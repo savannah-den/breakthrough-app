@@ -33,10 +33,10 @@ exports.handler = async (event) => {
 
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    headers: { 'content-type': 'application/json', 'x-api-key': String(process.env.ANTHROPIC_API_KEY || '').replace(/\s+/g, '').replace(/^["']|["']$/g, ''), 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({ model: MODEL, max_tokens: 4000, system, messages: [{ role: 'user', content: prompt }] })
   });
-  if (!r.ok) { console.error('anthropic', r.status, await r.text()); return { statusCode: 502, body: 'AI unavailable' }; }
+  if (!r.ok) { console.error('anthropic', r.status, 'keyLen', String(process.env.ANTHROPIC_API_KEY || '').replace(/\s+/g, '').length, 'looksRight', /^sk-ant-/.test(String(process.env.ANTHROPIC_API_KEY || '').trim()), await r.text()); return { statusCode: 502, body: 'AI unavailable' }; }
   const data = await r.json();
   const text = (data.content || []).filter(c => c.type === 'text').map(c => c.text).join('');
 
