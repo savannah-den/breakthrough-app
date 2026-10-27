@@ -19,7 +19,7 @@ What a client can see is set by **you** in the dashboard, not by the link. The l
    - Region: **Sydney (ap-southeast-2)**
    - Save the database password somewhere safe.
 2. When it's ready, open **SQL Editor → New query**. Paste in everything from `supabase/schema.sql` and press **Run**.
-   - The admin email in that file is `savannah@savannahdenny.com.au`. If you'll log in with a different email, change it in the file before you run it.
+   - The admin email in that file is `savannah@colourmeneurospicy.com.au`. If you'll log in with a different email, change it in the file before you run it.
 3. Go to **Authentication → Emails → Magic Link** and replace the email body with this:
    ```html
    <h2>Your Breakthrough login code</h2>
