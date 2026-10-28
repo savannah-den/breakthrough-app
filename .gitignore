@@ -1,0 +1,7 @@
+__pycache__/
+src/app-bundle.html
+playground/
+.app-update.zip
+Claude outputs/
+.DS_Store
+node_modules/

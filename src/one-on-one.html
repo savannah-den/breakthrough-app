@@ -1061,7 +1061,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <p style="margin: 0; font-size: 17px; line-height: 1.65; color: #F6D6CF">This is where it starts. Not the try-harder, white-knuckle kind of change, but the real kind: rewiring the programs that have been running you, and meeting the version of you that’s been waiting underneath all along. I’m so excited you’re here. Everything you need for our 1:1 time lives on this page.</p>
 
 <div style="display: flex; flex-direction: column; gap: 10px">
-<a class="bl" href="{{courseLink}}" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="#D3302B" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>Access Breakthrough Course</a>
+
 <sc-if value="{{waDone}}" hint-placeholder-val="{{ false }}">
 <a class="bp" href="{{waLink}}" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z"></path></svg>Message Savannah on WhatsApp</a>
 </sc-if>
@@ -1076,7 +1076,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div role="status" class="cc" style="padding: 16px 18px; background: #F1F9A6; display: flex; flex-direction: column; gap: 10px">
 <span style="font-size: 15px; line-height: 1.55; font-weight: 600">{{flash}}</span>
 <div style="display: flex; flex-wrap: wrap; gap: 8px">
-<a class="gc" style="background: #FFFFFF" href="{{waLink}}" target="_blank" rel="noopener">Open WhatsApp</a>
 <button class="gc" style="background: #FFFFFF" onClick="{{goTestsClear}}">See My tests</button>
 </div>
 </div>
@@ -1086,10 +1085,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div style="display: flex; flex-direction: column; gap: 22px">
 
 
-<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="oo-head" style="display: flex; flex-direction: column; gap: 8px">
 <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px">
-<span class="hand" style="font-size: 20px; color: #F1F9A6">Start here: 4 quick steps</span>
-<span style="font-size: 14px; color: #F6D6CF">{{doneCount}} of 4 complete</span>
+<span class="hand" style="font-size: 20px; color: #F1F9A6">Start here: 3 quick steps</span>
+<span style="font-size: 14px; color: #F6D6CF">{{doneCount}} of 3 complete</span>
 </div>
 <div style="display: flex; gap: 6px" aria-hidden="true">
 <sc-for list="{{segs}}" as="sg" hint-placeholder-count="4"><span class="{{sg.cls}}"></span></sc-for>
@@ -1097,16 +1096,16 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 </div>
 
 <sc-if value="{{allDone}}" hint-placeholder-val="{{ false }}">
-<section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+<section class="cc s-alldone" style="padding: 24px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
 <svg width="44" height="44" viewBox="0 0 24 24" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.2" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
 <h2 style="margin: 0; font-size: 26px">You’re all set.</h2>
-<p style="margin: 0; font-size: 15px; line-height: 1.6">Everything’s done. Your results live under My tests whenever you want to look back. Make sure you’ve sent each one to Savannah on WhatsApp, and she’ll see you in session.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Everything’s done. Your results live under My tests whenever you want to look back. They’re saved to your profile, so Savannah already has them. See you in session.</p>
 </section>
 </sc-if>
 
-<sc-if value="{{minHome}}" hint-placeholder-val="{{ false }}"><button class="mstep" onClick="{{reopenHome}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 1 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Save this page to your home screen</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
+<sc-if value="{{minHome}}" hint-placeholder-val="{{ false }}"><button class="mstep s-home" onClick="{{reopenHome}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 1 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Save this page to your home screen</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
 <sc-if value="{{showHome}}" hint-placeholder-val="{{ true }}">
-<section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<section class="cc s-home" style="padding: 24px; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; align-items: center; gap: 14px">
 <span class="sn">1</span>
 <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
@@ -1135,14 +1134,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 </section>
 </sc-if>
 
-<sc-if value="{{minWa}}" hint-placeholder-val="{{ false }}"><button class="mstep" onClick="{{reopenWa}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 2 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Connect with Savannah on WhatsApp</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
+<sc-if value="{{minWa}}" hint-placeholder-val="{{ false }}"><button class="mstep s-wa" onClick="{{reopenWa}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 2 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Connect with Savannah on WhatsApp</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
 <sc-if value="{{showWa}}" hint-placeholder-val="{{ true }}">
-<section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<section class="cc s-wa" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap">
 <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
 <div style="display: flex; align-items: center; gap: 12px"><span class="sn">2</span><span class="hand" style="font-size: 16px; color: #A8231F">About 5 minutes</span></div>
 <h2 style="margin: 0; font-size: 26px; line-height: 1.15">Connect with Savannah on WhatsApp</h2>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Your private WhatsApp chat with Savannah is where you’ll send your results, and how she’ll stay in touch between sessions.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Your private WhatsApp chat with Savannah is how she’ll stay in touch between sessions.</p>
 </div>
 <svg class="viz" viewBox="0 0 140 140" role="img" aria-label="A phone with chat bubbles"><rect x="36" y="8" width="68" height="124" rx="14" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"></rect><circle cx="70" cy="24" r="7" fill="#F28C3B" stroke="#4E0C08" stroke-width="2"></circle><rect x="44" y="40" width="40" height="16" rx="8" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2"></rect><rect x="56" y="62" width="40" height="16" rx="8" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"></rect><rect x="44" y="84" width="32" height="16" rx="8" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2"></rect><path d="M60 118h20" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path transform="translate(102 2) scale(1.2)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"></path></svg>
 </div>
@@ -1168,9 +1167,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 </section>
 </sc-if>
 
-<sc-if value="{{minCourse}}" hint-placeholder-val="{{ false }}"><button class="mstep" onClick="{{reopenCourse}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 3 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Unlock your Breakthrough course</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
+<sc-if value="{{minCourse}}" hint-placeholder-val="{{ false }}"><button class="mstep s-course" onClick="{{reopenCourse}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 3 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Unlock your Breakthrough course</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">Reopen<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
 <sc-if value="{{showCourse}}" hint-placeholder-val="{{ true }}">
-<section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<section class="cc s-course" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap">
 <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
 <div style="display: flex; align-items: center; gap: 12px"><span class="sn">3</span><span class="hand" style="font-size: 16px; color: #A8231F">About 2 minutes</span></div>
@@ -1197,11 +1196,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 </section>
 </sc-if>
 
-<sc-if value="{{minTests}}" hint-placeholder-val="{{ false }}"><button class="mstep" onClick="{{goTests}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 4 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Your 3 tests for Savannah</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">See them<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
+<sc-if value="{{minTests}}" hint-placeholder-val="{{ false }}"><button class="mstep s-tests" onClick="{{goTests}}"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span class="hand" style="font-size: 13px; color: #A8231F">Step 4 · done</span><span style="font-weight: 600; font-size: 15px; line-height: 1.3">Your 3 tests for Savannah</span></span><span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #4E0C08">See them<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M6 9l6 6 6-6"></path></svg></span></button></sc-if>
 <sc-if value="{{showTests}}" hint-placeholder-val="{{ true }}">
-<section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 18px; border: 3px solid #F1F9A6">
+<section class="cc s-tests" style="padding: 24px; display: flex; flex-direction: column; gap: 18px; border: 3px solid #F1F9A6">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<div style="display: flex; align-items: center; gap: 12px"><span class="sn">4</span><span class="hand" style="font-size: 16px; color: #A8231F">Before your first 1:1 call</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span class="sn">3</span><span class="hand" style="font-size: 16px; color: #A8231F">Before your first 1:1 call</span></div>
 <h2 style="margin: 0; font-size: clamp(26px, 5vw, 32px); line-height: 1.12">Do these 3 tests for Savannah</h2>
 <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">{{testsIntro}}</p>
 </div>
@@ -1240,7 +1239,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 </sc-if>
 </section>
 <sc-if value="{{guideOk}}" hint-placeholder-val="{{ false }}">
-<div style="display: flex; flex-direction: column; gap: 18px">
+<div class="s-tests" style="display: flex; flex-direction: column; gap: 18px">
 <sc-if value="{{showRep}}" hint-placeholder-val="{{ true }}">
 <section class="cc" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap">
@@ -1254,14 +1253,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div class="li"><span class="d">1</span><span>Find a quiet few minutes and answer the five questions. Trust your first answer.</span></div>
 <div class="li"><span class="d">2</span><span>On your results page, tap <strong>Download my results (JPEG)</strong>.</span></div>
-<div class="li"><span class="d">3</span><span>Send the image to Savannah in your private WhatsApp chat, then upload it here too so you can look back at it.</span></div>
+<div class="li"><span class="d">3</span><span>Upload the image here. It saves to your profile, so Savannah sees it too.</span></div>
 </div>
 <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6A5A57">Once you finish, this moves into My tests so you can re-open your results any time.</p>
 <sc-if value="{{hasRepImgErr}}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size: 14px; color: #A8231F">{{repImgErr}}</span></sc-if>
 <div style="display: flex; flex-wrap: wrap; gap: 10px">
 <a class="br" href="Main.dc.html" target="_self">Start the test</a>
 <label class="upl"><input type="file" accept="image/*" aria-label="Upload my rep system results image" onChange="{{uploadRep}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"></path></svg>Upload my results</label>
-<button class="sentb" onClick="{{completeRep}}"><span class="sbx" aria-hidden="true"></span>Sent to Sav on WhatsApp</button>
 </div>
 </section>
 </sc-if>
@@ -1280,7 +1278,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div class="li"><span class="d">1</span><span>Go to myhumandesign.com and choose to get your free chart.</span></div>
 <div class="li"><span class="d">2</span><span>Enter your name, date of birth, <strong>exact time of birth</strong> and place of birth. Check your birth certificate or baby book, or ask a parent.</span></div>
 <div class="li"><span class="d">3</span><span>On your chart page, tap <strong>Download chart</strong> (top right, circled in the example).</span></div>
-<div class="li"><span class="d">4</span><span>Send the chart to Savannah in your WhatsApp chat, then upload it here too so you can look back at it.</span></div>
+<div class="li"><span class="d">4</span><span>Upload the chart here. It saves to your profile, so Savannah sees it too.</span></div>
 </div>
 <button class="ex" style="align-self: flex-start" aria-expanded="{{hdExExpanded}}" onClick="{{toggleHdEx}}">{{hdExLabel}}</button>
 <sc-if value="{{hdExOpen}}" hint-placeholder-val="{{ false }}">
@@ -1293,7 +1291,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
 <a class="br" href="https://www.myhumandesign.com/" target="_blank" rel="noopener">Get my chart</a>
 <label class="upl"><input type="file" accept="image/*,application/pdf" aria-label="Upload my Human Design chart" onChange="{{uploadHd}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"></path></svg>Upload my chart</label>
-<button class="sentb" onClick="{{sentHd}}"><span class="sbx" aria-hidden="true"></span>Sent to Sav on WhatsApp</button>
 <button class="gc" onClick="{{skipHd}}">I don’t know my birth time</button>
 </div>
 </section>
@@ -1314,7 +1311,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div class="li"><span class="d">2</span><span>Answer every question honestly, as you actually are, not who you’d like to be. <strong>Trust the first answer.</strong></span></div>
 <div class="li"><span class="d">3</span><span>On your results page, find the <strong>Personal scores</strong> pie chart.</span></div>
 <div class="li"><span class="d">4</span><span>Screenshot it (iPhone: side button + volume up · Mac: Cmd + Shift + 4 · Windows: Windows + Shift + S).</span></div>
-<div class="li"><span class="d">5</span><span>Send the screenshot to Savannah in your WhatsApp chat, then upload it here too.</span></div>
+<div class="li"><span class="d">5</span><span>Upload the screenshot here. It saves to your profile, so Savannah sees it too.</span></div>
 </div>
 <button class="ex" style="align-self: flex-start" aria-expanded="{{discExExpanded}}" onClick="{{toggleDiscEx}}">{{discExLabel}}</button>
 <sc-if value="{{discExOpen}}" hint-placeholder-val="{{ false }}">
@@ -1327,7 +1324,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
 <a class="br" href="https://www.123test.com/disc-personality-test/" target="_blank" rel="noopener">Take the DISC test</a>
 <label class="upl"><input type="file" accept="image/*" aria-label="Upload my DISC screenshot" onChange="{{uploadDisc}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"></path></svg>Upload my screenshot</label>
-<button class="sentb" onClick="{{sentDisc}}"><span class="sbx" aria-hidden="true"></span>Sent to Sav on WhatsApp</button>
 </div>
 </section>
 </sc-if>
@@ -1460,7 +1456,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
 <a class="br" href="Main.dc.html" target="_self">Re-open my results</a>
 <label class="upl"><input type="file" accept="image/*" aria-label="Upload my rep system results image" onChange="{{uploadRep}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"></path></svg>{{repUpLabel}}</label>
-<button class="{{repSentCls}}" aria-pressed="{{repSentPressed}}" onClick="{{toggleRepSent}}"><span class="bx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Sent to Savannah on WhatsApp</button>
 </div>
 </section>
 </sc-if>
@@ -1483,13 +1478,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid #F1F9A
 <p style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #F4C2F7; font-size: 15px; line-height: 1.6">No birth time, no problem. Just let Savannah know on WhatsApp. If you find it later, you can still do this one.</p>
 </sc-if>
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
-<sc-if value="{{u.canSend}}" hint-placeholder-val="{{ true }}"><button class="{{u.sentCls}}" aria-pressed="{{u.sentPressed}}" onClick="{{u.toggleSent}}"><span class="bx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Sent to Savannah on WhatsApp</button></sc-if>
+<sc-if value="{{u.canSendNever}}" hint-placeholder-val="{{ false }}"><button class="{{u.sentCls}}" aria-pressed="{{u.sentPressed}}" onClick="{{u.toggleSent}}"><span class="bx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Sent to Savannah on WhatsApp</button></sc-if>
 <button class="gc" onClick="{{u.redo}}">{{u.redoLabel}}</button>
 </div>
 </section>
 </sc-for>
 
-<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #F6D6CF">Your uploads are saved on this device and browser only, which is why it’s important to send each one to Savannah on WhatsApp too.</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #F6D6CF">Your tests are saved to your profile, so Savannah can see them too.</p>
 </div>
 </sc-if>
 
@@ -2269,18 +2264,18 @@ button.mm-node.prog.more{border-style:dashed;color:#4E0C08;font-weight:600}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: start">
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div class="hand" style="font-size: 17px; color: #A8231F">Step 1 · notice your limiting beliefs</div>
-<h2 style="margin: 0; font-weight: 700; font-size: 34px; line-height: 1.1">Tick the beliefs that feel familiar</h2>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Don’t overthink this. Just notice your reaction.</p>
+<h2 style="margin: 0; font-weight: 700; font-size: 34px; line-height: 1.1">How often does it feel true?</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Six levels, five beliefs at a time. For each one, pick a dot: all the time, sometimes or never. Don’t overthink it. Just notice your reaction.</p>
 </div>
 <div class="card" style="padding: 20px 22px; display: flex; flex-direction: column; gap: 10px">
-<div style="font-weight: 600; font-size: 15px">Tick any belief that:</div>
+<div style="font-weight: 600; font-size: 15px">A belief counts if it:</div>
 <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5; color: #6A5A57">
 <li>Feels emotionally charged</li>
 <li>Makes you feel uncomfortable</li>
 <li>Sounds like something you’ve said to yourself</li>
 <li>Sounds like something you secretly fear might be true</li>
 </ul>
-<div style="margin-top: 6px; padding: 12px 16px; border-radius: 14px; background: #F1F9A6; font-size: 15px; line-height: 1.5">If your brain says <strong>“Oof.”</strong> Tick it.</div>
+<div style="margin-top: 6px; padding: 12px 16px; border-radius: 14px; background: #F1F9A6; font-size: 15px; line-height: 1.5">If your brain says <strong>“Oof.”</strong> it’s at least a sometimes.</div>
 </div>
 </div>
 
@@ -2297,19 +2292,48 @@ button.mm-node.prog.more{border-style:dashed;color:#4E0C08;font-weight:600}
 <sc-if value="{{hasF5Lead}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; font-weight: 600; color: #4E0C08">{{f5Lead}}</span></sc-if>
 </div>
 
-<sc-for list="{{cats}}" as="cat" hint-placeholder-count="6">
-<div style="display: flex; flex-direction: column; gap: 12px">
-<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1.5px solid #EDE3DF; padding-bottom: 10px">
-<h3 style="margin: 0; font-weight: 700; font-size: 23px">{{cat.name}}</h3>
-<span class="hand" style="font-size: 16px; color: #A8231F">{{cat.countLabel}}</span>
+<div id="pd-game" class="pdg">
+<div class="pdg-cats" role="list">
+<sc-for list="{{game.cats}}" as="gc" hint-placeholder-count="6"><button class="{{gc.cls}}" role="listitem" aria-current="{{gc.cur}}" onClick="{{gc.go}}"><span class="pdg-cn">{{gc.n}}</span><span>{{gc.name}}</span></button></sc-for>
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px">
-<sc-for list="{{cat.items}}" as="b" hint-placeholder-count="8">
-<button class="{{b.cls}}" aria-pressed="{{b.pressed}}" onClick="{{b.toggle}}"><span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="display: flex; flex-direction: column; gap: 4px"><span>{{b.text}}</span><span class="btag">{{b.f5}}</span></span></button>
+<div class="pdg-card">
+<div class="pdg-head">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="hand" style="font-size: 16px; color: #A8231F">{{game.kicker}}</span>
+<h3 style="margin: 0; font-weight: 700; font-size: 26px; line-height: 1.1">{{game.name}}</h3>
+</div>
+<span class="pdg-page">{{game.pageLabel}}</span>
+</div>
+<div class="pdg-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{game.pct}}" aria-label="How far through you are"><span style="width: {{game.pct}}%"></span></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #463A38">How often does this feel true for you? Go with your gut.</p>
+<div class="pdg-list">
+<sc-for list="{{game.items}}" as="g" hint-placeholder-count="5">
+<div class="{{g.cls}}">
+<div style="display: flex; flex-direction: column; gap: 4px"><span class="pdg-text">{{g.text}}</span><span class="btag">{{g.f5}}</span></div>
+<div class="pdg-dots" role="radiogroup" aria-label="{{g.text}}">
+<sc-for list="{{g.opts}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}"><span class="pdg-dot" aria-hidden="true"></span><span>{{o.label}}</span></button></sc-for>
+</div>
+</div>
 </sc-for>
 </div>
+<sc-if value="{{game.hasNote}}" hint-placeholder-val="{{ false }}"><div class="pdg-note">{{game.note}}</div></sc-if>
+<div class="pdg-nav">
+<sc-if value="{{game.canBack}}" hint-placeholder-val="{{ false }}"><button class="ghost" onClick="{{game.back}}">← Back</button></sc-if>
+<span style="flex: 1 1 auto"></span>
+<button class="{{game.nextCls}}" onClick="{{game.next}}">{{game.nextLabel}}</button>
 </div>
-</sc-for>
+</div>
+<sc-if value="{{game.done}}" hint-placeholder-val="{{ false }}">
+<div class="pdg-res">
+<span class="hand" style="font-size: 17px; color: #F1F9A6">Level complete</span>
+<div style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 26px; line-height: 1.15">{{game.resTitle}}</div>
+<div class="pdg-resrow"><span class="pdg-k all"><span class="pdg-dot" aria-hidden="true"></span><b>{{game.nAll}}</b> all the time · your core beliefs</span><span class="pdg-k some"><span class="pdg-dot" aria-hidden="true"></span><b>{{game.nSome}}</b> sometimes · parts of you</span></div>
+<sc-if value="{{game.hasCore}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{game.core}}" as="c" hint-placeholder-count="3"><span class="pdg-chip">{{c.text}}</span></sc-for></div></sc-if>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #F6D6CF">The ones you feel all the time are the beliefs running the show. The sometimes ones are parts of you that pop up in certain moments. Both are worth knowing.</p>
+</div>
+</sc-if>
+</div>
+
 
 <div class="dark" style="padding: 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px">
 <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 280px">
@@ -2828,6 +2852,7 @@ button.mm-node.prog.more{border-style:dashed;color:#4E0C08;font-weight:600}
 <span style="font-size: 12px; font-weight: 600; color: #4E0C08">{{e.date}}</span>
 <span style="font-size: 15px; line-height: 1.5">{{e.text}}</span>
 <sc-if value="{{e.hasPhoto}}" hint-placeholder-val="{{ false }}"><img src="{{e.photo}}" alt="{{e.alt}}" style="width: 100%; max-width: 280px; border-radius: 14px"></sc-if>
+<sc-if value="{{e.canLink}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 600; color: #6A5A57">This is proof against…</span><span style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{e.linkOpts}}" as="lk" hint-placeholder-count="2"><button class="tag" onClick="{{lk.pick}}">{{lk.text}}</button></sc-for></span></sc-if>
 </span>
 <sc-if value="{{e.removable}}" hint-placeholder-val="{{ true }}">
 <button class="x" aria-label="Remove this entry" onClick="{{e.remove}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
@@ -3598,12 +3623,12 @@ function setProps(el, props) {
   el.__p = props;
 }
 function dropRefs(node) { if (node.nodeType !== 1) return; if (node.__p && typeof node.__p.ref === 'function') node.__p.ref(null); for (var i = 0; i < node.childNodes.length; i++) dropRefs(node.childNodes[i]); }
-function create(v, svg) { if (typeof v === 'string') return document.createTextNode(v); var isSvg = svg || v.t === 'svg'; var el = isSvg ? document.createElementNS(SVGNS, v.t) : document.createElement(v.t); el.__t = v.t; setProps(el, v.p); patchChildren(el, v.c, isSvg && v.t !== 'foreignObject'); return el; }
+function create(v, svg) { if (typeof v === 'string') return document.createTextNode(v); var isSvg = svg || v.t === 'svg'; var el = isSvg ? document.createElementNS(SVGNS, v.t) : document.createElement(v.t); el.__t = v.t; setProps(el, v.p); if (!('data-slot' in v.p)) patchChildren(el, v.c, isSvg && v.t !== 'foreignObject'); return el; }
 function patchChildren(el, kids, svg) {
   for (var i = 0; i < kids.length; i++) {
     var v = kids[i], dom = el.childNodes[i];
     if (typeof v === 'string') { if (dom && dom.nodeType === 3) { if (dom.data !== v) dom.data = v; } else if (dom) { dropRefs(dom); el.replaceChild(document.createTextNode(v), dom); } else el.appendChild(document.createTextNode(v)); continue; }
-    if (dom && dom.nodeType === 1 && dom.__t === v.t) { setProps(dom, v.p); patchChildren(dom, v.c, (svg || v.t === 'svg') && v.t !== 'foreignObject'); }
+    if (dom && dom.nodeType === 1 && dom.__t === v.t) { setProps(dom, v.p); if (!('data-slot' in v.p)) patchChildren(dom, v.c, (svg || v.t === 'svg') && v.t !== 'foreignObject'); }
     else if (dom) { dropRefs(dom); el.replaceChild(create(v, svg), dom); }
     else el.appendChild(create(v, svg));
   }
@@ -3669,7 +3694,7 @@ class Component extends DCLogic {
       var ok = self.save(p);
       if (!ok) { var p2 = {}; p2[id] = { type: rec.type, name: rec.name, date: rec.date, noCopy: true }; self.save(p2); }
       var st = {}; st[errKey] = '';
-      st.flash = ok ? 'Saved to My tests. Now send it to Savannah in your WhatsApp chat too, so she has it.' : 'Marked as done, but this device couldn’t keep a copy. Please send it to Savannah on WhatsApp.';
+      st.flash = ok ? 'Saved to your profile. Savannah can see it now, no need to send it anywhere.' : 'That file was too big to save. Try a screenshot of it instead.';
       self.setState(st);
     };
     var date = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -3734,15 +3759,15 @@ class Component extends DCLogic {
     var waDone = !!d.wa, repDone = !!rep || !!d.repDone || !!d.repImg, hdDone = !!d.hd, discDone = !!d.disc;
     var homeDone = !!d.homeSaved, testsAll = repDone && hdDone && discDone, guideOk = !!d.guideOk;
     var courseDone = !!d.course;
-    var flags = [homeDone, waDone, courseDone, testsAll];
+    var flags = [homeDone, waDone, testsAll];
     var doneCount = flags.filter(Boolean).length;
     var tests = [repDone, hdDone, discDone].filter(Boolean).length;
-    var startDone = doneCount === 4;
-    var tab = st.tab || (startDone ? 'home' : 'start');
+    var startDone = doneCount === 3;
+    var tab = this.props.embed ? 'start' : (st.tab || (startDone ? 'home' : 'start'));
     var wk = d.weeks || {};
-    var unl = function (n) { return n === 1 || !!wk[n - 1]; };
+    var unl = function (n) { return window.BT_COURSE ? n <= window.BT_COURSE.unlockedWeek() : (n === 1 || !!wk[n - 1]); };
     var weeksDone = 0; for (var i = 1; i <= 8; i++) if (wk[i]) weeksDone++;
-    var tabDefs = (startDone ? [] : [{ id: 'start', label: 'Start here', ct: 4 - doneCount }]).concat([{ id: 'home', label: 'Home' }, { id: 'res', label: 'Resources' }, { id: 'tests', label: 'My tests', ct: tests }]);
+    var tabDefs = (startDone ? [] : [{ id: 'start', label: 'Start here', ct: 3 - doneCount }]).concat([{ id: 'home', label: 'Home' }, { id: 'res', label: 'Resources' }, { id: 'tests', label: 'My tests', ct: tests }]);
     var ex = st.ex;
     var ro = st.reopen || {};
     var v = {
@@ -3755,17 +3780,17 @@ class Component extends DCLogic {
       waDone: waDone,
       showHome: !d.homeSaved || !!ro.home, minHome: !!d.homeSaved && !ro.home,
       reopenHome: function () { self.setState({ reopen: Object.assign({}, ro, { home: true }) }); },
-      homeBtn: d.homeSaved ? 'Minimise' : 'Done, it’s saved',
+      homeBtn: 'Done',
       hideHome: function () { self.save({ homeSaved: true }); self.setState({ reopen: Object.assign({}, ro, { home: false }) }); },
       showHomeTip: function () { self.save({ homeSaved: false }); self.setState({ tab: 'start' }); },
-      showCourse: !courseDone || !!ro.course, minCourse: courseDone && !ro.course,
+      showCourse: false, minCourse: false,
       reopenCourse: function () { self.setState({ reopen: Object.assign({}, ro, { course: true }) }); },
       courseBtn: courseDone ? 'Minimise' : 'I’ve got access',
       completeCourse: function () { self.save({ course: true }); self.setState({ reopen: Object.assign({}, ro, { course: false }) }); },
       copyLabel: st.copied ? 'Copied' : 'Copy code',
       copyCode: function () { try { if (navigator.clipboard) navigator.clipboard.writeText('privateclient').then(function () { self.setState({ copied: true }); }, function () {}); } catch (e) {} },
       showTests: !testsAll, minTests: testsAll, showGuide: !guideOk, guideOk: guideOk, testsDone: tests,
-      testsIntro: guideOk ? 'Your tests are below. Do each one once, trust your first answer, and send each result to Savannah on WhatsApp.' : 'This is where your 1:1 work starts. Read this first, tap “I understand”, and your three tests will open underneath.',
+      testsIntro: guideOk ? 'Your tests are below. Do each one once and trust your first answer. Your results save straight to your profile, so Savannah sees them too.' : 'This is where your 1:1 work starts. Read this first, tap “I understand”, and your three tests will open underneath.',
       okGuide: function () { self.save({ guideOk: true }); },
       reopenGuide: function () { self.save({ guideOk: false }); },
       tabStart: tab === 'start', tabTests: tab === 'tests', tabHome: tab === 'home', tabRes: tab === 'res',
@@ -3780,7 +3805,7 @@ class Component extends DCLogic {
       weeks: [1, 2, 3, 4, 5, 6, 7, 8].map(function (n) {
         var done = !!wk[n], open = unl(n), cur = open && !done;
         var res = RESOURCES.filter(function (r) { return r.week === n; }).map(function (r) { return r.title; });
-        var sub = !open ? 'Available once you finish Week ' + (n - 1) : done ? 'Finished' + (res.length ? ' · ' + res.join(', ') : '') : (res.length ? 'Resources: ' + res.join(', ') : 'Work through this week’s modules');
+        var sub = !open ? (window.BT_COURSE ? window.BT_COURSE.unlockText(n) : 'Available once you finish Week ' + (n - 1)) : done ? 'Finished' + (res.length ? ' · ' + res.join(', ') : '') : (res.length ? 'Resources: ' + res.join(', ') : 'Work through this week’s modules');
         var minis = open ? RESOURCES.filter(function (r) { return r.week === n; }).map(function (r) { return { isWhatIf: r.id === 'whatif', isBox: r.id === 'box', isUb: r.id === 'ub', title: r.title, tag: 'Week ' + r.week + ' resource', go: function () { self.pendingScroll = r.id; self.setState({ tab: 'res', focusRes: r.id }); } }; }) : [];
         return { minis: minis, n: n, done: done, notDone: !done, locked: !open, cls: 'wk' + (done ? ' done' : '') + (cur ? ' cur' : '') + (!open ? ' lock' : ''), sub: sub,
           canTick: open && (!done || !wk[n + 1]), tickCls: 'tick' + (done ? ' on' : ''), pressed: done ? 'true' : 'false', tickLabel: done ? 'Finished' : 'Tick when finished',
@@ -3789,23 +3814,23 @@ class Component extends DCLogic {
       resources: RESOURCES.map(function (r) { var open = unl(r.week); var sv = ((d.saves || {})[r.id] || []); var er = (st.saveErr || {})[r.id] || ''; return {
         saveCount: sv.length, hasSaves: sv.length > 0, noSaves: sv.length === 0, saveHint: r.saveHint, saveAria: 'Save an image to ' + r.title, hasErr: !!er, err: er,
         addSave: function (e) { self.addSave(r.id, e); },
-        saves: sv.map(function (x, i) { return { data: x.data, date: x.date, label: 'View saved answers from ' + x.date, view: function () { self.setState({ viewer: { url: x.data, title: r.title + ' · ' + x.date, rid: r.id, idx: i } }); } }; }), anchor: 'res-' + r.id, target: r.target, isWhatIf: r.id === 'whatif', isBox: r.id === 'box', isUb: r.id === 'ub', coverBg: open ? r.cover : '#8E1D14', week: r.week, title: r.title, desc: r.desc, href: r.href, color: r.color, open: open, locked: !open, cls: 'rs' + (open ? '' : ' lock') + (st.focusRes === r.id ? ' hl' : ''), tagColor: open ? '#A8231F' : '#E8B9AE', note: 'Available once you finish Week ' + (r.week - 1) }; }),
+        saves: sv.map(function (x, i) { return { data: x.data, date: x.date, label: 'View saved answers from ' + x.date, view: function () { self.setState({ viewer: { url: x.data, title: r.title + ' · ' + x.date, rid: r.id, idx: i } }); } }; }), anchor: 'res-' + r.id, target: r.target, isWhatIf: r.id === 'whatif', isBox: r.id === 'box', isUb: r.id === 'ub', coverBg: open ? r.cover : '#8E1D14', week: r.week, title: r.title, desc: r.desc, href: r.href, color: r.color, open: open, locked: !open, cls: 'rs' + (open ? '' : ' lock') + (st.focusRes === r.id ? ' hl' : ''), tagColor: open ? '#A8231F' : '#E8B9AE', note: (window.BT_COURSE ? window.BT_COURSE.unlockText(r.week) : 'Available once you finish Week ' + (r.week - 1)) }; }),
       tabStartCls: 'tab' + (tab === 'start' ? ' on' : ''), tabTestsCls: 'tab' + (tab === 'tests' ? ' on' : ''),
       tabStartSel: tab === 'start' ? 'true' : 'false', tabTestsSel: tab === 'tests' ? 'true' : 'false',
       goStart: function () { self.setState({ tab: 'start' }); },
       goTests: function () { self.setState({ tab: 'tests' }); },
       goTestsClear: function () { self.setState({ tab: 'tests', flash: '' }); },
-      hasLeft: doneCount < 4, leftCount: 4 - doneCount, testsCount: tests,
+      hasLeft: doneCount < 3, leftCount: 3 - doneCount, testsCount: tests,
       hasFlash: !!st.flash, flash: st.flash,
-      doneCount: doneCount, allDone: doneCount === 4,
+      doneCount: doneCount, allDone: doneCount === 3,
       segs: flags.map(function (f) { return { cls: 'pseg' + (f ? ' on' : '') }; }),
       showWa: !waDone || !!ro.wa, minWa: waDone && !ro.wa,
       reopenWa: function () { self.setState({ reopen: Object.assign({}, ro, { wa: true }) }); },
-      waBtn: waDone ? 'Minimise' : 'I’ve done all of this', showRep: !repDone, showHd: !hdDone, showDisc: !discDone,
+      waBtn: 'Done', showRep: !repDone, showHd: !hdDone, showDisc: !discDone,
       completeWa: function () { self.save({ wa: true }); self.setState({ flash: '', reopen: Object.assign({}, ro, { wa: false }) }); },
-      completeRep: function () { self.save({ repDone: true, repSent: true }); self.setState({ flash: 'Thank you! Moved to My tests, where you can re-open your results any time.' }); },
-      sentHd: function () { self.save({ hd: { type: 'sent', sent: true, date: today() } }); self.setState({ flash: 'Thank you! Moved to My tests. You can upload a copy there too if you’d like to look back at it.' }); },
-      sentDisc: function () { self.save({ disc: { type: 'sent', sent: true, date: today() } }); self.setState({ flash: 'Thank you! Moved to My tests. You can upload a copy there too if you’d like to look back at it.' }); },
+      completeRep: function () { self.save({ repDone: true, repSent: true }); self.setState({ flash: 'Done! It’s saved to your profile and Savannah can see it. Re-open it any time under My tests.' }); },
+      sentHd: function () { self.save({ hd: { type: 'sent', sent: true, date: today() } }); self.setState({ flash: 'Done! Upload your chart under My tests so it saves to your profile for Savannah.' }); },
+      sentDisc: function () { self.save({ disc: { type: 'sent', sent: true, date: today() } }); self.setState({ flash: 'Done! Upload your chart under My tests so it saves to your profile for Savannah.' }); },
       skipHd: function () { self.save({ hd: { type: 'skip', date: '' } }); self.setState({ flash: 'No problem at all. Just let Savannah know on WhatsApp that you don’t have your birth time.' }); },
       uploadHd: function (e) { self.upload('hd', e); },
       uploadRep: function (e) { self.upload('repImg', e); },
@@ -4558,7 +4583,7 @@ class Component extends DCLogic {
     if (this.vpEl && this.fittedFor !== this.mwSize) this.fitView();
     var s = this.state;
     try {
-      window.localStorage.setItem(PD_KEY, JSON.stringify({ tab: s.tab, ticked: s.ticked, filter: s.filter, closed: s.closed, noted: s.noted, focus: s.focus, oldProof: s.oldProof, newProof: s.newProof, evidence: s.evidence, practices: s.practices, mapView: s.mapView, mmRoot: s.mmRoot, careAck: s.careAck, openBelief: s.openBelief, reminder: s.reminder }));
+      window.localStorage.setItem(PD_KEY, JSON.stringify({ tab: s.tab, ticked: s.ticked, filter: s.filter, closed: s.closed, noted: s.noted, focus: s.focus, oldProof: s.oldProof, newProof: s.newProof, evidence: s.evidence, practices: s.practices, mapView: s.mapView, mmRoot: s.mmRoot, careAck: s.careAck, openBelief: s.openBelief, reminder: s.reminder, freq: s.freq, gCat: s.gCat, gPage: s.gPage, gDone: s.gDone, customProves: s.customProves }));
       this.saveFailed = false;
     } catch (e) {
       if (!this.saveFailed) {
@@ -4666,6 +4691,41 @@ class Component extends DCLogic {
       return { name: cat.name, items: items, countLabel: count ? count + ' ticked' : '' };
     });
 
+
+    // ---- Step 1 as a game: one category, five beliefs at a time ----
+    var freq = s.freq || {}, G_PER = 5, FREQ = [['all', 'All the time'], ['some', 'Sometimes'], ['never', 'Never']];
+    var gTotal = 0, gAnswered = 0, nAll = 0, nSome = 0, coreList = [];
+    PD_CATS.forEach(function (cat) { cat.items.forEach(function (pair, i) { var k = cat.id + '-' + i; gTotal++; var f = freq[k] || (ticked[k] ? 'some' : ''); if (f) gAnswered++; if (f === 'all') { nAll++; coreList.push({ text: pair[0] }); } if (f === 'some') nSome++; }); });
+    var gci = Math.min(Math.max(0, s.gCat || 0), PD_CATS.length - 1), gcat = PD_CATS[gci];
+    var gPages = Math.ceil(gcat.items.length / G_PER), gpi = Math.min(Math.max(0, s.gPage || 0), gPages - 1);
+    var gTop = function () { setTimeout(function () { var el = document.getElementById('pd-game'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 30); };
+    var gItems = gcat.items.slice(gpi * G_PER, gpi * G_PER + G_PER).map(function (pair, j) {
+      var key = gcat.id + '-' + (gpi * G_PER + j), f = freq[key] || (ticked[key] ? 'some' : '');
+      return { text: pair[0], f5: pdF5Name(pdF5Of(pair[0], pair[1])), cls: 'pdg-row' + (f ? ' ' + f : ''),
+        opts: FREQ.map(function (o) { var on = f === o[0]; return { label: o[1], cls: 'pdg-o ' + o[0] + (on ? ' on' : ''), on: on ? 'true' : 'false', pick: function () {
+          var nf = Object.assign({}, self.state.freq || {}), nt = Object.assign({}, self.state.ticked || {});
+          nf[key] = o[0]; if (o[0] === 'never') delete nt[key]; else nt[key] = true;
+          self.setState({ freq: nf, ticked: nt });
+        } }; }) };
+    });
+    var pageDone = gItems.every(function (g) { return / (all|some|never)$/.test(g.cls); });
+    var lastPage = gpi >= gPages - 1, lastCat = gci >= PD_CATS.length - 1;
+    var game = {
+      cats: PD_CATS.map(function (c, ci) {
+        var ans = c.items.filter(function (p, i) { var k = c.id + '-' + i; return freq[k] || ticked[k]; }).length, full = ans === c.items.length;
+        return { n: full ? '✓' : String(ci + 1), name: c.name, cur: ci === gci ? 'step' : 'false', cls: 'pdg-c' + (ci === gci ? ' on' : '') + (full ? ' full' : ''), go: function () { self.setState({ gCat: ci, gPage: 0, gDone: false }); gTop(); } };
+      }),
+      kicker: 'Level ' + (gci + 1) + ' of ' + PD_CATS.length, name: gcat.name, pageLabel: (gpi + 1) + ' / ' + gPages,
+      pct: Math.round(gAnswered / Math.max(1, gTotal) * 100), items: gItems,
+      hasNote: !pageDone, note: 'Pick a dot for each one to keep going. Not sure? Sometimes is a great answer.',
+      canBack: gci > 0 || gpi > 0,
+      back: function () { if (gpi > 0) self.setState({ gPage: gpi - 1, gDone: false }); else if (gci > 0) { var pc = PD_CATS[gci - 1]; self.setState({ gCat: gci - 1, gPage: Math.ceil(pc.items.length / G_PER) - 1, gDone: false }); } gTop(); },
+      nextCls: 'primary' + (pageDone ? ' lime' : ' dim'),
+      nextLabel: !lastPage ? 'Next 5 →' : !lastCat ? 'Next level: ' + PD_CATS[gci + 1].name + ' →' : 'See my results →',
+      next: function () { if (!pageDone) return; if (!lastPage) self.setState({ gPage: gpi + 1 }); else if (!lastCat) self.setState({ gCat: gci + 1, gPage: 0 }); else self.setState({ gDone: true }); gTop(); },
+      done: !!s.gDone, nAll: nAll, nSome: nSome, core: coreList, hasCore: coreList.length > 0,
+      resTitle: nAll + nSome ? 'You found ' + (nAll + nSome) + (nAll + nSome === 1 ? ' limiting belief.' : ' limiting beliefs.') + ' That takes guts.' : 'Nothing ticked yet. That’s okay too.'
+    };
     var matchedIds = Object.keys(fromByProg);
     var mine = s.filter !== 'all';
     var list = mine ? PD_PROGS.filter(function (p) { return fromByProg[p.id]; }) : PD_PROGS;
@@ -4735,7 +4795,7 @@ class Component extends DCLogic {
     var groups = {};
     var order = [];
     function ensure(k) { if (!groups[k]) { groups[k] = []; order.push(k); } }
-    (s.evidence || []).forEach(function (e) { var k = e.belief || '__none'; ensure(k); groups[k].push(e); });
+    (s.evidence || []).forEach(function (e) { var ks = (e.beliefs && e.beliefs.length) ? e.beliefs : [e.belief || '__none']; ks.forEach(function (k) { ensure(k); groups[k].push(e); }); });
     Object.keys(oldProof).concat(Object.keys(newProof)).forEach(function (k) { if (k !== '__none' && (lines(oldProof[k]).length || lines(newProof[k]).length)) ensure(k); });
     function weighFor(k) {
       var old = lines(oldProof[k]).length;
@@ -4758,11 +4818,12 @@ class Component extends DCLogic {
       var isOpen = !!openBelief[k];
       var fromWeigh = lines(newProof[k]).map(function (t) { return { date: 'From your weigh-up', text: t, hasPhoto: false, photo: '', alt: '', removable: false, remove: null }; });
       var entries = (groups[k] || []).map(function (e) {
-        return { date: e.date, text: e.text || 'A photo for my portfolio', hasPhoto: !!e.photo, photo: e.photo || '', alt: e.text ? 'Photo: ' + e.text : 'Photo of new proof', removable: true, remove: function () { self.setState({ evidence: (self.state.evidence || []).filter(function (x) { return x.id !== e.id; }) }); } };
+        var linkOpts = !e.belief && !(e.beliefs && e.beliefs.length) ? candidates.map(function (b) { return { text: b, pick: function () { self.setState({ evidence: (self.state.evidence || []).map(function (x) { return x.id === e.id ? Object.assign({}, x, { belief: b }) : x; }), justAdded: 'Linked. That’s more proof against “' + b + '”.' }); } }; }) : [];
+        return { date: e.date, text: e.text || 'A photo for my portfolio', hasPhoto: !!e.photo, photo: e.photo || '', alt: e.text ? 'Photo: ' + e.text : 'Photo of new proof', removable: true, canLink: linkOpts.length > 0, linkOpts: linkOpts, remove: function () { self.setState({ evidence: (self.state.evidence || []).filter(function (x) { return x.id !== e.id; }) }); } };
       }).concat(fromWeigh);
       var oldL = lines(oldProof[k]).map(function (t) { return { text: t }; });
       return {
-        belief: k === '__none' ? 'Not linked to a belief yet' : k,
+        belief: k === '__none' ? 'My wins & sparkles' : k,
         countLabel: w.good + ' new · ' + w.old + ' old' + (w.good > w.old && w.good > 0 ? ' · the new proof is winning' : ''),
         goodSegs: w.goodSegs, oldSegs: w.oldSegs, old: w.old, good: w.good, msg: w.msg,
         entries: entries, oldLines: oldL, hasOld: oldL.length > 0,
@@ -5066,12 +5127,12 @@ class Component extends DCLogic {
       goNow: function () { self.go('now'); },
       goPortfolio: function () { self.go('portfolio'); },
       tickSummary: total ? total + (total === 1 ? ' belief ticked' : ' beliefs ticked') + (proofTotal ? ' · ' + proofTotal + (proofTotal === 1 ? ' piece of proof' : ' pieces of proof') : '') : '',
-      cats: cats,
+      cats: cats, game: game,
       f5Pills: f5Pills,
       f5Mine: f5Pills.filter(function (x) { return x.n > 0; }),
       hasF5Lead: !!f5Lead,
       f5Lead: f5Lead,
-      auditDoneTitle: total ? 'You ticked ' + total + (total === 1 ? ' belief.' : ' beliefs.') + ' Well done.' : 'Ready when you are.',
+      auditDoneTitle: total ? 'You found ' + total + (total === 1 ? ' belief' : ' beliefs') + (nAll ? ' (' + nAll + ' all the time)' : '') + '. Well done.' : 'Ready when you are.',
       segMineCls: mine ? 'seg on' : 'seg', segMinePressed: mine ? 'true' : 'false',
       segAllCls: mine ? 'seg' : 'seg on', segAllPressed: mine ? 'false' : 'true',
       showMine: function () { self.setState({ filter: 'mine' }); },

@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The What If? Workout</title>
+<meta name="theme-color" content="#4E0C08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/css/shell.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;family=Poppins:wght@400;500;600&amp;family=Patrick+Hand+SC&amp;display=swap">
+<style>
+body{margin:0;background:#FAF7F5}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.01em}
+a{color:#A8231F}a:hover{color:#74140E}
+button{font:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #74140E;outline-offset:2px}
+.wf-root{position:relative;font-family:Poppins,system-ui,sans-serif;color:#1F1412;background:#FAF7F5;min-height:100vh;overflow-x:clip}
+.hand{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em}
+.orb{position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:999px;background:radial-gradient(circle at 35% 40%,#F4C2F7 0%,rgba(244,194,247,0) 60%),radial-gradient(circle at 65% 60%,#F1F9A6 0%,rgba(241,249,166,0) 55%),radial-gradient(circle at 50% 50%,#F28C3B 0%,rgba(242,140,59,0) 45%);filter:blur(36px);opacity:.75;pointer-events:none}
+.card{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:22px}
+.dark{background:#4E0C08;color:#FFF4EE;border-radius:24px}
+.segwrap{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:999px;background:#F6EFEC;align-self:flex-start}
+.seg{min-height:44px;padding:8px 18px;border-radius:999px;border:0;background:transparent;color:#6A5A57;font-size:14px;font-weight:500;cursor:pointer}
+.seg.on{background:#FFFFFF;color:#1F1412;box-shadow:0 1px 3px rgba(31,20,18,.15)}
+.step{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:26px;padding:26px 24px;display:flex;flex-direction:column;gap:18px}
+.stephead{display:flex;align-items:center;gap:14px}
+.stepnum{flex:none;width:48px;height:48px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px;transition:background .3s,color .3s}
+.stepnum.done{background:#F1F9A6;color:#1F1412;box-shadow:inset 0 0 0 1.5px #1F1412}
+.q{display:flex;flex-direction:column;gap:10px;padding:16px 18px;border-radius:18px;background:#FAF7F5}
+.qtext{font-size:16px;font-weight:600;line-height:1.4}
+.pick{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.pick:hover{border-color:#1F1412}
+.pick.on{background:#1F1412;border-color:#1F1412;color:#FFFFFF}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.chip:hover{border-color:#1F1412}
+.chip.on{background:#F1F9A6;border-color:#1F1412}
+.box{flex:none;width:18px;height:18px;box-sizing:border-box;border-radius:6px;border:2px solid #6A5A57;display:flex;align-items:center;justify-content:center;background:#FFFFFF}
+.box svg{opacity:0}
+.chip.on .box{background:#4E0C08;border-color:#4E0C08}
+.chip.on .box svg{opacity:1}
+.field{width:100%;box-sizing:border-box;min-height:120px;padding:14px 16px;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px;line-height:1.55;resize:vertical}
+.field::placeholder,.line::placeholder,.whatif::placeholder{color:#8C7C79}
+.line{width:100%;box-sizing:border-box;min-height:96px;padding:14px 16px;border-radius:18px;border:1.5px solid #F4C2F7;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px;line-height:1.55;resize:vertical}
+.whatwrap{display:flex;flex-direction:column;border-radius:20px;border:2px solid #4E0C08;background:#FBE6FC;overflow:hidden}
+.whatlead{padding:14px 18px 0;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:24px;color:#4E0C08}
+.whatif{width:100%;box-sizing:border-box;min-height:130px;padding:6px 18px 16px;border:0;background:transparent;color:#1F1412;font:inherit;font-size:16px;line-height:1.6;resize:vertical}
+.whatif:focus-visible{outline:none}
+.whatwrap:focus-within{box-shadow:0 0 0 3px #FFFFFF,0 0 0 6px #74140E}
+.pill-note{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:18px;background:#F1F9A6;font-size:15px;line-height:1.5}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:#FBE6FC;font-size:15px;line-height:1.55}
+.callout.lime{background:#F8FCD6}
+.callout.care{background:#4E0C08;color:#FFF4EE}
+.story{flex:1 1 220px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:96px;padding:16px 18px;border-radius:20px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
+.story:hover{border-color:#1F1412}
+.story:active{transform:scale(.99)}
+.story .st-title{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:21px;line-height:1.15}
+.story .st-sub{font-size:13px;line-height:1.45;color:#6A5A57}
+.story.fear.on{background:#F6EFEC;border-color:#6A5A57}
+.story.good.on{background:#F1F9A6;border-color:#1F1412;box-shadow:0 0 0 3px #FFFFFF,0 0 0 5px #1F1412}
+.radio{flex:none;width:22px;height:22px;box-sizing:border-box;border-radius:999px;border:2px solid #6A5A57;background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.radio span{width:10px;height:10px;border-radius:999px;background:transparent}
+.story.on .radio{border-color:#1F1412}
+.story.on .radio span{background:#1F1412}
+.meter{display:grid;gap:4px;max-width:420px}
+.mseg{height:8px;border-radius:999px;background:#EDE3DF;transition:background .3s}
+.mseg.on{background:#D3302B}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 24px;border-radius:999px;border:0;background:#D3302B;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer}
+.primary:hover{background:#A8231F}
+.primary.lime{background:#F1F9A6;color:#1F1412}
+.primary.lime:hover{background:#FFFFFF}
+.primary.lime.edge{border:1.5px solid #1F1412}
+.ghost{min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid #EDE3DF;background:transparent;color:#1F1412;font-size:14px;cursor:pointer}
+.ghost:hover{border-color:#1F1412}
+.ghost.warn{border-color:#A8231F;color:#A8231F}
+.ghost.light{border-color:rgba(255,244,238,.4);color:#FFF4EE}
+.ghost.light:hover{border-color:#FFF4EE}
+.x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:#6A5A57;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.x:hover{background:#F6EFEC;color:#1F1412}
+.sum-row{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-top:1px solid #F6EFEC}
+.sum-row:first-child{border-top:0}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.cf{position:absolute;left:50%;top:58%;border-radius:3px;opacity:0;animation:wf-burst 1.9s cubic-bezier(.15,.7,.3,1) forwards}
+.cf:nth-child(1){--x:-109px;--y:-246px;--r:-276deg;background:#F4C2F7;width:10px;height:6px;animation-delay:7ms}
+.cf:nth-child(2){--x:232px;--y:-150px;--r:608deg;background:#F1F9A6;width:8px;height:10px;animation-delay:11ms}
+.cf:nth-child(3){--x:30px;--y:-180px;--r:-408deg;background:#D3302B;width:12px;height:6px;animation-delay:74ms}
+.cf:nth-child(4){--x:323px;--y:-126px;--r:-406deg;background:#F28C3B;width:8px;height:6px;animation-delay:109ms}
+.cf:nth-child(5){--x:-254px;--y:-146px;--r:-495deg;background:#4E0C08;width:12px;height:6px;animation-delay:23ms}
+.cf:nth-child(6){--x:-299px;--y:-191px;--r:279deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(7){--x:59px;--y:-321px;--r:501deg;background:#F4C2F7;width:10px;height:6px;animation-delay:118ms}
+.cf:nth-child(8){--x:-34px;--y:-287px;--r:-263deg;background:#F1F9A6;width:12px;height:14px;animation-delay:67ms}
+.cf:nth-child(9){--x:-4px;--y:-265px;--r:254deg;background:#D3302B;width:8px;height:6px;animation-delay:53ms}
+.cf:nth-child(10){--x:-224px;--y:-160px;--r:220deg;background:#F28C3B;width:12px;height:10px;animation-delay:97ms}
+.cf:nth-child(11){--x:59px;--y:-385px;--r:538deg;background:#4E0C08;width:12px;height:14px;animation-delay:74ms}
+.cf:nth-child(12){--x:160px;--y:-183px;--r:665deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(13){--x:-346px;--y:-124px;--r:471deg;background:#F4C2F7;width:12px;height:14px;animation-delay:113ms}
+.cf:nth-child(14){--x:92px;--y:-167px;--r:352deg;background:#F1F9A6;width:12px;height:10px;animation-delay:63ms}
+.cf:nth-child(15){--x:-361px;--y:-186px;--r:-587deg;background:#D3302B;width:10px;height:14px;animation-delay:10ms}
+.cf:nth-child(16){--x:-234px;--y:-198px;--r:-620deg;background:#F28C3B;width:12px;height:14px;animation-delay:90ms}
+.cf:nth-child(17){--x:-64px;--y:-271px;--r:-334deg;background:#4E0C08;width:8px;height:10px;animation-delay:19ms}
+.cf:nth-child(18){--x:-171px;--y:-174px;--r:-449deg;background:#E890EC;width:10px;height:10px;animation-delay:18ms}
+.cf:nth-child(19){--x:-62px;--y:-250px;--r:308deg;background:#F4C2F7;width:12px;height:6px;animation-delay:79ms}
+.cf:nth-child(20){--x:150px;--y:-330px;--r:587deg;background:#F1F9A6;width:10px;height:14px;animation-delay:13ms}
+.cf:nth-child(21){--x:-15px;--y:-312px;--r:-393deg;background:#D3302B;width:10px;height:10px;animation-delay:14ms}
+.cf:nth-child(22){--x:-91px;--y:-234px;--r:-283deg;background:#F28C3B;width:10px;height:6px;animation-delay:3ms}
+.cf:nth-child(23){--x:-237px;--y:-101px;--r:-438deg;background:#4E0C08;width:10px;height:6px;animation-delay:46ms}
+.cf:nth-child(24){--x:-16px;--y:-205px;--r:671deg;background:#E890EC;width:10px;height:14px;animation-delay:10ms}
+@keyframes wf-burst{0%{opacity:1;transform:translate(-50%,0) rotate(0deg) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),var(--y)) rotate(var(--r)) scale(1)}}
+.cel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;width:min(360px,calc(100% - 32px));box-sizing:border-box;background:#FFFFFF;border:2px solid #4E0C08;border-radius:28px;padding:26px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-shadow:0 24px 60px rgba(78,12,8,.25);animation:wf-pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes wf-pop{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.cf{display:none}.cel,.modal{animation:none}}
+.modal-bg{position:fixed;inset:0;z-index:30;border:0;padding:0;margin:0;background:rgba(31,20,18,.45);cursor:pointer}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;width:min(540px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:#FFFFFF;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 70px rgba(31,20,18,.3);animation:wf-pop .3s cubic-bezier(.2,1.2,.4,1)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+<style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+<!-- GENERATED by tools/import_canvas.py from src/canvases/whatif.dc.html. Re-run it after updating the canvas. -->
+<div id="bt-gate" class="bt-gate" hidden></div>
+<div id="app"></div>
+<template id="t-main">
+<div class="wf-root">
+<div class="orb" aria-hidden="true"></div>
+
+<sc-if value="{{hasExport}}" hint-placeholder-val="{{ false }}">
+<button class="modal-bg" aria-label="Close" onClick="{{closeExport}}"></button>
+<div class="modal" role="dialog" aria-modal="true" aria-label="Your workout image">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h3 style="margin: 0; font-weight: 700; font-size: 22px">Your workout is ready</h3>
+<button class="x" aria-label="Close" onClick="{{closeExport}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55; color: #463A38">If it didn’t download on its own, press and hold the image (phone) or right-click it (computer) and choose save.</p>
+<img src="{{exportUrl}}" alt="My What If? Workout" style="width: 100%; border-radius: 16px; border: 1.5px solid #EDE3DF">
+</div>
+</sc-if>
+
+<sc-if value="{{celebrating}}" hint-placeholder-val="{{ false }}">
+<div class="confetti" aria-hidden="true"><sc-for list="{{confetti}}" as="cf" hint-placeholder-count="24"><span class="cf"></span></sc-for></div>
+<div class="cel" role="status">
+<span style="width: 64px; height: 64px; border-radius: 999px; background: #F1F9A6; display: flex; align-items: center; justify-content: center"><svg width="34" height="34" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.2" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg></span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.1">{{celTitle}}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #463A38">{{celSub}}</span>
+<button class="ghost" onClick="{{closeCelebrate}}">Keep going</button>
+</div>
+</sc-if>
+
+<div style="position: relative; max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-direction: column; gap: 14px; padding-top: 16px">
+<div style="display: flex; align-items: center; gap: 14px">
+<svg width="56" height="56" viewBox="0 0 120 120" role="img" aria-label="What If Workout icon" style="flex: none"><defs><filter id="wf0" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="41"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><rect x="1" y="1" width="118" height="118" rx="29" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></rect><g filter="url(#wf0)"><path d="M30 64 C22 64 18 56 22 50 C18 42 26 34 34 37 C36 28 48 25 54 31 C60 23 76 25 78 35 C88 33 96 42 92 50 C98 56 93 66 84 65 C82 73 70 76 64 70 C58 77 44 76 42 68 C38 70 32 68 30 64 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><circle cx="40" cy="83" r="6" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.2"></circle><circle cx="30" cy="97" r="3.6" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2"></circle></g><text x="58" y="62" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-weight="700" font-size="30" fill="#4E0C08">?</text><path transform="translate(82 74) scale(0.9)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2" stroke-linejoin="round"></path></svg>
+<div class="hand" style="font-size: 18px; color: #A8231F">Breakthrough Program · resource</div>
+</div>
+<h1 style="margin: 0; font-weight: 700; font-size: clamp(38px, 7vw, 66px); line-height: 1.02; text-wrap: balance">The “What If?” Workout</h1>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(22px, 3.4vw, 30px); line-height: 1.2; color: #4E0C08">A prediction is not a fact.</p>
+<p style="margin: 0; max-width: 620px; font-size: 17px; line-height: 1.6; color: #463A38">For when your brain starts spiralling into the future. Get it out of your head and onto the page.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; max-width: 760px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">1</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Notice</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person holding their head while a spiral of what-ifs swirls above them" style="width: 100%; height: auto; display: block"><defs><filter id="wf1" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#wf1)"><path d="M100 50 m-4 0 a4 4 0 1 1 8 0 a8 8 0 1 1 -16 0 a12 12 0 1 1 24 0 a16 16 0 1 1 -32 0 a20 20 0 1 1 40 0 a24 24 0 1 1 -48 0" fill="none" stroke="#D3302B" stroke-width="2.4" stroke-linecap="round"></path><circle cx="100" cy="104" r="13" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M94 101 l3 1.5 M106 101 l-3 1.5" stroke="#4E0C08" stroke-width="2" stroke-linecap="round"></path><path d="M95 111 q5 -3 10 0" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round"></path><path d="M100 117 L100 152 M100 152 L88 180 M100 152 L112 180" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M100 126 L82 112 L86 96 M100 126 L118 112 L114 96" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><rect x="6" y="18" width="62" height="22" rx="11" fill="#FBE6FC" stroke="#4E0C08" stroke-width="2" transform="rotate(-8 37 29)"></rect><rect x="134" y="22" width="62" height="22" rx="11" fill="#FBE6FC" stroke="#4E0C08" stroke-width="2" transform="rotate(7 165 33)"></rect><rect x="10" y="66" width="62" height="22" rx="11" fill="#FBE6FC" stroke="#4E0C08" stroke-width="2" transform="rotate(5 41 77)"></rect><path d="M140 80 l8 -4 M146 92 l10 0 M140 104 l8 4" stroke="#B9ADAA" stroke-width="3" stroke-linecap="round"></path></g><text x="37" y="33" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#4E0C08" transform="rotate(-8 37 29)">what if…</text><text x="165" y="37" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#4E0C08" transform="rotate(7 165 33)">what if…</text><text x="41" y="81" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#4E0C08" transform="rotate(5 41 77)">what if…</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">Notice the spiral of what-ifs,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">2</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Question</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A page with the fear written on it, and a pencil marking it as a story, not a fact" style="width: 100%; height: auto; display: block"><defs><filter id="wf2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#wf2)"><path d="M46 22 L146 16 L154 168 L52 174 Z" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"></path><path d="M62 70 L138 66 M63 92 L139 88 M64 114 L140 110 M65 136 L141 132" stroke="#E6C3E8" stroke-width="2" stroke-linecap="round"></path><path d="M60 98 L142 93 L143 120 L61 125 Z" fill="#F1F9A6" fill-opacity=".9" stroke="none"></path><path d="M150 132 L178 70 L188 75 L160 137 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M150 132 L152 146 L160 137" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M178 70 L182 62 L192 67 L188 75" fill="#F28C3B" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M64 52 Q100 46 136 48" fill="none" stroke="#D3302B" stroke-width="2.2" stroke-linecap="round"></path></g><text x="100" y="45" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="16" fill="#4E0C08" transform="rotate(-3 100 45)">what if…</text><text x="102" y="113" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="15" fill="#1F1412" transform="rotate(-3 102 113)">a story, not a fact</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">get it on paper and question it,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">3</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Choose</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person at a fork, turning away from a grey fear story toward a bright empowering story" style="width: 100%; height: auto; display: block"><defs><filter id="wf3" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="37"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#wf3)"><path d="M90 128 Q70 100 46 74" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-dasharray="4 6" stroke-linecap="round"></path><path d="M110 128 Q130 100 152 72" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round"></path><path d="M8 48 C4 36 16 28 26 32 C30 20 50 20 54 30 C66 26 76 36 72 46 C80 52 72 64 62 60 C56 70 38 70 32 62 C20 66 8 60 8 48 Z" fill="#F6EFEC" stroke="#B9ADAA" stroke-width="2.2" stroke-linejoin="round"></path><path d="M120 46 C116 32 130 22 142 28 C148 14 172 14 176 28 C190 24 200 40 192 50 C198 60 186 70 176 64 C170 74 148 74 142 66 C130 70 118 60 120 46 Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><circle cx="100" cy="122" r="12" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="96" cy="120" r="1.6" fill="#4E0C08"></circle><circle cx="104" cy="120" r="1.6" fill="#4E0C08"></circle><path d="M95 126 Q100 130 105 126" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round"></path><path d="M100 134 L100 162 M100 162 L90 184 M100 162 L112 184" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M100 142 L84 152 M100 142 L120 130" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="40" y="50" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#6A5A57">fear story</text><text x="157" y="45" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#1F1412">empowering</text><text x="157" y="58" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#1F1412">story</text><path transform="translate(176 4) scale(0.7)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path transform="translate(118 78) scale(0.55)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.8" stroke-linejoin="round"></path></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">then choose the story you feed.</figcaption></figure>
+</div>
+</header>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Pick your version</div>
+<div class="segwrap" role="group" aria-label="Workout length">
+<button class="{{segLongCls}}" aria-pressed="{{segLongPressed}}" onClick="{{pickLong}}">Long · 7 steps</button>
+<button class="{{segShortCls}}" aria-pressed="{{segShortPressed}}" onClick="{{pickShort}}">Short · 3 steps</button>
+</div>
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Use the long one the first few times you do it, until you become <strong>Consciously Competent</strong>. You learn about this in the Neuroplasticity Module.</span></div>
+</sc-if>
+<sc-if value="{{isShort}}" hint-placeholder-val="{{ false }}">
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>The quick version, for once you know the moves. Your answers carry across, so you can switch any time.</span></div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="meter" style="grid-template-columns: repeat({{stepCount}}, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{meter}}" as="m" hint-placeholder-count="7"><span class="{{m.cls}}"></span></sc-for></div>
+<span style="font-size: 13px; color: #6A5A57">{{progressLabel}}</span>
+</div>
+</section>
+
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<section class="dark" style="padding: 28px 26px; display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Why this works</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.12">Your brain’s job is to keep you safe, not necessarily accurate.</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">When we’re anxious, our brain often starts predicting the future. The problem? Most of those predictions are stories, not facts.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">So when you notice yourself spiralling, instead of trying to solve everything in your head, get it onto paper.</p>
+<div style="align-self: flex-start; padding: 12px 18px; border-radius: 16px; background: #F1F9A6; color: #1F1412; font-size: 15px; font-weight: 600; line-height: 1.45">You can’t always solve a problem from inside the same mental box that created it.</div>
+</section>
+</sc-if>
+
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<section class="step">
+<div class="stephead"><span class="{{done.fear}}">{{n.fear}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.fear}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Write down the fear</h2></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">What is the “what if” your brain is currently focused on?</p>
+<label class="whatwrap"><span class="whatlead">What if…</span><textarea class="whatif" value="{{fear}}" onChange="{{onFear}}" placeholder="…I mess this up and everyone sees it?"></textarea></label>
+</section>
+</sc-if>
+
+<sc-if value="{{isShort}}" hint-placeholder-val="{{ false }}">
+<section class="step">
+<div class="stephead"><span class="{{done.sworst}}">{{n.sworst}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.sworst}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">What’s the worst thing?</h2></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What’s the worst thing that could happen?</span><textarea class="field" value="{{worst}}" onChange="{{onWorst}}" placeholder="Get it out of your head and onto the page…"></textarea></label>
+<div class="q"><span class="qtext">Is it really that bad?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qBad}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="q"><span class="qtext">Could you survive the worst thing?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qSurvive}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<sc-if value="{{surviveYes}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Then your nervous system may be treating <strong>discomfort</strong> as <strong>danger</strong>. Those are not the same thing.</span></div>
+</sc-if>
+<sc-if value="{{surviveUnsure}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Think back to the hard things you’ve already got through. You’ve survived every one of your worst days so far.</span></div>
+</sc-if>
+<sc-if value="{{surviveNo}}" hint-placeholder-val="{{ false }}">
+<div class="callout care" role="note"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"></path></svg><span>If this feels too big to hold on your own, please reach out to someone you trust, your GP or a mental health professional. <strong>Lifeline 13 11 14</strong> · <strong>Beyond Blue 1300 22 4636</strong> (24/7, Australia).</span></div>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<section class="step">
+<div class="stephead"><span class="{{done.check}}">{{n.check}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.check}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Pause and check in</h2></div></div>
+<p style="margin: 0; font-size: 15px; color: #6A5A57">Take a breath. Ask yourself:</p>
+<div class="q"><span class="qtext">Am I in actual danger right now?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qDanger}}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<sc-if value="{{dangerYes}}" hint-placeholder-val="{{ false }}">
+<div class="callout care" role="note"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"></path></svg><span>If you’re in real danger right now, put this down and get yourself safe first. Call <strong>000</strong> (Australia) or your local emergency number. <strong>Lifeline 13 11 14</strong> is there 24/7. This workout will still be here later.</span></div>
+</sc-if>
+<div class="q"><span class="qtext">Do I have proof this will happen?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qProof}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="q"><span class="qtext">Is my brain telling me a story to keep me safe?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qStory}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="pill-note"><span class="hand" style="font-size: 15px; color: #4E0C08">Remember</span><span><strong>A prediction is not a fact.</strong> A thought is not a guarantee.</span></div>
+</section>
+</sc-if>
+
+
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<section class="step">
+<div class="stephead"><span class="{{done.worst}}">{{n.worst}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.worst}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Explore the worst-case scenario</h2></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What’s the worst thing that could realistically happen?</span><textarea class="field" value="{{worst}}" onChange="{{onWorst}}" placeholder="Realistically, not catastrophically…"></textarea></label>
+<div class="q"><span class="qtext">Then ask yourself: would I survive it?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qSurvive}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<sc-if value="{{surviveYes}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>If the answer is yes, your nervous system may be treating <strong>discomfort</strong> as <strong>danger</strong>. Those are not the same thing.</span></div>
+</sc-if>
+<sc-if value="{{surviveUnsure}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Think back to the hard things you’ve already got through. You’ve survived every one of your worst days so far.</span></div>
+</sc-if>
+<sc-if value="{{surviveNo}}" hint-placeholder-val="{{ false }}">
+<div class="callout care" role="note"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"></path></svg><span>If this feels too big to hold on your own, please reach out to someone you trust, your GP or a mental health professional. <strong>Lifeline 13 11 14</strong> · <strong>Beyond Blue 1300 22 4636</strong> (24/7, Australia).</span></div>
+</sc-if>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.evidence}}">{{n.evidence}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.evidence}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Look for evidence</h2></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What proof do I actually have that this will happen?</span><textarea class="field" value="{{evidenceText}}" onChange="{{onEvidence}}" placeholder="Write what you actually know…"></textarea></label>
+<div class="q"><span class="qtext">Now ask: is this based on…</span><span style="font-size: 13px; color: #6A5A57">Tick all that apply.</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{evChips}}" as="c" hint-placeholder-count="4"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div></div>
+<sc-if value="{{evStory}}" hint-placeholder-val="{{ false }}">
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Notice that. Part of this is a story, not a fact. And a story can be rewritten.</span></div>
+</sc-if>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.protect}}">{{n.protect}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.protect}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Find the protection</h2></div></div>
+<p style="margin: 0; font-size: 16px; font-weight: 600">What is my brain trying to protect me from?</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{protChips}}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">Something else?</span><textarea class="line" style="min-height: 64px" value="{{protectOther}}" onChange="{{onProtectOther}}" placeholder="Name it in your own words"></textarea></label>
+<div style="padding: 16px 18px; border-radius: 18px; border: 2px solid #4E0C08; background: #FFFFFF; display: flex; flex-direction: column; gap: 4px"><span class="hand" style="font-size: 15px; color: #A8231F">My brain is trying to protect me from:</span><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; line-height: 1.25">{{protectSentence}}</span></div>
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<div style="background: #FBE6FC; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<span class="hand" style="font-size: 16px; color: #4E0C08">Bonus reflection</span>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Sometimes this reveals an unmet need. For example: if your brain is protecting you from social rejection, what you may actually need is safe social connection.</p>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 19px; line-height: 1.35; color: #4E0C08">Funny, isn’t it? Sometimes our brain tries to protect us from the very thing we need most.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 15px; font-weight: 600">What might I actually need?</span><textarea class="field" style="min-height: 84px; border-color: #F4C2F7" value="{{need}}" onChange="{{onNeed}}" placeholder="e.g. reassurance, connection, rest, a plan…"></textarea></label>
+</div>
+</sc-if>
+</section>
+</sc-if>
+
+<section class="step">
+<div class="stephead"><span class="{{done.best}}">{{n.best}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.best}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">{{bestTitle}}</h2></div></div>
+<p style="margin: 0; font-size: 16px; font-weight: 600">What’s the best-case scenario?</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">If we’re making up stories about the future anyway, why not create one that actually excites us?</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span style="padding: 6px 14px; border-radius: 999px; background: #FBE6FC; font-size: 14px">Be optimistic.</span><span style="padding: 6px 14px; border-radius: 999px; background: #FBE6FC; font-size: 14px">Be hopeful.</span><span class="hand" style="padding: 6px 14px; border-radius: 999px; background: #F1F9A6; border: 1.5px solid #1F1412; font-size: 15px">Be a little delulu if you want.</span></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What is the most empowering outcome that could happen?</span><textarea class="field" style="min-height: 140px; border-color: #1F1412; background: #F8FCD6" value="{{best}}" onChange="{{onBest}}" placeholder="Dream it big…"></textarea></label>
+</section>
+
+<sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
+<section class="step">
+<div class="stephead"><span class="{{done.focus}}">{{n.focus}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.focus}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Choose your focus</h2></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">You cannot control what happens. <strong style="color: #1F1412">You can control which story you feed.</strong></p>
+<p style="margin: 0; font-size: 16px; font-weight: 600">Right now, which story feels more helpful?</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px" role="group" aria-label="Which story feels more helpful">
+<button class="{{fearStoryCls}}" aria-pressed="{{fearStoryPressed}}" onClick="{{pickFearStory}}"><span style="display: flex; align-items: center; gap: 10px"><span class="radio"><span></span></span><span class="st-title">The fear story</span></span><span class="st-sub">{{fearStorySub}}</span></button>
+<button class="{{goodStoryCls}}" aria-pressed="{{goodStoryPressed}}" onClick="{{pickGoodStory}}"><span style="display: flex; align-items: center; gap: 10px"><span class="radio"><span></span></span><span class="st-title">The empowering story</span></span><span class="st-sub">{{goodStorySub}}</span></button>
+</div>
+<sc-if value="{{pickedFear}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>That’s okay, and honest. Read your best-case story one more time, slowly. You don’t have to believe it yet, just let it exist as a possibility.</span></div>
+</sc-if>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What small action can I take today that moves me toward the outcome I want?</span><textarea class="line" value="{{action}}" onChange="{{onAction}}" placeholder="Small counts. Tiny counts."></textarea></label>
+</section>
+</sc-if>
+
+<sc-if value="{{isShort}}" hint-placeholder-val="{{ false }}">
+<section class="step">
+<div class="stephead"><span class="{{done.go}}">{{n.go}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.go}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Okay, go do it!!</h2></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">You cannot control what happens. <strong style="color: #1F1412">You can control which story you feed.</strong> Feed the good one.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What’s one small thing I can do today to move toward it?</span><textarea class="line" value="{{action}}" onChange="{{onAction}}" placeholder="Small counts. Tiny counts."></textarea></label>
+<button class="primary" style="align-self: flex-start" onClick="{{goDoIt}}">I’m doing it!</button>
+</section>
+</sc-if>
+
+<section class="dark" style="position: relative; overflow: hidden; padding: 32px 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="120" height="120" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="position: absolute; right: -18px; top: -18px; opacity: .25"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Final reminder</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.08">Your brain’s prediction is not a prophecy.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">It’s just one possible story. And until the future arrives, every outcome exists only in your imagination.</p>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; color: #F1F9A6">Choose the one that helps you move forward.</p>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Keep it</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.1">Save your workout</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Save it to your Becoming Book with today’s date. Looking back at old what-ifs (and how they actually turned out) is great proof for your brain.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a class="primary lime edge" href="#bt-book-save" style="text-decoration:none">Save to my Becoming Book</a>
+</div>
+<sc-if value="{{hasErr}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A8231F">{{err}}</span></sc-if>
+</div>
+<div style="width: 100%; max-width: 420px; justify-self: center; background: #FFFFFF; border-radius: 28px; overflow: hidden; border: 1.5px solid #EDE3DF; box-shadow: 0 16px 40px rgba(78,12,8,.10)">
+<div style="background: #4E0C08; color: #FFF4EE; padding: 24px 24px 20px; display: flex; flex-direction: column; gap: 4px">
+<span class="hand" style="font-size: 14px; color: #F1F9A6">The “What If?” Workout</span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 26px; line-height: 1.1">My what if</span>
+<span style="font-size: 13px; color: #F6D6CF">{{today}}</span>
+</div>
+<div style="padding: 8px 24px 20px; display: flex; flex-direction: column">
+<sc-for list="{{summary}}" as="r" hint-placeholder-count="5">
+<div class="sum-row"><span class="hand" style="font-size: 14px; color: #A8231F">{{r.label}}</span><span style="font-size: 15px; line-height: 1.5; white-space: pre-line">{{r.text}}</span></div>
+</sc-for>
+<sc-if value="{{noSummary}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 0; font-size: 14px; color: #6A5A57">Your answers will show up here as you go.</span></sc-if>
+</div>
+</div>
+</section>
+
+<footer style="display: flex; flex-direction: column; gap: 18px; padding-top: 20px; border-top: 1.5px solid #EDE3DF">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: #6A5A57">
+<span>Your answers are saved privately in this browser on this device.</span>
+<button class="{{clearCls}}" onClick="{{clearAll}}">{{clearLabel}}</button>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 1.6; color: #6A5A57">This resource is for education and self-reflection, not therapy or medical advice. Need support? Lifeline 13 11 14 · Beyond Blue 1300 22 4636 · 000 in an emergency (Australia).</p>
+<div style="background: #4E0C08; color: #FFF4EE; border-radius: 24px; padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="#F1F9A6" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 21px">Colour Me Neurospicy</span>
+</div>
+<a href="https://www.instagram.com/colour_me_neurospicy/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #F1F9A6; color: #1F1412; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"></circle></svg>@colour_me_neurospicy</a>
+</div>
+</footer>
+
+</div>
+</div>
+</template>
+<script>
+var BT_ASSETS = {"ef10bcdcd5589c500c63bdf5f1b8414f": "ef10bcdcd5589c500c63bdf5f1b8414f.svg", "b54cf8597b937e67a8020b66d1ce173f": "b54cf8597b937e67a8020b66d1ce173f.svg", "2b53ad178b0e3d521afaed32044bbc9a": "2b53ad178b0e3d521afaed32044bbc9a.svg", "e5c14dd4bed1c2d0ce2392c1bc2d4937": "e5c14dd4bed1c2d0ce2392c1bc2d4937.svg", "71906935f7ead0390bb7742d8e63c8e7": "71906935f7ead0390bb7742d8e63c8e7.jpg", "09119c37c8a55b91cf2d126550d45a8b": "09119c37c8a55b91cf2d126550d45a8b.svg", "7e9394b0f49609b612799761708df1af": "7e9394b0f49609b612799761708df1af.svg", "b57862c5b864a8a3e79922d5081c1283": "b57862c5b864a8a3e79922d5081c1283.jpg", "f255c82adfac072178e45af61ee62c83": "f255c82adfac072178e45af61ee62c83.svg", "965835d597d63dbfb533bd132c48b010": "965835d597d63dbfb533bd132c48b010.svg", "bd303b99bc50c21c97bae21271dfb7f7": "bd303b99bc50c21c97bae21271dfb7f7.jpg", "d1f9b4795dae252f5dcac8de6abe6c17": "d1f9b4795dae252f5dcac8de6abe6c17.svg", "43731cbfd8ad9750c3328571417e1a07": "43731cbfd8ad9750c3328571417e1a07.svg", "10a013e0f6b891409d31736d1344fdf0": "10a013e0f6b891409d31736d1344fdf0.svg", "025d0ad08a140b1b7215508698058e2e": "025d0ad08a140b1b7215508698058e2e.svg", "3ab75ae85fd37ba180922aa6e0d5f4fe": "3ab75ae85fd37ba180922aa6e0d5f4fe.jpg", "b79475d66d94092e94468da4478102ef": "b79475d66d94092e94468da4478102ef.svg", "4258c786c9eccfaff671fe9a3b1ef84c": "4258c786c9eccfaff671fe9a3b1ef84c.svg", "7d27dee54b284a29494d637973548312": "7d27dee54b284a29494d637973548312.svg", "877343dccbde56e6e1f457a2d3ece211": "877343dccbde56e6e1f457a2d3ece211.png", "cc66e7467fffaccd352c974bae6611a8": "cc66e7467fffaccd352c974bae6611a8.svg", "81f32f69ffd7998e4b19f6ed1e33401d": "81f32f69ffd7998e4b19f6ed1e33401d.svg", "b8d6cf789c3b52fd6c8e25329142b20f": "b8d6cf789c3b52fd6c8e25329142b20f.svg", "663cd271223c87a3e9eb85198c255ca8": "663cd271223c87a3e9eb85198c255ca8.svg", "03a1b71b1a1f702415ce3062b36b4132": "03a1b71b1a1f702415ce3062b36b4132.jpg", "1c72b87736b666af4e241b1862672e1e": "1c72b87736b666af4e241b1862672e1e.svg", "3b021becdd8ab273a2eeff31458d67f2": "3b021becdd8ab273a2eeff31458d67f2.svg", "a802f77d6b18e31d9167f9e784a42793": "a802f77d6b18e31d9167f9e784a42793.svg", "bc28e522586c56fb459324f519613318": "bc28e522586c56fb459324f519613318.png", "2aa85a10e798befdc83d0b8a2eb9f860": "2aa85a10e798befdc83d0b8a2eb9f860.jpg", "8d2542df94e91b4e443b9304ceec32bb": "8d2542df94e91b4e443b9304ceec32bb.jpg", "b221da10573087306329469db7d06cf2": "b221da10573087306329469db7d06cf2.svg", "52b17553ad29af6204157d1ee2d48ea0": "52b17553ad29af6204157d1ee2d48ea0.svg", "6fdb31359ffcd34386c1b2a3d1ff2326": "6fdb31359ffcd34386c1b2a3d1ff2326.svg", "f224fca6b2efed3cebbe0db225a0abc2": "f224fca6b2efed3cebbe0db225a0abc2.svg", "452f32bba27a33ca67bbcf34f3330ede": "452f32bba27a33ca67bbcf34f3330ede.svg", "7b84cfb3e4ab4f28e1a861ae1ba93092": "7b84cfb3e4ab4f28e1a861ae1ba93092.svg", "6b709ad5c341dfacd0138210abbfa28e": "6b709ad5c341dfacd0138210abbfa28e.svg", "6c4de069e172edaa21031a8fb148e873": "6c4de069e172edaa21031a8fb148e873.svg", "9190031cc80e54bc31e46ed99c69027a": "9190031cc80e54bc31e46ed99c69027a.svg", "8f13a4480c39f62268d2a911bbd4ea57": "8f13a4480c39f62268d2a911bbd4ea57.jpg", "0ce2dc82c689d1a7e56585a59cb18d59": "0ce2dc82c689d1a7e56585a59cb18d59.svg", "43638181699d127e79d590bfeab1892a": "43638181699d127e79d590bfeab1892a.svg", "738ba7703ba55beb0d52acfc42beea68": "738ba7703ba55beb0d52acfc42beea68.png", "a49bbf3641d388a230741ffb5695ce25": "a49bbf3641d388a230741ffb5695ce25.jpg", "11d8af0544f4ee135324e200958dffee": "11d8af0544f4ee135324e200958dffee.png", "c8af3be239e308bc789ccaf133f93013": "c8af3be239e308bc789ccaf133f93013.svg", "88bb3cb53b2e3e99e5e4cab4f5c5e6b9": "88bb3cb53b2e3e99e5e4cab4f5c5e6b9.svg", "0ef8dcdd586ecd0ff80676f1e620be34": "0ef8dcdd586ecd0ff80676f1e620be34.svg", "fced005bcbb1883b152b43df153597d4": "fced005bcbb1883b152b43df153597d4.svg", "81911b4f2b0a19c8881b592a692b00c5": "81911b4f2b0a19c8881b592a692b00c5.svg", "0a978b3016f288611f08f67842c8b98f": "0a978b3016f288611f08f67842c8b98f.jpg", "1049cd27a6587d7e91092694eab2e91e": "1049cd27a6587d7e91092694eab2e91e.jpg", "405b3bf884136aaf14d362ee919d81a0": "405b3bf884136aaf14d362ee919d81a0.svg", "7e6688190a34abe274c03157e1730a80": "7e6688190a34abe274c03157e1730a80.svg", "55d9dcf01edfe5cec122ae90add04088": "55d9dcf01edfe5cec122ae90add04088.svg", "ed17ec258b156c8af9563a76d76a4939": "ed17ec258b156c8af9563a76d76a4939.jpg", "6bd0fad25e0de596ee8ebb4cbca3bf31": "6bd0fad25e0de596ee8ebb4cbca3bf31.svg", "e3a6bf877a877bbb4f4bfbb92d716f27": "e3a6bf877a877bbb4f4bfbb92d716f27.svg", "f846e29006165c8ba62f143c8d86e3f8": "f846e29006165c8ba62f143c8d86e3f8.jpg", "7ebb757ffeac9fd9a4d4e694c6c3d038": "7ebb757ffeac9fd9a4d4e694c6c3d038.svg", "4d24fca30f926a50d0d14581f83313a8": "4d24fca30f926a50d0d14581f83313a8.svg", "a11ad324fdb2f2c6ffee1e5895c941e5": "a11ad324fdb2f2c6ffee1e5895c941e5.svg", "e01ae0b495eb9a16003c5c3192cb7164": "e01ae0b495eb9a16003c5c3192cb7164.jpg", "67991f5dea14c9c436b7f8e6457ce229": "67991f5dea14c9c436b7f8e6457ce229.svg", "68c35e766ce7ce76f0d716155e97d01a": "68c35e766ce7ce76f0d716155e97d01a.svg", "5156dbc53efb3eb2089fc5827d2cc81f": "5156dbc53efb3eb2089fc5827d2cc81f.svg", "0b3e57663dc4bfebaf05c38b7cbbb3dc": "0b3e57663dc4bfebaf05c38b7cbbb3dc.jpg", "1f98186a04d8d535455be88f9ee9c6ab": "1f98186a04d8d535455be88f9ee9c6ab.svg", "3aed56c14b09721bd71008cf963bddda": "3aed56c14b09721bd71008cf963bddda.svg", "8cedfdc02165a506b164a81914fdb102": "8cedfdc02165a506b164a81914fdb102.svg", "4afec1221a96ad247f8e9047bf2fdccd": "4afec1221a96ad247f8e9047bf2fdccd.png", "32fddd771dd54995c7a682d2971acfab": "32fddd771dd54995c7a682d2971acfab.jpg", "1c5afb0325fedc27b1edea4e86f7787a": "1c5afb0325fedc27b1edea4e86f7787a.jpg", "08e8c138372dc36024988a87f1c28229": "08e8c138372dc36024988a87f1c28229.svg", "e0bc55bd2cd5fbb3817c4052002acb5a": "e0bc55bd2cd5fbb3817c4052002acb5a.svg", "60293a8e33fa4bf39988e78921a49568": "60293a8e33fa4bf39988e78921a49568.svg", "9171e26bad3c0414cf5231254b8e2146": "9171e26bad3c0414cf5231254b8e2146.svg", "7380668367de1af6d003f352f99f4aa5": "7380668367de1af6d003f352f99f4aa5.jpg", "a97517a8baec7a2513ad4de41c038eae": "a97517a8baec7a2513ad4de41c038eae.svg", "4aef4d64618ed5ff25eff66c4068851e": "4aef4d64618ed5ff25eff66c4068851e.svg", "1a4d7d76b40c48461192e9638d478fd0": "1a4d7d76b40c48461192e9638d478fd0.svg", "3dff29bcfb1faf0674d0d563eba2a549": "3dff29bcfb1faf0674d0d563eba2a549.svg", "b85e326874f11fdec73759cb3b297578": "b85e326874f11fdec73759cb3b297578.svg", "5b0320d24f83f454bd2d9624b8d63415": "5b0320d24f83f454bd2d9624b8d63415.svg", "3483ab7ef64fe4aa0dfaf595410a7b23": "3483ab7ef64fe4aa0dfaf595410a7b23.svg", "7205741504b90f111c0451fab85ff2d3": "7205741504b90f111c0451fab85ff2d3.svg", "4d15e84cdb8661ef1361585cdfc81997": "4d15e84cdb8661ef1361585cdfc81997.svg", "c0ee1f2c4eb226136fc9f66e3cd4e33e": "c0ee1f2c4eb226136fc9f66e3cd4e33e.jpg", "1f34b601a2667324ae5114bb4be344d7": "1f34b601a2667324ae5114bb4be344d7.svg", "4269a49363538fe24f761fbe92410788": "4269a49363538fe24f761fbe92410788.svg", "c97210ce3db85305c27738cefa1d232b": "c97210ce3db85305c27738cefa1d232b.svg", "5c6a4701b580c26661b1603710d8b45d": "5c6a4701b580c26661b1603710d8b45d.svg", "114034fde36eefbd5f3ebf16913978a4": "114034fde36eefbd5f3ebf16913978a4.jpg", "86849d58f49611f02400cea832d04565": "86849d58f49611f02400cea832d04565.svg", "423aca9e5b3ef0ad25536bd6b48a95a3": "423aca9e5b3ef0ad25536bd6b48a95a3.jpg", "02acac104a668adfde1e12e538c95722": "02acac104a668adfde1e12e538c95722.svg", "e764c61511bfe0dca82c3f449cc298c5": "e764c61511bfe0dca82c3f449cc298c5.png", "a88193d73fc4900672277473c572dbc5": "a88193d73fc4900672277473c572dbc5.jpg", "6a3871dfb91267d41e8251fe86eb7ba2": "6a3871dfb91267d41e8251fe86eb7ba2.svg", "10ef3dfe4743f20e35f479cfda7bd452": "10ef3dfe4743f20e35f479cfda7bd452.svg", "2698eb06626b25eab3cb6a5f2980bbd4": "2698eb06626b25eab3cb6a5f2980bbd4.svg", "ee8b57bbba94cad10d89e031ef3c7520": "ee8b57bbba94cad10d89e031ef3c7520.svg", "b1b330fb1915ecba19c970fe1a381456": "b1b330fb1915ecba19c970fe1a381456.svg", "2fd7c05d8e6485ce7d82e1b7ae169442": "2fd7c05d8e6485ce7d82e1b7ae169442.svg", "42148b886659a14145d923ab0ee21137": "42148b886659a14145d923ab0ee21137.png", "780a7a3decc747e8abc213e52d1252a8": "780a7a3decc747e8abc213e52d1252a8.svg", "0c09469bcdc2e20c851887902c41e560": "0c09469bcdc2e20c851887902c41e560.svg", "163ccf61ba6c54b85986ba91ed14db5a": "163ccf61ba6c54b85986ba91ed14db5a.png", "cf917aaa32f94007a6787e2fd82f83aa": "cf917aaa32f94007a6787e2fd82f83aa.svg", "27746f0af31163feb01b3a0323738f60": "27746f0af31163feb01b3a0323738f60.svg", "cbfb24b61c4ae6264c959964f082362b": "cbfb24b61c4ae6264c959964f082362b.jpg", "d5f1511a86c00d5f6c0ac6fc45bde973": "d5f1511a86c00d5f6c0ac6fc45bde973.jpg", "62768a1cfc0371b2fa3f28ec1434cfe3": "62768a1cfc0371b2fa3f28ec1434cfe3.svg", "ca584f1d5a317480f9135b46ac102964": "ca584f1d5a317480f9135b46ac102964.svg", "a1d75ea44d2f8b5daa7b340010a626ea": "a1d75ea44d2f8b5daa7b340010a626ea.svg", "2796011af48e177c5e14bfd47588cdac": "2796011af48e177c5e14bfd47588cdac.svg", "16ececf4aed9bfe373643768c34d7c7b": "16ececf4aed9bfe373643768c34d7c7b.png", "e8a0e2ab76757574ee552de21c54ac1e": "e8a0e2ab76757574ee552de21c54ac1e.svg", "1756c7ff302323a2435e501832a39fe4": "1756c7ff302323a2435e501832a39fe4.svg", "c750a2cd8d0086940bbc3eb5d1b276e7": "c750a2cd8d0086940bbc3eb5d1b276e7.svg", "a158db7f93031f794aa3e01d33cb6854": "a158db7f93031f794aa3e01d33cb6854.svg", "49f0892d6b07cf278010027527f0260b": "49f0892d6b07cf278010027527f0260b.jpg", "c6c4d7181abcef8e3f1eb0d6edbe60e5": "c6c4d7181abcef8e3f1eb0d6edbe60e5.jpg", "b56d90f66181fc1cb147686bd30dd4d2": "b56d90f66181fc1cb147686bd30dd4d2.svg", "c1debaa8b5d0bd188a8969bba732958b": "c1debaa8b5d0bd188a8969bba732958b.svg", "f3007d98cfc9c98fbe52e337a6e48165": "f3007d98cfc9c98fbe52e337a6e48165.jpg", "df5f40b96c4c2a449d74b145d546fcc0": "df5f40b96c4c2a449d74b145d546fcc0.svg", "7bc686bd4fdef3500756c9422442a127": "7bc686bd4fdef3500756c9422442a127.svg", "19f0304514144c82ce095a59a4ede0fd": "19f0304514144c82ce095a59a4ede0fd.jpg", "fcb1ffb42bbafddcd8b9d42d3e510752": "fcb1ffb42bbafddcd8b9d42d3e510752.svg", "006fdaca6d5f43b131a7c3d521b57322": "006fdaca6d5f43b131a7c3d521b57322.jpg", "946f61e3191cc43bba687791f5fba00c": "946f61e3191cc43bba687791f5fba00c.jpg", "cc94bb101e31217a6c9b6e75bb4f0c8a": "cc94bb101e31217a6c9b6e75bb4f0c8a.svg", "66a3fb64acd08b469b45a9f212f7767f": "66a3fb64acd08b469b45a9f212f7767f.svg", "21dd3441fa1468c37623c40e7df368b5": "21dd3441fa1468c37623c40e7df368b5.jpg", "d7dfcea1b0c2a7519e1b8001ab335752": "d7dfcea1b0c2a7519e1b8001ab335752.svg", "6c2716ab4aea16ab43052f1471a489ab": "6c2716ab4aea16ab43052f1471a489ab.jpg", "4988304a4110049ec389935f47c4436b": "4988304a4110049ec389935f47c4436b.svg", "6b91806f2ce9b2ff827e2833f57a350b": "6b91806f2ce9b2ff827e2833f57a350b.png", "51497c2cfaa41f0357b287d0f8c03c58": "51497c2cfaa41f0357b287d0f8c03c58.png", "ef629e895e8a8a3f0e492f11489caa92": "ef629e895e8a8a3f0e492f11489caa92.png", "e2fc964b6b5c30a9366d14211bd9d7cc": "e2fc964b6b5c30a9366d14211bd9d7cc.jpg", "dde5b214fec388cbe7d3398ea59dd9fc": "dde5b214fec388cbe7d3398ea59dd9fc.png", "cedbf205ff92f4058c52fd7e5f54ba6a": "cedbf205ff92f4058c52fd7e5f54ba6a.svg", "e27795e5d45b6fa9ef22084a5eaaa3ef": "e27795e5d45b6fa9ef22084a5eaaa3ef.svg", "1623037cd6ab22214835e9942ffb81c5": "1623037cd6ab22214835e9942ffb81c5.svg", "bb13b59b8e3ecad2e8c389d6596a1c51": "bb13b59b8e3ecad2e8c389d6596a1c51.jpg", "3f39c5e191cd716cd67b76399e8c408a": "3f39c5e191cd716cd67b76399e8c408a.svg", "6fd5963d5d88fb450238ac697ca08df7": "6fd5963d5d88fb450238ac697ca08df7.svg", "5d5e574219f73922043f755784dc386d": "5d5e574219f73922043f755784dc386d.svg", "ac603d9216b5df900f2fd5e68226d809": "ac603d9216b5df900f2fd5e68226d809.svg", "8984eb28e549e3701f8618326ded6bbc": "8984eb28e549e3701f8618326ded6bbc.svg", "b63a16aeabaa5e7f2d18fba7b2afb5bf": "b63a16aeabaa5e7f2d18fba7b2afb5bf.svg", "49b9549cb566e401a6413476bea140d6": "49b9549cb566e401a6413476bea140d6.svg", "492bda7f3d146b97ff251c39557adaee": "492bda7f3d146b97ff251c39557adaee.svg", "155c64712190eac9be159d6ad01d6e35": "155c64712190eac9be159d6ad01d6e35.svg", "8ae7156642df3a103106d8a0212efa15": "8ae7156642df3a103106d8a0212efa15.svg", "b75da40bc538e06270e3ddff5ce8ab48": "b75da40bc538e06270e3ddff5ce8ab48.svg", "98ed6256b7ba6446eace5a186aa343d6": "98ed6256b7ba6446eace5a186aa343d6.svg", "51d86cd4ce74b76e1d80802704533ad4": "51d86cd4ce74b76e1d80802704533ad4.svg", "39dc06590a0be01292c4b7e5b25de439": "39dc06590a0be01292c4b7e5b25de439.pdf", "71852cc02f3594a790bd0603f53f2526": "71852cc02f3594a790bd0603f53f2526.svg", "17c3ff0a134e9e88eeb1e075a27b9d14": "17c3ff0a134e9e88eeb1e075a27b9d14.svg", "393d1cd0363a6c807f49f86f0f9c640d": "393d1cd0363a6c807f49f86f0f9c640d.svg", "ed008a9b597eb58f70ccba16ad6f2737": "ed008a9b597eb58f70ccba16ad6f2737.svg", "ce1f0d0a137e909226f899170d5bf322": "ce1f0d0a137e909226f899170d5bf322.jpg", "3ebf6777f12e2a8760725def30113f99": "3ebf6777f12e2a8760725def30113f99.svg"};
+function BT_ASSET(id) { return '/tools/assets/' + (BT_ASSETS[id] || id); }
+
+
+var WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+var ANY = /\{\{\s*([^}]+?)\s*\}\}/g;
+var SVGNS = 'http://www.w3.org/2000/svg';
+function lookup(path, scopes) {
+  path = path.trim();
+  if (path === 'true') return true; if (path === 'false') return false; if (path === 'null') return null;
+  if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+  var parts = path.split('.'), base;
+  for (var i = scopes.length - 1; i >= 0; i--) { var sc = scopes[i]; if (sc && typeof sc === 'object' && parts[0] in sc) { base = sc[parts[0]]; break; } }
+  for (var j = 1; j < parts.length; j++) { if (base == null) return undefined; base = base[parts[j]]; }
+  return base;
+}
+function interp(str, scopes) { var m = WHOLE.exec(str); if (m) return lookup(m[1], scopes); return str.replace(ANY, function (_, p) { var v = lookup(p, scopes); return v == null ? '' : String(v); }); }
+function hole(attr) { return attr.replace(/^\s*\{\{|\}\}\s*$/g, ''); }
+var EVENTS = { onclick: 'click', onkeydown: 'keydown', oninput: 'input', onchange: 'change', onpointerdown: 'pointerdown', onpointermove: 'pointermove', onpointerup: 'pointerup', onwheel: 'wheel' };
+function build(nodes, scopes) {
+  var out = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    if (n.nodeType === 3) { var tv = interp(n.nodeValue, scopes); out.push(tv == null ? '' : String(tv)); continue; }
+    if (n.nodeType !== 1) continue;
+    var tag = n.localName;
+    if (tag === 'sc-if') { if (lookup(hole(n.getAttribute('value')), scopes)) out.push.apply(out, build(n.childNodes, scopes)); continue; }
+    if (tag === 'sc-for') { var list = lookup(hole(n.getAttribute('list')), scopes) || [], as = n.getAttribute('as'); for (var k = 0; k < list.length; k++) { var sc = {}; sc[as] = list[k]; sc.$index = k; out.push.apply(out, build(n.childNodes, scopes.concat([sc]))); } continue; }
+    if (tag === 'dc-import' || tag === 'helmet') continue;
+    var props = {};
+    for (var a = 0; a < n.attributes.length; a++) {
+      var at = n.attributes[a], name = at.name;
+      if (name.indexOf('hint-') === 0) continue;
+      var val = interp(at.value, scopes);
+      if (EVENTS[name]) { var ev = EVENTS[name]; if (name === 'onchange' && (tag === 'textarea' || (tag === 'input' && n.getAttribute('type') !== 'file'))) ev = 'input'; if (typeof val === 'function') props['@' + ev] = val; continue; }
+      props[name] = val;
+    }
+    out.push({ t: tag, p: props, c: tag === 'textarea' ? [] : build(n.childNodes, scopes) });
+  }
+  return out;
+}
+var pendingRefs = [];
+function dispatch(e) { var f = this.__ev && this.__ev[e.type]; if (f) f(e); }
+function setProps(el, props) {
+  var old = el.__p || {};
+  for (var k in old) { if (k in props) continue; if (k[0] === '@') { delete el.__ev[k.slice(1)]; continue; } if (k === 'ref') { if (typeof old.ref === 'function') old.ref(null); continue; } if (k === 'value' || k === 'checked') continue; el.removeAttribute(k); }
+  for (var name in props) {
+    var v = props[name];
+    if (name[0] === '@') { var type = name.slice(1); el.__ev = el.__ev || {}; if (!el.__ev[type] && !(el.__on && el.__on[type])) { el.addEventListener(type, dispatch); (el.__on = el.__on || {})[type] = true; } el.__ev[type] = v; continue; }
+    if (name === 'ref') { if (typeof v === 'function' && old.ref !== v) { if (typeof old.ref === 'function') old.ref(null); pendingRefs.push([v, el]); } continue; }
+    if (name === 'value' && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) { if (el.type === 'file') continue; var sv = v == null ? '' : String(v); if (el.value !== sv) el.value = sv; continue; }
+    if (name === 'checked') { el.checked = !!v && v !== 'false'; continue; }
+    if (name === 'disabled') { if (v === true || v === 'true') el.setAttribute('disabled', ''); else el.removeAttribute('disabled'); continue; }
+    if (v === false || v == null) { el.removeAttribute(name); continue; }
+    if (old[name] !== v || !el.hasAttribute(name)) el.setAttribute(name, v === true ? '' : String(v));
+  }
+  el.__p = props;
+}
+function dropRefs(node) { if (node.nodeType !== 1) return; if (node.__p && typeof node.__p.ref === 'function') node.__p.ref(null); for (var i = 0; i < node.childNodes.length; i++) dropRefs(node.childNodes[i]); }
+function create(v, svg) { if (typeof v === 'string') return document.createTextNode(v); var isSvg = svg || v.t === 'svg'; var el = isSvg ? document.createElementNS(SVGNS, v.t) : document.createElement(v.t); el.__t = v.t; setProps(el, v.p); if (!('data-slot' in v.p)) patchChildren(el, v.c, isSvg && v.t !== 'foreignObject'); return el; }
+function patchChildren(el, kids, svg) {
+  for (var i = 0; i < kids.length; i++) {
+    var v = kids[i], dom = el.childNodes[i];
+    if (typeof v === 'string') { if (dom && dom.nodeType === 3) { if (dom.data !== v) dom.data = v; } else if (dom) { dropRefs(dom); el.replaceChild(document.createTextNode(v), dom); } else el.appendChild(document.createTextNode(v)); continue; }
+    if (dom && dom.nodeType === 1 && dom.__t === v.t) { setProps(dom, v.p); if (!('data-slot' in v.p)) patchChildren(dom, v.c, (svg || v.t === 'svg') && v.t !== 'foreignObject'); }
+    else if (dom) { dropRefs(dom); el.replaceChild(create(v, svg), dom); }
+    else el.appendChild(create(v, svg));
+  }
+  while (el.childNodes.length > kids.length) { var last = el.lastChild; dropRefs(last); el.removeChild(last); }
+}
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(p) { var n = typeof p === 'function' ? p(this.state) : p; this.state = Object.assign({}, this.state, n); this._schedule(); }
+  forceUpdate() { this._schedule(); }
+  _schedule() { var self = this; if (self._queued || self._dead) return; self._queued = true; Promise.resolve().then(function () { self._queued = false; if (self._dead) return; self._render(); if (self.componentDidUpdate) self.componentDidUpdate(); }); }
+  _render() { var vals = this.renderVals(); pendingRefs = []; patchChildren(this._root, build(this._tpl, [vals]), false); var refs = pendingRefs; pendingRefs = []; refs.forEach(function (r) { r[0](r[1]); }); }
+}
+
+window.BT_TOOL = { slug: "what-if-workout", access: "all", props: {}, cls: (function () {
+
+var WF_KEY = 'what-if-workout-v1';
+var WF_PROTECT = ['Rejection', 'Embarrassment', 'Failure', 'Disappointment', 'Judgement', 'Uncertainty', 'Loss of control'];
+var WF_EVIDENCE = [['facts', 'Facts'], ['past', 'A past experience'], ['assume', 'Assumptions'], ['story', 'A story my brain has created to protect me']];
+var WF_SAVED = ['mode', 'bad', 'danger', 'proof', 'safeStory', 'fear', 'worst', 'survive', 'evidenceText', 'evidence', 'protect', 'protectOther', 'need', 'best', 'focus', 'action'];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'long', bad: null, danger: null, proof: null, safeStory: null, fear: '', worst: '', survive: null, evidenceText: '', evidence: {}, protect: {}, protectOther: '', need: '', best: '', focus: null, action: '', confirmClear: false, copied: '', exportUrl: null, celebrate: false, err: '' };
+  }
+
+  componentDidMount() {
+    try {
+      var raw = window.localStorage.getItem(WF_KEY);
+      if (raw) { var s = JSON.parse(raw); if (s && typeof s === 'object') this.setState(s); }
+    } catch (e) {}
+  }
+
+  componentDidUpdate() {
+    var s = this.state, out = {};
+    WF_SAVED.forEach(function (k) { out[k] = s[k]; });
+    try { window.localStorage.setItem(WF_KEY, JSON.stringify(out)); } catch (e) {}
+  }
+
+  flip(field, key) {
+    var next = Object.assign({}, this.state[field]);
+    if (next[key]) delete next[key]; else next[key] = true;
+    var patch = {}; patch[field] = next;
+    this.setState(patch);
+  }
+
+  saveJpeg(cv, name) {
+    var self = this;
+    var url = cv.toDataURL('image/jpeg', 0.92);
+    var fallback = function () {
+      try { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
+      self.setState({ exportUrl: url });
+    };
+    var C = window.claude;
+    if (!C || typeof C.use !== 'function') { fallback(); return; }
+    C.use('downloads').then(function (dl) {
+      if (!dl) { fallback(); return; }
+      cv.toBlob(function (blob) {
+        if (!blob) { fallback(); return; }
+        dl.save({ filename: name, data: blob }).then(function () {}, function (err) { if (err && err.code === 'declined') return; fallback(); });
+      }, 'image/jpeg', 0.92);
+    }, fallback);
+  }
+
+  exportCard(rows, dateLabel) {
+    var self = this;
+    var draw = function () {
+      try {
+        var W = 1080, pad = 72, inner = W - pad * 2, S = 2;
+        function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+        function layout(g, paint) {
+          function wrap(text, maxW) {
+            var out = [];
+            String(text).split('\n').forEach(function (para) {
+              var words = para.split(' '), cur = '';
+              words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t; });
+              out.push(cur);
+            });
+            return out;
+          }
+          if (paint) { g.fillStyle = '#4E0C08'; g.fillRect(0, 0, W, 210); }
+          g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+          g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#F1F9A6'; g.fillText('THE “WHAT IF?” WORKOUT', pad, 78); }
+          g.font = '700 60px "Playfair Display", Georgia, serif'; if (paint) { g.fillStyle = '#FFF4EE'; g.fillText('My what if', pad, 146); }
+          g.font = '400 22px Poppins, sans-serif'; if (paint) { g.fillStyle = '#F6D6CF'; g.fillText(dateLabel, pad, 186); }
+          var y = 230;
+          rows.forEach(function (r) {
+            y += 56;
+            g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#A8231F'; g.fillText(r.label.toUpperCase(), pad, y); }
+            if (r.hi) {
+              g.font = '600 26px Poppins, sans-serif';
+              var hl = wrap(r.text, inner - 40), hh = hl.length * 38 + 30;
+              y += 14;
+              if (paint) { g.fillStyle = r.hi; roundRect(g, pad - 20, y, inner + 40, hh, 22); g.fill(); g.fillStyle = '#1F1412'; hl.forEach(function (l, i) { g.fillText(l, pad, y + 46 + i * 38); }); }
+              y += hh; return;
+            }
+            g.font = '400 26px Poppins, sans-serif';
+            wrap(r.text, inner).forEach(function (l) { y += 38; if (paint) { g.fillStyle = '#1F1412'; g.fillText(l, pad, y); } });
+          });
+          y += 72;
+          var foot = 110;
+          if (paint) {
+            g.fillStyle = '#6A5A57'; g.font = 'italic 400 24px "Playfair Display", Georgia, serif'; g.fillText('Your brain’s prediction is not a prophecy. It’s just one possible story.', pad, y);
+            g.fillStyle = '#4E0C08'; g.fillRect(0, y + 40, W, foot);
+            g.textBaseline = 'middle'; g.fillStyle = '#FFF4EE'; g.font = 'italic 600 30px "Playfair Display", Georgia, serif'; g.fillText('Colour Me Neurospicy', pad, y + 40 + foot / 2);
+            g.textAlign = 'right'; g.fillStyle = '#F1F9A6'; g.font = '600 24px Poppins, sans-serif'; g.fillText('@colour_me_neurospicy', W - pad, y + 40 + foot / 2);
+          }
+          return y + 40 + foot;
+        }
+        var probe = document.createElement('canvas').getContext('2d');
+        var H = layout(probe, false);
+        var cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+        var g = cv.getContext('2d'); g.scale(S, S); g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H);
+        layout(g, true);
+        self.saveJpeg(cv, 'my-what-if-workout.jpg');
+      } catch (e) { self.setState({ err: 'Couldn’t make the image on this device. Try copying it to your notes instead.' }); }
+    };
+    try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw, draw); else draw(); } catch (e) { draw(); }
+  }
+
+  renderVals() {
+    var self = this, s = this.state;
+    var long = s.mode !== 'short';
+    var t = function (v) { return String(v || '').trim(); };
+
+    function single(field, opts) {
+      return opts.map(function (o) {
+        var on = s[field] === o[0];
+        return { label: o[1], cls: on ? 'pick on' : 'pick', pressed: on ? 'true' : 'false', pick: function () { var p = {}; p[field] = on ? null : o[0]; self.setState(p); } };
+      });
+    }
+
+    var protectList = WF_PROTECT.filter(function (p) { return (s.protect || {})[p]; }).map(function (p) { return p.toLowerCase(); });
+    if (t(s.protectOther)) protectList.push(t(s.protectOther));
+    var protectSentence = protectList.length ? protectList.join(', ').replace(/^./, function (c) { return c.toUpperCase(); }) + '.' : '…';
+    var evOn = WF_EVIDENCE.filter(function (e) { return (s.evidence || {})[e[0]]; });
+
+    var answered = {
+      check: !!(s.danger || s.proof || s.safeStory),
+      fear: !!t(s.fear),
+      worst: !!(t(s.worst) || s.survive),
+      evidence: !!(t(s.evidenceText) || evOn.length),
+      protect: protectList.length > 0 || !!t(s.need),
+      best: !!t(s.best),
+      focus: !!(s.focus || t(s.action)),
+      sworst: !!(t(s.worst) || s.bad || s.survive),
+      go: !!(t(s.action) || s.didIt)
+    };
+    var order = long ? ['fear', 'check', 'worst', 'evidence', 'protect', 'best', 'focus'] : ['sworst', 'best', 'go'];
+    var celebrate = function (title, sub) {
+      self.setState({ celebrate: { title: title, sub: sub } });
+      clearTimeout(self.celTimer);
+      self.celTimer = setTimeout(function () { self.setState({ celebrate: null }); }, 3400);
+    };
+    var n = {}, done = {};
+    order.forEach(function (k, i) { n[k] = i + 1; });
+    Object.keys(answered).forEach(function (k) { done[k] = answered[k] ? 'stepnum done' : 'stepnum'; });
+    var doneCount = order.filter(function (k) { return answered[k]; }).length;
+
+    var labels = { danger: { yes: 'Yes', no: 'No' }, proof: { yes: 'Yes', no: 'No', unsure: 'Not sure' }, story: { yes: 'Yes, probably', maybe: 'Maybe', no: 'No' }, survive: { yes: 'Yes', unsure: 'Not sure', no: 'No' }, bad: { yes: 'Yes', notreally: 'Not really', unsure: 'Not sure' } };
+    var dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    var summary = [];
+    if (long && t(s.fear)) summary.push({ label: 'What if…', text: t(s.fear) });
+    if (!long && (t(s.worst) || s.bad || s.survive)) summary.push({ label: 'The worst thing', text: [t(s.worst), s.bad ? 'Is it really that bad? ' + labels.bad[s.bad] : '', s.survive ? 'Could I survive it? ' + labels.survive[s.survive] : ''].filter(Boolean).join('\n') });
+    if (long && (s.danger || s.proof || s.safeStory)) {
+      var ck = [];
+      if (s.danger) ck.push('In actual danger? ' + labels.danger[s.danger]);
+      if (s.proof) ck.push('Proof it will happen? ' + labels.proof[s.proof]);
+      if (s.safeStory) ck.push('A story to keep me safe? ' + labels.story[s.safeStory]);
+      summary.push({ label: 'Check in', text: ck.join('\n') });
+    }
+    if (long && (t(s.worst) || s.survive)) summary.push({ label: 'Worst case', text: [t(s.worst), s.survive ? 'Would I survive it? ' + labels.survive[s.survive] : ''].filter(Boolean).join('\n') });
+    if (long && (t(s.evidenceText) || evOn.length)) summary.push({ label: 'The evidence', text: [t(s.evidenceText), evOn.length ? 'Based on: ' + evOn.map(function (e) { return e[1].toLowerCase(); }).join(', ') : ''].filter(Boolean).join('\n') });
+    if (long && protectList.length) summary.push({ label: 'Protecting me from', text: protectSentence });
+    if (long && t(s.need)) summary.push({ label: 'What I might actually need', text: t(s.need) });
+    if (t(s.best)) summary.push({ label: long ? 'My empowering story' : 'The best thing', text: t(s.best), hi: '#F8FCD6' });
+    if (long && s.focus) summary.push({ label: 'The story I’m feeding', text: s.focus === 'good' ? 'The empowering story' : 'The fear story (for now)' });
+    if (t(s.action)) summary.push({ label: 'My small action today', text: t(s.action), hi: '#FBE6FC' });
+
+    var summaryText = function () {
+      return ['THE “WHAT IF?” WORKOUT', dateLabel, ''].concat(summary.map(function (r) { return r.label.toUpperCase() + '\n' + r.text + '\n'; })).concat(['Your brain’s prediction is not a prophecy. It’s just one possible story.']).join('\n');
+    };
+
+    return {
+      isLong: long, isShort: !long,
+      segLongCls: long ? 'seg on' : 'seg', segLongPressed: long ? 'true' : 'false',
+      segShortCls: long ? 'seg' : 'seg on', segShortPressed: long ? 'false' : 'true',
+      pickLong: function () { self.setState({ mode: 'long' }); },
+      pickShort: function () { self.setState({ mode: 'short' }); },
+      stepCount: order.length,
+      meter: order.map(function (k) { return { cls: answered[k] ? 'mseg on' : 'mseg' }; }),
+      progressLabel: doneCount === order.length ? 'All ' + order.length + ' steps done. Look at you go.' : doneCount + ' of ' + order.length + ' steps done',
+      n: n, done: done,
+      qDanger: single('danger', [['yes', 'Yes'], ['no', 'No']]),
+      dangerYes: s.danger === 'yes',
+      qProof: single('proof', [['yes', 'Yes'], ['no', 'No'], ['unsure', 'Not sure']]),
+      qStory: single('safeStory', [['yes', 'Yes, probably'], ['maybe', 'Maybe'], ['no', 'No']]),
+      fearPrompt: long ? 'What is the “what if” your brain is currently focused on?' : 'What is the “what if” your brain is currently focused on? Brain dump all the things.',
+      fear: s.fear || '', onFear: function (e) { self.setState({ fear: e.target.value }); },
+      worst: s.worst || '', onWorst: function (e) { self.setState({ worst: e.target.value }); },
+      qBad: single('bad', [['yes', 'Yes'], ['notreally', 'Not really'], ['unsure', 'Not sure']]),
+      bestTitle: long ? 'Create an alternative story' : 'What’s the best thing?',
+      goDoIt: function () { self.setState({ didIt: true }); celebrate('Okay, go do it!!', 'You just chose the story that moves you forward. Now go make it happen.'); },
+      qSurvive: single('survive', [['yes', 'Yes'], ['unsure', 'Not sure'], ['no', 'No']]),
+      surviveYes: s.survive === 'yes', surviveUnsure: s.survive === 'unsure', surviveNo: s.survive === 'no',
+      evidenceText: s.evidenceText || '', onEvidence: function (e) { self.setState({ evidenceText: e.target.value }); },
+      evChips: WF_EVIDENCE.map(function (e) { var on = !!(s.evidence || {})[e[0]]; return { label: e[1], cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', toggle: function () { self.flip('evidence', e[0]); } }; }),
+      evStory: !!((s.evidence || {}).assume || (s.evidence || {}).story),
+      protChips: WF_PROTECT.map(function (p) { var on = !!(s.protect || {})[p]; return { label: p, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', toggle: function () { self.flip('protect', p); } }; }),
+      protectOther: s.protectOther || '', onProtectOther: function (e) { self.setState({ protectOther: e.target.value }); },
+      protectSentence: protectSentence,
+      need: s.need || '', onNeed: function (e) { self.setState({ need: e.target.value }); },
+      best: s.best || '', onBest: function (e) { self.setState({ best: e.target.value }); },
+      fearStoryCls: s.focus === 'fear' ? 'story fear on' : 'story fear', fearStoryPressed: s.focus === 'fear' ? 'true' : 'false',
+      goodStoryCls: s.focus === 'good' ? 'story good on' : 'story good', goodStoryPressed: s.focus === 'good' ? 'true' : 'false',
+      fearStorySub: t(s.fear) ? 'What if ' + t(s.fear).split('\n')[0].replace(/^what if\s*/i, '').slice(0, 90) : 'The one your brain started with.',
+      goodStorySub: t(s.best) ? t(s.best).split('\n')[0].slice(0, 90) : 'The one you just wrote.',
+      pickFearStory: function () { self.setState({ focus: s.focus === 'fear' ? null : 'fear' }); },
+      pickGoodStory: function () {
+        if (s.focus === 'good') { self.setState({ focus: null }); return; }
+        self.setState({ focus: 'good' });
+        celebrate('Feeding the good story!', 'Your brain’s prediction is not a prophecy. Now pick one small action that moves you toward it.');
+      },
+      pickedFear: s.focus === 'fear',
+      action: s.action || '', onAction: function (e) { self.setState({ action: e.target.value }); },
+      celebrating: !!s.celebrate,
+      celTitle: (s.celebrate && s.celebrate.title) || '',
+      celSub: (s.celebrate && s.celebrate.sub) || '',
+      closeCelebrate: function () { self.setState({ celebrate: null }); },
+      confetti: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map(function (i) { return { i: i }; }),
+      today: dateLabel,
+      summary: summary.map(function (r) { return { label: r.label, text: r.text }; }),
+      noSummary: summary.length === 0,
+      download: function () {
+        self.setState({ err: '' });
+        self.exportCard(summary.length ? summary : [{ label: 'What if…', text: 'Nothing written yet.' }], dateLabel);
+      },
+      hasExport: !!s.exportUrl, exportUrl: s.exportUrl || '',
+      closeExport: function () { self.setState({ exportUrl: null }); },
+      copy: function () {
+        var text = summaryText();
+        var done = function (ok) { self.setState({ copied: ok ? 'ok' : 'fail' }); setTimeout(function () { self.setState({ copied: '' }); }, 2500); };
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); }); return; }
+        } catch (e) {}
+        try { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove(); done(ok); } catch (e) { done(false); }
+      },
+      copyLabel: s.copied === 'ok' ? 'Copied!' : (s.copied === 'fail' ? 'Couldn’t copy, try a screenshot' : 'Copy to my notes'),
+      hasErr: !!s.err, err: s.err || '',
+      clearCls: s.confirmClear ? 'ghost warn' : 'ghost',
+      clearLabel: s.confirmClear ? 'Tap again to clear everything' : 'Start a fresh workout',
+      clearAll: function () {
+        if (!self.state.confirmClear) { self.setState({ confirmClear: true }); setTimeout(function () { self.setState({ confirmClear: false }); }, 4000); return; }
+        self.setState({ bad: null, didIt: false, danger: null, proof: null, safeStory: null, fear: '', worst: '', survive: null, evidenceText: '', evidence: {}, protect: {}, protectOther: '', need: '', best: '', focus: null, action: '', confirmClear: false });
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+      }
+    };
+  }
+}
+
+return Component;
+})() };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/course.js"></script>
+<script src="/js/saves.js"></script>
+<script src="/js/tool-shell.js"></script>
+</body>
+</html>

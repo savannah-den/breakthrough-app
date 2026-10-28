@@ -1,0 +1,8 @@
+{
+  "name": "breakthrough-app",
+  "private": true,
+  "description": "Breakthrough client app. Static site in /public, Netlify functions in /netlify/functions.",
+  "dependencies": {
+    "web-push": "3.6.7"
+  }
+}

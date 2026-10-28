@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Understanding Bridge</title>
+<meta name="theme-color" content="#4E0C08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/css/shell.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;family=Poppins:wght@400;500;600&amp;family=Patrick+Hand+SC&amp;display=swap">
+<style>
+body{margin:0;background:#FAF7F5}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.01em}
+a{color:#A8231F}a:hover{color:#74140E}
+button{font:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #74140E;outline-offset:2px}
+.ub-root{position:relative;font-family:Poppins,system-ui,sans-serif;color:#1F1412;background:#FAF7F5;min-height:100vh;overflow-x:clip}
+.hand{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em}
+.orb{position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:999px;background:radial-gradient(circle at 35% 40%,#F4C2F7 0%,rgba(244,194,247,0) 60%),radial-gradient(circle at 65% 60%,#F1F9A6 0%,rgba(241,249,166,0) 55%),radial-gradient(circle at 50% 50%,#F28C3B 0%,rgba(242,140,59,0) 45%);filter:blur(36px);opacity:.75;pointer-events:none}
+.dark{background:#4E0C08;color:#FFF4EE;border-radius:24px}
+.step{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:26px;padding:26px 24px;display:flex;flex-direction:column;gap:18px}
+.stephead{display:flex;align-items:center;gap:14px}
+.stepnum{flex:none;width:48px;height:48px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px;transition:background .3s,color .3s}
+.stepnum.done{background:#F1F9A6;color:#1F1412;box-shadow:inset 0 0 0 1.5px #1F1412}
+.steptitle{margin:0;font-weight:700;font-size:30px;line-height:1.1}
+.q{display:flex;flex-direction:column;gap:10px;padding:16px 18px;border-radius:18px;background:#FAF7F5}
+.qtext{font-size:16px;font-weight:600;line-height:1.4}
+.hint{margin:0;font-size:15px;line-height:1.6;color:#6A5A57}
+.prompts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.prompts li{position:relative;padding-left:22px;font-size:15px;line-height:1.5;color:#463A38}
+.prompts li::before{content:'';position:absolute;left:4px;top:9px;width:8px;height:8px;border-radius:999px;background:#F4C2F7;box-shadow:0 0 0 1.5px #4E0C08}
+.pick{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.pick:hover{border-color:#1F1412}
+.pick.on{background:#1F1412;border-color:#1F1412;color:#FFFFFF}
+.num{width:44px;height:44px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:15px;font-weight:600;cursor:pointer}
+.num:hover{border-color:#1F1412}
+.num.on{background:#D3302B;border-color:#D3302B;color:#FFFFFF}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.chip:hover{border-color:#1F1412}
+.chip.on{background:#F1F9A6;border-color:#1F1412}
+.box{flex:none;width:18px;height:18px;box-sizing:border-box;border-radius:6px;border:2px solid #6A5A57;display:flex;align-items:center;justify-content:center;background:#FFFFFF}
+.box svg{opacity:0}
+.chip.on .box{background:#4E0C08;border-color:#4E0C08}
+.chip.on .box svg{opacity:1}
+.field{width:100%;box-sizing:border-box;min-height:120px;padding:14px 16px;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px;line-height:1.55;resize:vertical}
+.field.big{min-height:170px}
+.field.pink{border-color:#F4C2F7}
+.field.lime{border-color:#1F1412;background:#F8FCD6}
+.field::placeholder,.input::placeholder{color:#8C7C79}
+.input{width:100%;box-sizing:border-box;min-height:52px;padding:12px 16px;border-radius:16px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px}
+.pill-note{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:18px;background:#F1F9A6;font-size:15px;line-height:1.5}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:#FBE6FC;font-size:15px;line-height:1.55}
+.callout.lime{background:#F8FCD6}
+.callout.care{background:#4E0C08;color:#FFF4EE}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.flow span.f{padding:8px 16px;border-radius:999px;background:#FFF4EE;color:#1F1412;font-weight:600;font-size:15px}
+.flow span.f.hi{background:#F1F9A6}
+.mode{flex:1 1 230px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:150px;padding:18px 18px 20px;border-radius:22px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
+.mode:hover{border-color:#1F1412}
+.mode:active{transform:scale(.99)}
+.mode .st-title{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px;line-height:1.15}
+.mode .st-sub{font-size:14px;line-height:1.5;color:#463A38}
+.mode .tag{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px;color:#A8231F}
+.mode.on{background:#F1F9A6;border-color:#1F1412;box-shadow:0 0 0 3px #FFFFFF,0 0 0 5px #1F1412}
+.radio{flex:none;width:22px;height:22px;box-sizing:border-box;border-radius:999px;border:2px solid #6A5A57;background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.radio span{width:10px;height:10px;border-radius:999px;background:transparent}
+.mode.on .radio{border-color:#1F1412}
+.mode.on .radio span{background:#1F1412}
+.expill{padding:6px 14px;border-radius:999px;background:#FFFFFF;border:1.5px solid #EDE3DF;font-size:14px;line-height:1.4}
+.say{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:14px 18px;border-radius:20px;border:2px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:left;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;line-height:1.3;transition:background .2s,border-color .2s}
+.say:hover{border-color:#4E0C08}
+.say.on{background:#FBE6FC;border-color:#4E0C08}
+.say .tick{flex:none;width:30px;height:30px;box-sizing:border-box;border-radius:999px;border:2px solid #6A5A57;display:flex;align-items:center;justify-content:center;background:#FFFFFF}
+.say .tick svg{opacity:0}
+.say.on .tick{background:#4E0C08;border-color:#4E0C08}
+.say.on .tick svg{opacity:1}
+.meter{display:grid;gap:4px;max-width:420px}
+.mseg{height:8px;border-radius:999px;background:#EDE3DF;transition:background .3s}
+.mseg.on{background:#D3302B}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 24px;border-radius:999px;border:0;background:#D3302B;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer}
+.primary:hover{background:#A8231F}
+.primary.lime{background:#F1F9A6;color:#1F1412}
+.primary.lime:hover{background:#FFFFFF}
+.primary.lime.edge{border:1.5px solid #1F1412}
+.primary.done{background:#F1F9A6;color:#1F1412;border:1.5px solid #1F1412}
+.ghost{min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid #EDE3DF;background:transparent;color:#1F1412;font-size:14px;cursor:pointer}
+.ghost:hover{border-color:#1F1412}
+.ghost.warn{border-color:#A8231F;color:#A8231F}
+.x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:#6A5A57;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.x:hover{background:#F6EFEC;color:#1F1412}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;align-items:stretch}
+.bcard{display:flex;flex-direction:column;background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:26px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.bcard:hover{border-color:#1F1412}
+.bcard.rec{border-color:#1F1412;box-shadow:0 0 0 3px #FFFFFF,0 0 0 6px #D3302B}
+.cover{position:relative;aspect-ratio:7/5;overflow:hidden}
+.recbadge{position:absolute;left:12px;top:12px;padding:6px 12px;border-radius:999px;background:#F1F9A6;border:1.5px solid #1F1412;color:#1F1412;font-size:13px;font-weight:600}
+.cbody{flex:1;display:flex;flex-direction:column;gap:8px;padding:18px 20px 20px}
+.cbody .tag{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px;color:#6A5A57}
+.ctitle{margin:0;font-weight:700;font-size:26px;line-height:1.1}
+.csub{margin:0 0 6px;font-size:14px;line-height:1.55;color:#463A38}
+.uselist{margin:0 0 10px;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+.uselist li{position:relative;padding-left:18px;font-size:14px;line-height:1.45;color:#1F1412}
+.uselist li::before{content:'';position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:999px;background:#F4C2F7;box-shadow:0 0 0 1.5px #4E0C08}
+.primary.open{margin-top:auto;align-self:stretch}
+.helper{display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:24px;background:#FBE6FC;border:1.5px solid #F4C2F7}
+.recnote{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;background:#FFFFFF;border:1.5px solid #1F1412}
+.pic{position:relative;margin:0;border-radius:20px;overflow:hidden;border:1.5px solid #EDE3DF}
+.pic img{width:100%;height:auto;display:block}
+.ring{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;animation:ub-ring 2.4s ease-in-out infinite}
+@keyframes ub-ring{0%,100%{opacity:1}50%{opacity:.7}}
+@media (prefers-reduced-motion: reduce){.ring{animation:none}}
+.hero{border-radius:26px;overflow:hidden;border:1.5px solid #EDE3DF}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:8px}
+.sum-row{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-top:1px solid #F6EFEC}
+.sum-row:first-child{border-top:0}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.cf{position:absolute;left:50%;top:58%;border-radius:3px;opacity:0;animation:ub-burst 1.9s cubic-bezier(.15,.7,.3,1) forwards}
+.cf:nth-child(1){--x:-109px;--y:-246px;--r:-276deg;background:#F4C2F7;width:10px;height:6px;animation-delay:7ms}
+.cf:nth-child(2){--x:232px;--y:-150px;--r:608deg;background:#F1F9A6;width:8px;height:10px;animation-delay:11ms}
+.cf:nth-child(3){--x:30px;--y:-180px;--r:-408deg;background:#D3302B;width:12px;height:6px;animation-delay:74ms}
+.cf:nth-child(4){--x:323px;--y:-126px;--r:-406deg;background:#F28C3B;width:8px;height:6px;animation-delay:109ms}
+.cf:nth-child(5){--x:-254px;--y:-146px;--r:-495deg;background:#4E0C08;width:12px;height:6px;animation-delay:23ms}
+.cf:nth-child(6){--x:-299px;--y:-191px;--r:279deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(7){--x:59px;--y:-321px;--r:501deg;background:#F4C2F7;width:10px;height:6px;animation-delay:118ms}
+.cf:nth-child(8){--x:-34px;--y:-287px;--r:-263deg;background:#F1F9A6;width:12px;height:14px;animation-delay:67ms}
+.cf:nth-child(9){--x:-4px;--y:-265px;--r:254deg;background:#D3302B;width:8px;height:6px;animation-delay:53ms}
+.cf:nth-child(10){--x:-224px;--y:-160px;--r:220deg;background:#F28C3B;width:12px;height:10px;animation-delay:97ms}
+.cf:nth-child(11){--x:59px;--y:-385px;--r:538deg;background:#4E0C08;width:12px;height:14px;animation-delay:74ms}
+.cf:nth-child(12){--x:160px;--y:-183px;--r:665deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(13){--x:-346px;--y:-124px;--r:471deg;background:#F4C2F7;width:12px;height:14px;animation-delay:113ms}
+.cf:nth-child(14){--x:92px;--y:-167px;--r:352deg;background:#F1F9A6;width:12px;height:10px;animation-delay:63ms}
+.cf:nth-child(15){--x:-361px;--y:-186px;--r:-587deg;background:#D3302B;width:10px;height:14px;animation-delay:10ms}
+.cf:nth-child(16){--x:-234px;--y:-198px;--r:-620deg;background:#F28C3B;width:12px;height:14px;animation-delay:90ms}
+.cf:nth-child(17){--x:-64px;--y:-271px;--r:-334deg;background:#4E0C08;width:8px;height:10px;animation-delay:19ms}
+.cf:nth-child(18){--x:-171px;--y:-174px;--r:-449deg;background:#E890EC;width:10px;height:10px;animation-delay:18ms}
+.cf:nth-child(19){--x:-62px;--y:-250px;--r:308deg;background:#F4C2F7;width:12px;height:6px;animation-delay:79ms}
+.cf:nth-child(20){--x:150px;--y:-330px;--r:587deg;background:#F1F9A6;width:10px;height:14px;animation-delay:13ms}
+.cf:nth-child(21){--x:-15px;--y:-312px;--r:-393deg;background:#D3302B;width:10px;height:10px;animation-delay:14ms}
+.cf:nth-child(22){--x:-91px;--y:-234px;--r:-283deg;background:#F28C3B;width:10px;height:6px;animation-delay:3ms}
+.cf:nth-child(23){--x:-237px;--y:-101px;--r:-438deg;background:#4E0C08;width:10px;height:6px;animation-delay:46ms}
+.cf:nth-child(24){--x:-16px;--y:-205px;--r:671deg;background:#E890EC;width:10px;height:14px;animation-delay:10ms}
+@keyframes ub-burst{0%{opacity:1;transform:translate(-50%,0) rotate(0deg) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),var(--y)) rotate(var(--r)) scale(1)}}
+.cel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;width:min(380px,calc(100% - 32px));box-sizing:border-box;background:#FFFFFF;border:2px solid #4E0C08;border-radius:28px;padding:26px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-shadow:0 24px 60px rgba(78,12,8,.25);animation:ub-pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes ub-pop{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.cf{display:none}.cel,.modal{animation:none}}
+.modal-bg{position:fixed;inset:0;z-index:30;border:0;padding:0;margin:0;background:rgba(31,20,18,.45);cursor:pointer}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;width:min(540px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:#FFFFFF;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 70px rgba(31,20,18,.3);animation:ub-pop .3s cubic-bezier(.2,1.2,.4,1)}
+</style>
+<style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+<!-- GENERATED by tools/import_canvas.py from src/canvases/bridge.dc.html. Re-run it after updating the canvas. -->
+<div id="bt-gate" class="bt-gate" hidden></div>
+<div id="app"></div>
+<template id="t-main">
+<div class="ub-root">
+<div class="orb" aria-hidden="true"></div>
+
+<sc-if value="{{hasExport}}" hint-placeholder-val="{{ false }}">
+<button class="modal-bg" aria-label="Close" onClick="{{closeExport}}"></button>
+<div class="modal" role="dialog" aria-modal="true" aria-label="Your bridge image">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h3 style="margin: 0; font-weight: 700; font-size: 22px">Your bridge is ready</h3>
+<button class="x" aria-label="Close" onClick="{{closeExport}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55; color: #463A38">If it didn’t download on its own, press and hold the image (phone) or right-click it (computer) and choose save.</p>
+<img src="{{exportUrl}}" alt="My Understanding Bridge" style="width: 100%; border-radius: 16px; border: 1.5px solid #EDE3DF">
+</div>
+</sc-if>
+
+<sc-if value="{{celebrating}}" hint-placeholder-val="{{ false }}">
+<div class="confetti" aria-hidden="true"><sc-for list="{{confetti}}" as="cf" hint-placeholder-count="24"><span class="cf"></span></sc-for></div>
+<div class="cel" role="status">
+<span style="width: 64px; height: 64px; border-radius: 999px; background: #F1F9A6; display: flex; align-items: center; justify-content: center"><svg width="34" height="34" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.2" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg></span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.1">{{celTitle}}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #463A38">{{celSub}}</span>
+<button class="ghost" onClick="{{closeCelebrate}}">Keep going</button>
+</div>
+</sc-if>
+
+<div style="position: relative; max-width: {{maxW}}px; margin: 0 auto; padding: 24px 16px 80px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px">
+
+<sc-if value="{{isHome}}" hint-placeholder-val="{{ true }}">
+<header style="display: flex; flex-direction: column; gap: 14px; padding-top: 16px">
+<div style="display: flex; align-items: center; gap: 14px">
+<svg width="56" height="56" viewBox="0 0 120 120" role="img" aria-label="Understanding Bridge icon" style="flex: none"><defs><filter id="ub0" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="41"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><rect x="1" y="1" width="118" height="118" rx="29" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></rect><g filter="url(#ub0)"><path d="M12 80 L34 80 L38 104 L12 104 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M86 80 L108 80 L108 104 L82 104 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M34 58 L34 81 M86 58 L86 81" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path d="M34 60 Q60 80 86 60" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round"></path><path d="M34 81 Q60 94 86 81" fill="none" stroke="#4E0C08" stroke-width="3.2" stroke-linecap="round"></path><path d="M47 67 L47 85 M60 70 L60 87 M73 67 L73 85" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round"></path><circle cx="22" cy="71" r="5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="98" cy="71" r="5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle></g><path transform="translate(48 20)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2" stroke-linejoin="round"></path></svg>
+<div class="hand" style="font-size: 18px; color: #A8231F">Breakthrough Program · resource</div>
+</div>
+<h1 style="margin: 0; font-weight: 700; font-size: clamp(38px, 7vw, 66px); line-height: 1.02; text-wrap: balance">The Understanding Bridge</h1>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(22px, 3.4vw, 30px); line-height: 1.2; color: #4E0C08">Take the lesson. Leave the pain.</p>
+<p style="margin: 0; max-width: 640px; font-size: 17px; line-height: 1.6; color: #463A38">A bridge between your perspective, their perspective, and a new understanding that lets you move forward.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; max-width: 760px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">1</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Your side</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person standing on their own cliff holding a heart, with an unbuilt dotted bridge stretching to the other side" style="width: 100%; height: auto; display: block"><defs><filter id="ub1" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#ub1)"><path d="M146 120 L200 120 L200 190 L138 190 Z" fill="#FAF7F5" stroke="#B9ADAA" stroke-width="2.2" stroke-linejoin="round"></path><path d="M54 94 Q100 124 146 94 M54 121 Q100 141 146 121" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-dasharray="4 6" stroke-linecap="round"></path><path d="M146 92 L146 121" stroke="#B9ADAA" stroke-width="3" stroke-linecap="round"></path><path d="M0 120 L54 120 L62 190 L0 190 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M54 92 L54 121" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><circle cx="28" cy="64" r="9" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M24 66 Q28 63 32 66" fill="none" stroke="#4E0C08" stroke-width="1.6" stroke-linecap="round"></path><path d="M28 73 L28 100 M28 100 L20 120 M28 100 L36 120" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M28 81 L18 90 L24 96 M28 81 L38 90 L32 96" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path transform="translate(16 18)" d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z" fill="#D3302B" stroke="#4E0C08" stroke-width="1.8" stroke-linejoin="round"></path><rect x="66" y="26" width="72" height="24" rx="12" fill="#FBE6FC" stroke="#4E0C08" stroke-width="2" transform="rotate(-6 102 38)"></rect><path d="M74 66 l10 -3 M76 78 l12 0" stroke="#B9ADAA" stroke-width="3" stroke-linecap="round"></path></g><text x="102" y="43" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#4E0C08" transform="rotate(-6 102 38)">how I felt</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">Stand on your side of the bridge,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">2</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Their side</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person who has crossed the bridge, standing on the other cliff and looking back through the other person's eyes" style="width: 100%; height: auto; display: block"><defs><filter id="ub2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#ub2)"><path d="M0 120 L54 120 L62 190 L0 190 Z" fill="#F6EFEC" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M146 120 L200 120 L200 190 L138 190 Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M54 92 L54 121 M146 92 L146 121" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path d="M54 94 Q100 124 146 94" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round"></path><path d="M54 121 Q100 141 146 121" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path d="M72 104 L72 127 M86 108 L86 130 M100 109 L100 131 M114 108 L114 130 M128 104 L128 127" stroke="#4E0C08" stroke-width="1.6" stroke-linecap="round"></path><circle cx="28" cy="64" r="9" fill="#FFFFFF" stroke="#B9ADAA" stroke-width="2"></circle><path d="M28 73 L28 100 M28 100 L20 120 M28 100 L36 120 M28 81 L18 94 M28 81 L38 94" fill="none" stroke="#B9ADAA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="172" cy="64" r="9" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="168" cy="63" r="1.6" fill="#4E0C08"></circle><circle cx="174" cy="63" r="1.6" fill="#4E0C08"></circle><path d="M172 73 L172 100 M172 100 L164 120 M172 100 L180 120" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M172 81 L160 92 M172 81 L184 94" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M156 58 Q100 30 46 54" fill="none" stroke="#D3302B" stroke-width="2.2" stroke-dasharray="5 6" stroke-linecap="round"></path><path d="M46 54 l11 -1 M46 54 l7 8" fill="none" stroke="#D3302B" stroke-width="2.2" stroke-linecap="round"></path><rect x="118" y="8" width="76" height="24" rx="12" fill="#FBE6FC" stroke="#4E0C08" stroke-width="2" transform="rotate(6 156 20)"></rect></g><text x="156" y="25" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#4E0C08" transform="rotate(6 156 20)">their world</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">walk across and look through their eyes,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">3</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">The middle</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person with open arms standing in the middle of the bridge, seeing both people on either side" style="width: 100%; height: auto; display: block"><defs><filter id="ub3" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="37"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#ub3)"><path d="M0 120 L54 120 L62 190 L0 190 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M146 120 L200 120 L200 190 L138 190 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path d="M54 92 L54 121 M146 92 L146 121" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path d="M54 94 Q100 124 146 94" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round"></path><path d="M54 121 Q100 141 146 121" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path d="M72 104 L72 127 M86 108 L86 130 M114 108 L114 130 M128 104 L128 127" stroke="#4E0C08" stroke-width="1.6" stroke-linecap="round"></path><circle cx="26" cy="72" r="8" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M26 80 L26 102 M26 102 L19 120 M26 102 L33 120 M26 87 L17 98 M26 87 L35 98" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="174" cy="72" r="8" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M174 80 L174 102 M174 102 L167 120 M174 102 L181 120 M174 87 L165 98 M174 87 L183 98" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="100" cy="76" r="9" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M96 78 Q100 81 104 78" fill="none" stroke="#4E0C08" stroke-width="1.6" stroke-linecap="round"></path><path d="M100 85 L100 112 M100 112 L92 131 M100 112 L108 131" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M100 92 L84 82 M100 92 L116 82" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M70 60 Q60 52 50 58 M130 60 Q140 52 150 58" fill="none" stroke="#D3302B" stroke-width="2" stroke-linecap="round"></path></g><path transform="translate(88 30)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2" stroke-linejoin="round"></path><path transform="translate(150 22) scale(0.55)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.8" stroke-linejoin="round"></path></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">then meet in the middle and see the whole picture.</figcaption></figure>
+</div>
+</header>
+
+<section style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Which bridge do I need?</div>
+<p style="margin: 0; max-width: 680px; font-size: 15px; line-height: 1.6; color: #463A38">Not every situation needs the same level of processing. Sometimes you need to heal an old wound. Sometimes you just need a quick perspective shift. Sometimes you need to stop thinking and let it out.</p>
+</div>
+
+<div class="helper">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span class="hand" style="font-size: 16px; color: #4E0C08">Need help deciding?</span>
+<span style="font-size: 15px; line-height: 1.5">Tap what feels most true right now and we’ll guide you to the right bridge.</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px" role="group" aria-label="What feels most true right now"><sc-for list="{{helpOpts}}" as="o" hint-placeholder-count="6"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div>
+<sc-if value="{{hasRec}}" hint-placeholder-val="{{ false }}">
+<div class="recnote" role="status"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span style="flex: 1 1 220px; font-size: 15px; line-height: 1.5">{{recText}}</span><button class="primary" onClick="{{openRec}}">{{recBtn}}</button></div>
+</sc-if>
+</div>
+
+<div class="cards">
+<article class="{{cards.quick.cls}}">
+<div class="cover" style="background: #CDCFCE"><img src="/tools/assets/a49bbf3641d388a230741ffb5695ce25.jpg" alt="Three people seen from above around an event: A is you, B is them, C is the observer" style="width: 100%; height: 100%; object-fit: cover; display: block"><sc-if value="{{cards.quick.rec}}" hint-placeholder-val="{{ false }}"><span class="recbadge">Recommended for you</span></sc-if></div>
+<div class="cbody">
+<span class="tag">3-minute perspective shift</span>
+<h3 class="ctitle">The Quick Bridge</h3>
+<p class="csub">When you’re hurt, frustrated, triggered, assuming the worst, or stuck in an RSD spiral.</p>
+<span class="hand" style="font-size: 14px; color: #A8231F">Use it for things like</span>
+<ul class="uselist"><li>They haven’t replied to my message</li><li>My partner seemed annoyed</li><li>My boss gave me feedback</li><li>Someone cancelled plans</li><li>I think somebody is judging me</li><li>I feel rejected</li><li>I’m creating stories in my head</li></ul>
+<button class="primary open" onClick="{{openQuick}}">Open the Quick Bridge<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</article>
+
+<article class="{{cards.deep.cls}}">
+<div class="cover" style="background: #F49AAB"><img src="/tools/assets/c6c4d7181abcef8e3f1eb0d6edbe60e5.jpg" alt="A rope bridge between two cliffs: you on one side, them on the other, the observer in the middle" style="width: 100%; height: 100%; object-fit: cover; display: block"><sc-if value="{{cards.deep.rec}}" hint-placeholder-val="{{ false }}"><span class="recbadge">Recommended for you</span></sc-if></div>
+<div class="cbody">
+<span class="tag">Journal · one specific event</span>
+<h3 class="ctitle">The Deep Bridge</h3>
+<p class="csub">For big events, painful memories, old wounds and limiting beliefs that still carry emotional weight.</p>
+<span class="hand" style="font-size: 14px; color: #A8231F">Use it for things like</span>
+<ul class="uselist"><li>Being bullied</li><li>A painful breakup, or being cheated on</li><li>Feeling abandoned or rejected</li><li>A difficult childhood experience</li><li>A parent constantly criticising you</li><li>A friendship ending</li><li>A traumatic workplace experience</li><li>A conflict that changed a relationship</li></ul>
+<button class="primary open" onClick="{{openDeep}}">Open the Deep Bridge<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</article>
+
+<article class="{{cards.release.cls}}">
+<div class="cover" style="background: #7A2A8C"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer" style="width: 100%; height: 100%; object-fit: cover; display: block"><sc-if value="{{cards.release.rec}}" hint-placeholder-val="{{ false }}"><span class="recbadge">Recommended for you</span></sc-if></div>
+<div class="cbody">
+<span class="tag">Somatic · out loud</span>
+<h3 class="ctitle">The Bridge Release</h3>
+<p class="csub">When the hurt isn’t attached to one moment. It’s attached to a person. For when you don’t need more thinking, you need release.</p>
+<span class="hand" style="font-size: 14px; color: #A8231F">Use it for someone like</span>
+<ul class="uselist"><li>A parent who hurt, criticised or dismissed you</li><li>An ex you’re still angry at</li><li>A friend who let you down again and again</li><li>A teacher, coach or boss who left a mark</li><li>Someone who betrayed or abandoned you</li><li>Someone who passed with things unsaid</li><li>Yourself in the past</li></ul>
+<button class="primary open" onClick="{{openRelease}}">Open the Bridge Release<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</article>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{isPage}}" hint-placeholder-val="{{ false }}">
+<section style="display: flex; flex-direction: column; gap: 18px; padding-top: 8px">
+<button class="ghost back" onClick="{{goHome}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>All bridges</button>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="hand" style="font-size: 18px; color: #A8231F">The Understanding Bridge</div>
+<h1 style="margin: 0; font-weight: 700; font-size: clamp(36px, 6.4vw, 60px); line-height: 1.02">{{pageTitle}}</h1>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(20px, 3vw, 26px); line-height: 1.25; color: #4E0C08">{{pageTag}}</p>
+</div>
+<sc-if value="{{isQuick}}" hint-placeholder-val="{{ false }}"><div class="hero" style="background: #CDCFCE"><img src="/tools/assets/a49bbf3641d388a230741ffb5695ce25.jpg" alt="Three people seen from above around an event: A is you, B is them, C is the observer" style="width: 100%; max-height: 460px; object-fit: contain; display: block; margin: 0 auto"></div></sc-if>
+<sc-if value="{{isDeep}}" hint-placeholder-val="{{ false }}"><div class="hero" style="background: #F49AAB"><img src="/tools/assets/a88193d73fc4900672277473c572dbc5.jpg" alt="A rope bridge between two cliffs: you on one side, them on the other, the observer in the middle" style="width: 100%; height: auto; display: block"></div></sc-if>
+<sc-if value="{{isRelease}}" hint-placeholder-val="{{ false }}"><div class="hero" style="background: #7A2A8C"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Not sure where to start?</strong> If focusing on a whole person feels overwhelming, start with the Deep Bridge on one specific event. Releasing the charge from a few events often softens how you feel about the person as a whole. There’s no right way. Start where you feel safest.</span></div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="meter" style="grid-template-columns: repeat({{stepCount}}, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{meter}}" as="m" hint-placeholder-count="3"><span class="{{m.cls}}"></span></sc-for></div>
+<span style="font-size: 13px; color: #6A5A57">{{progressLabel}}</span>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{notRelease}}" hint-placeholder-val="{{ true }}">
+<section class="dark" style="padding: 28px 26px; display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Why this works</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.12">Change the meaning, you change the feeling.</h2>
+<div class="flow" aria-label="Event leads to meaning leads to feeling"><span class="f">Event</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span class="f hi">Meaning</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span class="f">Feeling</span></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">It’s rarely the event itself that keeps hurting. It’s the meaning we attached to it. When you step into someone else’s model of the world, you get new information, and new information lets your brain write a new meaning.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="padding: 10px 16px; border-radius: 16px; background: #F1F9A6; color: #1F1412; font-size: 15px; font-weight: 600; line-height: 1.45">People do the best they can with the resources they have available.</span>
+<span style="padding: 10px 16px; border-radius: 16px; background: #FBE6FC; color: #1F1412; font-size: 15px; font-weight: 600; line-height: 1.45">Hurt people hurt people.</span>
+<span style="padding: 10px 16px; border-radius: 16px; background: #FFF4EE; color: #1F1412; font-size: 15px; font-weight: 600; line-height: 1.45">Intention and impact are often different.</span>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{isQuick}}" hint-placeholder-val="{{ true }}">
+<section class="step">
+<div class="stephead"><span class="{{done.qa}}">A</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Position A · You</span><h2 class="steptitle">Your side of the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/a49bbf3641d388a230741ffb5695ce25.jpg" alt="Three people seen from above around an event: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1200 900" aria-hidden="true"><ellipse cx="190" cy="610" rx="190" ry="250" fill="none" stroke="#F1F9A6" stroke-width="10" stroke-linecap="round" transform="rotate(-6 190 610)"></ellipse><ellipse cx="196" cy="606" rx="200" ry="244" fill="none" stroke="#F1F9A6" stroke-width="5" stroke-dasharray="38 23" transform="rotate(4 190 610)" opacity=".85"></ellipse><rect x="40" y="300" width="300" height="64" rx="32" fill="#F1F9A6" stroke="#1F1412" stroke-width="3"></rect><text x="190" y="332" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="38" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What happened, and how did that make me feel?</span><span class="hint">Brain dump it all. Messy. Be at effect. Just get the feelings out.</span><textarea class="field big" value="{{v.qHappened}}" onChange="{{on.qHappened}}" placeholder="They haven’t replied and I feel…"></textarea></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What story am I telling myself?</span><span class="hint">What am I making this mean? What story have I created?</span><textarea class="field pink" value="{{v.qStory}}" onChange="{{on.qStory}}" placeholder="I’m making it mean…"></textarea></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What are the actual facts?</span><span class="hint">Only what a camera would have recorded. No mind reading.</span><textarea class="field" style="min-height: 90px" value="{{v.qFacts}}" onChange="{{on.qFacts}}" placeholder="The facts are…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.qb}}">B</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Position B · Them</span><h2 class="steptitle">Walk across the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/a49bbf3641d388a230741ffb5695ce25.jpg" alt="Three people seen from above around an event: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1200 900" aria-hidden="true"><ellipse cx="1000" cy="640" rx="190" ry="255" fill="none" stroke="#F1F9A6" stroke-width="10" stroke-linecap="round" transform="rotate(-6 1000 640)"></ellipse><ellipse cx="1006" cy="636" rx="200" ry="249" fill="none" stroke="#F1F9A6" stroke-width="5" stroke-dasharray="38 23" transform="rotate(4 1000 640)" opacity=".85"></ellipse><rect x="830" y="330" width="300" height="64" rx="32" fill="#F1F9A6" stroke="#1F1412" stroke-width="3"></rect><text x="980" y="362" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="38" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<p class="hint">Enter their model of the world. Look through their eyes at you and the event.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What might be happening from their perspective?</span>
+<ul class="prompts"><li>What could be in their model of the world?</li><li>How did your actions make them feel?</li><li>What limiting belief might they be acting from?</li><li>Are they projecting their own stuff onto you?</li><li>What resources might they be missing?</li></ul>
+<textarea class="field big" value="{{v.qTheirView}}" onChange="{{on.qTheirView}}" placeholder="From where they’re standing…"></textarea></label>
+<div class="q"><span class="qtext">What was likely their intention?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{qIntentOpts}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Is there another explanation? What else could be true?</span><textarea class="field" style="min-height: 90px" value="{{v.qOther}}" onChange="{{on.qOther}}" placeholder="Maybe they were…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.qc}}">C</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Position C · Observer / Future You</span><h2 class="steptitle">Stand in the middle</h2></div></div>
+<figure class="pic"><img src="/tools/assets/a49bbf3641d388a230741ffb5695ce25.jpg" alt="Three people seen from above around an event: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1200 900" aria-hidden="true"><ellipse cx="590" cy="215" rx="200" ry="205" fill="none" stroke="#F1F9A6" stroke-width="10" stroke-linecap="round" transform="rotate(-6 590 215)"></ellipse><ellipse cx="596" cy="211" rx="210" ry="199" fill="none" stroke="#F1F9A6" stroke-width="5" stroke-dasharray="38 23" transform="rotate(4 590 215)" opacity=".85"></ellipse><rect x="820" y="100" width="300" height="64" rx="32" fill="#F1F9A6" stroke="#1F1412" stroke-width="3"></rect><text x="970" y="132" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="38" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<p class="hint">Step out of both of you. Picture Future You standing in the middle of the bridge, seeing the whole thing.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What meaning would better serve me?</span><textarea class="field lime" value="{{v.qMeaning}}" onChange="{{on.qMeaning}}" placeholder="A more helpful way to see this is…"></textarea></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What action moves me toward my goal? What would Future Me do next?</span><textarea class="field pink" style="min-height: 90px" value="{{v.qAction}}" onChange="{{on.qAction}}" placeholder="Next, I’m going to…"></textarea></label>
+<button class="{{quickDoneCls}}" style="align-self: flex-start" onClick="{{finishQuick}}">{{quickDoneLabel}}</button>
+</section>
+</sc-if>
+
+<sc-if value="{{isDeep}}" hint-placeholder-val="{{ false }}">
+<section class="step">
+<div class="stephead"><span class="{{done.d0}}">1</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 1</span><h2 class="steptitle">Before you begin</h2></div></div>
+<figure class="pic"><img src="/tools/assets/bb13b59b8e3ecad2e8c389d6596a1c51.jpg" alt="You on your cliff, them on theirs, the observer in the middle of the bridge, with the event far below"></figure>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Choose one specific event.</span><span class="hint">One moment, not a whole relationship. (For a whole person, try the Bridge Release.)</span><input class="input" value="{{v.dEvent}}" onChange="{{on.dEvent}}" placeholder="The time when…"></label>
+<div class="q"><span class="qtext">How emotionally intense does it feel right now?</span><span style="font-size: 13px; color: #6A5A57">0 = neutral · 10 = extremely intense</span><div style="display: flex; flex-wrap: wrap; gap: 6px" role="group" aria-label="Intensity before"><sc-for list="{{beforeOpts}}" as="o" hint-placeholder-count="11"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" aria-label="{{o.aria}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.d1}}">2</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 2</span><h2 class="steptitle">Your side of the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/7380668367de1af6d003f352f99f4aa5.jpg" alt="You, close up, back inside the event, looking at them in the event"></figure>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Go back to the time of the event, as if you’re still in it.</span>
+<ul class="prompts"><li>What could you see?</li><li>What did you feel?</li><li>What was happening?</li></ul>
+<textarea class="field big" value="{{v.dInside}}" onChange="{{on.dInside}}" placeholder="I’m standing there and…"></textarea></label>
+<figure class="pic"><img src="/tools/assets/b57862c5b864a8a3e79922d5081c1283.jpg" alt="You standing on your cliff, looking down at your past self and them in the event"></figure>
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Now step out of the event, back into this present moment, and look at your past self in it.</span></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Looking back from here…</span>
+<ul class="prompts"><li>What meaning did you make of the event?</li><li>What story did you attach to it?</li><li>How does it make you feel looking back now that you’re out of it?</li><li>What did you need that you didn’t receive?</li><li>What do you wish you’d said, or done differently?</li></ul>
+<span class="hint">Write it all. Do not edit yourself.</span>
+<textarea class="field big pink" value="{{v.dLooking}}" onChange="{{on.dLooking}}" placeholder="Looking back, I made it mean…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.d2}}">3</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 3</span><h2 class="steptitle">Walk across the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/f846e29006165c8ba62f143c8d86e3f8.jpg" alt="You walking across the bridge to stand beside them"></figure>
+<p class="hint">Imagine stepping into their model of the world. You are now that person, looking at you.</p>
+<figure class="pic"><img src="/tools/assets/ce1f0d0a137e909226f899170d5bf322.jpg" alt="Them, close up, looking at you in the event through their eyes"></figure>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Acting as if you were them…</span>
+<ul class="prompts"><li>What could they see?</li><li>What did they feel?</li><li>What was happening for them?</li><li>What was their perspective?</li></ul>
+<textarea class="field big" value="{{v.dThem}}" onChange="{{on.dThem}}" placeholder="As them, I’m seeing…"></textarea></label>
+<figure class="pic"><img src="/tools/assets/e2fc964b6b5c30a9366d14211bd9d7cc.jpg" alt="You and them standing together on their cliff, looking back at the event"></figure>
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Now step back out of them and stand on the cliff <em>with</em> them, looking back at the event. Remember: people do the best they can with the resources they have available.</span></div>
+<div class="q"><span class="qtext">Were they acting from love or fear?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{dIntentOpts}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="q"><span class="qtext">What do you think was behind it?</span><span style="font-size: 13px; color: #6A5A57">Tick all that might apply. Intention and impact are often different.</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{howChips}}" as="c" hint-placeholder-count="5"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What might have been happening in their world?</span>
+<ul class="prompts"><li>Think about their model of the world. What resources were they missing?</li><li>Did it come from their own place of hurt, or their own limiting belief?</li><li>What makes more sense now that didn’t before?</li></ul>
+<textarea class="field pink" value="{{v.dSense}}" onChange="{{on.dSense}}" placeholder="What makes more sense now is…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.d3}}">4</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 4</span><h2 class="steptitle">The middle of the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/ed17ec258b156c8af9563a76d76a4939.jpg" alt="You walking back across the bridge to the observer in the middle"></figure>
+<p class="hint">Imagine someone wise, who loves you both, standing in the middle of the bridge. Someone who can see the whole picture. Walk to them and watch the event through their eyes.</p>
+<div class="q"><span class="qtext">Who’s standing in the middle?</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{wiseOpts}}" as="o" hint-placeholder-count="5"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div>
+<sc-if value="{{wiseIsOther}}" hint-placeholder-val="{{ false }}"><input class="input" aria-label="Who is it?" value="{{v.dWiseOther}}" onChange="{{on.dWiseOther}}" placeholder="Who is it?"></sc-if>
+</div>
+<figure class="pic"><img src="/tools/assets/19f0304514144c82ce095a59a4ede0fd.jpg" alt="The observer and you on the bridge, watching you and them in the event"></figure>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Through their eyes…</span>
+<ul class="prompts"><li>What would they say?</li><li>What advice would they give you both?</li><li>What can they see that neither of you could?</li><li>What lesson can you take from this experience?</li></ul>
+<textarea class="field big lime" value="{{v.dWiseSays}}" onChange="{{on.dWiseSays}}" placeholder="They’d say…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.d4}}">5</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 5</span><h2 class="steptitle">Build a new bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/3ab75ae85fd37ba180922aa6e0d5f4fe.jpg" alt="You, the observer and them meeting together in the middle of the bridge above the event"></figure>
+<p class="hint">You’ve collected all three perspectives. Now choose what you build with them.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What meaning would better serve the person you are becoming?</span><textarea class="field lime" value="{{v.dMeaning}}" onChange="{{on.dMeaning}}" placeholder="The meaning I choose now is…"></textarea></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Resources then vs now</span>
+<ul class="prompts"><li>What resources do you have now that you didn’t have then?</li><li>What resources do they have now that they didn’t have then?</li><li>What resources do you have now that they needed then?</li></ul>
+<textarea class="field" value="{{v.dResources}}" onChange="{{on.dResources}}" placeholder="Now I have…"></textarea></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What do you choose to do with this experience moving forward?</span><textarea class="field pink" style="min-height: 90px" value="{{v.dChoose}}" onChange="{{on.dChoose}}" placeholder="Moving forward, I choose…"></textarea></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.d5}}">6</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 6</span><h2 class="steptitle">Finish</h2></div></div>
+<div class="q"><span class="qtext">Rate the emotional intensity now.</span><span style="font-size: 13px; color: #6A5A57">{{beforeNote}}</span><div style="display: flex; flex-wrap: wrap; gap: 6px" role="group" aria-label="Intensity now"><sc-for list="{{afterOpts}}" as="o" hint-placeholder-count="11"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" aria-label="{{o.aria}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<sc-if value="{{hasShift}}" hint-placeholder-val="{{ false }}"><div class="pill-note"><span class="hand" style="font-size: 15px; color: #4E0C08">Look at that</span><span><strong>{{shiftText}}</strong></span></div></sc-if>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">What shifted?</span><textarea class="field" value="{{v.dShifted}}" onChange="{{on.dShifted}}" placeholder="What feels different now is…"></textarea></label>
+<button class="{{deepDoneCls}}" style="align-self: flex-start" onClick="{{finishDeep}}">{{deepDoneLabel}}</button>
+</section>
+</sc-if>
+
+<sc-if value="{{isRelease}}" hint-placeholder-val="{{ false }}">
+<section class="dark" style="padding: 28px 26px; display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #F1F9A6">When you need to let it out</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.12">Sometimes understanding isn’t enough.</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">Sometimes you’ve already analysed it a hundred times. You don’t need more thinking. You need release. This bridge helps you move emotions through your body instead of carrying them around.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">Do it with an empty chair or standing positions, speaking out loud while you imagine the person in front of you. You can journal it if you’d rather, but speaking lets you feel it in your body without waiting for your pen to catch up. Guided audio coming soon.</p>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.r0}}">1</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Before you begin</span><h2 class="steptitle">Set yourself up safely</h2></div></div>
+<figure class="pic"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer"></figure>
+<p class="hint" style="font-weight: 600; color: #1F1412">Set up three spots in your space before you start: A for you, B for them, and C for the observer.</p>
+<p class="hint">This can bring up strong emotions. Crying, anger, grief, relief, numbness or exhaustion are all normal parts of the process.</p>
+<div class="q"><span class="qtext">Tick these off before you start</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{readyChips}}" as="c" hint-placeholder-count="5"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div></div>
+<div class="callout care" role="note"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"></path></svg><span>This isn’t a substitute for therapy, crisis support or medical care. If you’re in severe distress, having thoughts of suicide or self-harm, or feel unable to keep yourself regulated, please pause and reach out for support. <strong>Lifeline 13 11 14</strong> · <strong>Beyond Blue 1300 22 4636</strong> · <strong>000</strong> in an emergency (Australia). Your wellbeing always comes first.</span></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Who’s in the chair?</span><span class="hint">A parent, an ex, a friend, a boss… or yourself in the past. Pick a chair or a spot and imagine they’re really there. A photo helps if you’re struggling to picture them.</span><input class="input" value="{{v.rWho}}" onChange="{{on.rWho}}" placeholder="Their name, or just “them”"></label>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.r1}}">2</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 1</span><h2 class="steptitle">Your side of the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1920 1032" aria-hidden="true"><ellipse cx="500" cy="690" rx="220" ry="250" fill="none" stroke="#F1F9A6" stroke-width="11" stroke-linecap="round" transform="rotate(-6 500 690)"></ellipse><ellipse cx="506" cy="686" rx="230" ry="244" fill="none" stroke="#F1F9A6" stroke-width="6" stroke-dasharray="44 26" transform="rotate(4 500 690)" opacity=".85"></ellipse><rect x="330" y="940" width="340" height="76" rx="38" fill="#F1F9A6" stroke="#1F1412" stroke-width="4"></rect><text x="500" y="978" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="44" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<p class="hint">Say everything you wish you could say. You can’t hurt them. They aren’t here and they’ll never know you said it. So if you want to call your mum a c*nt, DO IT. If you want to tell your dad he’s a piece of shit, DO IT. It doesn’t mean anything about you that you feel this way.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Yell. Cry. Scream. Whisper. Feel it in your body.</p>
+<ul class="prompts"><li>How did they hurt you?</li><li>What did they do that disappointed you?</li><li>What angered you?</li><li>What did you need that they didn’t give you?</li><li>What did you never get to say?</li></ul>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="hand" style="padding: 6px 14px; border-radius: 999px; background: #F1F9A6; border: 1.5px solid #1F1412; font-size: 15px">Don’t edit.</span><span class="hand" style="padding: 6px 14px; border-radius: 999px; background: #F1F9A6; border: 1.5px solid #1F1412; font-size: 15px">Don’t minimise.</span><span class="hand" style="padding: 6px 14px; border-radius: 999px; background: #F1F9A6; border: 1.5px solid #1F1412; font-size: 15px">Don’t protect them.</span><span style="padding: 6px 14px; border-radius: 999px; background: #FBE6FC; font-size: 14px">This is your space.</span></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">Optional: jot anything you want to remember afterwards</span><textarea class="field" style="min-height: 84px" value="{{v.rSaidNotes}}" onChange="{{on.rSaidNotes}}" placeholder="What came up…"></textarea></label>
+<button class="{{said.cls}}" style="align-self: flex-start" onClick="{{said.toggle}}">{{said.label}}</button>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.r2}}">3</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 2</span><h2 class="steptitle">Cross the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1920 1032" aria-hidden="true"><ellipse cx="1400" cy="690" rx="250" ry="270" fill="none" stroke="#F1F9A6" stroke-width="11" stroke-linecap="round" transform="rotate(-6 1400 690)"></ellipse><ellipse cx="1406" cy="686" rx="260" ry="264" fill="none" stroke="#F1F9A6" stroke-width="6" stroke-dasharray="44 26" transform="rotate(4 1400 690)" opacity=".85"></ellipse><rect x="1230" y="945" width="340" height="76" rx="38" fill="#F1F9A6" stroke="#1F1412" stroke-width="4"></rect><text x="1400" y="983" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="44" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<p class="hint">Physically move to where they were standing. Step into their model of the world, into their shoes. You are now them. Answer as if you are them.</p>
+<ul class="prompts"><li>What was happening in your (their) life?</li><li>What were you (they) afraid of?</li><li>What resources didn’t you (they) have?</li><li>What pain were you (they) carrying?</li><li>What were you (they) trying to achieve?</li><li>What did you (they) need?</li></ul>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">Optional notes</span><textarea class="field" style="min-height: 84px" value="{{v.rCrossNotes}}" onChange="{{on.rCrossNotes}}" placeholder="As them, I noticed…"></textarea></label>
+<button class="{{crossed.cls}}" style="align-self: flex-start" onClick="{{crossed.toggle}}">{{crossed.label}}</button>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.r3}}">4</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 3</span><h2 class="steptitle">Stand in the middle of the bridge</h2></div></div>
+<figure class="pic"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1920 1032" aria-hidden="true"><ellipse cx="980" cy="290" rx="250" ry="250" fill="none" stroke="#F1F9A6" stroke-width="11" stroke-linecap="round" transform="rotate(-6 980 290)"></ellipse><ellipse cx="986" cy="286" rx="260" ry="244" fill="none" stroke="#F1F9A6" stroke-width="6" stroke-dasharray="44 26" transform="rotate(4 980 290)" opacity=".85"></ellipse><rect x="1260" y="240" width="340" height="76" rx="38" fill="#F1F9A6" stroke="#1F1412" stroke-width="4"></rect><text x="1430" y="278" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="44" fill="#1F1412">YOU’RE HERE</text></svg></figure>
+<p class="hint">Move to a third spot where you can see both where you stood as yourself and where they stood. Become someone who loves you both, or a kind bystander who wants the best for you both. It can be me (Sav) if you need someone to imagine.</p>
+<ul class="prompts"><li>What do you see that they cannot?</li><li>What do both people need?</li><li>What can each person learn?</li><li>What wisdom lives here?</li></ul>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">Optional notes</span><textarea class="field lime" style="min-height: 84px" value="{{v.rMiddleNotes}}" onChange="{{on.rMiddleNotes}}" placeholder="From the middle, I can see…"></textarea></label>
+<button class="{{middle.cls}}" style="align-self: flex-start" onClick="{{middle.toggle}}">{{middle.label}}</button>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{done.r4}}">5</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 4</span><h2 class="steptitle">Put it down</h2></div></div>
+<figure class="pic"><img src="/tools/assets/03a1b71b1a1f702415ce3062b36b4132.jpg" alt="Three people seen from above standing at the points of a triangle: A is you, B is them, C is the observer"><svg class="ring" viewBox="0 0 1920 1032" aria-hidden="true"><ellipse cx="500" cy="690" rx="220" ry="250" fill="none" stroke="#F1F9A6" stroke-width="11" stroke-linecap="round" transform="rotate(-6 500 690)"></ellipse><ellipse cx="506" cy="686" rx="230" ry="244" fill="none" stroke="#F1F9A6" stroke-width="6" stroke-dasharray="44 26" transform="rotate(4 500 690)" opacity=".85"></ellipse><rect x="330" y="940" width="340" height="76" rx="38" fill="#F1F9A6" stroke="#1F1412" stroke-width="4"></rect><text x="500" y="978" text-anchor="middle" dominant-baseline="central" font-family="'Patrick Hand SC', cursive" font-size="44" fill="#1F1412">BACK TO YOU</text></svg></figure>
+<p class="hint">Place your hand on your chest. Take a slow breath. Then say each one out loud, and tap it once you have.</p>
+<div style="display: flex; flex-direction: column; gap: 10px"><sc-for list="{{putSays}}" as="p" hint-placeholder-count="4"><button class="{{p.cls}}" aria-pressed="{{p.pressed}}" onClick="{{p.toggle}}"><span class="tick"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{p.label}}</button></sc-for></div>
+<div class="q"><span class="qtext">Now move it through your body. Whatever feels right.</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{moveChips}}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div></div>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; line-height: 1.4; color: #4E0C08">The bridge has been crossed. You don’t have to keep standing at the beginning of it.</p>
+<button class="{{releaseDoneCls}}" style="align-self: flex-start" onClick="{{finishRelease}}">{{releaseDoneLabel}}</button>
+</section>
+
+<section class="step" style="background: #FBE6FC; border-color: #F4C2F7">
+<div class="stephead"><span class="stepnum" style="background: #FFFFFF; color: #4E0C08; box-shadow: inset 0 0 0 1.5px #4E0C08"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3.1 1.6-1.9 3-3.1 5.2-3.1 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"></path></svg></span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Aftercare</span><h2 class="steptitle">Let your nervous system settle</h2></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Don’t jump straight back into work, emails or housework. Think of this like cleaning out an emotional cupboard: things can feel messier before they feel lighter. Pick your aftercare.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{careChips}}" as="c" hint-placeholder-count="11"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div>
+<p style="margin: 0; font-size: 15px; font-weight: 600">Be gentle with yourself. You’ve just done important work.</p>
+</section>
+</sc-if>
+
+<section class="dark" style="position: relative; overflow: hidden; padding: 32px 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="120" height="120" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="position: absolute; right: -18px; top: -18px; opacity: .25"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<div class="hand" style="font-size: 17px; color: #F1F9A6">A final reminder</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.08">The goal is understanding. The goal is release.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">This isn’t about excusing behaviour. It isn’t about forcing forgiveness, or reconnecting with someone. It’s about building a bridge between where you’ve been and where you want to go.</p>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; color: #F1F9A6">Take the lesson. Leave the pain. Keep moving forward.</p>
+</section>
+
+<sc-if value="{{isPage}}" hint-placeholder-val="{{ false }}">
+<section class="callout lime" style="padding: 20px 22px; align-items: flex-start">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="hand" style="font-size: 16px; color: #4E0C08">Nothing here gets saved, on purpose</span>
+<span>Re-reading the old story is how your brain keeps rehearsing it. So once you close this page, what you wrote is gone. Take the lesson with you and leave the pain on the page.</span>
+</div>
+</section>
+</sc-if>
+
+<footer style="display: flex; flex-direction: column; gap: 18px; padding-top: 20px; border-top: 1.5px solid #EDE3DF">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: #6A5A57">
+<span>Nothing you write here is saved or stored anywhere.</span>
+<sc-if value="{{isPage}}" hint-placeholder-val="{{ false }}"><button class="{{clearCls}}" onClick="{{clearAll}}">{{clearLabel}}</button></sc-if>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 1.6; color: #6A5A57">This resource is for education and self-reflection, not therapy or medical advice. Need support? Lifeline 13 11 14 · Beyond Blue 1300 22 4636 · 000 in an emergency (Australia).</p>
+<div style="background: #4E0C08; color: #FFF4EE; border-radius: 24px; padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="#F1F9A6" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 21px">Colour Me Neurospicy</span>
+</div>
+<a href="https://www.instagram.com/colour_me_neurospicy/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #F1F9A6; color: #1F1412; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"></circle></svg>@colour_me_neurospicy</a>
+</div>
+</footer>
+
+</div>
+</div>
+</template>
+<script>
+var BT_ASSETS = {"ef10bcdcd5589c500c63bdf5f1b8414f": "ef10bcdcd5589c500c63bdf5f1b8414f.svg", "b54cf8597b937e67a8020b66d1ce173f": "b54cf8597b937e67a8020b66d1ce173f.svg", "2b53ad178b0e3d521afaed32044bbc9a": "2b53ad178b0e3d521afaed32044bbc9a.svg", "e5c14dd4bed1c2d0ce2392c1bc2d4937": "e5c14dd4bed1c2d0ce2392c1bc2d4937.svg", "71906935f7ead0390bb7742d8e63c8e7": "71906935f7ead0390bb7742d8e63c8e7.jpg", "09119c37c8a55b91cf2d126550d45a8b": "09119c37c8a55b91cf2d126550d45a8b.svg", "7e9394b0f49609b612799761708df1af": "7e9394b0f49609b612799761708df1af.svg", "b57862c5b864a8a3e79922d5081c1283": "b57862c5b864a8a3e79922d5081c1283.jpg", "f255c82adfac072178e45af61ee62c83": "f255c82adfac072178e45af61ee62c83.svg", "965835d597d63dbfb533bd132c48b010": "965835d597d63dbfb533bd132c48b010.svg", "bd303b99bc50c21c97bae21271dfb7f7": "bd303b99bc50c21c97bae21271dfb7f7.jpg", "d1f9b4795dae252f5dcac8de6abe6c17": "d1f9b4795dae252f5dcac8de6abe6c17.svg", "43731cbfd8ad9750c3328571417e1a07": "43731cbfd8ad9750c3328571417e1a07.svg", "10a013e0f6b891409d31736d1344fdf0": "10a013e0f6b891409d31736d1344fdf0.svg", "025d0ad08a140b1b7215508698058e2e": "025d0ad08a140b1b7215508698058e2e.svg", "3ab75ae85fd37ba180922aa6e0d5f4fe": "3ab75ae85fd37ba180922aa6e0d5f4fe.jpg", "b79475d66d94092e94468da4478102ef": "b79475d66d94092e94468da4478102ef.svg", "4258c786c9eccfaff671fe9a3b1ef84c": "4258c786c9eccfaff671fe9a3b1ef84c.svg", "7d27dee54b284a29494d637973548312": "7d27dee54b284a29494d637973548312.svg", "877343dccbde56e6e1f457a2d3ece211": "877343dccbde56e6e1f457a2d3ece211.png", "cc66e7467fffaccd352c974bae6611a8": "cc66e7467fffaccd352c974bae6611a8.svg", "81f32f69ffd7998e4b19f6ed1e33401d": "81f32f69ffd7998e4b19f6ed1e33401d.svg", "b8d6cf789c3b52fd6c8e25329142b20f": "b8d6cf789c3b52fd6c8e25329142b20f.svg", "663cd271223c87a3e9eb85198c255ca8": "663cd271223c87a3e9eb85198c255ca8.svg", "03a1b71b1a1f702415ce3062b36b4132": "03a1b71b1a1f702415ce3062b36b4132.jpg", "1c72b87736b666af4e241b1862672e1e": "1c72b87736b666af4e241b1862672e1e.svg", "3b021becdd8ab273a2eeff31458d67f2": "3b021becdd8ab273a2eeff31458d67f2.svg", "a802f77d6b18e31d9167f9e784a42793": "a802f77d6b18e31d9167f9e784a42793.svg", "bc28e522586c56fb459324f519613318": "bc28e522586c56fb459324f519613318.png", "2aa85a10e798befdc83d0b8a2eb9f860": "2aa85a10e798befdc83d0b8a2eb9f860.jpg", "8d2542df94e91b4e443b9304ceec32bb": "8d2542df94e91b4e443b9304ceec32bb.jpg", "b221da10573087306329469db7d06cf2": "b221da10573087306329469db7d06cf2.svg", "52b17553ad29af6204157d1ee2d48ea0": "52b17553ad29af6204157d1ee2d48ea0.svg", "6fdb31359ffcd34386c1b2a3d1ff2326": "6fdb31359ffcd34386c1b2a3d1ff2326.svg", "f224fca6b2efed3cebbe0db225a0abc2": "f224fca6b2efed3cebbe0db225a0abc2.svg", "452f32bba27a33ca67bbcf34f3330ede": "452f32bba27a33ca67bbcf34f3330ede.svg", "7b84cfb3e4ab4f28e1a861ae1ba93092": "7b84cfb3e4ab4f28e1a861ae1ba93092.svg", "6b709ad5c341dfacd0138210abbfa28e": "6b709ad5c341dfacd0138210abbfa28e.svg", "6c4de069e172edaa21031a8fb148e873": "6c4de069e172edaa21031a8fb148e873.svg", "9190031cc80e54bc31e46ed99c69027a": "9190031cc80e54bc31e46ed99c69027a.svg", "8f13a4480c39f62268d2a911bbd4ea57": "8f13a4480c39f62268d2a911bbd4ea57.jpg", "0ce2dc82c689d1a7e56585a59cb18d59": "0ce2dc82c689d1a7e56585a59cb18d59.svg", "43638181699d127e79d590bfeab1892a": "43638181699d127e79d590bfeab1892a.svg", "738ba7703ba55beb0d52acfc42beea68": "738ba7703ba55beb0d52acfc42beea68.png", "a49bbf3641d388a230741ffb5695ce25": "a49bbf3641d388a230741ffb5695ce25.jpg", "11d8af0544f4ee135324e200958dffee": "11d8af0544f4ee135324e200958dffee.png", "c8af3be239e308bc789ccaf133f93013": "c8af3be239e308bc789ccaf133f93013.svg", "88bb3cb53b2e3e99e5e4cab4f5c5e6b9": "88bb3cb53b2e3e99e5e4cab4f5c5e6b9.svg", "0ef8dcdd586ecd0ff80676f1e620be34": "0ef8dcdd586ecd0ff80676f1e620be34.svg", "fced005bcbb1883b152b43df153597d4": "fced005bcbb1883b152b43df153597d4.svg", "81911b4f2b0a19c8881b592a692b00c5": "81911b4f2b0a19c8881b592a692b00c5.svg", "0a978b3016f288611f08f67842c8b98f": "0a978b3016f288611f08f67842c8b98f.jpg", "1049cd27a6587d7e91092694eab2e91e": "1049cd27a6587d7e91092694eab2e91e.jpg", "405b3bf884136aaf14d362ee919d81a0": "405b3bf884136aaf14d362ee919d81a0.svg", "7e6688190a34abe274c03157e1730a80": "7e6688190a34abe274c03157e1730a80.svg", "55d9dcf01edfe5cec122ae90add04088": "55d9dcf01edfe5cec122ae90add04088.svg", "ed17ec258b156c8af9563a76d76a4939": "ed17ec258b156c8af9563a76d76a4939.jpg", "6bd0fad25e0de596ee8ebb4cbca3bf31": "6bd0fad25e0de596ee8ebb4cbca3bf31.svg", "e3a6bf877a877bbb4f4bfbb92d716f27": "e3a6bf877a877bbb4f4bfbb92d716f27.svg", "f846e29006165c8ba62f143c8d86e3f8": "f846e29006165c8ba62f143c8d86e3f8.jpg", "7ebb757ffeac9fd9a4d4e694c6c3d038": "7ebb757ffeac9fd9a4d4e694c6c3d038.svg", "4d24fca30f926a50d0d14581f83313a8": "4d24fca30f926a50d0d14581f83313a8.svg", "a11ad324fdb2f2c6ffee1e5895c941e5": "a11ad324fdb2f2c6ffee1e5895c941e5.svg", "e01ae0b495eb9a16003c5c3192cb7164": "e01ae0b495eb9a16003c5c3192cb7164.jpg", "67991f5dea14c9c436b7f8e6457ce229": "67991f5dea14c9c436b7f8e6457ce229.svg", "68c35e766ce7ce76f0d716155e97d01a": "68c35e766ce7ce76f0d716155e97d01a.svg", "5156dbc53efb3eb2089fc5827d2cc81f": "5156dbc53efb3eb2089fc5827d2cc81f.svg", "0b3e57663dc4bfebaf05c38b7cbbb3dc": "0b3e57663dc4bfebaf05c38b7cbbb3dc.jpg", "1f98186a04d8d535455be88f9ee9c6ab": "1f98186a04d8d535455be88f9ee9c6ab.svg", "3aed56c14b09721bd71008cf963bddda": "3aed56c14b09721bd71008cf963bddda.svg", "8cedfdc02165a506b164a81914fdb102": "8cedfdc02165a506b164a81914fdb102.svg", "4afec1221a96ad247f8e9047bf2fdccd": "4afec1221a96ad247f8e9047bf2fdccd.png", "32fddd771dd54995c7a682d2971acfab": "32fddd771dd54995c7a682d2971acfab.jpg", "1c5afb0325fedc27b1edea4e86f7787a": "1c5afb0325fedc27b1edea4e86f7787a.jpg", "08e8c138372dc36024988a87f1c28229": "08e8c138372dc36024988a87f1c28229.svg", "e0bc55bd2cd5fbb3817c4052002acb5a": "e0bc55bd2cd5fbb3817c4052002acb5a.svg", "60293a8e33fa4bf39988e78921a49568": "60293a8e33fa4bf39988e78921a49568.svg", "9171e26bad3c0414cf5231254b8e2146": "9171e26bad3c0414cf5231254b8e2146.svg", "7380668367de1af6d003f352f99f4aa5": "7380668367de1af6d003f352f99f4aa5.jpg", "a97517a8baec7a2513ad4de41c038eae": "a97517a8baec7a2513ad4de41c038eae.svg", "4aef4d64618ed5ff25eff66c4068851e": "4aef4d64618ed5ff25eff66c4068851e.svg", "1a4d7d76b40c48461192e9638d478fd0": "1a4d7d76b40c48461192e9638d478fd0.svg", "3dff29bcfb1faf0674d0d563eba2a549": "3dff29bcfb1faf0674d0d563eba2a549.svg", "b85e326874f11fdec73759cb3b297578": "b85e326874f11fdec73759cb3b297578.svg", "5b0320d24f83f454bd2d9624b8d63415": "5b0320d24f83f454bd2d9624b8d63415.svg", "3483ab7ef64fe4aa0dfaf595410a7b23": "3483ab7ef64fe4aa0dfaf595410a7b23.svg", "7205741504b90f111c0451fab85ff2d3": "7205741504b90f111c0451fab85ff2d3.svg", "4d15e84cdb8661ef1361585cdfc81997": "4d15e84cdb8661ef1361585cdfc81997.svg", "c0ee1f2c4eb226136fc9f66e3cd4e33e": "c0ee1f2c4eb226136fc9f66e3cd4e33e.jpg", "1f34b601a2667324ae5114bb4be344d7": "1f34b601a2667324ae5114bb4be344d7.svg", "4269a49363538fe24f761fbe92410788": "4269a49363538fe24f761fbe92410788.svg", "c97210ce3db85305c27738cefa1d232b": "c97210ce3db85305c27738cefa1d232b.svg", "5c6a4701b580c26661b1603710d8b45d": "5c6a4701b580c26661b1603710d8b45d.svg", "114034fde36eefbd5f3ebf16913978a4": "114034fde36eefbd5f3ebf16913978a4.jpg", "86849d58f49611f02400cea832d04565": "86849d58f49611f02400cea832d04565.svg", "423aca9e5b3ef0ad25536bd6b48a95a3": "423aca9e5b3ef0ad25536bd6b48a95a3.jpg", "02acac104a668adfde1e12e538c95722": "02acac104a668adfde1e12e538c95722.svg", "e764c61511bfe0dca82c3f449cc298c5": "e764c61511bfe0dca82c3f449cc298c5.png", "a88193d73fc4900672277473c572dbc5": "a88193d73fc4900672277473c572dbc5.jpg", "6a3871dfb91267d41e8251fe86eb7ba2": "6a3871dfb91267d41e8251fe86eb7ba2.svg", "10ef3dfe4743f20e35f479cfda7bd452": "10ef3dfe4743f20e35f479cfda7bd452.svg", "2698eb06626b25eab3cb6a5f2980bbd4": "2698eb06626b25eab3cb6a5f2980bbd4.svg", "ee8b57bbba94cad10d89e031ef3c7520": "ee8b57bbba94cad10d89e031ef3c7520.svg", "b1b330fb1915ecba19c970fe1a381456": "b1b330fb1915ecba19c970fe1a381456.svg", "2fd7c05d8e6485ce7d82e1b7ae169442": "2fd7c05d8e6485ce7d82e1b7ae169442.svg", "42148b886659a14145d923ab0ee21137": "42148b886659a14145d923ab0ee21137.png", "780a7a3decc747e8abc213e52d1252a8": "780a7a3decc747e8abc213e52d1252a8.svg", "0c09469bcdc2e20c851887902c41e560": "0c09469bcdc2e20c851887902c41e560.svg", "163ccf61ba6c54b85986ba91ed14db5a": "163ccf61ba6c54b85986ba91ed14db5a.png", "cf917aaa32f94007a6787e2fd82f83aa": "cf917aaa32f94007a6787e2fd82f83aa.svg", "27746f0af31163feb01b3a0323738f60": "27746f0af31163feb01b3a0323738f60.svg", "cbfb24b61c4ae6264c959964f082362b": "cbfb24b61c4ae6264c959964f082362b.jpg", "d5f1511a86c00d5f6c0ac6fc45bde973": "d5f1511a86c00d5f6c0ac6fc45bde973.jpg", "62768a1cfc0371b2fa3f28ec1434cfe3": "62768a1cfc0371b2fa3f28ec1434cfe3.svg", "ca584f1d5a317480f9135b46ac102964": "ca584f1d5a317480f9135b46ac102964.svg", "a1d75ea44d2f8b5daa7b340010a626ea": "a1d75ea44d2f8b5daa7b340010a626ea.svg", "2796011af48e177c5e14bfd47588cdac": "2796011af48e177c5e14bfd47588cdac.svg", "16ececf4aed9bfe373643768c34d7c7b": "16ececf4aed9bfe373643768c34d7c7b.png", "e8a0e2ab76757574ee552de21c54ac1e": "e8a0e2ab76757574ee552de21c54ac1e.svg", "1756c7ff302323a2435e501832a39fe4": "1756c7ff302323a2435e501832a39fe4.svg", "c750a2cd8d0086940bbc3eb5d1b276e7": "c750a2cd8d0086940bbc3eb5d1b276e7.svg", "a158db7f93031f794aa3e01d33cb6854": "a158db7f93031f794aa3e01d33cb6854.svg", "49f0892d6b07cf278010027527f0260b": "49f0892d6b07cf278010027527f0260b.jpg", "c6c4d7181abcef8e3f1eb0d6edbe60e5": "c6c4d7181abcef8e3f1eb0d6edbe60e5.jpg", "b56d90f66181fc1cb147686bd30dd4d2": "b56d90f66181fc1cb147686bd30dd4d2.svg", "c1debaa8b5d0bd188a8969bba732958b": "c1debaa8b5d0bd188a8969bba732958b.svg", "f3007d98cfc9c98fbe52e337a6e48165": "f3007d98cfc9c98fbe52e337a6e48165.jpg", "df5f40b96c4c2a449d74b145d546fcc0": "df5f40b96c4c2a449d74b145d546fcc0.svg", "7bc686bd4fdef3500756c9422442a127": "7bc686bd4fdef3500756c9422442a127.svg", "19f0304514144c82ce095a59a4ede0fd": "19f0304514144c82ce095a59a4ede0fd.jpg", "fcb1ffb42bbafddcd8b9d42d3e510752": "fcb1ffb42bbafddcd8b9d42d3e510752.svg", "006fdaca6d5f43b131a7c3d521b57322": "006fdaca6d5f43b131a7c3d521b57322.jpg", "946f61e3191cc43bba687791f5fba00c": "946f61e3191cc43bba687791f5fba00c.jpg", "cc94bb101e31217a6c9b6e75bb4f0c8a": "cc94bb101e31217a6c9b6e75bb4f0c8a.svg", "66a3fb64acd08b469b45a9f212f7767f": "66a3fb64acd08b469b45a9f212f7767f.svg", "21dd3441fa1468c37623c40e7df368b5": "21dd3441fa1468c37623c40e7df368b5.jpg", "d7dfcea1b0c2a7519e1b8001ab335752": "d7dfcea1b0c2a7519e1b8001ab335752.svg", "6c2716ab4aea16ab43052f1471a489ab": "6c2716ab4aea16ab43052f1471a489ab.jpg", "4988304a4110049ec389935f47c4436b": "4988304a4110049ec389935f47c4436b.svg", "6b91806f2ce9b2ff827e2833f57a350b": "6b91806f2ce9b2ff827e2833f57a350b.png", "51497c2cfaa41f0357b287d0f8c03c58": "51497c2cfaa41f0357b287d0f8c03c58.png", "ef629e895e8a8a3f0e492f11489caa92": "ef629e895e8a8a3f0e492f11489caa92.png", "e2fc964b6b5c30a9366d14211bd9d7cc": "e2fc964b6b5c30a9366d14211bd9d7cc.jpg", "dde5b214fec388cbe7d3398ea59dd9fc": "dde5b214fec388cbe7d3398ea59dd9fc.png", "cedbf205ff92f4058c52fd7e5f54ba6a": "cedbf205ff92f4058c52fd7e5f54ba6a.svg", "e27795e5d45b6fa9ef22084a5eaaa3ef": "e27795e5d45b6fa9ef22084a5eaaa3ef.svg", "1623037cd6ab22214835e9942ffb81c5": "1623037cd6ab22214835e9942ffb81c5.svg", "bb13b59b8e3ecad2e8c389d6596a1c51": "bb13b59b8e3ecad2e8c389d6596a1c51.jpg", "3f39c5e191cd716cd67b76399e8c408a": "3f39c5e191cd716cd67b76399e8c408a.svg", "6fd5963d5d88fb450238ac697ca08df7": "6fd5963d5d88fb450238ac697ca08df7.svg", "5d5e574219f73922043f755784dc386d": "5d5e574219f73922043f755784dc386d.svg", "ac603d9216b5df900f2fd5e68226d809": "ac603d9216b5df900f2fd5e68226d809.svg", "8984eb28e549e3701f8618326ded6bbc": "8984eb28e549e3701f8618326ded6bbc.svg", "b63a16aeabaa5e7f2d18fba7b2afb5bf": "b63a16aeabaa5e7f2d18fba7b2afb5bf.svg", "49b9549cb566e401a6413476bea140d6": "49b9549cb566e401a6413476bea140d6.svg", "492bda7f3d146b97ff251c39557adaee": "492bda7f3d146b97ff251c39557adaee.svg", "155c64712190eac9be159d6ad01d6e35": "155c64712190eac9be159d6ad01d6e35.svg", "8ae7156642df3a103106d8a0212efa15": "8ae7156642df3a103106d8a0212efa15.svg", "b75da40bc538e06270e3ddff5ce8ab48": "b75da40bc538e06270e3ddff5ce8ab48.svg", "98ed6256b7ba6446eace5a186aa343d6": "98ed6256b7ba6446eace5a186aa343d6.svg", "51d86cd4ce74b76e1d80802704533ad4": "51d86cd4ce74b76e1d80802704533ad4.svg", "39dc06590a0be01292c4b7e5b25de439": "39dc06590a0be01292c4b7e5b25de439.pdf", "71852cc02f3594a790bd0603f53f2526": "71852cc02f3594a790bd0603f53f2526.svg", "17c3ff0a134e9e88eeb1e075a27b9d14": "17c3ff0a134e9e88eeb1e075a27b9d14.svg", "393d1cd0363a6c807f49f86f0f9c640d": "393d1cd0363a6c807f49f86f0f9c640d.svg", "ed008a9b597eb58f70ccba16ad6f2737": "ed008a9b597eb58f70ccba16ad6f2737.svg", "ce1f0d0a137e909226f899170d5bf322": "ce1f0d0a137e909226f899170d5bf322.jpg", "3ebf6777f12e2a8760725def30113f99": "3ebf6777f12e2a8760725def30113f99.svg"};
+function BT_ASSET(id) { return '/tools/assets/' + (BT_ASSETS[id] || id); }
+
+
+var WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+var ANY = /\{\{\s*([^}]+?)\s*\}\}/g;
+var SVGNS = 'http://www.w3.org/2000/svg';
+function lookup(path, scopes) {
+  path = path.trim();
+  if (path === 'true') return true; if (path === 'false') return false; if (path === 'null') return null;
+  if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+  var parts = path.split('.'), base;
+  for (var i = scopes.length - 1; i >= 0; i--) { var sc = scopes[i]; if (sc && typeof sc === 'object' && parts[0] in sc) { base = sc[parts[0]]; break; } }
+  for (var j = 1; j < parts.length; j++) { if (base == null) return undefined; base = base[parts[j]]; }
+  return base;
+}
+function interp(str, scopes) { var m = WHOLE.exec(str); if (m) return lookup(m[1], scopes); return str.replace(ANY, function (_, p) { var v = lookup(p, scopes); return v == null ? '' : String(v); }); }
+function hole(attr) { return attr.replace(/^\s*\{\{|\}\}\s*$/g, ''); }
+var EVENTS = { onclick: 'click', onkeydown: 'keydown', oninput: 'input', onchange: 'change', onpointerdown: 'pointerdown', onpointermove: 'pointermove', onpointerup: 'pointerup', onwheel: 'wheel' };
+function build(nodes, scopes) {
+  var out = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    if (n.nodeType === 3) { var tv = interp(n.nodeValue, scopes); out.push(tv == null ? '' : String(tv)); continue; }
+    if (n.nodeType !== 1) continue;
+    var tag = n.localName;
+    if (tag === 'sc-if') { if (lookup(hole(n.getAttribute('value')), scopes)) out.push.apply(out, build(n.childNodes, scopes)); continue; }
+    if (tag === 'sc-for') { var list = lookup(hole(n.getAttribute('list')), scopes) || [], as = n.getAttribute('as'); for (var k = 0; k < list.length; k++) { var sc = {}; sc[as] = list[k]; sc.$index = k; out.push.apply(out, build(n.childNodes, scopes.concat([sc]))); } continue; }
+    if (tag === 'dc-import' || tag === 'helmet') continue;
+    var props = {};
+    for (var a = 0; a < n.attributes.length; a++) {
+      var at = n.attributes[a], name = at.name;
+      if (name.indexOf('hint-') === 0) continue;
+      var val = interp(at.value, scopes);
+      if (EVENTS[name]) { var ev = EVENTS[name]; if (name === 'onchange' && (tag === 'textarea' || (tag === 'input' && n.getAttribute('type') !== 'file'))) ev = 'input'; if (typeof val === 'function') props['@' + ev] = val; continue; }
+      props[name] = val;
+    }
+    out.push({ t: tag, p: props, c: tag === 'textarea' ? [] : build(n.childNodes, scopes) });
+  }
+  return out;
+}
+var pendingRefs = [];
+function dispatch(e) { var f = this.__ev && this.__ev[e.type]; if (f) f(e); }
+function setProps(el, props) {
+  var old = el.__p || {};
+  for (var k in old) { if (k in props) continue; if (k[0] === '@') { delete el.__ev[k.slice(1)]; continue; } if (k === 'ref') { if (typeof old.ref === 'function') old.ref(null); continue; } if (k === 'value' || k === 'checked') continue; el.removeAttribute(k); }
+  for (var name in props) {
+    var v = props[name];
+    if (name[0] === '@') { var type = name.slice(1); el.__ev = el.__ev || {}; if (!el.__ev[type] && !(el.__on && el.__on[type])) { el.addEventListener(type, dispatch); (el.__on = el.__on || {})[type] = true; } el.__ev[type] = v; continue; }
+    if (name === 'ref') { if (typeof v === 'function' && old.ref !== v) { if (typeof old.ref === 'function') old.ref(null); pendingRefs.push([v, el]); } continue; }
+    if (name === 'value' && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) { if (el.type === 'file') continue; var sv = v == null ? '' : String(v); if (el.value !== sv) el.value = sv; continue; }
+    if (name === 'checked') { el.checked = !!v && v !== 'false'; continue; }
+    if (name === 'disabled') { if (v === true || v === 'true') el.setAttribute('disabled', ''); else el.removeAttribute('disabled'); continue; }
+    if (v === false || v == null) { el.removeAttribute(name); continue; }
+    if (old[name] !== v || !el.hasAttribute(name)) el.setAttribute(name, v === true ? '' : String(v));
+  }
+  el.__p = props;
+}
+function dropRefs(node) { if (node.nodeType !== 1) return; if (node.__p && typeof node.__p.ref === 'function') node.__p.ref(null); for (var i = 0; i < node.childNodes.length; i++) dropRefs(node.childNodes[i]); }
+function create(v, svg) { if (typeof v === 'string') return document.createTextNode(v); var isSvg = svg || v.t === 'svg'; var el = isSvg ? document.createElementNS(SVGNS, v.t) : document.createElement(v.t); el.__t = v.t; setProps(el, v.p); if (!('data-slot' in v.p)) patchChildren(el, v.c, isSvg && v.t !== 'foreignObject'); return el; }
+function patchChildren(el, kids, svg) {
+  for (var i = 0; i < kids.length; i++) {
+    var v = kids[i], dom = el.childNodes[i];
+    if (typeof v === 'string') { if (dom && dom.nodeType === 3) { if (dom.data !== v) dom.data = v; } else if (dom) { dropRefs(dom); el.replaceChild(document.createTextNode(v), dom); } else el.appendChild(document.createTextNode(v)); continue; }
+    if (dom && dom.nodeType === 1 && dom.__t === v.t) { setProps(dom, v.p); if (!('data-slot' in v.p)) patchChildren(dom, v.c, (svg || v.t === 'svg') && v.t !== 'foreignObject'); }
+    else if (dom) { dropRefs(dom); el.replaceChild(create(v, svg), dom); }
+    else el.appendChild(create(v, svg));
+  }
+  while (el.childNodes.length > kids.length) { var last = el.lastChild; dropRefs(last); el.removeChild(last); }
+}
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(p) { var n = typeof p === 'function' ? p(this.state) : p; this.state = Object.assign({}, this.state, n); this._schedule(); }
+  forceUpdate() { this._schedule(); }
+  _schedule() { var self = this; if (self._queued || self._dead) return; self._queued = true; Promise.resolve().then(function () { self._queued = false; if (self._dead) return; self._render(); if (self.componentDidUpdate) self.componentDidUpdate(); }); }
+  _render() { var vals = this.renderVals(); pendingRefs = []; patchChildren(this._root, build(this._tpl, [vals]), false); var refs = pendingRefs; pendingRefs = []; refs.forEach(function (r) { r[0](r[1]); }); }
+}
+
+window.BT_TOOL = { slug: "understanding-bridge", access: "all", props: {}, cls: (function () {
+
+var UB_KEY = 'understanding-bridge-v1';
+var UB_TEXT = ['qHappened', 'qStory', 'qFacts', 'qTheirView', 'qOther', 'qMeaning', 'qAction', 'dEvent', 'dInside', 'dLooking', 'dThem', 'dSense', 'dWiseOther', 'dWiseSays', 'dMeaning', 'dResources', 'dChoose', 'dShifted', 'rWho', 'rSaidNotes', 'rCrossNotes', 'rMiddleNotes'];
+var UB_OTHER = ['mode', 'qIntent', 'qDone', 'dBefore', 'dAfter', 'dIntent', 'dHow', 'dWise', 'dDone', 'rReady', 'rSaid', 'rCrossed', 'rMiddle', 'rPut', 'rMove', 'rCare', 'rDone'];
+var UB_MODES = [
+  ['quick', 'The Quick Bridge', '3-minute perspective shift', 'When you’re hurt, frustrated, triggered, assuming the worst, or stuck in an RSD spiral.'],
+  ['deep', 'The Deep Bridge', 'Journal · one event', 'Big events, painful memories, old wounds and limiting beliefs that still carry emotional weight.'],
+  ['release', 'The Bridge Release', 'Somatic · out loud', 'When the hurt isn’t attached to one moment. It’s attached to a person.']
+];
+var UB_EXAMPLES = {
+  quick: ['They haven’t replied to my message', 'My partner seemed annoyed', 'My boss gave me feedback', 'Someone cancelled plans', 'I think somebody is judging me', 'I feel rejected', 'I’m creating stories in my head'],
+  deep: ['Being bullied', 'A painful breakup', 'Being cheated on', 'Feeling abandoned', 'A difficult childhood experience', 'A parent constantly criticising you', 'A friendship ending', 'Being rejected', 'A traumatic workplace experience', 'A conflict that changed a relationship'],
+  release: ['A parent who repeatedly hurt, criticised or dismissed you', 'An ex you’re still angry at', 'A friend who let you down again and again', 'A difficult sibling relationship', 'A teacher, coach or boss who left a mark', 'Someone who betrayed your trust', 'Someone who abandoned you', 'Someone who passed away with things unsaid', 'Someone you’ve forgiven in your head but not your body', 'Yourself in the past']
+};
+var UB_EXLABEL = { quick: 'Use it for things like', deep: 'Use it when an event still triggers you, for things like', release: 'Use it for a person, like' };
+var UB_INTENT = [['love', 'Love'], ['fear', 'Fear'], ['both', 'A bit of both'], ['unsure', 'Not sure']];
+var UB_HOW = [['meant', 'They meant to hurt me'], ['unconscious', 'It was unconscious'], ['hurt', 'It came from their own hurt'], ['belief', 'It came from their own limiting belief'], ['unsure', 'Not sure yet']];
+var UB_WISE = [['future', 'Future Me'], ['mentor', 'A mentor'], ['friend', 'A trusted friend'], ['sav', 'Sav'], ['other', 'Someone else']];
+var UB_READY = [['time', 'I have time, no rushing'], ['safe', 'I’m somewhere physically safe'], ['water', 'Water is nearby'], ['nurture', 'I’ve planned something nurturing after'], ['stop', 'I know I can stop any time']];
+var UB_PUT = [['a1', '“I don’t need to carry this anymore.”'], ['a2', '“I release the need to replay this.”'], ['a3', '“I choose to take the lesson and leave the pain.”'], ['a4', '“I choose what happens next.”']];
+var UB_MOVE = [['breathe', 'Breathe'], ['shake', 'Shake'], ['stretch', 'Stretch'], ['dance', 'Dance'], ['cry', 'Cry'], ['walk', 'Walk'], ['journal', 'Journal']];
+var UB_CARE = [['walk', 'Going for a walk'], ['water', 'Drinking water'], ['shower', 'Taking a shower'], ['nature', 'Time in nature'], ['journal', 'Journaling'], ['breath', 'Breathing exercises'], ['move', 'Dancing or moving my body'], ['music', 'Calming music'], ['talk', 'Talking with someone I trust'], ['pet', 'Time with a pet'], ['rest', 'Resting']];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var st = { view: 'home', helpPick: null, mode: 'quick', qIntent: null, qDone: false, dBefore: null, dAfter: null, dIntent: null, dHow: {}, dWise: null, dDone: false, rReady: {}, rSaid: false, rCrossed: false, rMiddle: false, rPut: {}, rMove: {}, rCare: {}, rDone: false, confirmClear: false, copied: '', exportUrl: null, celebrate: null, err: '' };
+    UB_TEXT.forEach(function (k) { st[k] = ''; });
+    this.state = st;
+  }
+
+  componentDidMount() {
+    try {
+      window.localStorage.removeItem(UB_KEY);
+    } catch (e) {}
+  }
+
+  componentDidUpdate() {
+    var s = this.state, out = {};
+    UB_TEXT.concat(UB_OTHER).forEach(function (k) { out[k] = s[k]; });
+
+  }
+
+  flip(field, key) {
+    var next = Object.assign({}, this.state[field]);
+    if (next[key]) delete next[key]; else next[key] = true;
+    var patch = {}; patch[field] = next;
+    this.setState(patch);
+  }
+
+  saveJpeg(cv, name) {
+    var self = this;
+    var url = cv.toDataURL('image/jpeg', 0.92);
+    var fallback = function () {
+      try { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
+      self.setState({ exportUrl: url });
+    };
+    var C = window.claude;
+    if (!C || typeof C.use !== 'function') { fallback(); return; }
+    C.use('downloads').then(function (dl) {
+      if (!dl) { fallback(); return; }
+      cv.toBlob(function (blob) {
+        if (!blob) { fallback(); return; }
+        dl.save({ filename: name, data: blob }).then(function () {}, function (err) { if (err && err.code === 'declined') return; fallback(); });
+      }, 'image/jpeg', 0.92);
+    }, fallback);
+  }
+
+  exportCard(rows, title, dateLabel) {
+    var self = this;
+    var draw = function () {
+      try {
+        var W = 1080, pad = 72, inner = W - pad * 2, S = 2;
+        function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+        function layout(g, paint) {
+          function wrap(text, maxW) {
+            var out = [];
+            String(text).split('\n').forEach(function (para) {
+              var words = para.split(' '), cur = '';
+              words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t; });
+              out.push(cur);
+            });
+            return out;
+          }
+          if (paint) { g.fillStyle = '#4E0C08'; g.fillRect(0, 0, W, 210); }
+          g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+          g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#F1F9A6'; g.fillText('THE UNDERSTANDING BRIDGE', pad, 78); }
+          g.font = '700 60px "Playfair Display", Georgia, serif'; if (paint) { g.fillStyle = '#FFF4EE'; g.fillText(title, pad, 146); }
+          g.font = '400 22px Poppins, sans-serif'; if (paint) { g.fillStyle = '#F6D6CF'; g.fillText(dateLabel, pad, 186); }
+          var y = 230;
+          rows.forEach(function (r) {
+            y += 56;
+            g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#A8231F'; g.fillText(r.label.toUpperCase(), pad, y); }
+            if (r.hi) {
+              g.font = '600 26px Poppins, sans-serif';
+              var hl = wrap(r.text, inner - 40), hh = hl.length * 38 + 30;
+              y += 14;
+              if (paint) { g.fillStyle = r.hi; roundRect(g, pad - 20, y, inner + 40, hh, 22); g.fill(); g.fillStyle = '#1F1412'; hl.forEach(function (l, i) { g.fillText(l, pad, y + 46 + i * 38); }); }
+              y += hh; return;
+            }
+            g.font = '400 26px Poppins, sans-serif';
+            wrap(r.text, inner).forEach(function (l) { y += 38; if (paint) { g.fillStyle = '#1F1412'; g.fillText(l, pad, y); } });
+          });
+          y += 72;
+          var foot = 110;
+          if (paint) {
+            g.fillStyle = '#6A5A57'; g.font = 'italic 400 24px "Playfair Display", Georgia, serif'; g.fillText('Take the lesson. Leave the pain. Keep moving forward.', pad, y);
+            g.fillStyle = '#4E0C08'; g.fillRect(0, y + 40, W, foot);
+            g.textBaseline = 'middle'; g.fillStyle = '#FFF4EE'; g.font = 'italic 600 30px "Playfair Display", Georgia, serif'; g.fillText('Colour Me Neurospicy', pad, y + 40 + foot / 2);
+            g.textAlign = 'right'; g.fillStyle = '#F1F9A6'; g.font = '600 24px Poppins, sans-serif'; g.fillText('@colour_me_neurospicy', W - pad, y + 40 + foot / 2);
+          }
+          return y + 40 + foot;
+        }
+        var probe = document.createElement('canvas').getContext('2d');
+        var H = layout(probe, false);
+        var cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+        var g = cv.getContext('2d'); g.scale(S, S); g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H);
+        layout(g, true);
+        self.saveJpeg(cv, 'my-understanding-bridge.jpg');
+      } catch (e) { self.setState({ err: 'Couldn’t make the image on this device. Try copying it to your notes instead.' }); }
+    };
+    try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw, draw); else draw(); } catch (e) { draw(); }
+  }
+
+  renderVals() {
+    var self = this, s = this.state;
+    var view = (s.view === 'quick' || s.view === 'deep' || s.view === 'release') ? s.view : 'home';
+    var mode = view === 'home' ? 'quick' : view;
+    var go = function (v) { self.setState({ view: v }); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} };
+    var HELP = [
+      ['now', 'Something just happened and my brain is spiralling', 'quick'],
+      ['trig', 'I’m hurt, triggered or assuming the worst about someone', 'quick'],
+      ['old', 'An old memory or event still carries a lot of weight', 'deep'],
+      ['belief', 'One moment shaped a belief I’m still living with', 'deep'],
+      ['person', 'It’s not one moment, it’s a person I keep carrying', 'release'],
+      ['out', 'I’ve analysed it to death. I just need to let it out', 'release']
+    ];
+    var picked = HELP.filter(function (h) { return h[0] === s.helpPick; })[0];
+    var rec = picked ? picked[2] : null;
+    var REC = { quick: ['Sounds like the Quick Bridge. A 3-minute perspective shift to change the meaning, so you change the feeling.', 'Open the Quick Bridge'], deep: ['Sounds like the Deep Bridge. Take one specific event and walk all the way across it.', 'Open the Deep Bridge'], release: ['Sounds like the Bridge Release. Less thinking, more letting it move through your body.', 'Open the Bridge Release'] };
+    var PAGES = { quick: ['The Quick Bridge', 'A 3-minute perspective shift.'], deep: ['The Deep Bridge', 'Your side, their side, and a new understanding in the middle.'], release: ['The Bridge Release', 'When the hurt is attached to a person, not one moment.'] };
+    var t = function (val) { return String(val || '').trim(); };
+    var any = function (o) { return Object.keys(o || {}).some(function (k) { return o[k]; }); };
+    var labelOf = function (list, key) { var f = list.filter(function (o) { return o[0] === key; })[0]; return f ? f[1] : ''; };
+    var onList = function (list, field) { return list.filter(function (o) { return (s[field] || {})[o[0]]; }).map(function (o) { return o[1]; }); };
+
+    var v = {}, on = {};
+    UB_TEXT.forEach(function (k) { v[k] = s[k] || ''; on[k] = function (e) { var p = {}; p[k] = e.target.value; self.setState(p); }; });
+
+    function single(field, opts) {
+      return opts.map(function (o) {
+        var isOn = s[field] === o[0];
+        return { label: o[1], cls: isOn ? 'pick on' : 'pick', pressed: isOn ? 'true' : 'false', pick: function () { var p = {}; p[field] = isOn ? null : o[0]; self.setState(p); } };
+      });
+    }
+    function chips(field, opts) {
+      return opts.map(function (o) {
+        var isOn = !!(s[field] || {})[o[0]];
+        return { label: o[1], cls: isOn ? 'chip on' : 'chip', pressed: isOn ? 'true' : 'false', toggle: function () { self.flip(field, o[0]); } };
+      });
+    }
+    function scale(field) {
+      var out = [];
+      for (var i = 0; i <= 10; i++) {
+        (function (n) {
+          var isOn = s[field] === n;
+          out.push({ label: String(n), aria: n + ' out of 10', cls: isOn ? 'num on' : 'num', pressed: isOn ? 'true' : 'false', pick: function () { var p = {}; p[field] = isOn ? null : n; self.setState(p); } });
+        })(i);
+      }
+      return out;
+    }
+    function doneBtn(field, todo, doneLabel) {
+      var d = !!s[field];
+      return { cls: d ? 'primary done' : 'primary', label: d ? doneLabel : todo, toggle: function () { var p = {}; p[field] = !d; self.setState(p); } };
+    }
+    var celebrate = function (title, sub) {
+      self.setState({ celebrate: { title: title, sub: sub } });
+      clearTimeout(self.celTimer);
+      self.celTimer = setTimeout(function () { self.setState({ celebrate: null }); }, 3800);
+    };
+
+    var answered = {
+      qa: !!(t(s.qHappened) || t(s.qStory) || t(s.qFacts)),
+      qb: !!(t(s.qTheirView) || s.qIntent || t(s.qOther)),
+      qc: !!(t(s.qMeaning) || t(s.qAction)),
+      d0: !!(t(s.dEvent) || s.dBefore !== null && s.dBefore !== undefined),
+      d1: !!(t(s.dInside) || t(s.dLooking)),
+      d2: !!(t(s.dThem) || s.dIntent || any(s.dHow) || t(s.dSense)),
+      d3: !!(s.dWise || t(s.dWiseSays)),
+      d4: !!(t(s.dMeaning) || t(s.dResources) || t(s.dChoose)),
+      d5: !!((s.dAfter !== null && s.dAfter !== undefined) || t(s.dShifted)),
+      r0: !!(t(s.rWho) || any(s.rReady)),
+      r1: !!s.rSaid,
+      r2: !!s.rCrossed,
+      r3: !!s.rMiddle,
+      r4: !!(any(s.rPut) || any(s.rMove) || s.rDone)
+    };
+    var orders = { quick: ['qa', 'qb', 'qc'], deep: ['d0', 'd1', 'd2', 'd3', 'd4', 'd5'], release: ['r0', 'r1', 'r2', 'r3', 'r4'] };
+    var order = orders[mode];
+    var done = {};
+    Object.keys(answered).forEach(function (k) { done[k] = answered[k] ? 'stepnum done' : 'stepnum'; });
+    var doneCount = order.filter(function (k) { return answered[k]; }).length;
+
+    var hasB = typeof s.dBefore === 'number', hasA = typeof s.dAfter === 'number';
+    var shiftText = '';
+    if (hasB && hasA) {
+      if (s.dAfter < s.dBefore) shiftText = 'From ' + s.dBefore + ' down to ' + s.dAfter + '. That’s your brain updating the story.';
+      else if (s.dAfter === s.dBefore) shiftText = 'Still ' + s.dAfter + '. That’s okay. Some bridges take more than one crossing.';
+      else shiftText = 'Up from ' + s.dBefore + ' to ' + s.dAfter + '. Stirring it up is part of the process. Be gentle with yourself and come back to it.';
+    }
+
+    var dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    var titles = { quick: 'My Quick Bridge', deep: 'My Deep Bridge', release: 'My Bridge Release' };
+
+    var summary = [];
+    var add = function (label, text, hi) { if (t(text)) summary.push({ label: label, text: t(text), hi: hi }); };
+    if (mode === 'quick') {
+      add('What happened', s.qHappened);
+      add('The story I was telling myself', s.qStory);
+      add('The actual facts', s.qFacts);
+      add('Through their eyes', s.qTheirView);
+      if (s.qIntent) add('Their likely intention', labelOf(UB_INTENT, s.qIntent));
+      add('What else could be true', s.qOther);
+      add('A meaning that serves me better', s.qMeaning, '#F8FCD6');
+      add('My next move', s.qAction, '#FBE6FC');
+    } else if (mode === 'deep') {
+      add('The event', [t(s.dEvent), hasB ? 'Intensity before: ' + s.dBefore + '/10' : ''].filter(Boolean).join('\n'));
+      add('Inside the event', s.dInside);
+      add('Looking back', s.dLooking);
+      add('Through their eyes', s.dThem);
+      var why = [s.dIntent ? 'Acting from: ' + labelOf(UB_INTENT, s.dIntent).toLowerCase() : '', onList(UB_HOW, 'dHow').join(', ')].filter(Boolean).join('\n');
+      add('Behind it', why);
+      add('What makes more sense now', s.dSense);
+      var wise = s.dWise === 'other' ? t(s.dWiseOther) : labelOf(UB_WISE, s.dWise);
+      add(wise ? 'In the middle: ' + wise : 'The middle of the bridge', s.dWiseSays || (wise ? '…' : ''));
+      add('My new meaning', s.dMeaning, '#F8FCD6');
+      add('Resources then vs now', s.dResources);
+      add('What I choose moving forward', s.dChoose, '#FBE6FC');
+      add('Finish', [hasA ? 'Intensity now: ' + s.dAfter + '/10' + (hasB ? ' (from ' + s.dBefore + ')' : '') : '', t(s.dShifted)].filter(Boolean).join('\n'));
+    } else {
+      add('Who I’m releasing', s.rWho);
+      var steps = [s.rSaid ? 'Said it all from my side' : '', s.rCrossed ? 'Crossed into their shoes' : '', s.rMiddle ? 'Stood in the middle' : ''].filter(Boolean).join('\n');
+      add('Crossing the bridge', steps);
+      add('From my side', s.rSaidNotes);
+      add('From their side', s.rCrossNotes);
+      add('From the middle', s.rMiddleNotes);
+      add('I put it down', onList(UB_PUT, 'rPut').join('\n'), '#FBE6FC');
+      add('How I moved it', onList(UB_MOVE, 'rMove').join(', '));
+      add('My aftercare', onList(UB_CARE, 'rCare').join(', '), '#F8FCD6');
+    }
+
+    var summaryText = function () {
+      return ['THE UNDERSTANDING BRIDGE', titles[mode], dateLabel, ''].concat(summary.map(function (r) { return r.label.toUpperCase() + '\n' + r.text + '\n'; })).concat(['Take the lesson. Leave the pain. Keep moving forward.']).join('\n');
+    };
+
+    var said = doneBtn('rSaid', 'I’ve said it all', 'Said it ✓');
+    var crossed = doneBtn('rCrossed', 'I’ve crossed over', 'Crossed ✓');
+    var middle = doneBtn('rMiddle', 'I’ve seen the whole picture', 'Seen ✓');
+
+    var modeKeys = { quick: ['qHappened', 'qStory', 'qFacts', 'qTheirView', 'qOther', 'qMeaning', 'qAction'], deep: ['dEvent', 'dInside', 'dLooking', 'dThem', 'dSense', 'dWiseOther', 'dWiseSays', 'dMeaning', 'dResources', 'dChoose', 'dShifted'], release: ['rWho', 'rSaidNotes', 'rCrossNotes', 'rMiddleNotes'] };
+    var modeReset = { quick: { qIntent: null, qDone: false }, deep: { dBefore: null, dAfter: null, dIntent: null, dHow: {}, dWise: null, dDone: false }, release: { rReady: {}, rSaid: false, rCrossed: false, rMiddle: false, rPut: {}, rMove: {}, rCare: {}, rDone: false } };
+
+    return {
+      isHome: view === 'home', isPage: view !== 'home',
+      isQuick: view === 'quick', isDeep: view === 'deep', isRelease: view === 'release', notRelease: view === 'quick' || view === 'deep',
+      maxW: view === 'home' ? 1040 : 860,
+      pageTitle: view === 'home' ? '' : PAGES[view][0], pageTag: view === 'home' ? '' : PAGES[view][1],
+      goHome: function () { go('home'); },
+      openQuick: function () { go('quick'); }, openDeep: function () { go('deep'); }, openRelease: function () { go('release'); },
+      helpOpts: HELP.map(function (h) { var isOn = s.helpPick === h[0]; return { label: h[1], cls: isOn ? 'pick on' : 'pick', pressed: isOn ? 'true' : 'false', pick: function () { self.setState({ helpPick: isOn ? null : h[0] }); } }; }),
+      hasRec: !!rec, recText: rec ? REC[rec][0] : '', recBtn: rec ? REC[rec][1] : '',
+      openRec: function () { if (rec) go(rec); },
+      cards: { quick: { cls: rec === 'quick' ? 'bcard rec' : 'bcard', rec: rec === 'quick' }, deep: { cls: rec === 'deep' ? 'bcard rec' : 'bcard', rec: rec === 'deep' }, release: { cls: rec === 'release' ? 'bcard rec' : 'bcard', rec: rec === 'release' } },
+      modes: UB_MODES.map(function (m) {
+        var isOn = mode === m[0];
+        return { title: m[1], tag: m[2], sub: m[3], cls: isOn ? 'mode on' : 'mode', pressed: isOn ? 'true' : 'false', pick: function () { self.setState({ mode: m[0] }); } };
+      }),
+      exLabel: UB_EXLABEL[mode],
+      examples: UB_EXAMPLES[mode].map(function (e) { return { t: e }; }),
+      stepCount: order.length,
+      meter: order.map(function (k) { return { cls: answered[k] ? 'mseg on' : 'mseg' }; }),
+      progressLabel: doneCount === order.length ? 'All ' + order.length + ' steps done. Look at you go.' : doneCount + ' of ' + order.length + ' steps done',
+      done: done, v: v, on: on,
+      qIntentOpts: single('qIntent', UB_INTENT),
+      dIntentOpts: single('dIntent', UB_INTENT),
+      howChips: chips('dHow', UB_HOW),
+      wiseOpts: single('dWise', UB_WISE),
+      wiseIsOther: s.dWise === 'other',
+      beforeOpts: scale('dBefore'),
+      afterOpts: scale('dAfter'),
+      beforeNote: hasB ? 'You started at ' + s.dBefore + '/10. 0 = neutral · 10 = extremely intense' : '0 = neutral · 10 = extremely intense',
+      hasShift: !!shiftText, shiftText: shiftText,
+      readyChips: chips('rReady', UB_READY),
+      said: said, crossed: crossed, middle: middle,
+      putSays: UB_PUT.map(function (o) { var isOn = !!(s.rPut || {})[o[0]]; return { label: o[1], cls: isOn ? 'say on' : 'say', pressed: isOn ? 'true' : 'false', toggle: function () { self.flip('rPut', o[0]); } }; }),
+      moveChips: chips('rMove', UB_MOVE),
+      careChips: chips('rCare', UB_CARE),
+      quickDoneCls: s.qDone ? 'primary done' : 'primary',
+      quickDoneLabel: s.qDone ? 'Bridge crossed ✓' : 'I’ve crossed the bridge',
+      finishQuick: function () {
+        if (s.qDone) { self.setState({ qDone: false }); return; }
+        self.setState({ qDone: true });
+        celebrate('Bridge crossed!', 'You changed the meaning, so you can change the feeling. Now go do that next thing.');
+      },
+      deepDoneCls: s.dDone ? 'primary done' : 'primary',
+      deepDoneLabel: s.dDone ? 'Bridge built ✓' : 'I’ve built my new bridge',
+      finishDeep: function () {
+        if (s.dDone) { self.setState({ dDone: false }); return; }
+        self.setState({ dDone: true });
+        var sub = (hasB && hasA && s.dAfter < s.dBefore) ? 'From ' + s.dBefore + ' down to ' + s.dAfter + '. You took the lesson and left some of the pain.' : 'Whatever shifted, you did brave work today. Be gentle with yourself.';
+        celebrate('New bridge built!', sub);
+      },
+      releaseDoneCls: s.rDone ? 'primary done' : 'primary',
+      releaseDoneLabel: s.rDone ? 'Put down ✓' : 'I’ve put it down',
+      finishRelease: function () {
+        if (s.rDone) { self.setState({ rDone: false }); return; }
+        self.setState({ rDone: true });
+        celebrate('The bridge has been crossed.', 'You don’t have to keep standing at the beginning of it. You’re putting down the backpack. Now, aftercare.');
+      },
+      celebrating: !!s.celebrate,
+      celTitle: (s.celebrate && s.celebrate.title) || '',
+      celSub: (s.celebrate && s.celebrate.sub) || '',
+      closeCelebrate: function () { self.setState({ celebrate: null }); },
+      confetti: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map(function (i) { return { i: i }; }),
+      today: dateLabel,
+      cardTitle: titles[mode],
+      summary: summary.map(function (r) { return { label: r.label, text: r.text }; }),
+      noSummary: summary.length === 0,
+      download: function () {
+        self.setState({ err: '' });
+        self.exportCard(summary.length ? summary : [{ label: 'My bridge', text: 'Nothing written yet.' }], titles[mode], dateLabel);
+      },
+      hasExport: !!s.exportUrl, exportUrl: s.exportUrl || '',
+      closeExport: function () { self.setState({ exportUrl: null }); },
+      copy: function () {
+        var text = summaryText();
+        var fin = function (ok) { self.setState({ copied: ok ? 'ok' : 'fail' }); setTimeout(function () { self.setState({ copied: '' }); }, 2500); };
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function () { fin(true); }, function () { fin(false); }); return; }
+        } catch (e) {}
+        try { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove(); fin(ok); } catch (e) { fin(false); }
+      },
+      copyLabel: s.copied === 'ok' ? 'Copied!' : (s.copied === 'fail' ? 'Couldn’t copy, try a screenshot' : 'Copy to my notes'),
+      hasErr: !!s.err, err: s.err || '',
+      clearCls: s.confirmClear ? 'ghost warn' : 'ghost',
+      clearLabel: s.confirmClear ? 'Tap again to clear it all' : 'Clear what I wrote',
+      clearAll: function () {
+        if (!self.state.confirmClear) { self.setState({ confirmClear: true }); setTimeout(function () { self.setState({ confirmClear: false }); }, 4000); return; }
+        var p = Object.assign({ confirmClear: false }, modeReset[mode]);
+        modeKeys[mode].forEach(function (k) { p[k] = ''; });
+        self.setState(p);
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+      }
+    };
+  }
+}
+
+return Component;
+})() };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/course.js"></script>
+<script src="/js/saves.js"></script>
+<script src="/js/tool-shell.js"></script>
+</body>
+</html>

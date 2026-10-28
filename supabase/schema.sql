@@ -112,3 +112,64 @@ create policy "admin writes settings" on public.app_settings for all using (publ
 
 grant execute on function public.touch_last_seen() to authenticated;
 grant execute on function public.is_admin() to authenticated;
+
+-- Clients can change their own name from their profile (nothing else on their profile row)
+create or replace function public.update_my_profile(new_name text) returns void
+language sql security definer set search_path = public as $$
+  update public.profiles set full_name = left(trim(new_name), 120) where id = auth.uid();
+$$;
+grant execute on function public.update_my_profile(text) to authenticated;
+
+-- Coaching agreements: Sav sets the package (terms) per client; the client reads it and signs in the app.
+-- Clients can only read their own row and sign it through sign_my_contract (they can't change the terms).
+create table if not exists public.contracts (
+  user_id uuid primary key references auth.users on delete cascade,
+  terms jsonb not null default '{}'::jsonb,
+  status text not null default 'draft',          -- draft | sent | signed
+  signed jsonb,                                   -- { client: {...her details, consent, signedName...}, terms: {...exact terms she signed} }
+  signed_at timestamptz,
+  updated_at timestamptz not null default now()
+);
+alter table public.contracts enable row level security;
+drop policy if exists "read own contract or admin" on public.contracts;
+create policy "read own contract or admin" on public.contracts for select using (user_id = auth.uid() or public.is_admin());
+drop policy if exists "admin manages contracts" on public.contracts;
+create policy "admin manages contracts" on public.contracts for all using (public.is_admin()) with check (public.is_admin());
+
+create or replace function public.sign_my_contract(sig jsonb) returns timestamptz
+language plpgsql security definer set search_path = public as $$
+declare t timestamptz := now();
+begin
+  update public.contracts
+     set signed = jsonb_build_object('client', sig, 'terms', terms), signed_at = t, status = 'signed', updated_at = t
+   where user_id = auth.uid() and status = 'sent';
+  if not found then raise exception 'No agreement waiting to be signed'; end if;
+  return t;
+end $$;
+grant execute on function public.sign_my_contract(jsonb) to authenticated;
+
+-- Coach-only notes about each client (only Sav can see or change these):
+-- her own photo of them, Human Design / DISC screenshots + notes, and 1:1 session records
+-- (Zoom AI summary, transcript, Google Drive video link, her notes).
+create table if not exists public.coach_clients (
+  client_id uuid primary key references auth.users on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+alter table public.coach_clients enable row level security;
+drop policy if exists "admin only coach_clients" on public.coach_clients;
+create policy "admin only coach_clients" on public.coach_clients for all using (public.is_admin()) with check (public.is_admin());
+
+-- Phone notifications: one row per phone/browser that said yes to notifications.
+-- Clients pick a reminder hour (in their own timezone); Sav's rows get a ping for new wins and signed agreements.
+create table if not exists public.push_subs (
+  endpoint text primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  sub jsonb not null,
+  tz text,
+  remind_hour int,
+  updated_at timestamptz default now()
+);
+alter table public.push_subs enable row level security;
+drop policy if exists "own push subs" on public.push_subs;
+create policy "own push subs" on public.push_subs for all using (user_id = auth.uid()) with check (user_id = auth.uid());

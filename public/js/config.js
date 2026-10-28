@@ -7,3 +7,11 @@ window.BT_CONFIG = {
   aiEnabled: true,      // AI Coach Sav buttons (needs ANTHROPIC_API_KEY set in Netlify)
   coachName: 'Sav'
 };
+
+// On the private preview link, show a small banner so it's obvious this isn't the live app.
+if (/^preview--/.test(location.hostname)) document.addEventListener('DOMContentLoaded', function () {
+  var b = document.createElement('div');
+  b.textContent = 'PREVIEW · not the live app';
+  b.setAttribute('style', 'position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99999;padding:4px 14px;border-radius:0 0 12px 12px;background:#F28C3B;color:#1F1412;font:600 12px Poppins,system-ui,sans-serif;letter-spacing:.04em;pointer-events:none');
+  document.body.appendChild(b);
+});

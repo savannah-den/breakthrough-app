@@ -1,0 +1,1191 @@
+[
+ {
+  "id": "anxiety",
+  "label": "I’m anxious or worried",
+  "kw": [
+   "anxious",
+   "anxiety",
+   "worry",
+   "worried",
+   "what if",
+   "spiral",
+   "spiralling",
+   "nervous",
+   "fear",
+   "scared",
+   "dread",
+   "future",
+   "overthinking",
+   "overthink",
+   "panic",
+   "panicky",
+   "on edge",
+   "chest tight",
+   "racing heart",
+   "catastrophising",
+   "worst case"
+  ],
+  "line": "Your brain is time-travelling into a future that hasn’t happened yet. Get it out of your head and onto the page.",
+  "watch": [
+   "w1l5",
+   "w1l6"
+  ],
+  "res": [
+   "whatif",
+   "breathe",
+   "pause",
+   "vagal"
+  ],
+  "tip": "Do a physiological sigh: a long inhale through the nose, a short top-up inhale, then a long slow exhale through the mouth. Repeat 1–3 times.",
+  "jp": "w1l5:0",
+  "chip": "I’m anxious"
+ },
+ {
+  "id": "overwhelm",
+  "label": "I’m overwhelmed",
+  "kw": [
+   "overwhelm",
+   "overwhelmed",
+   "too much",
+   "overstimulated",
+   "overload",
+   "sensory",
+   "meltdown",
+   "can’t cope",
+   "cant cope",
+   "everything at once",
+   "stressed",
+   "stress",
+   "frazzled",
+   "swamped",
+   "drowning",
+   "shut down",
+   "shutdown",
+   "frozen",
+   "paralysed",
+   "overstimulation",
+   "sensory overload",
+   "noise"
+  ],
+  "line": "Your nervous system is maxed out. First calm the body, then the brain can think again. One breath, one pause, one tiny thing.",
+  "watch": [
+   "w1l3",
+   "w1l9",
+   "w2s2",
+   "w3b1"
+  ],
+  "res": [
+   "breathe",
+   "pause",
+   "move",
+   "vagal"
+  ],
+  "tip": "Try a physiological sigh right now: two quick inhales through the nose, then one long slow exhale. Do it 3 times.",
+  "jp": "w1l3:0",
+  "chip": "I’m overwhelmed"
+ },
+ {
+  "id": "scroll",
+  "label": "I keep doomscrolling, snacking or shopping",
+  "kw": [
+   "doomscroll",
+   "doomscrolling",
+   "scrolling",
+   "scroll",
+   "phone",
+   "social media",
+   "instagram",
+   "tiktok",
+   "sugar",
+   "snack",
+   "snacking",
+   "chocolate",
+   "shopping",
+   "online shopping",
+   "dopamine",
+   "craving",
+   "cravings",
+   "addicted",
+   "youtube",
+   "netflix",
+   "binge",
+   "bingeing",
+   "impulse",
+   "impulse buying"
+  ],
+  "line": "That’s your brain hunting for a quick hit of dopamine. Give it a better one from your DOSE menu.",
+  "watch": [
+   "w1l4",
+   "w1l8"
+  ],
+  "res": [
+   "dose",
+   "pause",
+   "move"
+  ],
+  "tip": "Get your daily DOSE first thing: 30 minutes of sun, movement, connection and a small win. Start with 5 minutes dancing outside if that’s all you’ve got.",
+  "jp": "w1l4:0",
+  "chip": "I keep doomscrolling"
+ },
+ {
+  "id": "avoid",
+  "label": "I keep avoiding the course",
+  "kw": [
+   "avoiding",
+   "avoid",
+   "procrastinate",
+   "procrastinating",
+   "procrastination",
+   "can’t start",
+   "cant start",
+   "motivation",
+   "unmotivated",
+   "lazy",
+   "course",
+   "behind",
+   "task paralysis",
+   "putting off",
+   "stuck",
+   "not started"
+  ],
+  "line": "Nothing changes if nothing changes. Do the 1%: one video, one prompt, one breath. That counts.",
+  "watch": [
+   "home",
+   "w1l2"
+  ],
+  "res": [
+   "intent",
+   "setup"
+  ],
+  "tip": "Ask yourself: if I did know why I’m avoiding it, what would it be? Most of the time it uncovers a belief.",
+  "jp": "If I did know why I keep avoiding the course, what would it be? What belief is underneath that?",
+  "chip": "I’ve been avoiding the course"
+ },
+ {
+  "id": "sabotage",
+  "label": "I keep sabotaging myself",
+  "kw": [
+   "sabotage",
+   "sabotaging",
+   "self sabotage",
+   "self-sabotage",
+   "pattern",
+   "patterns",
+   "same thing",
+   "again and again",
+   "keep doing",
+   "unconscious"
+  ],
+  "line": "Your unconscious mind isn’t out to get you. It’s trying to protect you. Ask it what from.",
+  "watch": [
+   "w1l2",
+   "w1l8"
+  ],
+  "res": [
+   "box",
+   "proof"
+  ],
+  "tip": "Notice the moment just before the pattern kicks in. Awareness is the first rewire.",
+  "jp": "w1l2:0"
+ },
+ {
+  "id": "habit",
+  "label": "I want to change a habit",
+  "kw": [
+   "habit",
+   "habits",
+   "autopilot",
+   "automatic",
+   "rewire",
+   "rewiring",
+   "neuroplasticity",
+   "break a habit",
+   "routine",
+   "new habit",
+   "consistency",
+   "consistent",
+   "stick to"
+  ],
+  "line": "Every time you choose differently, you’re rewiring the path. Small reps add up.",
+  "watch": [
+   "w1l8",
+   "w1l2"
+  ],
+  "res": [
+   "dose",
+   "vagal",
+   "proof"
+  ],
+  "tip": "Swap, don’t just stop: put the healthier option where your hand already reaches (a book where you’d grab your phone).",
+  "jp": "w1l8:0"
+ },
+ {
+  "id": "change",
+  "label": "I’m scared of change or staying stuck",
+  "kw": [
+   "change",
+   "scared of change",
+   "comfort zone",
+   "familiar",
+   "stuck",
+   "job",
+   "relationship",
+   "leave",
+   "leaving",
+   "move",
+   "safe",
+   "unknown",
+   "uncomfortable"
+  ],
+  "line": "Familiar isn’t the same as good for you. Your brain just prefers what it already knows.",
+  "watch": [
+   "w1l2"
+  ],
+  "res": [
+   "box",
+   "intent"
+  ],
+  "tip": "Change can be uncomfortable. Lean into it and remind yourself: I won’t die.",
+  "jp": "w1l2:3"
+ },
+ {
+  "id": "belief",
+  "label": "I don’t feel good enough",
+  "kw": [
+   "not good enough",
+   "good enough",
+   "not smart",
+   "stupid",
+   "imposter",
+   "impostor",
+   "failure",
+   "worthless",
+   "belief",
+   "beliefs",
+   "limiting belief",
+   "confidence",
+   "doubt",
+   "self doubt",
+   "rookie",
+   "can’t do it",
+   "useless",
+   "not enough",
+   "self-doubt",
+   "insecure"
+  ],
+  "line": "We’re all shit in the beginning. That’s the hierarchy of learning, not proof you can’t do it.",
+  "watch": [
+   "w1l2"
+  ],
+  "res": [
+   "proof",
+   "box"
+  ],
+  "tip": "Write the belief down, then ask: who taught me this, and is it actually true?",
+  "jp": "w1l2:2"
+ },
+ {
+  "id": "anger",
+  "label": "I blew up or snapped at someone",
+  "kw": [
+   "angry",
+   "anger",
+   "blew up",
+   "exploded",
+   "snapped",
+   "yelled",
+   "screamed",
+   "rage",
+   "reactive",
+   "defensive",
+   "lost it",
+   "temper",
+   "irritable",
+   "furious",
+   "shouted"
+  ],
+  "line": "A blow-up is usually the stacking effect, not the last thing that happened.",
+  "watch": [
+   "w1l3",
+   "w1l6"
+  ],
+  "res": [
+   "rewind",
+   "breathe",
+   "pause",
+   "move"
+  ],
+  "tip": "Use Pause and Rewind to replay it and rehearse the ending you’d choose next time.",
+  "jp": "w1l3:0"
+ },
+ {
+  "id": "please",
+  "label": "I’m people-pleasing or can’t say no",
+  "kw": [
+   "people pleasing",
+   "people pleaser",
+   "please",
+   "fawn",
+   "say no",
+   "boundaries",
+   "boundary",
+   "guilt",
+   "yes to everything",
+   "abandon myself",
+   "resentful",
+   "yes person"
+  ],
+  "line": "Abandoning yourself to keep the peace isn’t peace. Notice which state you default to, and with who.",
+  "watch": [
+   "w1l6"
+  ],
+  "res": [
+   "ub",
+   "box"
+  ],
+  "tip": "Before you say yes, take one breath and ask: is this a yes, or a fear of disappointing them?",
+  "jp": "w1l6:1"
+ },
+ {
+  "id": "burnout",
+  "label": "I’m exhausted or burnt out",
+  "kw": [
+   "burnout",
+   "burnt out",
+   "burned out",
+   "exhausted",
+   "tired",
+   "no energy",
+   "drained",
+   "shutdown",
+   "shut down",
+   "freeze",
+   "frozen",
+   "numb",
+   "can’t get out of bed",
+   "fatigue",
+   "running on empty"
+  ],
+  "line": "Running on empty means your body needs refuelling before anything else. Start with small pockets of rest.",
+  "watch": [
+   "w1l6",
+   "w1l7",
+   "w2s2"
+  ],
+  "res": [
+   "pause",
+   "dose",
+   "breathe",
+   "vagal"
+  ],
+  "tip": "Do the Vagal Tone Workout basics: DOSE, Breathe, Pause, Move. On a hard day, one pause and a little movement still count.",
+  "jp": "w1l6:0"
+ },
+ {
+  "id": "body",
+  "label": "My body is aching or sending signals",
+  "kw": [
+   "headache",
+   "head ache",
+   "back pain",
+   "aching",
+   "ache",
+   "tummy",
+   "stomach",
+   "ibs",
+   "gut",
+   "digestion",
+   "jaw",
+   "clench",
+   "shoulders",
+   "neck",
+   "pain",
+   "body",
+   "sore",
+   "tight",
+   "tense",
+   "tension",
+   "tight shoulders",
+   "numb",
+   "disconnected"
+  ],
+  "line": "Your body sends signals. Sometimes an aching back needs a different chair, and sometimes it needs a conversation.",
+  "watch": [
+   "w1l7",
+   "w1l3"
+  ],
+  "res": [
+   "comehome",
+   "move",
+   "breathe"
+  ],
+  "tip": "Check the basics first: water, food, movement, rest and sleep.",
+  "jp": "w1l7:1"
+ },
+ {
+  "id": "sleep",
+  "label": "I can’t sleep",
+  "kw": [
+   "sleep",
+   "can’t sleep",
+   "cant sleep",
+   "insomnia",
+   "awake",
+   "night",
+   "racing thoughts",
+   "bedtime",
+   "wired",
+   "awake at night",
+   "cant switch off",
+   "can’t switch off",
+   "3am"
+  ],
+  "line": "Your body needs a signal that it’s safe to switch off. Slow, long exhales are that signal.",
+  "watch": [
+   "w1l7",
+   "w1l9"
+  ],
+  "res": [
+   "breathe",
+   "pause",
+   "whatif"
+  ],
+  "tip": "No screens before bed, read to tire your eyes, and do five minutes of slow breathing lying down.",
+  "jp": "What feels unfinished right now? What am I afraid will happen if I stop and rest?",
+  "chip": "I can’t sleep"
+ },
+ {
+  "id": "trigger",
+  "label": "Someone said something that hurt",
+  "kw": [
+   "triggered",
+   "trigger",
+   "hurt",
+   "comment",
+   "criticism",
+   "criticised",
+   "rejected",
+   "rejection",
+   "rsd",
+   "offended",
+   "upset",
+   "took it personally",
+   "hate comment",
+   "criticized"
+  ],
+  "line": "When something hits hard, it says more about the bullets in your gun than the person delivering it.",
+  "watch": [
+   "w3l4",
+   "w3b1"
+  ],
+  "res": [
+   "rewind",
+   "breathe",
+   "ub"
+  ],
+  "tip": "Regulate first: breathe 5 in, 5 out, sway, soften your jaw and shoulders. Then get curious.",
+  "jp": "w3l4:0",
+  "chip": "Someone triggered me"
+ },
+ {
+  "id": "annoyed",
+  "label": "Someone is really annoying me",
+  "kw": [
+   "annoyed",
+   "annoying",
+   "irritated",
+   "irritating",
+   "judging",
+   "judgement",
+   "judgment",
+   "can’t stand",
+   "frustrated",
+   "jealous",
+   "jealousy",
+   "frustrating",
+   "grr"
+  ],
+  "line": "Perception is projection. What’s annoying you is a mirror for you to clean up.",
+  "watch": [
+   "w3l5"
+  ],
+  "res": [
+   "ub",
+   "pause",
+   "rewind"
+  ],
+  "tip": "Ask: where in my life am I doing (or afraid of doing) this exact thing?",
+  "jp": "w3l5:0"
+ },
+ {
+  "id": "conflict",
+  "label": "I’m struggling with someone I love",
+  "kw": [
+   "conflict",
+   "argument",
+   "fight",
+   "fighting",
+   "partner",
+   "husband",
+   "wife",
+   "mum",
+   "mom",
+   "dad",
+   "parents",
+   "family",
+   "friend",
+   "kids",
+   "forgive",
+   "forgiveness",
+   "resentment",
+   "don’t understand",
+   "relationship",
+   "arguing"
+  ],
+  "line": "They were doing the best they could with the resources they had at the time. So were you.",
+  "watch": [
+   "w3l3",
+   "w3l1",
+   "w3l2"
+  ],
+  "res": [
+   "ub",
+   "rewind"
+  ],
+  "tip": "Step into their model of the world for a moment: their past, their upbringing, their reality. What do you notice?",
+  "jp": "w3l3:1"
+ },
+ {
+  "id": "past",
+  "label": "I can’t let go of the past",
+  "kw": [
+   "past",
+   "trauma",
+   "childhood",
+   "let go",
+   "move on",
+   "holding me back",
+   "regret",
+   "what happened",
+   "history",
+   "old wounds",
+   "ruminating",
+   "rumination",
+   "replaying",
+   "stuck on",
+   "grudge",
+   "memories"
+  ],
+  "line": "Your past explains you. It doesn’t get to decide your future.",
+  "watch": [
+   "w3l6",
+   "w3l3"
+  ],
+  "res": [
+   "ub",
+   "proof",
+   "comehome"
+  ],
+  "tip": "Notice one way the past is still running the show today, and one tiny choice you could make differently.",
+  "jp": "w3l6:0"
+ },
+ {
+  "id": "regret",
+  "label": "I reacted badly and feel awful",
+  "kw": [
+   "reacted",
+   "overreacted",
+   "said something",
+   "shouldn’t have",
+   "guilty",
+   "shame",
+   "embarrassed",
+   "take it back",
+   "regret",
+   "apologise",
+   "sorry",
+   "ashamed"
+  ],
+  "line": "You can’t undo it, but you can rewind it and rehearse a different ending.",
+  "watch": [
+   "w3l5",
+   "w1l6"
+  ],
+  "res": [
+   "rewind",
+   "proof"
+  ],
+  "tip": "Be kind to yourself. Approach it with curiosity, not judgement.",
+  "jp": "If I could rewind that moment, what would I want to do differently, and what did I need right then?"
+ },
+ {
+  "id": "selfcare",
+  "label": "I’ve been neglecting myself",
+  "kw": [
+   "neglect",
+   "neglecting",
+   "self care",
+   "self-care",
+   "not eating",
+   "water",
+   "hydrate",
+   "skipping meals",
+   "looking after myself",
+   "health",
+   "forgetting to eat",
+   "hydration",
+   "exercise"
+  ],
+  "line": "It might not be easy, but it is simple: water, food, movement, rest and sleep. Improve one by 1% today.",
+  "watch": [
+   "w1l1",
+   "w1l7"
+  ],
+  "res": [
+   "dose",
+   "move",
+   "pause",
+   "vagal"
+  ],
+  "tip": "Pick one thing you can easily change today and commit to doing it every day.",
+  "jp": "w1l1:0"
+ },
+ {
+  "id": "focus",
+  "label": "I can’t focus",
+  "kw": [
+   "focus",
+   "concentrate",
+   "concentration",
+   "distracted",
+   "distraction",
+   "adhd",
+   "brain fog",
+   "scattered",
+   "all over the place",
+   "foggy",
+   "cant concentrate",
+   "can’t concentrate",
+   "task paralysis",
+   "executive function"
+  ],
+  "line": "Make it smaller and easier. One video, not a module.",
+  "watch": [
+   "w1l4"
+  ],
+  "res": [
+   "move",
+   "dose",
+   "breathe"
+  ],
+  "tip": "Headphones in, phone on do not disturb, body double with someone, and pick the time of day your brain is freshest.",
+  "jp": "w1l4:0"
+ },
+ {
+  "id": "low",
+  "label": "I’m feeling flat or low",
+  "kw": [
+   "sad",
+   "low",
+   "down",
+   "flat",
+   "empty",
+   "lonely",
+   "lost",
+   "blah",
+   "no joy",
+   "unhappy",
+   "crying",
+   "unmotivated",
+   "no motivation",
+   "meh",
+   "numb"
+  ],
+  "line": "Make room for something that feels good: a little pleasure, connection, play or a small win.",
+  "watch": [
+   "w1l4",
+   "w1l7"
+  ],
+  "res": [
+   "dose",
+   "move",
+   "proof"
+  ],
+  "tip": "Put on a favourite song, cuddle your dog, laugh with someone, finish one small task.",
+  "jp": "What need am I actually trying to meet right now, and what’s one healthy way to meet it today?"
+ },
+ {
+  "id": "time",
+  "label": "I don’t have time",
+  "kw": [
+   "time",
+   "busy",
+   "no time",
+   "don’t have time",
+   "too busy",
+   "schedule",
+   "kids",
+   "work",
+   "5 minutes",
+   "five minutes",
+   "quick"
+  ],
+  "line": "If you think you don’t have time, make this so important you make time.",
+  "watch": [
+   "home"
+  ],
+  "res": [
+   "breathe",
+   "pause",
+   "dose"
+  ],
+  "tip": "What can you shrink or hand off this week? Meal prep, a cleaner, Mum cooking a few meals, watching while the dogs play at the park.",
+  "jp": "What can I remove, shrink or ask for help with this week to make time for me?"
+ },
+ {
+  "id": "lapsed",
+  "label": "I fell off and feel guilty",
+  "kw": [
+   "fell off",
+   "fallen off",
+   "dropped the ball",
+   "lapsed",
+   "missed",
+   "behind",
+   "guilty",
+   "restart",
+   "start again",
+   "gave up",
+   "quit",
+   "missed days",
+   "broke my streak"
+  ],
+  "line": "Pick the ball back up. It’s exactly where you left it, waiting for you.",
+  "watch": [
+   "home"
+  ],
+  "res": [
+   "vagal",
+   "proof",
+   "intent"
+  ],
+  "tip": "No catching up required. Do the next 1% action, today.",
+  "jp": "What’s the 1% I can do today to get back in?"
+ },
+ {
+  "id": "direction",
+  "label": "I don’t know what I want",
+  "kw": [
+   "goal",
+   "goals",
+   "direction",
+   "purpose",
+   "what i want",
+   "don’t know",
+   "lost",
+   "future",
+   "vision",
+   "north star",
+   "why",
+   "meaning",
+   "what next"
+  ],
+  "line": "Pick a great direction and point yourself toward it.",
+  "watch": [
+   "i2"
+  ],
+  "res": [
+   "intent",
+   "star"
+  ],
+  "tip": "Start with who you’re NOT anymore, then who you want to become.",
+  "jp": "Who do I want to become by the end of this course? What do I have, and how do I feel?"
+ },
+ {
+  "id": "calm",
+  "label": "I need to calm down fast",
+  "kw": [
+   "calm",
+   "calm down",
+   "panic",
+   "panic attack",
+   "breathe",
+   "breathing",
+   "heart racing",
+   "fight or flight",
+   "regulate",
+   "regulation",
+   "dysregulated",
+   "settle",
+   "grounding",
+   "ground myself"
+  ],
+  "line": "Your body already knows how to do this. You’re just pressing the reset button on purpose.",
+  "watch": [
+   "w1l9",
+   "w1a3",
+   "w1l6",
+   "w3b1"
+  ],
+  "res": [
+   "breathe",
+   "pause",
+   "comehome"
+  ],
+  "tip": "Double inhale through the nose, long slow exhale through the mouth. Repeat 1–3 times.",
+  "jp": "w1l6:1"
+ },
+ {
+  "id": "emotions",
+  "label": "I don’t know what I’m feeling",
+  "kw": [
+   "feelings",
+   "feel weird",
+   "numb",
+   "confused",
+   "mixed emotions",
+   "emotional",
+   "cry",
+   "crying",
+   "tears",
+   "what am i feeling"
+  ],
+  "res": [
+   "blueprint",
+   "comehome",
+   "breathe"
+  ],
+  "watch": [
+   "w4l2",
+   "w4a2",
+   "w4l4"
+  ],
+  "line": "Feelings are information. Naming them is the first step to working with them, not against them.",
+  "tip": "Put a hand on your chest and ask: where do I feel this in my body? Just notice."
+ },
+ {
+  "id": "meltdown",
+  "label": "I’m having a meltdown",
+  "kw": [
+   "meltdown",
+   "melt down",
+   "losing it",
+   "shutdown",
+   "cant stop crying",
+   "can’t stop crying",
+   "spiralling",
+   "spiraling",
+   "breaking down"
+  ],
+  "res": [
+   "breathe",
+   "comehome",
+   "pause"
+  ],
+  "watch": [
+   "w4l3",
+   "w3b1"
+  ],
+  "line": "You’re safe. Nothing to fix right now. Just get your body back on side, one breath at a time.",
+  "tip": "Find 5 things you can see, 4 you can touch, 3 you can hear. Then one long slow exhale.",
+  "chip": "I’m melting down"
+ },
+ {
+  "id": "stress",
+  "label": "I’m stressed",
+  "kw": [
+   "stressed",
+   "stress",
+   "pressure",
+   "under pressure",
+   "deadline",
+   "work stress",
+   "tight",
+   "wound up"
+  ],
+  "res": [
+   "breathe",
+   "pause",
+   "move",
+   "vagal"
+  ],
+  "watch": [
+   "w1l3",
+   "w1l6"
+  ],
+  "line": "Stress lives in the body. Move it out and slow it down, then your brain gets its thinking back.",
+  "tip": ""
+ },
+ {
+  "id": "wins",
+  "label": "I want to celebrate a win",
+  "kw": [
+   "win",
+   "wins",
+   "proud",
+   "did it",
+   "achievement",
+   "celebrate",
+   "progress",
+   "good day",
+   "proof",
+   "evidence"
+  ],
+  "res": [
+   "proof"
+  ],
+  "watch": [
+   "w2l3"
+  ],
+  "line": "Yes! Put it in your proof portfolio so your brain can’t forget it.",
+  "tip": "",
+  "chip": "I had a win!"
+ },
+ {
+  "id": "motivation",
+  "label": "I can’t get motivated",
+  "kw": [
+   "motivation",
+   "motivated",
+   "lazy",
+   "stuck",
+   "cant get going",
+   "can’t get going",
+   "start"
+  ],
+  "res": [
+   "dose",
+   "move",
+   "intent"
+  ],
+  "watch": [
+   "w1l4",
+   "w1l8"
+  ],
+  "line": "Motivation follows action, not the other way round. Make the first step tiny.",
+  "tip": ""
+ },
+ {
+  "id": "energy",
+  "label": "My energy is all over the place",
+  "kw": [
+   "energy",
+   "energy audit",
+   "drained by",
+   "what drains me",
+   "recharge",
+   "introvert",
+   "social battery",
+   "overstimulated"
+  ],
+  "res": [
+   "pause",
+   "dose",
+   "vagal"
+  ],
+  "watch": [
+   "w2s2",
+   "w2a2"
+  ],
+  "line": "Notice what fills you up and what drains you, then plan more of the first one.",
+  "tip": ""
+ },
+ {
+  "id": "happy",
+  "label": "I want to feel happier",
+  "kw": [
+   "happy",
+   "happier",
+   "joy",
+   "dopamine",
+   "oxytocin",
+   "serotonin",
+   "endorphins",
+   "feel good",
+   "hormones"
+  ],
+  "res": [
+   "dose",
+   "move",
+   "proof"
+  ],
+  "watch": [
+   "w1l4"
+  ],
+  "line": "Happiness has ingredients. Your DOSE menu is your recipe card.",
+  "tip": ""
+ },
+ {
+  "id": "connection",
+  "label": "I feel disconnected from people",
+  "kw": [
+   "disconnected",
+   "lonely",
+   "alone",
+   "isolated",
+   "no friends",
+   "misunderstood",
+   "understood"
+  ],
+  "res": [
+   "dose",
+   "ub"
+  ],
+  "watch": [
+   "w3l1",
+   "w3l2"
+  ],
+  "line": "Connection is a need, not a nice-to-have. A hug, a chat, a laugh all count (that’s your oxytocin).",
+  "tip": ""
+ },
+ {
+  "id": "perspective",
+  "label": "I can’t see their side",
+  "kw": [
+   "perspective",
+   "their side",
+   "why do they",
+   "understand them",
+   "other people",
+   "judging",
+   "judgement",
+   "judgment"
+  ],
+  "res": [
+   "ub"
+  ],
+  "watch": [
+   "w3l2",
+   "w3l5",
+   "w3l1"
+  ],
+  "line": "Everyone acts from their own map of the world. The Understanding Bridge helps you meet them on theirs.",
+  "tip": ""
+ },
+ {
+  "id": "thoughts",
+  "label": "My thoughts are spiralling",
+  "kw": [
+   "thoughts",
+   "negative thoughts",
+   "intrusive",
+   "looping",
+   "loop",
+   "spiral",
+   "spiralling",
+   "self talk",
+   "inner critic",
+   "mean to myself"
+  ],
+  "res": [
+   "whatif",
+   "box",
+   "breathe"
+  ],
+  "watch": [
+   "w2l6",
+   "w1l5"
+  ],
+  "line": "Thoughts aren’t facts. Catch one, write it down, and check it against your proof.",
+  "tip": ""
+ },
+ {
+  "id": "react",
+  "label": "I keep reacting instead of responding",
+  "kw": [
+   "react",
+   "reacting",
+   "reactive",
+   "snapping",
+   "short fuse",
+   "overreact",
+   "overreacting",
+   "respond"
+  ],
+  "res": [
+   "rewind",
+   "pause",
+   "breathe"
+  ],
+  "watch": [
+   "w3a2",
+   "w1l6",
+   "w3l4"
+  ],
+  "line": "There’s a gap between what happens and what you do. Pause and Rewind helps you find it.",
+  "tip": ""
+ },
+ {
+  "id": "restless",
+  "label": "I feel restless and fidgety",
+  "kw": [
+   "restless",
+   "fidgety",
+   "cant sit still",
+   "can’t sit still",
+   "buzzing",
+   "wired",
+   "hyper",
+   "stim",
+   "stimming"
+  ],
+  "res": [
+   "move",
+   "breathe"
+  ],
+  "watch": [
+   "w1l7"
+  ],
+  "line": "Your body’s asking to move. Let it. Shake it out, dance, stim, walk.",
+  "tip": ""
+ },
+ {
+  "id": "vagal",
+  "label": "How do I do my daily practice?",
+  "kw": [
+   "vagal",
+   "vagus",
+   "vagal tone",
+   "daily practice",
+   "workout",
+   "embodiment",
+   "routine",
+   "dose breathe pause move"
+  ],
+  "res": [
+   "vagal",
+   "breathe",
+   "dose",
+   "pause",
+   "move"
+  ],
+  "watch": [
+   "w1a2",
+   "w1l3"
+  ],
+  "line": "Your Vagal Tone Workout is four tiny daily practices. One thing is enough.",
+  "tip": ""
+ },
+ {
+  "id": "ruminate",
+  "label": "I can’t stop thinking about it",
+  "kw": [
+   "cant stop thinking",
+   "can’t stop thinking",
+   "obsessing",
+   "replaying",
+   "overthinking"
+  ],
+  "res": [
+   "whatif",
+   "move",
+   "pause"
+  ],
+  "watch": [
+   "w1l5",
+   "w2l6"
+  ],
+  "line": "",
+  "tip": ""
+ }
+]

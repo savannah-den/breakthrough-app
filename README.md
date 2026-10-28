@@ -85,3 +85,10 @@ Their answers save to their account and to their phone, so they're kept even if 
 - `public/js/admin.js` is the coach dashboard. The `TOOLS` map gives saved keys their friendly names.
 - 1:1-only views are flagged `private: true` in the merge script and blocked for self-paced accounts.
 - Database security rules (RLS) in `supabase/schema.sql`: each client can only read and write their own rows. Admin can read everything. Coach notes and invites are admin-only.
+
+## Updating from Claude artifacts
+
+- Companion / 1:1 artifacts: save the new bundle over `src/companion.html` or `src/one-on-one.html`, then run `python3 tools/build.py`.
+- Tool canvases (What If, Bridge, REWIND, Coming Home, Emotional Blueprint): save the new `Main.dc.html` over the matching file in `src/canvases/`, put any new images in `public/tools/assets/`, then run `python3 tools/import_canvas.py`.
+- Keep each tool's saving key (e.g. `rewind-v1`) the same, or clients' saved answers won't show up.
+- Old Claude artifact links are swapped for app links via `LINKMAP` in `tools/import_canvas.py`.

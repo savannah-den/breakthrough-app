@@ -1,0 +1,151 @@
+<title>Breakthrough App Playground</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@400;500;600&family=Patrick+Hand+SC&display=swap">
+<style>
+/* Layout: one maroon hero card, then three big "door" tiles, then the tool list. Single brand look in both themes. */
+:root{
+  --maroon:#4E0C08; --ink:#1F1412; --cream:#FAF4F1; --lime:#F1F9A6; --pink:#F4C2F7; --orange:#F28C3B; --paper:#FFFFFF; --muted:#6A5A57; --line:#EDE3DF;
+  --display:'Playfair Display',Georgia,serif; --body:Poppins,system-ui,sans-serif; --hand:'Patrick Hand SC','Comic Sans MS',cursive;
+  color-scheme:light;
+}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.hero{position:relative;overflow:hidden;background:var(--maroon);color:#FFF4EE;border-radius:30px;padding:26px 24px 40px;display:flex;flex-direction:column;gap:10px}
+.kick{margin:0;font-family:var(--hand);font-size:20px;letter-spacing:.06em;color:var(--pink)}
+h1{margin:0;font-family:var(--display);font-size:clamp(34px,7vw,52px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;max-width:60ch;color:#F6D6CF}
+.wave{position:absolute;left:-20px;right:-20px;bottom:8px;height:22px;width:calc(100% + 40px);opacity:.5;animation:wave 6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:translateX(0)}50%{transform:translateX(-26px)}}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:14px}
+.door{display:flex;flex-direction:column;gap:6px;padding:22px;border-radius:26px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;transition:transform .2s}
+.door:hover,.door:focus-visible{transform:translateY(-3px)}
+.door:focus-visible,.tool:focus-visible,button:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.door b{font-family:var(--display);font-size:24px;line-height:1.15}
+.door span{font-size:14px}
+.door .go{margin-top:8px;font-weight:600}
+.d1{background:var(--pink)}.d2{background:var(--lime)}.d3{background:var(--maroon);color:#FFF4EE;border-color:var(--maroon)}
+h2{margin:6px 0 0;font-family:var(--display);font-size:24px;color:var(--maroon)}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:10px}
+.tool{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:20px;background:var(--paper);border:1.5px solid var(--line);color:var(--ink);text-decoration:none}
+.tool:hover{border-color:var(--ink)}
+.tool b{font-size:15px}.tool span{font-size:12.5px;color:var(--muted)}
+.how{background:var(--paper);border:1.5px solid var(--line);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.how ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:68ch}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font:600 14px var(--body);cursor:pointer}
+.note{margin:0;font-size:13px;color:var(--muted)}
+#stage{position:fixed;inset:0;z-index:50;background:var(--cream);display:flex;flex-direction:column}
+#stage[hidden]{display:none!important}
+#stage iframe{flex:1;width:100%;border:0;background:var(--cream)}
+.bar{display:flex;align-items:center;gap:10px;padding:6px max(10px,env(safe-area-inset-left,0px));padding-top:calc(6px + env(safe-area-inset-top,0px));background:var(--maroon);color:#FFF4EE}
+.bar button{min-height:36px;padding:4px 14px;background:var(--pink);font-size:13px}
+.bar span{font-size:12.5px;color:#F6D6CF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.tourbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;border-radius:24px;background:var(--lime);border:1.5px solid var(--ink)}
+.tourbar>span{flex:1 1 200px;font-family:var(--display);font-size:20px;font-weight:700;color:var(--maroon)}
+.tour-btn{display:flex;flex-direction:column;align-items:flex-start;padding:10px 18px;border-radius:999px;background:var(--maroon);color:#FFF4EE;text-decoration:none;line-height:1.2}
+.tour-btn b{font-size:15px}.tour-btn span{font-size:12px;color:#F6D6CF}
+.tour-btn:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="kick">Your sandbox copy</p>
+    <h1>Breakthrough App Playground</h1>
+    <p class="lede">An exact copy of the live app, with your coach dashboard. Play, break things and try ideas here. Nothing you do on this page reaches the live app or your clients until you tell Claude to send it live.</p>
+    <svg class="wave" viewBox="0 0 400 40" aria-hidden="true"><path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20 T 250 20 T 300 20 T 350 20 T 400 20" fill="none" stroke="#F1F9A6" stroke-width="3" stroke-linecap="round"/></svg>
+  </header>
+
+  <div class="tourbar">
+    <span>See what new clients see first</span>
+    <a class="tour-btn" href="app.html?door=course&amp;tour=1"><b>▶ App tour</b><span>Self-paced</span></a>
+    <a class="tour-btn" href="app.html?door=private&amp;fresh=1"><b>▶ New 1:1 client</b><span>The full first-time journey</span></a>
+    <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=welcome"><b>▶ The welcome module</b><span>Start at step 5, with steps 1–4 done</span></a>
+    <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=contract"><b>📄 The agreement</b><span>What they sign at step 2</span></a>
+  </div>
+  <nav class="doors" aria-label="Open the app as">
+    <a class="door d1" href="app.html?door=private&amp;fresh=1&amp;skip=ready"><b>1:1 client view</b><span>A 1:1 client who has done their tests and the welcome module, so everything’s open. Starts fresh each time you open it.</span><span class="go">Open →</span></a>
+    <a class="door d2" href="app.html?door=course"><b>Self-paced view</b><span>What course customers see: the Breakthrough Companion and their tools.</span><span class="go">Open →</span></a>
+    <a class="door d3" href="admin.html"><b>Coach dashboard</b><span>Your back of house. You show up here as a client, beside a few made-up examples.</span><span class="go">Open →</span></a>
+  </nav>
+
+  <section>
+    <h2>Tools</h2>
+    <div class="tools">
+      <a class="tool" href="tools/emotional-blueprint.html"><b>Emotional Blueprint</b><span>Map and rewrite emotional patterns</span></a>
+      <a class="tool" href="tools/what-if-workout.html"><b>The What If? Workout</b><span>Stretch past the worst-case story</span></a>
+      <a class="tool" href="tools/rewind.html"><b>REWIND</b><span>Respond instead of react</span></a>
+      <a class="tool" href="tools/coming-home.html"><b>Coming Home</b><span>Back into your body</span></a>
+      <a class="tool" href="tools/understanding-bridge.html"><b>The Understanding Bridge</b><span>Meet people where they are</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Setup"><b>Set yourself up for success</b><span>Intro activity: the seven set-up steps</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Intentions"><b>Setting Intentions</b><span>Your North Star and your why</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Vagal"><b>Vagal Tone Workout</b><span>The embodiment series hub + daily workout card</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Breathe"><b>Breathe</b><span>Breathing guide, sounds and what to do for your state</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Dose"><b>DOSE</b><span>Daily dose menu and plan</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Pause"><b>Pause</b><span>Pause ideas and the conveyor belt</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Move"><b>Move</b><span>Daily move card, streaks and progress</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#BreakingOut"><b>Breaking Out of Your Box</b><span>Bust open limiting beliefs + proof portfolio</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#StarHome"><b>North Star &amp; STAR goals</b><span>Week 7: your STAR goal plan</span></a>
+      <a class="tool" href="app.html?door=private&amp;peek=1#RepTest"><b>Rep System Test</b><span>1:1 clients: how your brain takes things in</span></a>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How to use it</h2>
+    <ol>
+      <li>Fill things in as if you were a client, then open the coach dashboard to see how your answers look from your side.</li>
+      <li>Ask Claude to change anything: wording, colours, steps, new tools. Changes land here first.</li>
+      <li>When you love it, tell Claude "send it live". It goes to the preview link, then to your real app.</li>
+    </ol>
+    <p class="note">Playground differences: you're logged in automatically, the AI Coach Sav buttons are switched off, and videos open in a new tab instead of playing inside the app.</p>
+    <div class="row">
+      <button id="reset" type="button">Clear my playground answers</button>
+      <span class="note" id="reset-msg" role="status"></span>
+    </div>
+  </section>
+</div>
+
+<div id="stage" hidden>
+  <div class="bar"><button id="close" type="button">← Playground</button><span id="where"></span></div>
+  <iframe id="view" title="App playground"></iframe>
+</div>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage'), view = document.getElementById('view'), where = document.getElementById('where');
+  // Pages are fetched and shown inside the frame below (a Claude artifact serves big pages as plain text,
+  // so they can't be opened directly). Links between pages come back here through BT_OPEN.
+  var ROOT = location.href.split('#')[0].split('?')[0].replace(/[^\/]*$/, '');
+  window.BT_ROOT = ROOT;
+  function open(href, label) {
+    var hash = (href.split('#')[1] || ''), rest = href.split('#')[0];
+    var query = rest.split('?')[1] || '', file = rest.split('?')[0] || 'app.html';
+    if (!file || file === './' || file === 'index.html') { close(); return; }
+    var door = (new URLSearchParams(query)).get('door') || '';
+    var base = new URL(file, ROOT).href.replace(/[^\/]*$/, '');
+    if (label) where.textContent = label;
+    stage.hidden = false;
+    fetch(new URL(file, ROOT).href).then(function (r) { return r.text(); }).then(function (html) {
+      var inject = '<base href="' + base + '"><script>window.BT_DEMO=' + JSON.stringify({ door: door, file: file, peek: (new URLSearchParams(query)).get('peek') === '1', viewAs: (new URLSearchParams(query)).get('viewas') || '', tour: (new URLSearchParams(query)).get('tour') === '1', fresh: (new URLSearchParams(query)).get('fresh') === '1', skip: (new URLSearchParams(query)).get('skip') || '' }) + ';' +
+        (hash ? 'try{location.hash=' + JSON.stringify('#' + hash) + '}catch(e){}' : '') + '<\/script>';
+      html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, function (m) { return m + inject; }) : inject + html;
+      view.srcdoc = html;
+    });
+  }
+  window.BT_OPEN = function (href) { open(href, ''); };
+  function close() { stage.hidden = true; view.srcdoc = ''; }
+  window.BT_PLAYGROUND_CLOSE = close;
+  document.getElementById('close').addEventListener('click', close);
+  document.querySelectorAll('a.door, a.tool, a.tour-btn').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); open(a.getAttribute('href'), a.querySelector('b').textContent); });
+  });
+})();
+(function () {
+  var btn = document.getElementById('reset'), msg = document.getElementById('reset-msg'), armed = false;
+  btn.addEventListener('click', function () {
+    if (!armed) { armed = true; btn.textContent = 'Tap again to clear everything'; msg.textContent = 'This empties every answer saved in this playground.'; return; }
+    try { var ks = []; for (var i = 0; i < localStorage.length; i++) ks.push(localStorage.key(i)); ks.forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
+    armed = false; btn.textContent = 'Clear my playground answers'; msg.textContent = 'Cleared. The playground is fresh.';
+  });
+})();
+</script>

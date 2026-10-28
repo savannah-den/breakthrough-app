@@ -1,0 +1,187 @@
+<title>Proof Portfolio Icon Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=Poppins:wght@400;500;600&family=Patrick+Hand+SC&display=swap">
+<style>
+/* Layout: one maroon intro band, then a grid of option cards, each with the big cover + the small app icon + what it says. Single brand look. */
+:root{
+  --maroon:#4E0C08; --ink:#1F1412; --cream:#FAF4F1; --lime:#F1F9A6; --proof:#E4F27A; --pink:#F4C2F7; --paper:#FFFFFF; --muted:#6A5A57; --line:#EDE3DF; --red:#A8231F;
+  --display:'Playfair Display',Georgia,serif; --body:Poppins,system-ui,sans-serif; --hand:'Patrick Hand SC','Comic Sans MS',cursive;
+  color-scheme:light;
+}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.intro{background:var(--maroon);color:#FFF4EE;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.kick{margin:0;font:20px var(--hand);letter-spacing:.06em;color:var(--pink)}
+h1{margin:0;font:700 clamp(30px,6vw,44px)/1.1 var(--display);text-wrap:balance}
+.intro p{margin:0;max-width:62ch;color:#F6D6CF}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:16px}
+.opt{display:flex;flex-direction:column;background:var(--paper);border:2px solid var(--ink);border-radius:24px;overflow:hidden;box-shadow:5px 5px 0 var(--ink)}
+.cov{display:grid;place-items:center;height:190px;background:var(--bgc,#F1F9A6);border-bottom:2px solid var(--ink)}
+.cov svg{width:150px;height:150px}
+.meta{display:flex;flex-direction:column;gap:8px;padding:16px}
+.top{display:flex;align-items:center;gap:12px}
+.ico{flex:none;width:48px;height:48px;border-radius:14px;border:1.5px solid var(--ink);background:var(--bgc,#F1F9A6);display:grid;place-items:center;overflow:hidden}
+.ico svg{width:40px;height:40px}
+.num{font:18px var(--hand);color:var(--red);letter-spacing:.04em}
+h2{margin:0;font:700 21px/1.15 var(--display)}
+.says{margin:0;font-size:14px;color:#463A38}
+.line{margin:0;padding:8px 12px;border-radius:12px;background:var(--cream);border:1.5px dashed var(--maroon);font-size:13.5px}
+.line b{font-weight:600}
+.foot{margin:0;text-align:center;font:22px var(--hand);color:var(--maroon)}
+/* gentle loops */
+.tw{animation:tw 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes tw{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+.bob{animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.drop{animation:drop 3.2s ease-in infinite}
+@keyframes drop{0%{transform:translateY(-34px);opacity:0}25%{opacity:1}60%,100%{transform:translateY(0);opacity:1}}
+.stamp{animation:stamp 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+@keyframes stamp{0%,55%,100%{transform:translateY(0)}35%{transform:translateY(-14px)}}
+.ink{animation:ink 3.4s ease-in-out infinite}
+@keyframes ink{0%,40%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
+.tip{animation:tip 4s ease-in-out infinite;transform-box:view-box;transform-origin:60px 40px}
+@keyframes tip{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(-14deg)}}
+.print{animation:print 4s ease-out infinite}
+@keyframes print{0%{transform:translateY(-12px)}60%,100%{transform:translateY(0)}}
+.grow{animation:grow 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+@keyframes grow{0%,100%{transform:scaleY(.92)}50%{transform:scaleY(1.04)}}
+.scan{animation:scan 4s ease-in-out infinite}
+@keyframes scan{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-6px)}}
+.fill{animation:fill 4s ease-in-out infinite}
+@keyframes fill{0%,100%{transform:translateY(6px)}50%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <p class="kick">Pick one (or mix two)</p>
+    <h1>Proof Portfolio icon options</h1>
+    <p>The current one is a little jar with a sparkle, which doesn't say "proof" on its own. Here are nine other ideas. Each shows the big cover from the Resources page and the small icon used on Home, the Becoming Book and the course list. Tell Claude the number you like.</p>
+  </header>
+
+  <section class="grid" aria-label="Icon options">
+
+    <article class="opt" style="--bgc:#E4F27A">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <g class="bob"><path d="M18 40h30l6 8h48v52H18z" fill="#F4C2F7" stroke="#1F1412" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="30" y="22" width="34" height="42" rx="3" fill="#FFF" stroke="#1F1412" stroke-width="2.5" transform="rotate(-8 47 43)"/>
+        <path d="M37 36h18M37 44h14" stroke="#A8231F" stroke-width="2.5" stroke-linecap="round" transform="rotate(-8 47 43)"/>
+        <rect x="56" y="26" width="32" height="38" rx="3" fill="#FFF4EE" stroke="#1F1412" stroke-width="2.5" transform="rotate(7 72 45)"/>
+        <path class="tw" d="M72 34c.8 5 3 7.2 8 8-5 .8-7.2 3-8 8-.8-5-3-7.2-8-8 5-.8 7.2-3 8-8z" fill="#E4F27A" stroke="#1F1412" stroke-width="1.6"/>
+        <path d="M18 56h84v44H18z" fill="#4E0C08" stroke="#1F1412" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="60" cy="78" r="10" fill="#E4F27A" stroke="#1F1412" stroke-width="2.5"/><path d="M55 78l4 4 7-8" fill="none" stroke="#1F1412" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="18 18 86 86"><path d="M18 40h30l6 8h48v52H18z" fill="#F4C2F7" stroke="#1F1412" stroke-width="4"/><rect x="34" y="26" width="34" height="38" rx="3" fill="#FFF" stroke="#1F1412" stroke-width="3.5"/><path d="M18 56h84v44H18z" fill="#4E0C08" stroke="#1F1412" stroke-width="4"/><circle cx="60" cy="78" r="11" fill="#E4F27A" stroke="#1F1412" stroke-width="3.5"/><path d="M55 78l4 4 7-8" fill="none" stroke="#1F1412" stroke-width="4" stroke-linecap="round"/></svg></span><div><span class="num">Option 1</span><h2>The evidence folder</h2></div></div>
+      <p class="says">A real portfolio folder, notes and wins spilling out, with a big tick on the front.</p>
+      <p class="line"><b>What it says:</b> "I'm collecting the evidence, and it's adding up."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#FBE6FC">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <g class="bob"><rect x="22" y="30" width="56" height="64" rx="4" fill="#FFF" stroke="#1F1412" stroke-width="3" transform="rotate(-10 50 62)"/>
+        <rect x="42" y="24" width="56" height="64" rx="4" fill="#FFF" stroke="#1F1412" stroke-width="3" transform="rotate(6 70 56)"/>
+        <rect x="48" y="31" width="44" height="38" fill="#E4F27A" stroke="#1F1412" stroke-width="2" transform="rotate(6 70 56)"/>
+        <circle cx="60" cy="44" r="6" fill="#F28C3B" transform="rotate(6 70 56)"/><path d="M50 66l12-12 8 8 6-6 14 12" fill="#BFE3D0" stroke="#1F1412" stroke-width="2" stroke-linejoin="round" transform="rotate(6 70 56)"/>
+        <text x="70" y="82" text-anchor="middle" font-family="Patrick Hand SC, cursive" font-size="11" fill="#A8231F" transform="rotate(6 70 56)">I did it!</text></g>
+        <path class="tw" d="M100 18c.8 5 3 7.2 8 8-5 .8-7.2 3-8 8-.8-5-3-7.2-8-8 5-.8 7.2-3 8-8z" fill="#E4F27A" stroke="#1F1412" stroke-width="1.6"/>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="20 20 84 84"><rect x="28" y="34" width="50" height="58" rx="4" fill="#FFF" stroke="#1F1412" stroke-width="4" transform="rotate(-10 53 63)"/><rect x="44" y="26" width="52" height="60" rx="4" fill="#FFF" stroke="#1F1412" stroke-width="4" transform="rotate(6 70 56)"/><rect x="50" y="32" width="40" height="36" fill="#E4F27A" stroke="#1F1412" stroke-width="3" transform="rotate(6 70 56)"/></svg></span><div><span class="num">Option 2</span><h2>The snapshot stack</h2></div></div>
+      <p class="says">A little pile of polaroids, the top one a sunny "I did it!" moment.</p>
+      <p class="line"><b>What it says:</b> "Snapshots of me being the new me."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#F1F9A6">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M34 34h52v8c8 6 10 14 10 26v18a14 14 0 0 1-14 14H38a14 14 0 0 1-14-14V68c0-12 2-20 10-26z" fill="#FFFFFF" fill-opacity=".7" stroke="#1F1412" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="32" y="22" width="56" height="12" rx="4" fill="#4E0C08" stroke="#1F1412" stroke-width="2.5"/>
+        <g fill="#E4F27A" stroke="#1F1412" stroke-width="1.6"><path d="M44 80l2.4 5 5.4.6-4 3.7 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.7 5.4-.6z"/><path d="M62 84l2.4 5 5.4.6-4 3.7 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.7 5.4-.6z"/><path d="M78 76l2.4 5 5.4.6-4 3.7 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.7 5.4-.6z"/><path d="M54 66l2.4 5 5.4.6-4 3.7 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.7 5.4-.6z"/></g>
+        <path class="drop" d="M70 46l2.4 5 5.4.6-4 3.7 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.7 5.4-.6z" fill="#F4C2F7" stroke="#1F1412" stroke-width="1.6"/>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="20 18 80 86"><path d="M34 34h52v8c8 6 10 14 10 26v18a14 14 0 0 1-14 14H38a14 14 0 0 1-14-14V68c0-12 2-20 10-26z" fill="#FFF" stroke="#1F1412" stroke-width="4"/><rect x="32" y="22" width="56" height="12" rx="4" fill="#4E0C08" stroke="#1F1412" stroke-width="3"/><circle cx="48" cy="86" r="7" fill="#E4F27A" stroke="#1F1412" stroke-width="3"/><circle cx="66" cy="84" r="7" fill="#E4F27A" stroke="#1F1412" stroke-width="3"/><circle cx="58" cy="70" r="7" fill="#F4C2F7" stroke="#1F1412" stroke-width="3"/></svg></span><div><span class="num">Option 3</span><h2>The star jar</h2></div></div>
+      <p class="says">A jar filling with stars. Every win drops one in, and you watch it fill.</p>
+      <p class="line"><b>What it says:</b> "Every win counts. Look how full it's getting."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#FFF4EE">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <rect x="18" y="58" width="84" height="44" rx="6" fill="#FFF" stroke="#1F1412" stroke-width="3"/>
+        <path d="M28 70h40M28 80h30" stroke="#E8DCD8" stroke-width="4" stroke-linecap="round"/>
+        <g class="ink"><rect x="52" y="70" width="44" height="22" rx="4" fill="none" stroke="#A8231F" stroke-width="3" transform="rotate(-8 74 81)"/><text x="74" y="86" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="12" fill="#A8231F" transform="rotate(-8 74 81)">PROVEN</text></g>
+        <g class="stamp"><rect x="62" y="14" width="22" height="26" rx="10" fill="#4E0C08" stroke="#1F1412" stroke-width="3"/><rect x="54" y="40" width="38" height="10" rx="3" fill="#F4C2F7" stroke="#1F1412" stroke-width="3"/><rect x="52" y="50" width="42" height="6" rx="2" fill="#A8231F" stroke="#1F1412" stroke-width="2"/></g>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="16 10 90 96"><rect x="18" y="58" width="84" height="44" rx="6" fill="#FFF" stroke="#1F1412" stroke-width="4"/><rect x="34" y="68" width="56" height="24" rx="4" fill="none" stroke="#A8231F" stroke-width="5" transform="rotate(-8 62 80)"/><rect x="50" y="14" width="22" height="28" rx="10" fill="#4E0C08" stroke="#1F1412" stroke-width="4"/><rect x="42" y="42" width="38" height="12" rx="3" fill="#F4C2F7" stroke="#1F1412" stroke-width="4"/></svg></span><div><span class="num">Option 4</span><h2>The PROVEN stamp</h2></div></div>
+      <p class="says">A rubber stamp thumping down "PROVEN" on a note. Fun, punchy, very clear.</p>
+      <p class="line"><b>What it says:</b> "That old story? Proven wrong. Stamped."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#FFD9A8">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <rect x="58" y="94" width="8" height="12" fill="#1F1412"/><path d="M40 106h44" stroke="#1F1412" stroke-width="4" stroke-linecap="round"/>
+        <g class="tip"><path d="M14 46L106 34" stroke="#1F1412" stroke-width="4" stroke-linecap="round"/>
+        <path d="M14 46l-8 22h28z" fill="none" stroke="#1F1412" stroke-width="2"/><path d="M106 34l-8 22h28z" fill="none" stroke="#1F1412" stroke-width="2"/>
+        <path d="M4 68h32a16 6 0 0 1-32 0z" fill="#E8DCD8" stroke="#1F1412" stroke-width="2.5"/><rect x="12" y="58" width="16" height="10" rx="2" fill="#A39A97" stroke="#1F1412" stroke-width="2"/><text x="20" y="66" text-anchor="middle" font-family="Poppins" font-size="7" font-weight="700" fill="#FFF">OLD</text>
+        <path d="M96 56h32a16 6 0 0 1-32 0z" fill="#E4F27A" stroke="#1F1412" stroke-width="2.5"/>
+        <g fill="#E4F27A" stroke="#1F1412" stroke-width="2"><rect x="100" y="46" width="12" height="10" rx="2"/><rect x="112" y="46" width="12" height="10" rx="2"/><rect x="104" y="36" width="12" height="10" rx="2"/><rect x="108" y="26" width="12" height="10" rx="2" fill="#F4C2F7"/></g></g>
+        <circle cx="60" cy="40" r="6" fill="#4E0C08" stroke="#1F1412" stroke-width="2"/><path d="M60 46v48" stroke="#1F1412" stroke-width="5"/>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="0 18 130 92"><path d="M14 52L116 34" stroke="#1F1412" stroke-width="6" stroke-linecap="round"/><path d="M60 40v62" stroke="#1F1412" stroke-width="7"/><rect x="8" y="56" width="24" height="16" rx="3" fill="#A39A97" stroke="#1F1412" stroke-width="4"/><rect x="96" y="18" width="30" height="34" rx="3" fill="#E4F27A" stroke="#1F1412" stroke-width="4"/></svg></span><div><span class="num">Option 5</span><h2>Tipping the scales</h2></div></div>
+      <p class="says">One small old belief on one side, a growing pile of proof on the other, and the scale tips.</p>
+      <p class="line"><b>What it says:</b> "The proof is starting to outweigh the old story."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#F1F9A6">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <rect x="24" y="12" width="72" height="12" rx="6" fill="#4E0C08" stroke="#1F1412" stroke-width="3"/>
+        <g class="print"><path d="M32 18h56v84l-7-5-7 5-7-5-7 5-7-5-7 5-7-5-7 5z" fill="#FFF" stroke="#1F1412" stroke-width="3" stroke-linejoin="round"/>
+        <text x="60" y="36" text-anchor="middle" font-family="Patrick Hand SC, cursive" font-size="11" fill="#A8231F">RECEIPTS</text>
+        <g font-family="Poppins, sans-serif" font-size="7" fill="#1F1412"><text x="38" y="50">Spoke up</text><text x="82" y="50" text-anchor="end">✓</text><text x="38" y="61">Rested</text><text x="82" y="61" text-anchor="end">✓</text><text x="38" y="72">Asked for help</text><text x="82" y="72" text-anchor="end">✓</text></g>
+        <path d="M38 78h44" stroke="#1F1412" stroke-dasharray="3 3"/><text x="60" y="90" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="8.5" fill="#1F1412">TOTAL: I CAN</text></g>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="22 8 76 100"><rect x="24" y="12" width="72" height="14" rx="6" fill="#4E0C08" stroke="#1F1412" stroke-width="4"/><path d="M32 20h56v82l-7-5-7 5-7-5-7 5-7-5-7 5-7-5-7 5z" fill="#FFF" stroke="#1F1412" stroke-width="4"/><path d="M40 44h40M40 58h40M40 72h28" stroke="#A8231F" stroke-width="5" stroke-linecap="round"/></svg></span><div><span class="num">Option 6</span><h2>Keep the receipts</h2></div></div>
+      <p class="says">A receipt printing out your wins line by line. Total at the bottom: I CAN.</p>
+      <p class="line"><b>What it says:</b> "When my brain argues, I've got the receipts."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#DCEFF7">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M18 104h84" stroke="#1F1412" stroke-width="4" stroke-linecap="round"/>
+        <g stroke="#1F1412" stroke-width="2.5" stroke-linejoin="round">
+        <rect x="24" y="86" width="24" height="16" rx="2" fill="#E4F27A"/><rect x="48" y="86" width="24" height="16" rx="2" fill="#F4C2F7"/><rect x="72" y="86" width="24" height="16" rx="2" fill="#E4F27A"/>
+        <rect x="36" y="70" width="24" height="16" rx="2" fill="#FFF4EE"/><rect x="60" y="70" width="24" height="16" rx="2" fill="#E4F27A"/>
+        <rect x="48" y="54" width="24" height="16" rx="2" fill="#F4C2F7"/></g>
+        <g class="drop"><rect x="48" y="38" width="24" height="16" rx="2" fill="#E4F27A" stroke="#1F1412" stroke-width="2.5"/></g>
+        <path class="tw" d="M60 12c.8 5 3 7.2 8 8-5 .8-7.2 3-8 8-.8-5-3-7.2-8-8 5-.8 7.2-3 8-8z" fill="#F1F9A6" stroke="#1F1412" stroke-width="1.6"/>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="18 30 84 76"><g stroke="#1F1412" stroke-width="4"><rect x="22" y="84" width="26" height="18" rx="2" fill="#E4F27A"/><rect x="48" y="84" width="26" height="18" rx="2" fill="#F4C2F7"/><rect x="74" y="84" width="26" height="18" rx="2" fill="#E4F27A"/><rect x="35" y="66" width="26" height="18" rx="2" fill="#FFF4EE"/><rect x="61" y="66" width="26" height="18" rx="2" fill="#E4F27A"/><rect x="48" y="48" width="26" height="18" rx="2" fill="#F4C2F7"/></g></svg></span><div><span class="num">Option 7</span><h2>Brick by brick</h2></div></div>
+      <p class="says">Each win is a brick. They stack into a solid new foundation.</p>
+      <p class="line"><b>What it says:</b> "I'm building a new belief, one win at a time."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#FBE6FC">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <g fill="#E4F27A" stroke="#1F1412" stroke-width="1.6"><path class="tw" d="M30 30c.6 4 2.4 5.8 6.4 6.4-4 .6-5.8 2.4-6.4 6.4-.6-4-2.4-5.8-6.4-6.4 4-.6 5.8-2.4 6.4-6.4z"/><path class="tw" style="animation-delay:.8s" d="M88 82c.6 4 2.4 5.8 6.4 6.4-4 .6-5.8 2.4-6.4 6.4-.6-4-2.4-5.8-6.4-6.4 4-.6 5.8-2.4 6.4-6.4z"/><path class="tw" style="animation-delay:1.6s" d="M28 84c.6 4 2.4 5.8 6.4 6.4-4 .6-5.8 2.4-6.4 6.4-.6-4-2.4-5.8-6.4-6.4 4-.6 5.8-2.4 6.4-6.4z"/></g>
+        <g class="scan"><circle cx="54" cy="54" r="24" fill="#FFF" fill-opacity=".85" stroke="#1F1412" stroke-width="4"/><path d="M72 72l20 20" stroke="#4E0C08" stroke-width="10" stroke-linecap="round"/><path d="M72 72l20 20" stroke="#1F1412" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+        <path d="M54 42c1 7 4 10 11 11-7 1-10 4-11 11-1-7-4-10-11-11 7-1 10-4 11-11z" fill="#E4F27A" stroke="#1F1412" stroke-width="2"/></g>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="24 24 76 76"><circle cx="54" cy="54" r="24" fill="#FFF" stroke="#1F1412" stroke-width="5"/><path d="M72 72l20 20" stroke="#4E0C08" stroke-width="12" stroke-linecap="round"/><path d="M54 40c1 7 4 10 12 12-8 2-11 5-12 12-1-7-4-10-12-12 8-2 11-5 12-12z" fill="#E4F27A" stroke="#1F1412" stroke-width="3"/></svg></span><div><span class="num">Option 8</span><h2>Spot the proof</h2></div></div>
+      <p class="says">A magnifying glass finding sparkles everywhere. This is your RAS filter at work.</p>
+      <p class="line"><b>What it says:</b> "Now I'm looking for it, I see proof everywhere."</p></div>
+    </article>
+
+    <article class="opt" style="--bgc:#E4F27A">
+      <div class="cov"><svg viewBox="0 0 120 120" aria-hidden="true">
+        <rect x="26" y="20" width="68" height="82" rx="6" fill="#FFF" stroke="#1F1412" stroke-width="3"/>
+        <rect x="44" y="14" width="32" height="12" rx="4" fill="#4E0C08" stroke="#1F1412" stroke-width="2.5"/>
+        <g font-family="Patrick Hand SC, cursive" font-size="10" fill="#A39A97"><text x="36" y="46" text-decoration="line-through">I always quit</text></g>
+        <path d="M34 43h48" stroke="#A8231F" stroke-width="2.5" stroke-linecap="round"/>
+        <g class="fill"><text x="36" y="64" font-family="Patrick Hand SC, cursive" font-size="10" fill="#1F1412">I showed up</text><text x="36" y="78" font-family="Patrick Hand SC, cursive" font-size="10" fill="#1F1412">7 days in a row</text></g>
+        <circle cx="80" cy="88" r="10" fill="#E4F27A" stroke="#1F1412" stroke-width="2.5"/><path d="M75 88l4 4 6-8" fill="none" stroke="#1F1412" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></div>
+      <div class="meta"><div class="top"><span class="ico"><svg viewBox="22 10 76 96"><rect x="26" y="20" width="68" height="82" rx="6" fill="#FFF" stroke="#1F1412" stroke-width="4"/><rect x="44" y="14" width="32" height="14" rx="4" fill="#4E0C08" stroke="#1F1412" stroke-width="3"/><path d="M36 46h46" stroke="#A8231F" stroke-width="5" stroke-linecap="round"/><path d="M36 64h40M36 78h30" stroke="#A39A97" stroke-width="5" stroke-linecap="round"/><circle cx="78" cy="88" r="11" fill="#E4F27A" stroke="#1F1412" stroke-width="4"/></svg></span><div><span class="num">Option 9</span><h2>Case closed</h2></div></div>
+      <p class="says">A clipboard. The old belief gets crossed out and the new evidence writes in underneath.</p>
+      <p class="line"><b>What it says:</b> "Old story crossed out. New evidence in."</p></div>
+    </article>
+
+  </section>
+  <p class="foot">Tell Claude: "Option 6" (or "6 but with the stamp from 4")</p>
+</div>

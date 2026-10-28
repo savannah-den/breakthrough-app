@@ -10,7 +10,7 @@ Companion views keep their names. 1:1-only views are renamed so nothing collides
 BreakingOut is shared, so the Companion copy is used.
 The router is replaced by public/js/shell.js (login, sync, menu, video player).
 """
-import re, sys
+import os, re, sys
 
 comp_path, one_path, out_path = sys.argv[1:4]
 A = open(comp_path, encoding='utf-8').read()
@@ -108,5 +108,10 @@ window.BT_build = build;
 </script>
 ''' % ('\n'.join(fonts), css, tpl, runtime(A), code)
 
+# Old Claude links -> the same tools inside the app
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from import_canvas import LINKMAP
+for old, new in LINKMAP.items():
+    out = out.replace(old, new)
 open(out_path, 'w', encoding='utf-8').write(out)
 print('wrote', out_path, len(out), 'bytes; views:', re.findall(r'^VIEWS\["([^"]+)"\]', code, re.M))

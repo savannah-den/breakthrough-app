@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>REWIND – Respond Instead of React</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600;1,700&amp;family=Poppins:wght@400;500;600&amp;family=Patrick+Hand+SC&amp;display=swap">
+<style>
+body{margin:0;background:#FAF7F5}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.01em}
+a{color:#A8231F}a:hover{color:#74140E}
+html{scroll-behavior:smooth}
+button{font:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #74140E;outline-offset:2px}
+.rw-root{position:relative;font-family:Poppins,system-ui,sans-serif;color:#1F1412;background:#FAF7F5;min-height:100vh;overflow-x:clip}
+.hand{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em}
+.orb{position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:999px;background:radial-gradient(circle at 35% 40%,#F4C2F7 0%,rgba(244,194,247,0) 60%),radial-gradient(circle at 65% 60%,#F1F9A6 0%,rgba(241,249,166,0) 55%),radial-gradient(circle at 50% 50%,#F28C3B 0%,rgba(242,140,59,0) 45%);filter:blur(36px);opacity:.75;pointer-events:none}
+.dark{background:#4E0C08;color:#FFF4EE;border-radius:24px}
+.step{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:26px;padding:26px 24px;display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px}
+.stephead{display:flex;align-items:center;gap:14px}
+.stepnum{flex:none;width:48px;height:48px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px;transition:background .3s,color .3s}
+.stepnum.done{background:#F1F9A6;color:#1F1412;box-shadow:inset 0 0 0 1.5px #1F1412}
+.letter{flex:none;width:64px;height:64px;border-radius:20px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:36px;transition:background .3s,color .3s}
+.letter.done{background:#F1F9A6;color:#1F1412;box-shadow:inset 0 0 0 1.5px #1F1412}
+.sub{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:1.5px dashed #EDE3DF}
+.subhead{display:flex;align-items:center;gap:10px}
+.subnum{flex:none;width:32px;height:32px;border-radius:999px;background:#FBE6FC;color:#4E0C08;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px}
+.q{display:flex;flex-direction:column;gap:10px;padding:16px 18px;border-radius:18px;background:#FAF7F5}
+.qtext{font-size:16px;font-weight:600;line-height:1.4}
+.ask{margin:0;padding:14px 18px;border-radius:18px;background:#FBE6FC;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;line-height:1.3;color:#4E0C08}
+.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.list li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.5}
+.list li svg{flex:none;margin-top:3px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#FFFFFF;border:1.5px solid #EDE3DF;color:#1F1412;font-size:14px;line-height:1.35}
+.pill.pink{background:#FBE6FC;border-color:#FBE6FC;color:#1F1412}
+.pill.lime{background:#F1F9A6;border-color:#1F1412;color:#1F1412}
+.pill.grey{background:#F6EFEC;border-color:#F6EFEC;color:#1F1412}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.flow .arr{color:#6A5A57;display:flex}
+.tool{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:18px;background:#FAF7F5;font-size:15px;line-height:1.45}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.cmp{display:flex;flex-direction:column;gap:8px;padding:16px 18px;border-radius:20px}
+.cmp.old{background:#F6EFEC}
+.cmp.new{background:#F8FCD6;border:1.5px solid #1F1412}
+.cmp-row{display:flex;flex-direction:column;gap:2px}
+.cmp-row .hand{font-size:14px;color:#A8231F}
+.cmp-row span:last-child{font-size:15px;line-height:1.45}
+.bubble{align-self:flex-start;max-width:340px;padding:10px 16px;border-radius:20px 20px 20px 6px;background:#F6EFEC;font-size:15px;line-height:1.45;color:#463A38}
+.rwrow{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;padding:14px 0;border-top:1px solid #F6EFEC}
+.rwrow:first-child{border-top:0}
+.rwrow .lk{width:44px;height:44px;border-radius:14px;background:#F1F9A6;border:1.5px solid #1F1412;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.chip:hover{border-color:#1F1412}
+.chip.on{background:#F1F9A6;border-color:#1F1412}
+.box{flex:none;width:18px;height:18px;box-sizing:border-box;border-radius:6px;border:2px solid #6A5A57;display:flex;align-items:center;justify-content:center;background:#FFFFFF}
+.box svg{opacity:0}
+.chip.on .box{background:#4E0C08;border-color:#4E0C08}
+.chip.on .box svg{opacity:1}
+.radio{flex:none;width:20px;height:20px;box-sizing:border-box;border-radius:999px;border:2px solid #6A5A57;background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.radio span{width:9px;height:9px;border-radius:999px;background:transparent}
+.chip.on .radio{border-color:#1F1412}
+.chip.on .radio span{background:#1F1412}
+.field{width:100%;box-sizing:border-box;min-height:110px;padding:14px 16px;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px;line-height:1.55;resize:vertical}
+.field::placeholder{color:#8C7C79}
+.field.pink{border-color:#F4C2F7}
+.field.lime{border-color:#1F1412;background:#F8FCD6}
+.field.short{min-height:64px}
+.eg{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.eg .lbl{font-size:13px;color:#6A5A57}
+.eg .e{padding:6px 12px;border-radius:999px;background:#FAF7F5;font-size:13px;font-style:italic;color:#463A38}
+.pex{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:18px;border:1.5px dashed #E890EC;background:#FFFFFF;font-size:15px;line-height:1.55;color:#1F1412}
+.pex .hand{font-size:14px;color:#A8231F}
+.chain{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.ctile{display:flex;flex-direction:column;gap:8px;padding:14px 14px 16px;border-radius:22px;background:#FFF4EE;color:#1F1412}
+.ctile .ch{display:flex;align-items:center;gap:8px}
+.ctile .cn{flex:none;width:30px;height:30px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:16px}
+.ctile .cl{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:17px;color:#4E0C08}
+.ctile p{margin:0;font-size:14px;line-height:1.5}
+.pv{padding:0 6px;border-radius:6px;background:#F1F9A6;font-weight:600;color:#1F1412;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.pv.r{background:#FBE6FC}
+.pv.u{background:none;padding:0;font-weight:700;font-style:italic;color:#4E0C08;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
+.pv.empty{background:#F6EFEC;color:#6A5A57;font-style:italic;font-weight:600}
+.stairs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.stairs li{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:#FAF7F5;box-sizing:border-box}
+.stairs li.here{background:#F8FCD6;border:1.5px solid #1F1412}
+.stairs .sn{flex:none;width:34px;height:34px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:17px}
+.stairs .st{font-weight:600;font-size:16px;line-height:1.3}
+.stairs .sd{font-size:14px;line-height:1.5;color:#463A38}
+.here-tag{display:inline-flex;margin-top:6px;padding:4px 10px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:14px;align-self:flex-start}
+.slide{margin:0;display:flex;flex-direction:column;gap:8px}
+.slide img{width:100%;height:auto;display:block;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF}
+.slide figcaption{font-size:13px;line-height:1.5;color:#6A5A57}
+.dark .slide img{border-color:rgba(255,244,238,.3)}
+.dark .slide figcaption{color:#F6D6CF}
+.reply{align-self:flex-start;max-width:260px;padding:10px 16px;border-radius:20px 20px 20px 6px;background:#FFFFFF;border:1.5px solid #EDE3DF;color:#1F1412;font-size:15px;line-height:1.45}
+.auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.auto .card{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.pill-note{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:18px;background:#F1F9A6;color:#1F1412;font-size:15px;line-height:1.5}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:#FBE6FC;color:#1F1412;font-size:15px;line-height:1.55}
+.callout.lime{background:#F8FCD6}
+.meter{display:grid;gap:4px;max-width:420px}
+.mseg{height:8px;border-radius:999px;background:rgba(255,244,238,.25);transition:background .3s}
+.mseg.on{background:#F1F9A6}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 24px;border-radius:999px;border:0;background:#D3302B;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer}
+.primary:hover{background:#A8231F}
+.primary.lime{background:#F1F9A6;color:#1F1412}
+.primary.lime:hover{background:#FFFFFF}
+.primary.lime.edge{border:1.5px solid #1F1412}
+.ghost{min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid #EDE3DF;background:transparent;color:#1F1412;font-size:14px;cursor:pointer}
+.ghost:hover{border-color:#1F1412}
+.ghost.warn{border-color:#A8231F;color:#A8231F}
+.x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:#6A5A57;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.x:hover{background:#F6EFEC;color:#1F1412}
+.sum-row{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-top:1px solid #F6EFEC}
+.sum-row:first-child{border-top:0}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.cf{position:absolute;left:50%;top:58%;border-radius:3px;opacity:0;animation:rw-burst 1.9s cubic-bezier(.15,.7,.3,1) forwards}
+.cf:nth-child(1){--x:-109px;--y:-246px;--r:-276deg;background:#F4C2F7;width:10px;height:6px;animation-delay:7ms}
+.cf:nth-child(2){--x:232px;--y:-150px;--r:608deg;background:#F1F9A6;width:8px;height:10px;animation-delay:11ms}
+.cf:nth-child(3){--x:30px;--y:-180px;--r:-408deg;background:#D3302B;width:12px;height:6px;animation-delay:74ms}
+.cf:nth-child(4){--x:323px;--y:-126px;--r:-406deg;background:#F28C3B;width:8px;height:6px;animation-delay:109ms}
+.cf:nth-child(5){--x:-254px;--y:-146px;--r:-495deg;background:#4E0C08;width:12px;height:6px;animation-delay:23ms}
+.cf:nth-child(6){--x:-299px;--y:-191px;--r:279deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(7){--x:59px;--y:-321px;--r:501deg;background:#F4C2F7;width:10px;height:6px;animation-delay:118ms}
+.cf:nth-child(8){--x:-34px;--y:-287px;--r:-263deg;background:#F1F9A6;width:12px;height:14px;animation-delay:67ms}
+.cf:nth-child(9){--x:-4px;--y:-265px;--r:254deg;background:#D3302B;width:8px;height:6px;animation-delay:53ms}
+.cf:nth-child(10){--x:-224px;--y:-160px;--r:220deg;background:#F28C3B;width:12px;height:10px;animation-delay:97ms}
+.cf:nth-child(11){--x:59px;--y:-385px;--r:538deg;background:#4E0C08;width:12px;height:14px;animation-delay:74ms}
+.cf:nth-child(12){--x:160px;--y:-183px;--r:665deg;background:#E890EC;width:12px;height:6px;animation-delay:8ms}
+.cf:nth-child(13){--x:-346px;--y:-124px;--r:471deg;background:#F4C2F7;width:12px;height:14px;animation-delay:113ms}
+.cf:nth-child(14){--x:92px;--y:-167px;--r:352deg;background:#F1F9A6;width:12px;height:10px;animation-delay:63ms}
+.cf:nth-child(15){--x:-361px;--y:-186px;--r:-587deg;background:#D3302B;width:10px;height:14px;animation-delay:10ms}
+.cf:nth-child(16){--x:-234px;--y:-198px;--r:-620deg;background:#F28C3B;width:12px;height:14px;animation-delay:90ms}
+.cf:nth-child(17){--x:-64px;--y:-271px;--r:-334deg;background:#4E0C08;width:8px;height:10px;animation-delay:19ms}
+.cf:nth-child(18){--x:-171px;--y:-174px;--r:-449deg;background:#E890EC;width:10px;height:10px;animation-delay:18ms}
+.cf:nth-child(19){--x:-62px;--y:-250px;--r:308deg;background:#F4C2F7;width:12px;height:6px;animation-delay:79ms}
+.cf:nth-child(20){--x:150px;--y:-330px;--r:587deg;background:#F1F9A6;width:10px;height:14px;animation-delay:13ms}
+.cf:nth-child(21){--x:-15px;--y:-312px;--r:-393deg;background:#D3302B;width:10px;height:10px;animation-delay:14ms}
+.cf:nth-child(22){--x:-91px;--y:-234px;--r:-283deg;background:#F28C3B;width:10px;height:6px;animation-delay:3ms}
+.cf:nth-child(23){--x:-237px;--y:-101px;--r:-438deg;background:#4E0C08;width:10px;height:6px;animation-delay:46ms}
+.cf:nth-child(24){--x:-16px;--y:-205px;--r:671deg;background:#E890EC;width:10px;height:14px;animation-delay:10ms}
+@keyframes rw-burst{0%{opacity:1;transform:translate(-50%,0) rotate(0deg) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),var(--y)) rotate(var(--r)) scale(1)}}
+.cel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;width:min(360px,calc(100% - 32px));box-sizing:border-box;background:#FFFFFF;border:2px solid #4E0C08;border-radius:28px;padding:26px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-shadow:0 24px 60px rgba(78,12,8,.25);animation:rw-pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes rw-pop{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.cf{display:none}.cel,.modal{animation:none}html{scroll-behavior:auto}}
+.modal-bg{position:fixed;inset:0;z-index:30;border:0;padding:0;margin:0;background:rgba(31,20,18,.45);cursor:pointer}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;width:min(540px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:#FFFFFF;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 70px rgba(31,20,18,.3);animation:rw-pop .3s cubic-bezier(.2,1.2,.4,1)}
+</style>
+</helmet>
+<div class="rw-root">
+<div class="orb" aria-hidden="true"></div>
+
+<sc-if value="{{hasExport}}" hint-placeholder-val="{{ false }}">
+<button class="modal-bg" aria-label="Close" onClick="{{closeExport}}"></button>
+<div class="modal" role="dialog" aria-modal="true" aria-label="Your REWIND image">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h3 style="margin: 0; font-weight: 700; font-size: 22px">Your REWIND is ready</h3>
+<button class="x" aria-label="Close" onClick="{{closeExport}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55; color: #463A38">If it didn’t download on its own, press and hold the image (phone) or right-click it (computer) and choose save.</p>
+<img src="{{exportUrl}}" alt="My REWIND" style="width: 100%; border-radius: 16px; border: 1.5px solid #EDE3DF">
+</div>
+</sc-if>
+
+<sc-if value="{{celebrating}}" hint-placeholder-val="{{ false }}">
+<div class="confetti" aria-hidden="true"><sc-for list="{{confetti}}" as="cf" hint-placeholder-count="24"><span class="cf"></span></sc-for></div>
+<div class="cel" role="status">
+<span style="width: 64px; height: 64px; border-radius: 999px; background: #F1F9A6; display: flex; align-items: center; justify-content: center"><svg width="34" height="34" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.2" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg></span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.1">{{celTitle}}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #463A38">{{celSub}}</span>
+<button class="ghost" onClick="{{closeCelebrate}}">Keep going</button>
+</div>
+</sc-if>
+
+<div style="position: relative; max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-direction: column; gap: 14px; padding-top: 16px">
+<div style="display: flex; align-items: center; gap: 14px">
+<svg width="56" height="56" viewBox="0 0 120 120" role="img" aria-label="REWIND icon" style="flex: none"><defs><filter id="rw0" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="41"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><rect x="1" y="1" width="118" height="118" rx="29" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></rect><g filter="url(#rw0)"><circle cx="58" cy="60" r="38" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4"></circle><path d="M56 44 L34 60 L56 76 Z M80 44 L58 60 L80 76 Z" fill="#4E0C08" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path></g><path transform="translate(84 76) scale(0.9)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2" stroke-linejoin="round"></path></svg>
+<div class="hand" style="font-size: 18px; color: #A8231F">Breakthrough Program · Week 2 resource</div>
+</div>
+<h1 style="margin: 0; font-weight: 700; font-size: clamp(48px, 9vw, 84px); line-height: 1; letter-spacing: 0.02em">REWIND</h1>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(22px, 3.4vw, 30px); line-height: 1.2; color: #4E0C08">How to respond instead of react.</p>
+<p style="margin: 0; max-width: 640px; font-size: 17px; line-height: 1.6; color: #463A38">A practical framework for navigating triggers, RSD, conflict, misunderstandings, emotional overwhelm, and those delightful little moments where your brain makes up an entire Netflix drama from one tiny interaction.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; max-width: 760px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">1</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Pause</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A calm stick person with a hand on their chest, breathing slowly" style="width: 100%; height: auto; display: block"><defs><filter id="rw1" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw1)"><rect x="26" y="12" width="148" height="28" rx="14" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"></rect><path d="M44 66 q10 -10 20 0 t20 0 M118 60 q10 -10 20 0 t20 0" fill="none" stroke="#E890EC" stroke-width="3" stroke-linecap="round"></path><circle cx="100" cy="92" r="13" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M93 91 q3 2.5 6 0 M101 91 q3 2.5 6 0" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round"></path><path d="M95 98 q5 4 10 0" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round"></path><path d="M100 105 L100 145 M100 145 L88 178 M100 145 L112 178" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M106 118 c0 -4 6 -4 6 0 c0 -4 6 -4 6 0 c0 5 -6 8 -6 10 c0 -2 -6 -5 -6 -10 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.6" stroke-linejoin="round"></path><path d="M100 114 L86 126 L110 124 M100 114 L118 138" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="100" y="31" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#1F1412">a trigger, not a tiger</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">Pause before the old program runs,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">2</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Rethink</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A thought bubble where the story they hate me is crossed out and replaced with they got distracted" style="width: 100%; height: auto; display: block"><defs><filter id="rw2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw2)"><rect x="58" y="12" width="134" height="114" rx="30" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6"></rect><rect x="72" y="28" width="106" height="28" rx="14" fill="#F6EFEC"></rect><path d="M78 42 L172 42" stroke="#D3302B" stroke-width="2.6" stroke-linecap="round"></path><rect x="72" y="72" width="106" height="40" rx="16" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"></rect><circle cx="54" cy="136" r="6" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="44" cy="150" r="3.6" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="30" cy="166" r="12" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="26" cy="164" r="1.6" fill="#4E0C08"></circle><circle cx="34" cy="164" r="1.6" fill="#4E0C08"></circle><path d="M30 178 L30 190" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path></g><text x="125" y="47" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#463A38">they hate me</text><text x="125" y="89" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#1F1412">they got</text><text x="125" y="104" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#1F1412">distracted</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">find a new meaning,</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 16px; background: #FFFFFF; border: 1.5px solid #EDE3DF; border-radius: 22px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #4E0C08; color: #F1F9A6; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 19px">3</span><span style="font-family: 'Patrick Hand SC', cursive; font-size: 18px; letter-spacing: 0.06em; color: #4E0C08">Respond</span></div><svg viewBox="0 0 200 190" role="img" aria-label="A stick person at a fork. The bright path up leads to a whole heart, respond with intention. The grey path down leads to a broken heart, react with emotion." style="width: 100%; height: auto; display: block"><defs><filter id="rw3" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="37"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw3)"><path d="M56 108 Q96 96 136 52" fill="none" stroke="#F1F9A6" stroke-width="14" stroke-linecap="round"></path><path d="M56 108 Q96 96 136 52" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-dasharray="5 7" stroke-linecap="round"></path><path d="M56 124 Q96 140 134 164" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-dasharray="4 6" stroke-linecap="round"></path><path d="M30 182 L196 182" stroke="#B9ADAA" stroke-width="2.4" stroke-linecap="round"></path><circle cx="36" cy="94" r="11" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="33" cy="92" r="1.5" fill="#4E0C08"></circle><circle cx="40" cy="92" r="1.5" fill="#4E0C08"></circle><path d="M32 98 Q36 101 40 98" fill="none" stroke="#4E0C08" stroke-width="1.6" stroke-linecap="round"></path><path d="M36 105 L36 134 M36 134 L27 160 M36 134 L45 160" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M36 114 L24 126 M36 114 L52 104" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path transform="translate(160 32)" d="M0 -4 C -4 -14 -20 -12 -20 1 C -20 12 -7 18 0 25 C 7 18 20 12 20 1 C 20 -12 4 -14 0 -4 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><path transform="translate(158 148)" d="M0 -4 C -4 -14 -20 -12 -20 1 C -20 12 -7 18 0 25 C 7 18 20 12 20 1 C 20 -12 4 -14 0 -4 Z" fill="#EDE3DF" stroke="#6A5A57" stroke-width="2.2" stroke-linejoin="round"></path><path transform="translate(158 148)" d="M0 -4 L-5 4 L3 10 L-3 17 L0 25" fill="none" stroke="#FAF7F5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path><path transform="translate(158 148)" d="M0 -4 L-5 4 L3 10 L-3 17 L0 25" fill="none" stroke="#6A5A57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></g><path transform="translate(176 6) scale(0.7)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><text x="160" y="76" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#1F1412">respond with</text><text x="160" y="90" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#1F1412">intention</text><text x="160" y="124" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#463A38">react with</text><text x="160" y="137" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#463A38">emotion</text></svg><figcaption style="font-size: 15px; line-height: 1.5; color: #1F1412; text-align: center">then respond with intention, not react with emotion.</figcaption></figure>
+</div>
+
+<div class="callout lime" style="max-width: 760px; box-sizing: border-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Need a refresher? Watch the trigger lesson: <strong>Week 3, Lesson 4</strong>. Click the video below to rewatch.</span></div>
+<a href="https://youtu.be/gxx4mlU8vBo" target="_blank" rel="noopener" aria-label="Watch the trigger lesson, Week 3 Lesson 4, on YouTube (opens in a new tab)" style="display: flex; flex-direction: column; max-width: 760px; box-sizing: border-box; border-radius: 24px; overflow: hidden; border: 1.5px solid #EDE3DF; background: #4E0C08; color: #FFF4EE; text-decoration: none"><img src="/_blob/0b3e57663dc4bfebaf05c38b7cbbb3dc" alt="Lesson title slide: Triggers, with a pink revolver" style="display: block; width: 100%; aspect-ratio: 1400 / 736; object-fit: cover; background: #FCF1FC"><span style="display: flex; align-items: center; gap: 14px; padding: 14px 18px"><span style="flex: none; width: 52px; height: 52px; border-radius: 999px; background: #F1F9A6; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="#4E0C08" aria-hidden="true" style="margin-left: 3px"><path d="M6 4 L20 12 L6 20 Z"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span class="hand" style="font-size: 15px; color: #F1F9A6">Week 3 · Lesson 4</span><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600">Watch the trigger lesson on YouTube<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span></span></span></a>
+</header>
+
+<section class="dark" style="padding: 28px 26px; display: flex; flex-direction: column; gap: 18px">
+<div class="hand" style="font-size: 17px; color: #F1F9A6">What is REWIND?</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.12">REWIND is a pattern interrupt.</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">It helps you pause before the old program takes over. Instead of going:</p>
+<div class="flow" aria-label="Old program: Trigger, Meaning, Feeling, Reaction, Regret">
+<span class="pill grey">Trigger</span><span class="arr" style="color: #F6D6CF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill grey">Meaning</span><span class="arr" style="color: #F6D6CF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill grey">Feeling</span><span class="arr" style="color: #F6D6CF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill grey">Reaction</span><span class="arr" style="color: #F6D6CF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill grey">Regret</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">REWIND helps you create space so you can go:</p>
+<div class="flow" aria-label="With REWIND: Trigger, Pause, Perspective, New Meaning, Chosen Response">
+<span class="pill pink">Trigger</span><span class="arr" style="color: #F1F9A6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill pink">Pause</span><span class="arr" style="color: #F1F9A6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill pink">Perspective</span><span class="arr" style="color: #F1F9A6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill pink">New meaning</span><span class="arr" style="color: #F1F9A6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill lime" style="font-weight: 600">Chosen response</span>
+</div>
+<figure class="slide"><img src="/_blob/006fdaca6d5f43b131a7c3d521b57322" alt="Lesson slide: he says 'Stop overthinking this', she gets triggered. Event or action, then trigger, then react is crossed out and replaced with respond, with pause and breath in between."><figcaption>From the lesson: event → trigger → react becomes <strong style="color: #F1F9A6">respond</strong> when you pause and breathe.</figcaption></figure>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 6px">
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #FFF4EE">Because you can’t always choose what happens. <strong style="color: #F1F9A6">But you can choose what it means.</strong></p>
+<div class="chain" style="padding-top: 8px">
+<div class="ctile"><div class="ch"><span class="cn">1</span><span class="cl">Meaning</span></div><svg viewBox="0 0 160 100" role="img" aria-label="A thought bubble where an old story is crossed out and a new one written in" style="width: 100%; height: auto; display: block"><defs><filter id="rw4" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="51"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw4)"><rect x="20" y="6" width="130" height="72" rx="28" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.4"></rect><rect x="34" y="18" width="102" height="20" rx="10" fill="#EDE3DF"></rect><path d="M40 28 L130 28" stroke="#D3302B" stroke-width="2.4" stroke-linecap="round"></path><rect x="34" y="46" width="102" height="22" rx="11" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8"></rect><circle cx="20" cy="86" r="5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="10" cy="95" r="3" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle></g><text x="85" y="32" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#463A38">old story</text><text x="85" y="61" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#1F1412">new meaning</text></svg><p>When you change the <strong>meaning</strong>…</p></div>
+<div class="ctile"><div class="ch"><span class="cn">2</span><span class="cl">Feeling</span></div><svg viewBox="0 0 160 100" role="img" aria-label="A heavy grey cloud turning into a soft pink heart" style="width: 100%; height: auto; display: block"><defs><filter id="rw5" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="63"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw5)"><path d="M10 52 C6 40 18 32 28 36 C32 24 52 24 56 34 C66 32 72 42 66 50 C70 60 58 66 50 62 C44 70 26 70 22 62 C12 64 8 58 10 52 Z" fill="#EDE3DF" stroke="#6A5A57" stroke-width="2"></path><path d="M44 74 l-3 10 M32 74 l-3 10 M56 72 l-3 10" stroke="#B9ADAA" stroke-width="2.4" stroke-linecap="round"></path><path d="M78 48 L92 48 M86 42 L92 48 L86 54" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path><path transform="translate(124 42)" d="M0 -6 C -5 -18 -26 -16 -26 1 C -26 15 -9 23 0 32 C 9 23 26 15 26 1 C 26 -16 5 -18 0 -6 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path></g><path transform="translate(140 6) scale(0.7)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path></svg><p>…you change the <strong>feeling</strong>.</p></div>
+<div class="ctile"><div class="ch"><span class="cn">3</span><span class="cl">Action</span></div><svg viewBox="0 0 160 100" role="img" aria-label="Two choices. On one side a person turns away with arms crossed: withdraw. On the other side two people hug under a heart: connect." style="width: 100%; height: auto; display: block"><defs><filter id="rw6" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="77"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw6)"><path d="M80 6 L80 86" stroke="#B9ADAA" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"></path><circle cx="20" cy="32" r="8" fill="#F6EFEC" stroke="#6A5A57" stroke-width="2"></circle><path d="M20 40 L20 62 M20 62 L14 84 M20 62 L26 84" fill="none" stroke="#6A5A57" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 48 L28 54 M28 48 L12 54" fill="none" stroke="#6A5A57" stroke-width="3" stroke-linecap="round"></path><circle cx="58" cy="32" r="8" fill="#FFFFFF" stroke="#6A5A57" stroke-width="2"></circle><path d="M58 40 L58 62 M58 62 L52 84 M58 62 L64 84" fill="none" stroke="#6A5A57" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M58 48 L42 44 M58 48 L66 58" fill="none" stroke="#6A5A57" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="106" cy="34" r="8" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><circle cx="126" cy="34" r="8" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M106 42 L106 64 M106 64 L100 84 M106 64 L112 84 M126 42 L126 64 M126 64 L120 84 M126 64 L132 84" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M106 50 Q118 58 130 48 M126 52 Q114 60 102 50" fill="none" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"></path><path transform="translate(116 14)" d="M0 -2 C -2 -8 -11 -7 -11 0 C -11 6 -4 9 0 13 C 4 9 11 6 11 0 C 11 -7 2 -8 0 -2 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.8" stroke-linejoin="round"></path></g><text x="40" y="98" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#463A38">withdraw</text><text x="116" y="98" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#1F1412">connect</text></svg><p>…you change the <strong>action</strong>.</p></div>
+<div class="ctile"><div class="ch"><span class="cn">4</span><span class="cl">Outcome</span></div><svg viewBox="0 0 160 100" role="img" aria-label="Two outcomes. On one side a person cheers on top of a hill: yay. On the other a person is stuck in a hole: oh no." style="width: 100%; height: auto; display: block"><defs><filter id="rw7" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="89"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3"></feDisplacementMap></filter></defs><g filter="url(#rw7)"><path d="M80 6 L80 86" stroke="#B9ADAA" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"></path><path d="M2 88 Q38 34 74 88 Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><circle cx="38" cy="30" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></circle><path d="M35 32 Q38 35 41 32" fill="none" stroke="#4E0C08" stroke-width="1.4" stroke-linecap="round"></path><path d="M38 37 L38 52 M38 52 L33 62 M38 52 L43 62" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M38 42 L28 30 M38 42 L48 30" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round"></path><path d="M86 62 L156 62" stroke="#6A5A57" stroke-width="2.4" stroke-linecap="round"></path><path d="M100 62 Q120 100 140 62 Z" fill="#EDE3DF" stroke="#6A5A57" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="120" cy="70" r="7" fill="#FFFFFF" stroke="#6A5A57" stroke-width="2"></circle><path d="M117 74 Q120 71 123 74" fill="none" stroke="#6A5A57" stroke-width="1.4" stroke-linecap="round"></path><path d="M114 66 L108 54 M126 66 L132 54" fill="none" stroke="#6A5A57" stroke-width="2.6" stroke-linecap="round"></path></g><path transform="translate(54 6) scale(0.6)" d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"></path><text x="16" y="18" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#1F1412">yay!</text><text x="120" y="40" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="13" fill="#463A38">oh no…</text><text x="38" y="98" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#1F1412">on top</text><text x="120" y="98" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="12" fill="#463A38">stuck</text></svg><p>…and you change the <strong>outcome</strong>.</p></div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #A8231F">When to use it</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.1">Reach for REWIND when…</h2>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; line-height: 1.3; color: #4E0C08">You realise you reacted in a way you wish you could take back, or do differently next time.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #463A38">Maybe you got defensive. Maybe you reacted overly emotional, or you can feel you were a bit over the top. Or it happened so fast, on autopilot, that you barely noticed until you were already mid unwanted behaviour.</p>
+<div class="auto">
+<div class="card">
+<span class="hand" style="font-size: 16px; color: #A8231F">Out toward someone</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="pill pink">Yelling at your kids</span>
+<span class="pill pink">Arguing with your partner</span>
+<span class="pill pink">Sending a passive-aggressive message while you’re still mad</span>
+<span class="pill pink">Snapping at your mum over one tiny comment</span>
+<span class="pill pink">Giving someone the silent treatment</span>
+<span class="pill pink">Getting defensive the second you hear feedback</span>
+<span class="pill pink">Slamming cupboards so they know you’re annoyed</span>
+</div>
+</div>
+<div class="card">
+<span class="hand" style="font-size: 16px; color: #A8231F">In your head</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="pill pink">A mental spiral you can’t get out of, and no clue how you got there</span>
+<span class="pill pink">Replaying a conversation on a loop at 2am</span>
+<span class="pill pink">Rehearsing the argument you’ll never actually have</span>
+<span class="pill pink">Convincing yourself everyone’s secretly annoyed with you</span>
+</div>
+</div>
+<div class="card">
+<span class="hand" style="font-size: 16px; color: #A8231F">On autopilot</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="pill pink">Scrolling your phone for an hour</span>
+<span class="pill pink">Eating chocolate mindlessly out of the fridge</span>
+<span class="pill pink">Impulse online shopping</span>
+<span class="pill pink">Shutting down and going quiet</span>
+<span class="pill pink">Cancelling plans because suddenly it’s all too much</span>
+<span class="pill pink">Pouring a wine before you’ve even put your bag down</span>
+</div>
+</div>
+</div>
+<div class="pill-note"><span class="hand" style="font-size: 15px; color: #4E0C08">Basically</span><span>Any time something happens and it negatively affects your <strong>feelings, thoughts or actions</strong>, whether that came out toward the person or turned inward into a thought pattern that had you spiralling.</span></div>
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>We’re <strong>hunting for the trigger</strong>, so you can notice it next time and change it.</span></div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="hand" style="font-size: 17px; color: #A8231F">See it in action</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(30px, 5vw, 40px); line-height: 1.08">The text message spiral</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 26px; background: #FFFFFF; border: 1.5px solid #EDE3DF">
+<span class="hand" style="font-size: 16px; color: #A8231F">The trigger</span>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 22px; background: #FAF7F5">
+<div style="align-self: flex-end; max-width: 240px; padding: 10px 16px; border-radius: 20px 20px 6px 20px; background: #4E0C08; color: #FFF4EE; font-size: 15px; line-height: 1.45">Hey! Are we still on for Friday?</div>
+<span style="align-self: flex-end; font-size: 12px; color: #6A5A57">Read 2:14 pm</span>
+<div style="align-self: flex-start; display: flex; gap: 5px; padding: 12px 16px; border-radius: 20px; background: #EDE3DF" role="img" aria-label="No reply yet"><span style="width: 7px; height: 7px; border-radius: 999px; background: #8C7C79"></span><span style="width: 7px; height: 7px; border-radius: 999px; background: #8C7C79"></span><span style="width: 7px; height: 7px; border-radius: 999px; background: #8C7C79"></span></div>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.55">Someone reads your message and doesn’t reply.</p>
+<span class="hand" style="font-size: 16px; color: #A8231F">The old program</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span class="bubble">“They hate me.”</span>
+<span class="bubble">“I’ve done something wrong.”</span>
+<span class="bubble">“They’re pulling away.”</span>
+</div>
+<span class="hand" style="font-size: 16px; color: #A8231F">The reaction</span>
+<p style="margin: 0; font-size: 15px; line-height: 1.55">Based on that meaning, you message them again.</p>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 22px; background: #FAF7F5">
+<div style="align-self: flex-end; max-width: 240px; padding: 10px 16px; border-radius: 20px 20px 6px 20px; background: #4E0C08; color: #FFF4EE; font-size: 15px; line-height: 1.45">Did I do something wrong??</div>
+<div class="reply">No, not at all! I got distracted is all.</div>
+</div>
+<div class="pill-note"><span>All that spiralling… for a meaning <strong>you made up</strong>.</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 22px; border-radius: 26px; background: #FFFFFF; border: 2px solid #4E0C08">
+<span class="hand" style="font-size: 16px; color: #A8231F; padding-bottom: 4px">Now, REWIND it</span>
+<div class="rwrow"><span class="lk">R</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>Regulate</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">Before typing “did I do something wrong??”, put the phone down. Take a breath. Remind your body you are safe.</span></div></div>
+<div class="rwrow"><span class="lk">E</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>Examine</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">The event is: they read it and haven’t replied. The meaning I made is: they hate me and I’ve done something wrong. That meaning is what wanted to send the anxious text.</span></div></div>
+<div class="rwrow"><span class="lk">W</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>Walk into their world</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">Maybe they’re busy. Maybe they opened it and got distracted. Maybe they replied in their head. Maybe they’re overwhelmed. (Spoiler: they just got distracted.)</span></div></div>
+<div class="rwrow"><span class="lk">I</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>Identify the ammunition</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">This hit my fear of rejection, and my “I’m not important” bullet.</span></div></div>
+<div class="rwrow"><span class="lk">N</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>New meaning</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">Their delay does not automatically mean rejection. A read receipt is not a verdict on me.</span></div></div>
+<div class="rwrow"><span class="lk">D</span><div style="display: flex; flex-direction: column; gap: 2px"><strong>Decide</strong><span style="font-size: 15px; line-height: 1.5; color: #463A38">I can wait. Or, if I need an answer, gently bring it back to their attention later, without accusation: “Hey, just bumping this, are we still on for Friday?”</span></div></div>
+<div class="callout lime" style="margin-top: 10px"><span>Same outcome (they were never mad), minus the spiral, the anxious message and the vulnerability hangover.</span></div>
+</div>
+</div>
+</section>
+
+<section class="dark" id="rw-activity" style="padding: 28px 26px; display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 16px">
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Embodiment activity</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(30px, 5vw, 40px); line-height: 1.08">Now REWIND one of yours.</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #F6D6CF">Pick one moment from the last week that you reacted to in a way you wish you hadn’t, or that’s still playing on a loop in your head, and walk it through, letter by letter. Each step explains the why, then gives you space to write. Your brain learns faster when it’s on the page.</p>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
+<div class="meter" style="grid-template-columns: repeat({{stepCount}}, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{meter}}" as="m" hint-placeholder-count="7"><span class="{{m.cls}}"></span></sc-for></div>
+<span style="font-size: 13px; color: #F6D6CF">{{progressLabel}}</span>
+</div>
+</section>
+
+<section class="step">
+<div class="stephead"><span class="{{cls.trigger}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 6 L3 12 L11 18 Z M21 6 L13 12 L21 18 Z"></path></svg></span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Start here</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Choose one recent trigger</h2></div></div>
+<div class="q"><span class="qtext">Think of a moment from the last week where you…</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="pill pink">Felt big emotions</span><span class="pill pink">Did something you wish you could take back</span><span class="pill pink">Mentally spiralled</span><span class="pill pink">Ended up at the unwanted outcome</span></div></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">Write it down</span><textarea class="field short" value="{{momentText}}" onChange="{{onMomentText}}" placeholder="The moment, in a sentence or two…"></textarea></label>
+</section>
+
+<section class="step" id="rw-r">
+<div class="stephead"><span class="{{cls.reg}}">R</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 1</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Regulate first</h2></div></div>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">Before you analyse, explain, defend, spiral, or send the message… <strong>regulate.</strong></p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">If your survival brain is online, your logical brain is not fully available. So before you try to think your way out of the trigger, signal safety to your body. Try one of these now:</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px">
+<div class="tool"><strong>Physiological sigh</strong><span style="font-size: 13px; color: #6A5A57">See the breathing resource</span></div>
+<div class="tool"><strong>Deep breathing</strong><span style="font-size: 13px; color: #6A5A57">See the breathing resource</span></div>
+<div class="tool"><strong>Name five things you can see</strong><span style="font-size: 13px; color: #6A5A57">Rewatch Week 3, Lesson 5: Perception is Projection for a refresh on this</span></div>
+<div class="tool"><strong>Feel your feet on the floor</strong></div>
+<div class="tool"><strong>Place a hand on your chest</strong></div>
+<div class="tool"><strong>Step away for a moment</strong></div>
+</div>
+<div class="pill-note"><span class="hand" style="font-size: 15px; color: #4E0C08">Say it out loud</span><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; line-height: 1.25">“I am safe. This is a trigger, not a tiger.”</span></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">The goal is to create enough space to choose your response, instead of the automatic knee-jerk reaction.</p>
+<figure class="slide"><img src="/_blob/1c5afb0325fedc27b1edea4e86f7787a" alt="Lesson slide: from the trigger, the straight path leads to an argument and the unwanted outcome. Pause and breathe opens a second path to the desired outcome, a hug."><figcaption>Pause + breathe opens up a second path: away from the unwanted outcome and toward the one you actually want.</figcaption></figure>
+<button class="{{regCls}}" style="align-self: flex-start" aria-pressed="{{regPressed}}" onClick="{{toggleReg}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>I’ve regulated. My body feels safe enough to keep going.</button>
+</section>
+
+<section class="step" id="rw-e">
+<div class="stephead"><span class="{{cls.examine}}">E</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 2</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Examine the trigger</h2></div></div>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">The event is not usually the cause of the feeling. <strong>The meaning is.</strong></p>
+<figure class="slide"><img src="/_blob/8f13a4480c39f62268d2a911bbd4ea57" alt="Lesson slide: action or event, then a pink gun labelled trigger, then reaction."><figcaption>Action or event → trigger → reaction. What happened is the event. What you made it mean is what pulled the trigger.</figcaption></figure>
+<div class="flow"><span class="pill">Event</span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill lime" style="font-weight: 600">Meaning</span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span><span class="pill">Feeling</span></div>
+<div class="pex"><span class="hand">Our example for this activity</span><span>Your partner walks in after work, looks around and says: <strong>“Why is the kitchen still a mess?”</strong></span></div>
+<div class="compare">
+<div class="cmp old">
+<div class="cmp-row"><span class="hand">Event</span><span>“Why is the kitchen still a mess?”</span></div>
+<div class="cmp-row"><span class="hand">Meaning</span><span>“They think I’m lazy. I can never do enough.”</span></div>
+<div class="cmp-row"><span class="hand">Feeling</span><span>Shame, then anger. You snap back.</span></div>
+</div>
+<div class="cmp new">
+<div class="cmp-row"><span class="hand">Same event</span><span>“Why is the kitchen still a mess?”</span></div>
+<div class="cmp-row"><span class="hand">Different meaning</span><span>“They’ve had a long day and walked into chaos. This is about their overwhelm, not my worth.”</span></div>
+<div class="cmp-row"><span class="hand">Different feeling</span><span>Calmer. Able to actually talk about it.</span></div>
+</div>
+</div>
+
+<div class="sub">
+<div class="subhead"><span class="subnum">a</span><h3 style="margin: 0; font-weight: 700; font-size: 22px">What happened?</h3></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Stick to the facts. <strong style="color: #1F1412">Not the story.</strong></p>
+<textarea class="field" aria-label="What happened" value="{{facts}}" onChange="{{onFacts}}" placeholder="Just what a camera would have recorded…"></textarea>
+<div class="eg"><span class="lbl">For example:</span><span class="e">“My partner asked why the kitchen was still a mess.”</span><span class="e">“Mum asked if I’m still doing ‘that coaching thing’.”</span><span class="e">“My partner said I was overthinking.”</span><span class="e">“My kid said ‘you never listen’.”</span></div>
+</div>
+
+<div class="sub">
+<div class="subhead"><span class="subnum">b</span><h3 style="margin: 0; font-weight: 700; font-size: 22px">What did I make it mean?</h3></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Write the story your brain created. All of it, Netflix drama and all.</p>
+<textarea class="field" aria-label="What I made it mean" value="{{story}}" onChange="{{onStory}}" placeholder="The story my brain told me was…"></textarea>
+<div class="eg"><span class="lbl">For example:</span><span class="e">“They think I’m lazy.”</span><span class="e">“She’s never been proud of me.”</span><span class="e">“I’m failing at everything.”</span><span class="e">“I’m a bad mum.”</span></div>
+</div>
+
+<div class="sub">
+<div class="subhead"><span class="subnum">c</span><h3 style="margin: 0; font-weight: 700; font-size: 22px">What did I feel?</h3></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{feelChips}}" as="c" hint-placeholder-count="14"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">Something else?</span><textarea class="field short pink" value="{{feelOther}}" onChange="{{onFeelOther}}" placeholder="Name it in your own words"></textarea></label>
+</div>
+</section>
+
+<section class="step" id="rw-w">
+<div class="stephead"><span class="{{cls.walk}}">W</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 3</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Walk into their world</h2></div></div>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">Step into their model of the world. Ask:</p>
+<ul class="list">
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What might they be seeing, feeling, or experiencing?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What might their intention have been?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What resources do they currently have available?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What fear, belief, or program might be influencing them? What might they be needing?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Was it out of love or fear?</strong></span></li>
+</ul>
+<figure class="slide"><img src="/_blob/49f0892d6b07cf278010027527f0260b" alt="Lesson slide: It's about intention. Love: expansive, connective, open, abundant. Fear: restrictive, protective, destructive, limiting."><figcaption>It’s about intention. Love is expansive, connective, open. Fear is restrictive, protective, limiting.</figcaption></figure>
+<div class="pex"><span class="hand">In the kitchen example</span><span>Maybe they had a rough day, they’re overstimulated and hungry, and walked into one more thing to deal with. Their fear might be “I can’t cope with one more thing,” not “you’re not enough.”</span></div>
+<textarea class="field" aria-label="Their world" value="{{their}}" onChange="{{onTheir}}" placeholder="From where they were standing, maybe…"></textarea>
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>This does not mean excusing their behaviour. It means <strong>understanding creates awareness</strong>, and awareness creates choice.</span></div>
+</section>
+
+<section class="step" id="rw-i">
+<div class="stephead"><span class="{{cls.ammo}}">I</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 4</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Identify the ammunition</h2></div></div>
+<p class="ask">What bullet did this hit?</p>
+<figure class="slide"><img src="/_blob/cbfb24b61c4ae6264c959964f082362b" alt="Lesson slide: What ammo is in your gun? Bullets labelled red hair, ADHD isn't real, crying is weak, too much."><figcaption>What ammo is in your gun? Each bullet is a belief that makes the trigger fire.</figcaption></figure>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Which belief, wound, or old program is behind the bullet? Tick any that fit.</p>
+<div class="pex"><span class="hand">In the kitchen example</span><span>This hit my “I’m failing” and “I’m not doing enough” bullets. Maybe an old one from childhood too, about having to earn love by getting everything right.</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{ammoChips}}" as="c" hint-placeholder-count="11"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{c.label}}</button></sc-for></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">A different bullet?</span><textarea class="field short pink" value="{{ammoOther}}" onChange="{{onAmmoOther}}" placeholder="The belief behind it, in your words"></textarea></label>
+<div style="padding: 16px 18px; border-radius: 18px; border: 2px solid #4E0C08; background: #FFFFFF; display: flex; flex-direction: column; gap: 4px"><span class="hand" style="font-size: 15px; color: #A8231F">The bullet this hit:</span><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; line-height: 1.25">{{ammoSentence}}</span></div>
+<div class="pill-note"><span class="hand" style="font-size: 15px; color: #4E0C08">Remember</span><span>The trigger is not always the problem. <strong>The ammunition is.</strong> If there were no bullet in the gun, the trigger wouldn’t have fired the same way.</span></div>
+</section>
+
+<section class="step" id="rw-n">
+<div class="stephead"><span class="{{cls.meaning}}">N</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 5</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">New meaning</h2></div></div>
+<figure class="slide"><img src="/_blob/6c2716ab4aea16ab43052f1471a489ab" alt="Lesson slide: on the left a grey, gloomy road of signs; on the right a bright, colourful world. A woman steps across a bridge labelled understanding."><figcaption>Same world, different meaning. Understanding is the bridge from the grey story to the bright one.</figcaption></figure>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">Now choose a more expansive meaning. Ask:</p>
+<ul class="list">
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What else could this mean? What is another possible explanation?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What would I make this mean if I felt safe?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What would I make this mean if I knew I was loved?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What would I make this mean if I believed I was enough?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What meaning moves me toward my goal?</span></li>
+<li><svg width="16" height="16" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>What meaning helps me become the version of myself I want to be?</span></li>
+</ul>
+<div class="pex"><span class="hand">In the kitchen example</span><span>They’re overwhelmed, not judging my worth. A messy kitchen is not a verdict on me as a person.</span></div>
+<textarea class="field lime" style="min-height: 130px" aria-label="My new meaning" value="{{meaning}}" onChange="{{onMeaning}}" placeholder="What else this could mean is…"></textarea>
+<sc-if value="{{hasBoth}}" hint-placeholder-val="{{ false }}">
+<div class="compare">
+<div class="cmp old"><span class="hand" style="font-size: 14px; color: #6A5A57">Old story</span><span style="font-size: 15px; line-height: 1.5; color: #463A38">{{storyShort}}</span></div>
+<div class="cmp new"><span class="hand" style="font-size: 14px; color: #A8231F">New meaning</span><span style="font-size: 15px; line-height: 1.5; font-weight: 600">{{meaningShort}}</span></div>
+</div>
+</sc-if>
+<div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You are not trying to gaslight yourself. You are giving your brain access to <strong>more than one story</strong>.</span></div>
+</section>
+
+<section class="step" id="rw-d">
+<div class="stephead"><span class="{{cls.resp}}">D</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step 6</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Decide your response</h2></div></div>
+<p class="ask">What would I do next if I was responding instead of reacting?</p>
+<div class="compare">
+<div class="cmp old">
+<span class="hand" style="font-size: 16px; color: #6A5A57">Not…</span>
+<span style="font-size: 15px; line-height: 1.5; color: #463A38">What protects my ego?</span>
+<span style="font-size: 15px; line-height: 1.5; color: #463A38">What proves I’m right?</span>
+<span style="font-size: 15px; line-height: 1.5; color: #463A38">What gets the last word?</span>
+<span style="font-size: 15px; line-height: 1.5; color: #463A38">What avoids discomfort?</span>
+</div>
+<div class="cmp new">
+<span class="hand" style="font-size: 16px; color: #A8231F">But…</span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; line-height: 1.25">What moves me toward the reality I want to create?</span>
+</div>
+</div>
+<div class="pex"><span class="hand">In the kitchen example</span><span>Instead of snapping back: “Sounds like a rough day. I’ve been flat out too. Can we tackle it together after dinner?”</span></div>
+<p style="margin: 0; font-size: 15px; color: #463A38">Pick one action, or write your own.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px" role="group" aria-label="Choose one response"><sc-for list="{{respChips}}" as="c" hint-placeholder-count="12"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><span class="radio"><span></span></span>{{c.label}}</button></sc-for></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; color: #6A5A57">In my own words</span><textarea class="field short pink" value="{{respText}}" onChange="{{onRespText}}" placeholder="e.g. ask them what they need"></textarea></label>
+<div class="pill-note"><span>This is where you move from <strong>reaction</strong> to <strong>response</strong>.</span></div>
+<button class="primary" style="align-self: flex-start" onClick="{{commit}}">I’m choosing this response</button>
+</section>
+
+<section class="dark" style="position: relative; overflow: hidden; padding: 32px 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="120" height="120" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="position: absolute; right: -18px; top: -18px; opacity: .25"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Final reminder</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.08">REWIND is not about never getting triggered.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">You will still get triggered. You’re human. This is about noticing the trigger sooner, creating a gap, choosing a new meaning, and responding in a way that moves you toward the reality you want.</p>
+<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">Every time you do that, you’re building a new groove.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px">
+<span class="pill pink">One pause.</span><span class="pill pink">One breath.</span><span class="pill pink">One new meaning.</span><span class="pill lime" style="font-weight: 600">One different response at a time.</span>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Keep it</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.1">Save your REWIND</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Turn it into a plan for next time. Your response comes from step D. Fill in the last two bits and watch your card build.</p>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">If this same thing happens again…</span><span style="font-size: 13px; line-height: 1.5; color: #6A5A57">What actually caused it? If you knew what specifically triggered the meaning and feeling you created, what would it be? Keep it a little broad, so it covers all the other times it’s happened slightly differently but is really the same trigger.</span><textarea class="field short" value="{{nextTrigger}}" onChange="{{onNextTrigger}}" placeholder="e.g. someone says no to plans"></textarea></label>
+<div class="eg"><span class="lbl">For example:</span><span class="e">someone says no to plans</span><span class="e">someone questions my actions</span><span class="e">I feel left out</span><span class="e">I’m told I’m doing it wrong</span></div>
+<label style="display: flex; flex-direction: column; gap: 8px"><span class="qtext">I will respond differently because…</span><span style="font-size: 13px; color: #6A5A57">The outcome you want to create by changing your actions.</span><textarea class="field short lime" value="{{because}}" onChange="{{onBecause}}" placeholder="e.g. I want us to feel like a team, not opponents"></textarea></label>
+<div class="eg"><span class="lbl">For example:</span><span class="e">I want my kids to feel safe with me</span><span class="e">I get to feel calm and in control</span><span class="e">I want a closer relationship with my partner</span><span class="e">I don’t have to carry the guilt afterwards</span></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Download it as an image, copy it into your notes, or screenshot the card. Pop it somewhere you’ll see it.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button class="primary lime edge" onClick="{{download}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download as JPEG</button>
+<button class="ghost" onClick="{{copy}}">{{copyLabel}}</button>
+</div>
+<sc-if value="{{hasErr}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A8231F">{{err}}</span></sc-if>
+</div>
+<div style="width: 100%; max-width: 420px; justify-self: center; background: #FFFFFF; border-radius: 28px; overflow: hidden; border: 1.5px solid #EDE3DF; box-shadow: 0 16px 40px rgba(78,12,8,.10)">
+<div style="background: #4E0C08; color: #FFF4EE; padding: 24px 24px 20px; display: flex; flex-direction: column; gap: 4px">
+<span class="hand" style="font-size: 14px; color: #F1F9A6">REWIND · Respond instead of react</span>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 26px; line-height: 1.1">My REWIND</span>
+<span style="font-size: 13px; color: #F6D6CF">{{today}}</span>
+</div>
+<div style="padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px">
+<span class="hand" style="font-size: 15px; color: #A8231F">My next-time plan</span>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 400; font-size: 23px; line-height: 1.55; color: #463A38">Next time <span class="{{planTrigCls}}">{{planTrig}}</span>, I will notice it, take a breath and <span class="{{planRespCls}}">{{planResp}}</span>, because <span class="{{planBecCls}}">{{planBec}}</span>.</p>
+</div>
+</div>
+</section>
+
+<section class="step">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Be gentle with yourself</div>
+<h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.1">This isn’t an overnight thing.</h2>
+</div>
+<p style="margin: 0; font-size: 16px; line-height: 1.65">Your well-worn grooves for some of these can be <strong>really deep</strong>. You’ve had years of unconsciously practising it one way. So for now, just noticing and adjusting your behaviour after the fact is enough. That <em>is</em> the rewiring.</p>
+<figure class="slide"><img src="/_blob/423aca9e5b3ef0ad25536bd6b48a95a3" alt="Lesson slide: a deep groove pressed into clay runs from the trigger down to the unwanted outcome, with a newer, shallower path branching off to the desired outcome."><figcaption>The old groove runs straight to the unwanted outcome. Every time you choose differently, you carve the new path a little deeper.</figcaption></figure>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Remember the hierarchy of learning from Week 1’s videos?</p>
+<ol class="stairs">
+<li><span class="sn">1</span><div style="display: flex; flex-direction: column; gap: 2px"><span class="st">Unconsciously incompetent</span><span class="sd">You don’t even notice you’re doing it. It just happens.</span></div></li>
+<li class="here" style="margin-left: min(5vw, 28px)"><span class="sn">2</span><div style="display: flex; flex-direction: column; gap: 2px"><span class="st">Consciously incompetent</span><span class="sd">You notice, but usually after the fact. You still react, and then you catch it.</span><span class="here-tag">Noticing after? You’re here, and that’s progress</span></div></li>
+<li style="margin-left: calc(2 * min(5vw, 28px))"><span class="sn">3</span><div style="display: flex; flex-direction: column; gap: 2px"><span class="st">Consciously competent</span><span class="sd">You catch it in the moment and choose a new response. It takes effort, but you can do it.</span></div></li>
+<li style="margin-left: calc(3 * min(5vw, 28px))"><span class="sn">4</span><div style="display: flex; flex-direction: column; gap: 2px"><span class="st">Unconsciously competent</span><span class="sd">The new response is your default. You barely have to think about it.</span></div></li>
+</ol>
+<div class="pill-note"><span>It takes time to rewire. Every time you notice, even after the fact, you’re moving up a step.</span></div>
+</section>
+
+<footer style="display: flex; flex-direction: column; gap: 18px; padding-top: 20px; border-top: 1.5px solid #EDE3DF">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: #6A5A57">
+<span>Your answers are saved privately in this browser on this device.</span>
+<button class="{{clearCls}}" onClick="{{clearAll}}">{{clearLabel}}</button>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 1.6; color: #6A5A57">This resource is for education and self-reflection, not therapy or medical advice. Need support? Lifeline 13 11 14 · Beyond Blue 1300 22 4636 · 000 in an emergency (Australia).</p>
+<div style="background: #4E0C08; color: #FFF4EE; border-radius: 24px; padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="#F1F9A6" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 21px">Colour Me Neurospicy</span>
+</div>
+<a href="https://www.instagram.com/colour_me_neurospicy/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #F1F9A6; color: #1F1412; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"></circle></svg>@colour_me_neurospicy</a>
+</div>
+</footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":9000}}'>
+var RW_KEY = 'rewind-v1';
+var RW_MOMENT = ['Felt hurt', 'Felt rejected', 'Felt angry', 'Felt misunderstood', 'Reacted in a way I didn’t love', 'Spiralled afterwards', 'Felt myself repeating an old pattern'];
+var RW_FEEL = ['Ashamed', 'Rejected', 'Angry', 'Sad', 'Afraid', 'Embarrassed', 'Panicked', 'Not good enough', 'Unloved', 'Unworthy', 'Annoyed', 'Frustrated', 'Confused', 'Disappointed'];
+var RW_AMMO = ['I’m not good enough', 'I’m too much', 'I’m not important', 'I’m not safe', 'I’m being rejected', 'I’m being abandoned', 'I’m being judged', 'I’m a burden', 'I don’t belong', 'I’m failing', 'I can’t trust myself'];
+var RW_RESP = ['wait before replying', 'ask a clarifying question', 'regulate before speaking', 'set a boundary', 'take space', 'send a kind message', 'apologise', 'let it go', 'have the hard conversation when I’m calm', 'do nothing for now', 'choose not to make it about me', 'gently bring it up later, without accusation'];
+var RW_SAVED = ['nextTrigger', 'because', 'moment', 'momentText', 'regulated', 'facts', 'story', 'feel', 'feelOther', 'ammo', 'ammoOther', 'their', 'meaning', 'resp', 'respText', 'committed'];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { nextTrigger: '', because: '', moment: {}, momentText: '', regulated: false, facts: '', story: '', feel: {}, feelOther: '', ammo: {}, ammoOther: '', their: '', meaning: '', resp: null, respText: '', committed: false, confirmClear: false, copied: '', exportUrl: null, celebrate: null, err: '' };
+  }
+
+  componentDidMount() {
+    try {
+      var raw = window.localStorage.getItem(RW_KEY);
+      if (raw) { var s = JSON.parse(raw); if (s && typeof s === 'object') this.setState(s); }
+    } catch (e) {}
+  }
+
+  componentDidUpdate() {
+    var s = this.state, out = {};
+    RW_SAVED.forEach(function (k) { out[k] = s[k]; });
+    try { window.localStorage.setItem(RW_KEY, JSON.stringify(out)); } catch (e) {}
+  }
+
+  flip(field, key) {
+    var next = Object.assign({}, this.state[field]);
+    if (next[key]) delete next[key]; else next[key] = true;
+    var patch = {}; patch[field] = next;
+    this.setState(patch);
+  }
+
+  saveJpeg(cv, name) {
+    var self = this;
+    var url = cv.toDataURL('image/jpeg', 0.92);
+    var fallback = function () {
+      try { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
+      self.setState({ exportUrl: url });
+    };
+    var C = window.claude;
+    if (!C || typeof C.use !== 'function') { fallback(); return; }
+    C.use('downloads').then(function (dl) {
+      if (!dl) { fallback(); return; }
+      cv.toBlob(function (blob) {
+        if (!blob) { fallback(); return; }
+        dl.save({ filename: name, data: blob }).then(function () {}, function (err) { if (err && err.code === 'declined') return; fallback(); });
+      }, 'image/jpeg', 0.92);
+    }, fallback);
+  }
+
+  exportPlan(segs, dateLabel) {
+    var self = this;
+    var PF = '"Playfair Display", Georgia, serif';
+    var fonts = { n: '400 23px ' + PF, y: '600 23px ' + PF, p: '600 23px ' + PF, u: 'italic 700 23px ' + PF, e: 'italic 600 23px ' + PF };
+    var colors = { n: '#463A38', y: '#1F1412', p: '#1F1412', u: '#4E0C08', e: '#6A5A57' };
+    var bgs = { y: '#F1F9A6', p: '#FBE6FC', e: '#F6EFEC' };
+    var draw = function () {
+      try {
+        var W = 420, S = 3, M = 40, innerX = 24, innerW = W - 48, FS = 23, LH = FS * 1.55, PADH = 6;
+        var probe = document.createElement('canvas').getContext('2d');
+        var toks = [];
+        segs.forEach(function (sg, si) { String(sg.t).split(/(\s+)/).forEach(function (p) { if (p) toks.push({ t: p, k: sg.k, si: si, sp: /^\s+$/.test(p) }); }); });
+        var lines = [[]], x = 0;
+        toks.forEach(function (tk, i) {
+          probe.font = fonts[tk.k];
+          var w = probe.measureText(tk.t).width;
+          var first = i === 0 || toks[i - 1].si !== tk.si;
+          var last = i === toks.length - 1 || toks[i + 1].si !== tk.si;
+          var padL = (bgs[tk.k] && first) ? PADH : 0, padR = (bgs[tk.k] && last) ? PADH : 0;
+          if (tk.sp) { if (x === 0) return; lines[lines.length - 1].push({ tk: tk, x: x, w: w, padL: 0, padR: 0 }); x += w; return; }
+          if (x > 0 && x + padL + w + padR > innerW) {
+            var L = lines[lines.length - 1]; while (L.length && L[L.length - 1].tk.sp) L.pop();
+            lines.push([]); x = 0;
+          }
+          lines[lines.length - 1].push({ tk: tk, x: x + padL, w: w, padL: padL, padR: padR });
+          x += padL + w + padR;
+        });
+        var L0 = lines[lines.length - 1]; while (L0.length && L0[L0.length - 1].tk.sp) L0.pop();
+        var hdrH = 24 + 20 + 4 + 29 + 4 + 19 + 20;
+        var bodyTop = hdrH, textTop = bodyTop + 22 + 21 + 10;
+        var cardH = textTop + lines.length * LH + 24;
+        var CW = W + M * 2, CH = cardH + M * 2;
+        var cv = document.createElement('canvas'); cv.width = CW * S; cv.height = CH * S;
+        var g = cv.getContext('2d'); g.scale(S, S);
+        function rr(x0, y0, w0, h0, r) { g.beginPath(); g.moveTo(x0 + r, y0); g.arcTo(x0 + w0, y0, x0 + w0, y0 + h0, r); g.arcTo(x0 + w0, y0 + h0, x0, y0 + h0, r); g.arcTo(x0, y0 + h0, x0, y0, r); g.arcTo(x0, y0, x0 + w0, y0, r); g.closePath(); }
+        g.fillStyle = '#FAF7F5'; g.fillRect(0, 0, CW, CH);
+        g.save(); g.shadowColor = 'rgba(78,12,8,0.10)'; g.shadowBlur = 40; g.shadowOffsetY = 16; rr(M, M, W, cardH, 28); g.fillStyle = '#FFFFFF'; g.fill(); g.restore();
+        g.save(); rr(M, M, W, cardH, 28); g.clip(); g.translate(M, M);
+        g.fillStyle = '#4E0C08'; g.fillRect(0, 0, W, hdrH);
+        g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+        try { g.letterSpacing = '0.84px'; } catch (e) {}
+        g.font = '400 14px "Patrick Hand SC", cursive'; g.fillStyle = '#F1F9A6'; g.fillText('REWIND · RESPOND INSTEAD OF REACT', 24, 24 + 15);
+        try { g.letterSpacing = '0px'; } catch (e) {}
+        g.font = '700 26px ' + PF; g.fillStyle = '#FFF4EE'; g.fillText('My REWIND', 24, 24 + 20 + 4 + 23);
+        g.font = '400 13px Poppins, system-ui, sans-serif'; g.fillStyle = '#F6D6CF'; g.fillText(dateLabel, 24, 24 + 20 + 4 + 29 + 4 + 14);
+        try { g.letterSpacing = '0.9px'; } catch (e) {}
+        g.font = '400 15px "Patrick Hand SC", cursive'; g.fillStyle = '#A8231F'; g.fillText('MY NEXT-TIME PLAN', 24, bodyTop + 22 + 16);
+        try { g.letterSpacing = '0px'; } catch (e) {}
+        lines.forEach(function (line, li) {
+          var top = textTop + li * LH, base = top + (LH - FS) / 2 + FS * 0.8;
+          var runs = [];
+          line.forEach(function (it) { var r = runs[runs.length - 1]; if (r && r.si === it.tk.si) { r.items.push(it); } else { runs.push({ si: it.tk.si, k: it.tk.k, items: [it] }); } });
+          runs.forEach(function (r) {
+            var a = r.items[0], b = r.items[r.items.length - 1];
+            var x0 = innerX + a.x - a.padL, x1 = innerX + b.x + b.w + b.padR;
+            if (bgs[r.k]) { g.fillStyle = bgs[r.k]; rr(x0, top + (LH - 31) / 2, x1 - x0, 31, 6); g.fill(); }
+            if (r.k === 'u') { g.fillStyle = colors.u; g.fillRect(innerX + a.x, base + 5, (innerX + b.x + b.w) - (innerX + a.x), 2); }
+          });
+          line.forEach(function (it) { if (it.tk.sp) return; g.font = fonts[it.tk.k]; g.fillStyle = colors[it.tk.k]; g.fillText(it.tk.t, innerX + it.x, base); });
+        });
+        g.restore();
+        g.save(); rr(M + 0.75, M + 0.75, W - 1.5, cardH - 1.5, 27.25); g.lineWidth = 1.5; g.strokeStyle = '#EDE3DF'; g.stroke(); g.restore();
+        self.saveJpeg(cv, 'my-rewind.jpg');
+      } catch (e) { self.setState({ err: 'Couldn’t make the image on this device. Try copying it to your notes instead.' }); }
+    };
+    try {
+      var specs = [fonts.n, fonts.y, fonts.u, fonts.e, '700 26px ' + PF, '400 14px "Patrick Hand SC"', '400 13px Poppins'];
+      if (document.fonts && document.fonts.load) Promise.all(specs.map(function (f) { return document.fonts.load(f, 'Next time abc'); })).then(draw, draw); else draw();
+    } catch (e) { draw(); }
+  }
+
+  exportCard(rows, dateLabel) {
+    var self = this;
+    var draw = function () {
+      try {
+        var W = 1080, pad = 72, inner = W - pad * 2, S = 2;
+        function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+        function layout(g, paint) {
+          function wrap(text, maxW) {
+            var out = [];
+            String(text).split('\n').forEach(function (para) {
+              var words = para.split(' '), cur = '';
+              words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t; });
+              out.push(cur);
+            });
+            return out;
+          }
+          if (paint) { g.fillStyle = '#4E0C08'; g.fillRect(0, 0, W, 210); }
+          g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+          g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#F1F9A6'; g.fillText('REWIND · RESPOND INSTEAD OF REACT', pad, 78); }
+          g.font = '700 60px "Playfair Display", Georgia, serif'; if (paint) { g.fillStyle = '#FFF4EE'; g.fillText('My REWIND', pad, 146); }
+          g.font = '400 22px Poppins, sans-serif'; if (paint) { g.fillStyle = '#F6D6CF'; g.fillText(dateLabel, pad, 186); }
+          var y = 230;
+          rows.forEach(function (r) {
+            y += 56;
+            g.font = '400 26px "Patrick Hand SC", cursive'; if (paint) { g.fillStyle = '#A8231F'; g.fillText(r.label.toUpperCase(), pad, y); }
+            if (r.hi) {
+              g.font = '600 26px Poppins, sans-serif';
+              var hl = wrap(r.text, inner - 40), hh = hl.length * 38 + 30;
+              y += 14;
+              if (paint) { g.fillStyle = r.hi; roundRect(g, pad - 20, y, inner + 40, hh, 22); g.fill(); g.fillStyle = '#1F1412'; hl.forEach(function (l, i) { g.fillText(l, pad, y + 46 + i * 38); }); }
+              y += hh; return;
+            }
+            g.font = '400 26px Poppins, sans-serif';
+            wrap(r.text, inner).forEach(function (l) { y += 38; if (paint) { g.fillStyle = '#1F1412'; g.fillText(l, pad, y); } });
+          });
+          y += 72;
+          var foot = 110;
+          if (paint) {
+            g.fillStyle = '#6A5A57'; g.font = 'italic 400 24px "Playfair Display", Georgia, serif'; g.fillText('One pause. One breath. One new meaning. One different response at a time.', pad, y);
+            g.fillStyle = '#4E0C08'; g.fillRect(0, y + 40, W, foot);
+            g.textBaseline = 'middle'; g.fillStyle = '#FFF4EE'; g.font = 'italic 600 30px "Playfair Display", Georgia, serif'; g.fillText('Colour Me Neurospicy', pad, y + 40 + foot / 2);
+            g.textAlign = 'right'; g.fillStyle = '#F1F9A6'; g.font = '600 24px Poppins, sans-serif'; g.fillText('@colour_me_neurospicy', W - pad, y + 40 + foot / 2);
+          }
+          return y + 40 + foot;
+        }
+        var probe = document.createElement('canvas').getContext('2d');
+        var H = layout(probe, false);
+        var cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+        var g = cv.getContext('2d'); g.scale(S, S); g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H);
+        layout(g, true);
+        self.saveJpeg(cv, 'my-rewind.jpg');
+      } catch (e) { self.setState({ err: 'Couldn’t make the image on this device. Try copying it to your notes instead.' }); }
+    };
+    try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw, draw); else draw(); } catch (e) { draw(); }
+  }
+
+  renderVals() {
+    var self = this, s = this.state;
+    var t = function (v) { return String(v || '').trim(); };
+    var picked = function (field, list) { return list.filter(function (x) { return (s[field] || {})[x]; }); };
+    var multi = function (field, list) {
+      return list.map(function (x) { var on = !!(s[field] || {})[x]; return { label: x, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', toggle: function () { self.flip(field, x); } }; });
+    };
+
+    var moments = picked('moment', RW_MOMENT);
+    var feels = picked('feel', RW_FEEL);
+    if (t(s.feelOther)) feels.push(t(s.feelOther));
+    var ammos = picked('ammo', RW_AMMO);
+    if (t(s.ammoOther)) ammos.push(t(s.ammoOther));
+    var ammoSentence = ammos.length ? ammos.map(function (a) { return '“' + a + '”'; }).join(', ') : '…';
+    var response = t(s.respText) || s.resp || '';
+
+    var answered = {
+      trigger: !!t(s.momentText),
+      reg: !!s.regulated,
+      examine: !!(t(s.facts) || t(s.story) || feels.length),
+      walk: !!t(s.their),
+      ammo: ammos.length > 0,
+      meaning: !!t(s.meaning),
+      resp: !!response
+    };
+    var order = ['trigger', 'reg', 'examine', 'walk', 'ammo', 'meaning', 'resp'];
+    var cls = {};
+    order.forEach(function (k) { var base = k === 'trigger' ? 'stepnum' : 'letter'; cls[k] = answered[k] ? base + ' done' : base; });
+    var doneCount = order.filter(function (k) { return answered[k]; }).length;
+
+    var celebrate = function (title, sub) {
+      self.setState({ celebrate: { title: title, sub: sub } });
+      clearTimeout(self.celTimer);
+      self.celTimer = setTimeout(function () { self.setState({ celebrate: null }); }, 3400);
+    };
+
+    var dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    var clip = function (v, n) { v = t(v); return v.length > n ? v.slice(0, n - 1) + '…' : v; };
+
+    var summary = [];
+    if (answered.trigger) summary.push({ label: 'The moment', text: [t(s.momentText), moments.length ? 'I ' + moments.map(function (m) { return m.charAt(0).toLowerCase() + m.slice(1); }).join(', ') : ''].filter(Boolean).join('\n') });
+    if (t(s.facts)) summary.push({ label: 'What happened', text: t(s.facts) });
+    if (t(s.story)) summary.push({ label: 'What I made it mean', text: t(s.story) });
+    if (feels.length) summary.push({ label: 'What I felt', text: feels.join(', ') });
+    if (answered.walk) summary.push({ label: 'Walking into their world', text: t(s.their) });
+    if (answered.ammo) summary.push({ label: 'The ammunition', text: ammos.join(', ') });
+    if (answered.meaning) summary.push({ label: 'My new meaning', text: t(s.meaning), hi: '#F8FCD6' });
+    if (answered.resp) summary.push({ label: 'My chosen response', text: response, hi: '#FBE6FC' });
+
+    var tidy = function (v) { return t(v).replace(/[.\s]+$/, ''); };
+    var pTrig = tidy(s.nextTrigger);
+    var pResp = tidy(response);
+    if (pResp && !/^I[\s’']/.test(pResp)) pResp = pResp.charAt(0).toLowerCase() + pResp.slice(1);
+    pResp = pResp.replace(/^I will\s+/i, '');
+    var pBec = tidy(s.because);
+    if (pTrig && !/^I[\s’']/.test(pTrig)) pTrig = pTrig.charAt(0).toLowerCase() + pTrig.slice(1);
+    var statement = 'Next time ' + (pTrig || '[the trigger]') + ', I will notice it, take a breath and ' + (pResp || '[my response]') + ', because ' + (pBec || '[what I get by changing it]') + '.';
+    var summaryText = function () {
+      return ['MY REWIND', dateLabel, '', statement, '', 'One pause. One breath. One new meaning. One different response at a time.'].join('\n');
+    };
+
+    return {
+      stepCount: order.length,
+      meter: order.map(function (k) { return { cls: answered[k] ? 'mseg on' : 'mseg' }; }),
+      progressLabel: doneCount === order.length ? 'All done. You just rewound it. Look at you go.' : doneCount + ' of ' + order.length + ' parts done',
+      cls: cls,
+      momentChips: multi('moment', RW_MOMENT),
+      momentText: s.momentText || '', onMomentText: function (e) { self.setState({ momentText: e.target.value }); },
+      regCls: s.regulated ? 'chip on' : 'chip', regPressed: s.regulated ? 'true' : 'false',
+      toggleReg: function () { self.setState({ regulated: !self.state.regulated }); },
+      facts: s.facts || '', onFacts: function (e) { self.setState({ facts: e.target.value }); },
+      story: s.story || '', onStory: function (e) { self.setState({ story: e.target.value }); },
+      feelChips: multi('feel', RW_FEEL),
+      feelOther: s.feelOther || '', onFeelOther: function (e) { self.setState({ feelOther: e.target.value }); },
+      ammoChips: multi('ammo', RW_AMMO),
+      ammoOther: s.ammoOther || '', onAmmoOther: function (e) { self.setState({ ammoOther: e.target.value }); },
+      ammoSentence: ammoSentence,
+      their: s.their || '', onTheir: function (e) { self.setState({ their: e.target.value }); },
+      meaning: s.meaning || '', onMeaning: function (e) { self.setState({ meaning: e.target.value }); },
+      hasBoth: !!(t(s.story) && t(s.meaning)),
+      storyShort: clip(s.story, 140), meaningShort: clip(s.meaning, 140),
+      respChips: RW_RESP.map(function (x) { var on = s.resp === x; return { label: x.charAt(0).toUpperCase() + x.slice(1), cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.setState({ resp: on ? null : x }); } }; }),
+      respText: s.respText || '', onRespText: function (e) { self.setState({ respText: e.target.value }); },
+      commit: function () {
+        if (!response) { celebrate('Pick one first', 'Choose a response above, or write your own. One action is all you need.'); return; }
+        self.setState({ committed: true });
+        celebrate('Response chosen!', 'You just moved from reaction to response. That’s a brand new groove.');
+      },
+      celebrating: !!s.celebrate,
+      celTitle: (s.celebrate && s.celebrate.title) || '',
+      celSub: (s.celebrate && s.celebrate.sub) || '',
+      closeCelebrate: function () { self.setState({ celebrate: null }); },
+      confetti: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map(function (i) { return { i: i }; }),
+      today: dateLabel,
+      summary: summary.map(function (r) { return { label: r.label, text: r.text }; }),
+      noSummary: summary.length === 0,
+      download: function () {
+        self.setState({ err: '' });
+        self.exportPlan([
+          { t: 'Next time ', k: 'n' },
+          { t: pTrig || 'the trigger', k: pTrig ? 'y' : 'e' },
+          { t: ', I will notice it, take a breath and ', k: 'n' },
+          { t: pResp || 'my response', k: pResp ? 'u' : 'e' },
+          { t: ', because ', k: 'n' },
+          { t: pBec || 'what I get by changing it', k: pBec ? 'p' : 'e' },
+          { t: '.', k: 'n' }
+        ], dateLabel);
+      },
+      nextTrigger: s.nextTrigger || '', onNextTrigger: function (e) { self.setState({ nextTrigger: e.target.value }); },
+      because: s.because || '', onBecause: function (e) { self.setState({ because: e.target.value }); },
+      planTrig: pTrig || 'the trigger', planTrigCls: pTrig ? 'pv' : 'pv empty',
+      planResp: pResp || 'my response', planRespCls: pResp ? 'pv u' : 'pv empty',
+      planBec: pBec || 'what I get by changing it', planBecCls: pBec ? 'pv r' : 'pv empty',
+      hasExport: !!s.exportUrl, exportUrl: s.exportUrl || '',
+      closeExport: function () { self.setState({ exportUrl: null }); },
+      copy: function () {
+        var text = summaryText();
+        var fin = function (ok) { self.setState({ copied: ok ? 'ok' : 'fail' }); setTimeout(function () { self.setState({ copied: '' }); }, 2500); };
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function () { fin(true); }, function () { fin(false); }); return; }
+        } catch (e) {}
+        try { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove(); fin(ok); } catch (e) { fin(false); }
+      },
+      copyLabel: s.copied === 'ok' ? 'Copied!' : (s.copied === 'fail' ? 'Couldn’t copy, try a screenshot' : 'Copy to my notes'),
+      hasErr: !!s.err, err: s.err || '',
+      clearCls: s.confirmClear ? 'ghost warn' : 'ghost',
+      clearLabel: s.confirmClear ? 'Tap again to clear everything' : 'Start a fresh REWIND',
+      clearAll: function () {
+        if (!self.state.confirmClear) { self.setState({ confirmClear: true }); setTimeout(function () { self.setState({ confirmClear: false }); }, 4000); return; }
+        self.setState({ nextTrigger: '', because: '', moment: {}, momentText: '', regulated: false, facts: '', story: '', feel: {}, feelOther: '', ammo: {}, ammoOther: '', their: '', meaning: '', resp: null, respText: '', committed: false, confirmClear: false });
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

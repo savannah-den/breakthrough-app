@@ -1,0 +1,1902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Coming Home: into your body</title>
+<meta name="theme-color" content="#4E0C08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/css/shell.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600;1,700&amp;family=Poppins:wght@400;500;600&amp;family=Patrick+Hand+SC&amp;display=swap">
+<style>
+body{margin:0;background:#FAF7F5}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.01em}
+a{color:#A8231F}a:hover{color:#74140E}
+button{font:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #74140E;outline-offset:2px}
+.ch-root{position:relative;font-family:Poppins,system-ui,sans-serif;color:#1F1412;background:#FAF7F5;min-height:100vh;overflow-x:clip}
+.hand{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em}
+.orb{position:absolute;top:-80px;right:-60px;width:380px;height:380px;border-radius:999px;background:radial-gradient(circle at 35% 40%,#F4C2F7 0%,rgba(244,194,247,0) 60%),radial-gradient(circle at 65% 60%,#F1F9A6 0%,rgba(241,249,166,0) 55%),radial-gradient(circle at 50% 50%,#F28C3B 0%,rgba(242,140,59,0) 45%);filter:blur(36px);opacity:.75;pointer-events:none}
+.wrap{position:relative;max-width:900px;margin:0 auto;padding:0 16px 120px;box-sizing:border-box;display:flex;flex-direction:column;gap:26px}
+.tabs{position:sticky;top:0;z-index:20;background:rgba(250,247,245,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:10px 0}
+.tabrow{display:flex;gap:6px;padding:6px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF;box-shadow:0 10px 30px rgba(78,12,8,.06);overflow-x:auto;scrollbar-width:none}
+.tabrow::-webkit-scrollbar{display:none}
+.tab{flex:1 0 82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:6px 4px;border-radius:18px;border:0;background:transparent;color:#463A38;font-size:12px;font-weight:600;line-height:1.15;cursor:pointer;text-align:center}
+.tab img{width:28px;height:28px;border-radius:8px}
+.tab:hover{background:#FAF7F5}
+.tab.on{background:#4E0C08;color:#F1F9A6}
+.tab.spot{box-shadow:0 0 0 3px #D3302B;animation:ch-pulse 1.4s ease-in-out infinite}
+@keyframes ch-pulse{0%,100%{box-shadow:0 0 0 3px #D3302B}50%{box-shadow:0 0 0 7px rgba(211,48,43,.35)}}
+.dark{background:#4E0C08;color:#FFF4EE;border-radius:24px}
+.sec{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:18px;color:#A8231F}
+.dark .eyebrow{color:#F1F9A6}
+.h2{margin:0;font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.1}
+.big{margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.12}
+.lead{margin:0;font-size:17px;line-height:1.6;color:#463A38;max-width:680px}
+.dark .lead{color:#F6D6CF}
+.body{margin:0;font-size:15px;line-height:1.6;color:#463A38}
+.dark .body{color:#F6D6CF}
+.step{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:26px;padding:24px 22px;display:flex;flex-direction:column;gap:16px}
+.stephead{display:flex;align-items:center;gap:14px}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.cmp{display:flex;flex-direction:column;gap:8px;padding:18px 20px;border-radius:22px}
+.cmp.in{background:#F8FCD6;border:1.5px solid #1F1412}
+.cmp.out{background:#F6EFEC}
+.cmp .hand{font-size:15px;color:#A8231F}
+.cmp h3{margin:0;font-size:24px;line-height:1.15}
+.cmp p{margin:0;font-size:15px;line-height:1.55;color:#463A38}
+.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.list li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.5}
+.list li svg{flex:none;margin-top:3px}
+.dead{display:flex;align-items:center;gap:18px;padding:16px 20px;border-radius:22px;background:#FBE6FC}
+.dead img{flex:none;width:110px;height:110px;border-radius:26px}
+.dead p{margin:0;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:clamp(22px,3.4vw,28px);line-height:1.25;color:#4E0C08}
+.dead span{display:block;margin-top:6px;font-family:Poppins,system-ui,sans-serif;font-style:normal;font-weight:400;font-size:15px;color:#463A38}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:#FBE6FC;color:#1F1412;font-size:15px;line-height:1.55}
+.callout.lime{background:#F8FCD6}
+.callout.cream{background:#FAF7F5}
+.callout.white{background:#FFFFFF;border:1.5px solid #EDE3DF}
+.banner{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:16px 18px;border-radius:22px;background:#F1F9A6;border:1.5px solid #1F1412}
+.banner img{flex:none;width:56px;height:56px;border-radius:16px}
+.banner .bt{flex:1 1 260px;font-size:15px;line-height:1.5}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.door{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:22px;background:rgba(255,244,238,.08);border:1.5px solid rgba(255,244,238,.18)}
+.door .dn{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:24px;color:#FFF4EE}
+.door p{margin:0;font-size:15px;line-height:1.55;color:#F6D6CF}
+.door img{width:72px;height:72px;border-radius:18px}
+.pdoor{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.pdoor img{width:88px;height:88px;border-radius:22px}
+.pdoor .dn{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px}
+.pdoor p{margin:0;font-size:15px;line-height:1.5;color:#463A38}
+.pdoor .ghost{margin-top:auto;align-self:flex-start}
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.rung{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:20px;background:#FFF4EE;color:#1F1412}
+.rung .mins{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:30px;line-height:1;color:#4E0C08}
+.rung .lbl{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:17px;color:#A8231F}
+.rung p{margin:0;font-size:14px;line-height:1.45;color:#463A38}
+.rung.r1{min-height:130px;background:#F1F9A6;border:1.5px solid #1F1412}
+.rung.r2{min-height:150px}
+.rung.r3{min-height:170px}
+.rung.r4{min-height:190px}
+.example{display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:18px;border:1.5px dashed #E890EC;background:#FFFFFF;font-size:15px;line-height:1.55}
+.example .hand{font-size:15px;color:#A8231F}
+.senses{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.sense{display:flex;flex-direction:column;gap:6px}
+.sense label{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:17px;color:#4E0C08}
+.input{width:100%;box-sizing:border-box;min-height:48px;padding:12px 14px;border-radius:16px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:inherit;font-size:15px;line-height:1.4}
+.input::placeholder{color:#8C7C79}
+.rest{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.restc{display:flex;flex-direction:column;gap:8px;padding:16px 18px;border-radius:20px}
+.restc.body-r{background:#F6EFEC}
+.restc.brain-r{background:#F8FCD6;border:1.5px solid #1F1412}
+.restc .hand{font-size:15px;color:#A8231F}
+.restc p{margin:0;font-size:15px;line-height:1.5}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.tier{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.tier .tn{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px;line-height:1.15}
+.tier .tt{display:inline-flex;align-self:flex-start;padding:4px 12px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px}
+.tier p{margin:0;font-size:15px;line-height:1.5;color:#463A38}
+.moodblock{display:flex;flex-direction:column;gap:14px;padding:22px 20px;border-radius:28px}
+.moodblock.ff{background:#4E0C08;color:#FFF4EE}
+.moodblock.ev{background:#FFFFFF;border:1.5px solid #EDE3DF}
+.moodblock .mbh{display:flex;flex-direction:column;gap:4px}
+.moodblock .mbt{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:26px;line-height:1.15}
+.moodblock.ff .mbs{color:#F6D6CF;font-size:15px;line-height:1.5}
+.moodblock.ev .mbs{color:#463A38;font-size:15px;line-height:1.5}
+.moods{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.mood{display:flex;align-items:center;gap:14px;min-height:108px;padding:12px 16px 12px 12px;border-radius:24px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:left;box-sizing:border-box}
+.mood:hover{border-color:#1F1412;transform:translateY(-1px)}
+.moodblock.ff .mood{border-color:transparent}
+.moodblock.ff .mood:hover{border-color:#F1F9A6}
+.mood img{flex:none;width:84px;height:84px;border-radius:22px}
+.mood .mt{display:block;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:20px;line-height:1.15}
+.mood .ms{display:block;margin-top:4px;font-size:13.5px;line-height:1.4;color:#463A38}
+.mood .mk{display:inline-flex;margin-top:6px;padding:2px 10px;border-radius:999px;background:#F6EFEC;font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:13px;color:#A8231F}
+.mood .mk.saved{background:#F1F9A6;color:#1F1412;box-shadow:inset 0 0 0 1.5px #1F1412}
+.flow{display:flex;flex-direction:column;gap:18px;padding:24px 22px;border-radius:28px;background:#FFFFFF;border:1.5px solid #EDE3DF;box-shadow:0 18px 44px rgba(78,12,8,.08)}
+.flowtop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dots{display:flex;gap:6px}
+.dot{width:28px;height:8px;border-radius:999px;background:#EDE3DF}
+.dot.on{background:#4E0C08}
+.dot.done{background:#E890EC}
+.info{display:flex;flex-direction:column;gap:8px;padding:16px 18px;border-radius:20px;background:#FFF4EE;border:1.5px solid #F4C2F7}
+.info .it{display:flex;align-items:center;gap:12px}
+.info img{flex:none;width:56px;height:56px;border-radius:16px}
+.info .ih{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:19px;line-height:1.2}
+.info p{margin:0;font-size:14.5px;line-height:1.6;color:#463A38}
+.bwrap{position:relative;width:220px;height:220px;align-self:center;display:flex;align-items:center;justify-content:center}
+.bcirc{position:absolute;inset:0;border-radius:999px;background:radial-gradient(circle at 40% 35%,#FBE6FC 0%,#F4C2F7 45%,#E890EC 100%);animation:ch-breath 10s ease-in-out infinite}
+.blbl{position:relative;width:100%;height:40px;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:26px;color:#4E0C08;text-align:center}
+.blbl span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.bin{animation:ch-in 10s linear infinite}
+.bout{animation:ch-out 10s linear infinite}
+@keyframes ch-breath{0%{transform:scale(.55)}40%{transform:scale(1)}100%{transform:scale(.55)}}
+@keyframes ch-in{0%,38%{opacity:1}42%,100%{opacity:0}}
+@keyframes ch-out{0%,38%{opacity:0}42%,96%{opacity:1}100%{opacity:0}}
+.sosgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.sos{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:22px;background:#FAF7F5;border:1.5px solid #EDE3DF}
+.sos.mine{background:#FFF4EE;border-color:#E890EC}
+.sos.did{background:#F8FCD6;border-color:#1F1412}
+.sos .sh{display:flex;align-items:center;gap:12px}
+.sos img{flex:none;width:72px;height:72px;border-radius:18px}
+.sos h4{margin:0;font-size:19px;line-height:1.2}
+.sos p{margin:0;font-size:14px;line-height:1.55;color:#463A38}
+.sos .note{font-size:12.5px;color:#A8231F;line-height:1.45}
+.sos .btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.mytag{display:inline-flex;align-self:flex-start;padding:2px 10px;border-radius:999px;background:#E890EC;color:#1F1412;font-size:12px;font-weight:600}
+.didbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;color:#1F1412;font-size:14px;font-weight:600;cursor:pointer}
+.didbtn.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.minibtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 12px;border-radius:999px;border:1.5px dashed #E890EC;background:#FFFFFF;color:#4E0C08;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+.minibtn.on{background:#FBE6FC;border-style:solid;border-color:#E890EC}
+.minibtn:hover{border-style:solid}
+.vbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 14px 6px 6px;border-radius:999px;background:#4E0C08;color:#FFF4EE;font-size:13px;font-weight:600;text-decoration:none;align-self:flex-start}
+.vbtn:hover{background:#74140E;color:#FFF4EE}
+.vbtn .vd{width:32px;height:32px;border-radius:999px;background:#D3302B;display:flex;align-items:center;justify-content:center}
+.land{display:flex;flex-direction:column;gap:8px}
+.lrow{display:flex;align-items:center;gap:14px;min-height:60px;padding:10px 14px;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:left;font-size:16px}
+.lrow:hover{border-color:#1F1412}
+.lrow .ln{flex:none;width:44px;height:44px;border-radius:999px;background:#FBE6FC;color:#4E0C08;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px}
+.lrow.on{background:#F8FCD6;border-color:#1F1412}
+.lrow.on .ln{background:#4E0C08;color:#F1F9A6}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.cbtn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:84px;padding:14px 16px;border-radius:20px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:left}
+.cbtn:hover{border-color:#1F1412}
+.cbtn .ct{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:20px}
+.cbtn .cs{font-size:13px;color:#463A38}
+.cbtn.on{background:#4E0C08;border-color:#4E0C08;color:#FFF4EE}
+.cbtn.on .cs{color:#F6D6CF}
+.help{display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:24px;background:#4E0C08;color:#FFF4EE}
+.help .hh{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:22px}
+.help .hk{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:16px;color:#F1F9A6;margin-top:4px}
+.help a.hl{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:10px 16px;border-radius:16px;background:rgba(255,244,238,.1);color:#FFF4EE;text-decoration:none;font-weight:600;font-size:15px}
+.help a.hl:hover{background:rgba(255,244,238,.18)}
+.help a.hl span:last-child{color:#F1F9A6;font-weight:600;white-space:nowrap}
+.help .intl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.help .ir{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:14px;background:rgba(255,244,238,.06);font-size:14px;line-height:1.45;color:#F6D6CF}
+.help .ir strong{color:#FFF4EE}
+.help .ir a{color:#F1F9A6}
+.help .hn{margin:0;font-size:13.5px;line-height:1.55;color:#F6D6CF}
+.video{display:flex;flex-direction:column;border-radius:24px;overflow:hidden;border:1.5px solid #EDE3DF;background:#4E0C08;color:#FFF4EE;text-decoration:none;max-width:640px}
+.video img{display:block;width:100%;aspect-ratio:682 / 376;object-fit:cover;background:#FCF1FC}
+.video .vb{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.video .vp{flex:none;width:44px;height:44px;border-radius:999px;background:#D3302B;display:flex;align-items:center;justify-content:center}
+.vlinks{display:flex;flex-wrap:wrap;gap:12px}
+.vlink{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:20px;background:rgba(255,244,238,.08);border:1.5px solid rgba(255,244,238,.25);color:#FFF4EE;text-decoration:none;flex:1 1 260px;max-width:420px;box-sizing:border-box}
+.vlink:hover{background:rgba(255,244,238,.14);color:#FFF4EE}
+.vlink .vi{flex:none;width:52px;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.vlink .vt{display:flex;flex-direction:column;gap:2px}
+.vlink .vt span:first-child{font-weight:600;font-size:15.5px}
+.vlink .vt span:last-child{font-size:13px;color:#F6D6CF}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.cat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:104px;padding:10px 8px;border-radius:20px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:center;font-size:13px;font-weight:600;line-height:1.2}
+.cat img{width:52px;height:52px;border-radius:14px}
+.cat:hover{border-color:#1F1412}
+.cat.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.cat .cc{font-size:11px;font-weight:400;opacity:.8}
+.filters{display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.fgroup{display:flex;flex-direction:column;gap:8px}
+.fq{font-weight:600;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:14px;cursor:pointer;text-align:left}
+.chip:hover{border-color:#1F1412}
+.chip.on{background:#F1F9A6;border-color:#1F1412}
+.chip.small{min-height:40px;padding:6px 12px;font-size:13px}
+.chip img{width:28px;height:28px;border-radius:8px;margin-left:-6px}
+.box{flex:none;width:18px;height:18px;box-sizing:border-box;border-radius:6px;border:2px solid #6A5A57;display:flex;align-items:center;justify-content:center;background:#FFFFFF}
+.box svg{opacity:0}
+.chip.on .box{background:#4E0C08;border-color:#4E0C08}
+.chip.on .box svg{opacity:1}
+.radio{flex:none;width:20px;height:20px;box-sizing:border-box;border-radius:999px;border:2px solid #6A5A57;background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.radio span{width:9px;height:9px;border-radius:999px;background:transparent}
+.chip.on .radio{border-color:#1F1412}
+.chip.on .radio span{background:#1F1412}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.count{font-size:15px;color:#463A38}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:10px;padding:0 0 16px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF;box-sizing:border-box;overflow:hidden}
+.card .pic{display:flex;align-items:center;justify-content:center;height:128px;background:#FAF7F5;position:relative}
+.card .pic img{width:112px;height:112px;border-radius:26px}
+.card .pic .dur{position:absolute;right:12px;top:12px}
+.card .cb{display:flex;flex-direction:column;gap:10px;padding:0 16px;flex:1 1 auto}
+.card.love{border-color:#1F1412}
+.card.love .pic{background:#F8FCD6}
+.card.maybe .pic{background:#FFF4EE}
+.card.nope{opacity:.62}
+.card.surprise{border:2.5px solid #D3302B;box-shadow:0 14px 34px rgba(211,48,43,.16)}
+.ctier{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px;color:#A8231F}
+.dur{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-size:12px;font-weight:600;white-space:nowrap}
+.card h4{margin:0;font-size:21px;line-height:1.2}
+.card p{margin:0;font-size:14px;line-height:1.55;color:#463A38}
+.card .aka{font-size:13px;font-style:italic;color:#A8231F}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:3px 10px;border-radius:999px;background:#F6EFEC;font-size:12px;color:#463A38}
+.rate{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:auto}
+.rb{min-height:44px;padding:6px 4px;border-radius:14px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:12.5px;line-height:1.2;cursor:pointer}
+.rb:hover{border-color:#1F1412}
+.rb.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.addbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px dashed #E890EC;background:#FFFFFF;color:#4E0C08;font-size:14px;font-weight:600;cursor:pointer;text-align:center}
+.addbtn:hover{border-style:solid}
+.addbtn.has{background:#FBE6FC;border-style:solid;border-color:#FBE6FC}
+.morebtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0;border:0;background:none;color:#A8231F;font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:4px;align-self:flex-start}
+.more{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:18px;background:#FFF4EE}
+.more .mh{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px;color:#A8231F}
+.more ol,.more ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.5;color:#1F1412}
+.more strong{color:#4E0C08}
+.more .rem{padding:10px 12px;border-radius:14px;background:#F1F9A6;font-size:13.5px;line-height:1.5}
+.addpanel{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:18px;background:#FAF7F5}
+.addpanel .hand{font-size:14px;color:#A8231F}
+.slots{display:flex;flex-wrap:wrap;gap:6px}
+.badge{display:inline-flex;align-self:flex-start;padding:4px 12px;border-radius:999px;background:#D3302B;color:#FFFFFF;font-size:12px;font-weight:600}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 24px;border-radius:999px;border:0;background:#D3302B;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none}
+.primary:hover{background:#A8231F;color:#FFFFFF}
+.primary.maroon{background:#4E0C08;color:#F1F9A6}
+.primary.maroon:hover{background:#74140E;color:#F1F9A6}
+.primary.lime{background:#F1F9A6;color:#1F1412}
+.primary.lime:hover{background:#FFFFFF}
+.primary.lime.edge{border:1.5px solid #1F1412}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid #EDE3DF;background:transparent;color:#1F1412;font-size:14px;cursor:pointer;text-decoration:none}
+.ghost:hover{border-color:#1F1412}
+.ghost.warn{border-color:#A8231F;color:#A8231F}
+.ghost.solid{background:#FFFFFF;border-color:#1F1412}
+.dark .ghost,.moodblock.ff .ghost{color:#FFF4EE;border-color:rgba(255,244,238,.35)}
+.plangrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+.slot{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.slot .sh2{display:flex;align-items:center;gap:12px}
+.slot .sh2 img{flex:none;width:48px;height:48px;border-radius:14px}
+.slot .sn{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:21px;line-height:1.15}
+.slot .sh{margin:0;font-size:14px;line-height:1.5;color:#6A5A57}
+.mine{display:flex;flex-direction:column;gap:6px}
+.mi{display:flex;flex-direction:column;gap:6px;padding:6px 6px 6px 14px;border-radius:18px;background:#F1F9A6;border:1.5px solid #1F1412;font-size:14px;line-height:1.3}
+.mi .mr{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.mi .mr button{flex:none;width:36px;height:36px;border-radius:999px;border:0;background:transparent;color:#1F1412;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mi .mr button:hover{background:rgba(31,20,18,.1)}
+.daypick{display:flex;flex-wrap:wrap;gap:4px;padding-bottom:4px}
+.dp{width:36px;height:36px;border-radius:10px;border:1.5px solid rgba(31,20,18,.25);background:#FFFFFF;color:#1F1412;font-size:12px;font-weight:600;cursor:pointer}
+.dp.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.empty{font-size:14px;font-style:italic;color:#6A5A57}
+.ideas{display:flex;flex-direction:column;gap:6px}
+.ideas .hand{font-size:14px;color:#A8231F}
+.addrow{display:flex;gap:8px}
+.addrow .input{flex:1 1 auto;min-width:0}
+.addrow .ghost{flex:none}
+.week{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.day{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.day.today{border:2.5px solid #4E0C08;box-shadow:0 12px 30px rgba(78,12,8,.1)}
+.day .dhd{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.day .dname{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:20px}
+.day .dcount{font-size:12px;color:#6A5A57}
+.today-tag{display:inline-flex;padding:2px 10px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:13px}
+.ditem{display:flex;align-items:center;gap:10px;min-height:48px;padding:6px 8px 6px 6px;border-radius:14px;border:1.5px solid transparent;background:#FAF7F5;color:#1F1412;cursor:pointer;text-align:left;font-size:13.5px;line-height:1.3;width:100%;box-sizing:border-box}
+.ditem:hover{border-color:#1F1412}
+.ditem img{flex:none;width:34px;height:34px;border-radius:10px}
+.ditem .dk{display:block;font-size:11px;color:#A8231F;font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em}
+.ditem .dt{flex:1 1 auto;min-width:0}
+.ditem .tk{flex:none;width:26px;height:26px;box-sizing:border-box;border-radius:8px;border:2px solid #6A5A57;background:#FFFFFF;display:flex;align-items:center;justify-content:center;color:transparent}
+.ditem.on{background:#F8FCD6;border-color:#1F1412}
+.ditem.on .tk{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.mrow{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 8px;border-radius:16px;background:#FAF7F5;font-size:14px}
+.mrow img{flex:none;width:40px;height:40px;border-radius:12px}
+.mrow .mn{flex:1 1 auto;min-width:0}
+.mrow .mtk{display:flex;gap:4px}
+.mrow .mtk button{width:40px;height:40px;box-sizing:border-box;border-radius:12px;border:2px solid #6A5A57;background:#FFFFFF;color:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mrow .mtk button.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}
+.seg{display:flex;flex-wrap:wrap;gap:6px;padding:6px;border-radius:999px;background:#F6EFEC;align-self:flex-start}
+.seg button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 16px 6px 6px;border-radius:999px;border:0;background:transparent;color:#1F1412;font-size:14px;font-weight:600;cursor:pointer}
+.seg button img{width:32px;height:32px;border-radius:10px}
+.seg button.on{background:#4E0C08;color:#F1F9A6}
+.why-out{margin:0;padding:22px 24px;border-radius:22px;background:#4E0C08;color:#FFF4EE;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:clamp(21px,3vw,26px);line-height:1.35}
+.why-out.blank{background:#F6EFEC;color:#6A5A57}
+.mantras{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.mantra{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 14px;border-radius:16px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;text-align:left;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:16px;line-height:1.35}
+.mantra:hover{border-color:#1F1412}
+.mantra.on{background:#FBE6FC;border-color:#4E0C08}
+.mantra.on .radio{border-color:#1F1412}
+.mantra.on .radio span{background:#1F1412}
+.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start}
+.phone{width:260px;max-width:100%;aspect-ratio:1179 / 2556;box-sizing:border-box;border-radius:44px;border:9px solid #1F1412;background:#FBE6FC;overflow:hidden;justify-self:center;box-shadow:0 30px 60px rgba(78,12,8,.22);display:flex;align-items:center;justify-content:center}
+.phone img{width:100%;height:100%;display:block;object-fit:cover}
+.phone .ph{padding:20px;text-align:center;font-size:13px;color:#6A5A57}
+.modal-bg{position:fixed;inset:0;z-index:30;border:0;padding:0;margin:0;background:rgba(31,20,18,.45);cursor:pointer}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;width:min(420px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:#FFFFFF;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 70px rgba(31,20,18,.3)}
+.x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:#6A5A57;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.x:hover{background:#F6EFEC;color:#1F1412}
+.ordered{display:flex;flex-direction:column;gap:8px}
+.oitem{display:flex;align-items:center;gap:12px;padding:8px;border-radius:18px;background:#FFF4EE;border:1.5px solid #E890EC;font-size:15px}
+.oitem img{flex:none;width:44px;height:44px;border-radius:12px}
+.oitem .on{flex:none;width:30px;height:30px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-weight:700}
+.oitem span.t{flex:1 1 auto}
+.oitem button{flex:none;width:40px;height:40px;border-radius:999px;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1F1412}
+.oitem button:hover{background:rgba(31,20,18,.08)}
+.planhead{display:flex;align-items:center;gap:16px}
+.planhead img{flex:none;width:84px;height:84px;border-radius:22px}
+.tour-dim{position:fixed;inset:0;z-index:38;background:rgba(31,20,18,.28);pointer-events:none}
+.tour{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:40;width:min(460px,calc(100% - 24px));box-sizing:border-box;padding:20px;border-radius:26px;background:#FFFFFF;border:2px solid #4E0C08;box-shadow:0 24px 60px rgba(78,12,8,.3);display:flex;flex-direction:column;gap:10px;animation:ch-pop .3s cubic-bezier(.2,1.3,.4,1)}
+@keyframes ch-pop{0%{transform:translate(-50%,20px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+.tour .tk2{font-family:'Patrick Hand SC',cursive;letter-spacing:0.06em;font-size:15px;color:#A8231F}
+.tour .tt2{margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:24px;line-height:1.15}
+.tour p{margin:0;font-size:15px;line-height:1.55;color:#463A38}
+.tour .tbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tour .tdots{display:flex;gap:5px}
+.tour .tdots span{width:8px;height:8px;border-radius:999px;background:#EDE3DF}
+.tour .tdots span.on{background:#4E0C08;width:22px}
+.tourbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:13px;font-weight:600;cursor:pointer}
+.tourbtn:hover{border-color:#1F1412}
+@media (prefers-reduced-motion: reduce){.bcirc,.bin,.bout,.tab.spot,.tour{animation:none}.bcirc{transform:scale(.8)}.bout{opacity:0}.mood:hover{transform:none}}
+</style>
+<style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+<!-- GENERATED by tools/import_canvas.py from src/canvases/cominghome.dc.html. Re-run it after updating the canvas. -->
+<div id="bt-gate" class="bt-gate" hidden></div>
+<div id="app"></div>
+<template id="t-main">
+<div class="ch-root">
+<div class="orb" aria-hidden="true"></div>
+
+<sc-if value="{{hasExport}}" hint-placeholder-val="{{ false }}">
+<button class="modal-bg" aria-label="Close" onClick="{{closeExport}}"></button>
+<div class="modal" role="dialog" aria-modal="true" aria-label="Your wallpaper">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h3 style="margin: 0; font-weight: 700; font-size: 22px">Your wallpaper is ready</h3>
+<button class="x" aria-label="Close" onClick="{{closeExport}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.55; color: #463A38">If it didn’t download on its own, press and hold the image (phone) or right-click it (computer) and save it. Then: Photos › share › Use as Wallpaper.</p>
+<img src="{{exportUrl}}" alt="My Coming Home wallpaper" style="width: 100%; border-radius: 22px; border: 1.5px solid #EDE3DF">
+</div>
+</sc-if>
+
+<sc-if value="{{inTour}}" hint-placeholder-val="{{ false }}">
+<div class="tour-dim" aria-hidden="true"></div>
+<div class="tour" role="dialog" aria-label="App tour">
+<span class="tk2">{{tourKicker}}</span>
+<p class="tt2">{{tourTitle}}</p>
+<p>{{tourText}}</p>
+<div class="tbar">
+<div class="tdots" aria-hidden="true"><sc-for list="{{tourDots}}" as="d" hint-placeholder-count="8"><span class="{{d.cls}}"></span></sc-for></div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button class="tourbtn" onClick="{{tourSkip}}">{{tourSkipLabel}}</button>
+<sc-if value="{{tourHasBack}}" hint-placeholder-val="{{ false }}"><button class="tourbtn" onClick="{{tourBack}}">Back</button></sc-if>
+<button class="primary maroon" style="min-height: 44px; padding: 8px 18px; font-size: 14px" onClick="{{tourNext}}">{{tourNextLabel}}</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<div class="wrap">
+
+<header style="display: flex; align-items: center; gap: 14px; padding-top: 22px; flex-wrap: wrap">
+<svg width="64" height="64" viewBox="0 0 120 120" role="img" aria-label="Coming Home icon: a heart inside a house" style="flex: none"><rect x="1" y="1" width="118" height="118" rx="29" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"></rect><path d="M82 40 V30 H90 V47" fill="#F4C2F7" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"></path><path d="M22 60 L60 26 L98 60 L98 98 L22 98 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"></path><path d="M60 86s-17-10-17-22.5c0-6 4.5-10 9.5-10 3.5 0 6 2 7.5 4.5 1.5-2.5 4-4.5 7.5-4.5 5 0 9.5 4 9.5 10C77 76 60 86 60 86z" fill="#D3302B" stroke="#4E0C08" stroke-width="2.6" stroke-linejoin="round"></path><path d="M100 14C100.5 19 103 21.5 108 22C103 22.5 100.5 25 100 30C99.5 25 97 22.5 92 22C97 21.5 99.5 19 100 14Z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 200px">
+<span class="hand" style="font-size: 15px; color: #A8231F">Breakthrough Program · Grounding resource</span>
+<h1 style="margin: 0; font-weight: 700; font-size: clamp(34px, 6vw, 52px); line-height: 1">Coming Home</h1>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(18px, 2.6vw, 22px); color: #4E0C08">into your body.</span>
+</div>
+<button class="tourbtn" onClick="{{startTour}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"></path></svg>Take the tour</button>
+</header>
+
+<nav class="tabs" aria-label="Coming Home sections">
+<div class="tabrow">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="6">
+<button class="{{tb.cls}}" aria-current="{{tb.current}}" onClick="{{tb.go}}"><img src="{{tb.img}}" alt="">{{tb.l}}</button>
+</sc-for>
+</div>
+</nav>
+
+<!-- ================= RIGHT NOW ================= -->
+<sc-if value="{{tabNow}}" hint-placeholder-val="{{ true }}">
+
+<sc-if value="{{nowHome}}" hint-placeholder-val="{{ true }}">
+<div class="banner"><img src="/tools/assets/b54cf8597b937e67a8020b66d1ce173f.svg" alt=""><span class="bt"><strong>New here? Read the Learn page before you try this for the first time.</strong> Then come back to this page whenever you’re in the moment and need help reconnecting to your body.</span><button class="ghost solid" onClick="{{goLearn}}">Go to Learn</button></div>
+
+<p class="big">Hey you. How are you, right now?</p>
+
+<section class="moodblock ff">
+<div class="mbh"><span class="eyebrow">Fight, flight or freeze</span><span class="mbt">My body thinks I’m in danger.</span><span class="mbs">Amygdala hijack mode. Tap the closest one and I’ll walk you home, step by step.</span></div>
+<div class="moods">
+<sc-for list="{{ffMoods}}" as="m" hint-placeholder-count="3">
+<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
+</sc-for>
+</div>
+</section>
+
+<section class="moodblock ev">
+<div class="mbh"><span class="eyebrow">Everyday moments</span><span class="mbt">I just need to come back to my body.</span><span class="mbs">Opens your saved plan for that moment, or the 55 ways menu so you can find one.</span></div>
+<div class="moods">
+<sc-for list="{{evMoods}}" as="m" hint-placeholder-count="4">
+<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
+</sc-for>
+</div>
+</section>
+
+<div class="help">
+<span class="hh">Need more support?</span>
+<span class="hk">In Australia</span>
+<a class="hl" href="tel:131114"><span>Call Lifeline, 24/7</span><span>13 11 14</span></a>
+<a class="hl" href="sms:0477131114"><span>Text Lifeline, 24/7</span><span>0477 13 11 14</span></a>
+<a class="hl" href="tel:000"><span>If you or someone else is in danger</span><span>000</span></a>
+<span class="hk">Not in Australia?</span>
+<div class="intl">
+<span class="ir"><strong>USA and Canada</strong>Call or text 988</span>
+<span class="ir"><strong>UK and Ireland</strong>Samaritans, call 116 123</span>
+<span class="ir"><strong>New Zealand</strong>Call or text 1737</span>
+<span class="ir"><strong>Anywhere else</strong><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free lines in your country</span>
+</div>
+<p class="hn">In an emergency, call your local emergency number: 911 in the US and Canada, 999 or 112 in the UK and Europe, 111 in New Zealand.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{nowPlan}}" hint-placeholder-val="{{ false }}">
+<section class="flow">
+<div class="flowtop">
+<button class="ghost" onClick="{{backHome}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Back</button>
+<button class="ghost" onClick="{{editPlan}}">Edit my plan</button>
+</div>
+<div class="planhead"><img src="{{planImg}}" alt=""><div style="display: flex; flex-direction: column; gap: 4px"><span class="hand" style="font-size: 16px; color: #A8231F">My plan for this moment</span><p class="big" style="font-size: clamp(26px, 4.6vw, 36px)">{{planTitle}}</p></div></div>
+<sc-if value="{{planIsFF}}" hint-placeholder-val="{{ false }}">
+<div class="info"><div class="it"><img src="{{infoImg}}" alt=""><span class="ih">{{infoTitle}}</span></div><p>{{infoText}}</p></div>
+</sc-if>
+<p class="lead">You made this plan for exactly this moment. Start at the top. Tap each one as you do it.</p>
+<div class="sosgrid">
+<sc-for list="{{planCards}}" as="j" hint-placeholder-count="3">
+<div class="{{j.cls}}">
+<div class="sh"><img src="{{j.img}}" alt=""><div style="display: flex; flex-direction: column; gap: 4px"><span class="mytag">{{j.num}}</span><h4>{{j.n}}</h4></div></div>
+<p>{{j.h}}</p>
+<sc-if value="{{j.hasVideo}}" hint-placeholder-val="{{ false }}"><a class="vbtn" href="{{j.video}}" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>{{j.videoLabel}}</a></sc-if>
+<div class="btns"><button class="{{j.btnCls}}" aria-pressed="{{j.pressed}}" onClick="{{j.toggle}}">{{j.btnLabel}}</button></div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-if value="{{planIsFF}}" hint-placeholder-val="{{ false }}"><button class="primary maroon" onClick="{{openGuide}}">Walk me through the full guide</button></sc-if>
+<sc-if value="{{planIsEv}}" hint-placeholder-val="{{ false }}"><button class="primary maroon" onClick="{{browseMore}}">Find more in 55 ways</button></sc-if>
+<button class="ghost" onClick="{{backHome}}">I’m back in my body</button>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{nowFlow}}" hint-placeholder-val="{{ false }}">
+<section class="flow" aria-live="polite">
+<div class="flowtop">
+<button class="ghost" onClick="{{flowBack}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>{{backLabel}}</button>
+<div class="dots" aria-label="{{stepLabel}}"><sc-for list="{{dots}}" as="d" hint-placeholder-count="4"><span class="{{d.cls}}"></span></sc-for></div>
+</div>
+<span class="hand" style="font-size: 16px; color: #A8231F">{{modeLabel}}</span>
+
+<sc-if value="{{isFirst}}" hint-placeholder-val="{{ false }}">
+<div class="info"><div class="it"><img src="{{infoImg}}" alt=""><span class="ih">{{infoTitle}}</span></div><p>{{infoText}}</p></div>
+</sc-if>
+
+<sc-if value="{{isCalm}}" hint-placeholder-val="{{ false }}">
+<p class="big">You’re okay. This is big, and it will pass.</p>
+<p class="lead">Panic peaks and passes, usually within about 10 minutes. You can’t think your way out of this one, so we’re going to body our way out. You don’t have to get it right. Just follow along.</p>
+</sc-if>
+
+<sc-if value="{{isMeltsafe}}" hint-placeholder-val="{{ false }}">
+<p class="big">First, less. Less of everything.</p>
+<p class="lead">Before anything else, turn the input down. Tick whatever you can do.</p>
+<div class="chips"><sc-for list="{{meltChips}}" as="o" hint-placeholder-count="6"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.l}}</button></sc-for></div>
+<a class="video" href="https://www.youtube.com/watch?v=i4qTAoIGBcI" target="_blank" rel="noopener" aria-label="Watch my unhinged 4 step nervous system reset for AuDHD’ers on YouTube (opens in a new tab)"><img src="/tools/assets/16ececf4aed9bfe373643768c34d7c7b.png" alt="Video cover: unhinged 4 step nervous system reset for AuDHD’ers"><span class="vb"><span class="vp"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Watch: my unhinged 4-step nervous system reset</span><span style="font-size: 13px; color: #F6D6CF">For AuDHD’ers · 5:30 · YouTube</span></span></span></a>
+</sc-if>
+
+<sc-if value="{{isWake}}" hint-placeholder-val="{{ false }}">
+<p class="big">Let’s wake your body up. Gently.</p>
+<p class="lead">We bring it back online with sensation and small movement. Slowly is perfect.</p>
+</sc-if>
+
+<sc-if value="{{isBreathe}}" hint-placeholder-val="{{ false }}">
+<p class="big">Breathe with the circle.</p>
+<p class="lead">In through your nose as it grows. Long, slow breath out as it shrinks. The out-breath is the magic bit. Do about six rounds.</p>
+<div class="bwrap" aria-hidden="true"><span class="bcirc"></span><span class="blbl"><span class="bin">Breathe in</span><span class="bout">and out…</span></span></div>
+<div class="callout lime"><span><strong>Can’t get a full breath?</strong> Do a physiological sigh: a long inhale through your nose, a short top-up sniff, then a slow, complete exhale through your mouth. One to three times.</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a class="vbtn" href="https://youtu.be/kvODph3fgdo" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>Do the sigh with me</a>
+<a class="vbtn" href="https://www.youtube.com/watch?v=7Wiv157HDTM" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>My breathing lesson</a>
+</div>
+</sc-if>
+
+<sc-if value="{{isJolt}}" hint-placeholder-val="{{ false }}">
+<p class="big">{{joltTitle}}</p>
+<p class="lead">{{joltLead}}</p>
+<div class="sosgrid">
+<sc-for list="{{joltCards}}" as="j" hint-placeholder-count="6">
+<div class="{{j.cls}}">
+<div class="sh"><img src="{{j.img}}" alt=""><div style="display: flex; flex-direction: column; gap: 4px"><sc-if value="{{j.mine}}" hint-placeholder-val="{{ false }}"><span class="mytag">In my plan</span></sc-if><h4>{{j.n}}</h4></div></div>
+<p>{{j.h}}</p>
+<sc-if value="{{j.hasNote}}" hint-placeholder-val="{{ false }}"><span class="note">{{j.note}}</span></sc-if>
+<sc-if value="{{j.hasVideo}}" hint-placeholder-val="{{ false }}"><a class="vbtn" href="{{j.video}}" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>{{j.videoLabel}}</a></sc-if>
+<div class="btns"><button class="{{j.btnCls}}" aria-pressed="{{j.pressed}}" onClick="{{j.toggle}}">{{j.btnLabel}}</button><button class="{{j.addCls}}" aria-pressed="{{j.mineP}}" onClick="{{j.toggleMine}}">{{j.addLabel}}</button></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isLand}}" hint-placeholder-val="{{ false }}">
+<p class="big">Now land back in the room.</p>
+<p class="lead">Slowly. Look around. Tap each one as you find them. Out loud or in your head.</p>
+<div class="land"><sc-for list="{{landRows}}" as="l" hint-placeholder-count="5"><button class="{{l.cls}}" aria-pressed="{{l.pressed}}" onClick="{{l.toggle}}"><span class="ln">{{l.n}}</span><span>{{l.t}}</span></button></sc-for></div>
+</sc-if>
+
+<sc-if value="{{isCheck}}" hint-placeholder-val="{{ false }}">
+<p class="big">How are you now?</p>
+<div class="checks"><sc-for list="{{checkBtns}}" as="c" hint-placeholder-count="3"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><span class="ct">{{c.t}}</span><span class="cs">{{c.s}}</span></button></sc-for></div>
+<sc-if value="{{resBetter}}" hint-placeholder-val="{{ false }}">
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>You came home.</strong> Look at you. Now be extra gentle for the next little while: drink some water, eat something, rest if you can. Your body just did a lot of work.</span></div>
+<sc-if value="{{canSaveDone}}" hint-placeholder-val="{{ false }}"><button class="primary" style="align-self: flex-start" onClick="{{saveDone}}">{{saveDoneLabel}}</button></sc-if>
+<button class="primary maroon" style="align-self: flex-start" onClick="{{backHome}}">Back to start</button>
+</sc-if>
+<sc-if value="{{resLittle}}" hint-placeholder-val="{{ false }}">
+<div class="callout"><span>A little better is still better. Let’s go one more round. Pick a different one this time.</span></div>
+<button class="primary" style="align-self: flex-start" onClick="{{againFlow}}">Go again</button>
+</sc-if>
+<sc-if value="{{resBad}}" hint-placeholder-val="{{ false }}">
+<p class="lead">That’s okay. Some days it’s too big to do alone, and that’s exactly when we reach out.</p>
+<div class="help">
+<sc-if value="{{hasPerson}}" hint-placeholder-val="{{ false }}"><span style="font-size: 15px">Text or call <strong>{{sosPerson}}</strong>. You don’t have to explain. “Can you talk to me for 5 minutes?” is enough.</span></sc-if>
+<span class="hk">In Australia</span>
+<a class="hl" href="tel:131114"><span>Call Lifeline, 24/7</span><span>13 11 14</span></a>
+<a class="hl" href="sms:0477131114"><span>Text Lifeline, 24/7</span><span>0477 13 11 14</span></a>
+<a class="hl" href="https://www.lifeline.org.au/crisis-chat/" target="_blank" rel="noopener"><span>Chat with Lifeline online</span><span>Open</span></a>
+<a class="hl" href="tel:000"><span>If you or someone else is in danger</span><span>000</span></a>
+<span class="hk">Not in Australia?</span>
+<div class="intl">
+<span class="ir"><strong>USA and Canada</strong>Call or text 988</span>
+<span class="ir"><strong>UK and Ireland</strong>Samaritans, call 116 123</span>
+<span class="ir"><strong>New Zealand</strong>Call or text 1737</span>
+<span class="ir"><strong>Anywhere else</strong><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
+</div>
+<p class="hn">In an emergency, call your local emergency number: 911 in the US and Canada, 999 or 112 in the UK and Europe, 111 in New Zealand.</p>
+</div>
+<button class="ghost" style="align-self: flex-start" onClick="{{againFlow}}">Or go round again</button>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{showNext}}" hint-placeholder-val="{{ true }}">
+<button class="primary maroon" style="align-self: flex-start" onClick="{{nextStep}}">{{nextLabel}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+</sc-if>
+</section>
+</sc-if>
+</sc-if>
+
+<!-- ================= LEARN ================= -->
+<sc-if value="{{tabLearn}}" hint-placeholder-val="{{ false }}">
+
+<section class="sec">
+<p class="big">Coming home, into your body.</p>
+<p class="lead">For when you’re stuck in your head, overthinking, ruminating, or halfway down the dark doom hole, and you want to come back to the land of the living. This is an experiment, not homework. Try things, keep what feels good, ditch what doesn’t.</p>
+</section>
+
+<section class="dark sec" style="padding: 30px 26px; gap: 18px">
+<div class="eyebrow">The Tony Robbins Triad</div>
+<h2 class="h2" style="color: #FFF4EE">Change your state, change your life.</h2>
+<p class="lead">Your state is how you feel in this exact moment, and Tony Robbins says three things drive it. Pull any one of these levers and your state shifts. Pull all three and it flips. Everything in this app is one of these levers.</p>
+<div class="doors">
+<div class="door"><img src="/tools/assets/6a3871dfb91267d41e8251fe86eb7ba2.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">1 · Physiology</span><span class="dn">Your body</span><p>How you breathe, stand, move and touch. Change your body and your brain follows. That’s the whole 55 ways menu.</p></div>
+<div class="door"><img src="/tools/assets/5156dbc53efb3eb2089fc5827d2cc81f.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">2 · Focus</span><span class="dn">Your attention</span><p>Whatever you focus on, you feel. Pull your focus out of your head and into your five senses, and you’re back in the room.</p></div>
+<div class="door"><img src="/tools/assets/4d15e84cdb8661ef1361585cdfc81997.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">3 · Language</span><span class="dn">Your words</span><p>The words you say to yourself, and the meaning you give things. That’s what your mantra is for.</p></div>
+</div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Try all three in 30 seconds.</strong> Stand up, shoulders back, chin up, and take a big physiological sigh (physiology). Find one thing you can see and really look at it (focus). Say your mantra out loud, or “I’m here. I’m home.” (language). Notice what changed.</span></div>
+<div class="vlinks">
+<a class="vlink" href="https://www.youtube.com/watch?v=oViDv_Afxb8" target="_blank" rel="noopener" aria-label="Watch Tony Robbins explain the Triad on YouTube (opens in a new tab)"><span class="vi" style="background: #D3302B"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="vt"><span>Watch Tony explain the Triad</span><span>YouTube · opens in a new tab</span></span></a>
+<a class="vlink" href="https://www.instagram.com/p/DWAxPszD1Tj/" target="_blank" rel="noopener" aria-label="Watch my reel on changing your state on Instagram (opens in a new tab)"><span class="vi" style="background: #F1F9A6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1412" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="#1F1412"></circle></svg></span><span class="vt"><span>My reel: change your state</span><span>Instagram · @colour_me_neurospicy</span></span></a>
+<a class="vlink" href="https://www.instagram.com/p/DZqiPJKBgIp/" target="_blank" rel="noopener" aria-label="Watch my fast energy reset reel on Instagram (opens in a new tab)"><span class="vi" style="background: #F28C3B"><svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#1F1412" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span><span class="vt"><span>Need more energy? My fast way back into your body</span><span>Instagram · @colour_me_neurospicy</span></span></a>
+</div>
+</section>
+
+<section class="sec">
+<div class="eyebrow">Quick refresher</div>
+<h2 class="h2">Where are you living right now?</h2>
+<p class="lead">Remember those incredible little assholes smacking a spoon on a pot just to see what happens? KIDS. Be more like a kid. What do kids do when they’re bored, or they’ve been thinking for too long? They start fidgeting, wanting to move and playing up. This is why school fucks us up so much. We’re forced to be in our heads for far too long, and we exit school like little zombies.</p>
+<div class="compare">
+<div class="cmp in"><span class="hand">Associated</span><h3>In your body</h3><p>Present. Connected. Feeling your feelings directly. You feel, you think, you react, in real time. Like a kid.</p></div>
+<div class="cmp out"><span class="hand">Dissociated</span><h3>In your head</h3><p>Detached from what’s happening. Analysing the world instead of experiencing it. Your unconscious mind’s escape hatch: too intense, too much, too soon. “Abort. Into the mind ASAP.”</p></div>
+</div>
+<div class="dead"><img src="/tools/assets/a11ad324fdb2f2c6ffee1e5895c941e5.svg" alt="A cartoon head with crossed-out eyes and a cloud of thoughts on top"><p>If you’re in your head, you’re dead.<span>Because you’re not here, in the world, experiencing it.</span></p></div>
+<div class="step">
+<h3 style="margin: 0; font-size: 24px">You’re probably in your head if…</h3>
+<ul class="list">
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You suddenly realise you have no idea what someone just said, and now they’re asking you a question.</span></li>
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You feel like you’re watching yourself from the outside, or the world feels a bit not-real.</span></li>
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You’re worried about what you look like to other people. (Hello, dance floor. “Fuck, does this look stupid?”)</span></li>
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You hyperfocused so hard you forgot to pee, eat or drink water. All mind, no body.</span></li>
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>You lie in bed at night with a flood of thought downloads coming in.</span></li>
+<li><svg width="18" height="18" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Big chunks of your past feel blank.</span></li>
+</ul>
+<div class="callout"><span>None of this means you’re broken. It means your brain did a brilliant job of protecting you. Now we get to teach it, slowly, that it’s safe to come back.</span></div>
+</div>
+</section>
+
+<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>Panic, meltdowns and freeze have their own page.</strong> Coming home after an amygdala hijack works differently, so it gets its own teaching, tools and plans.</span><button class="ghost solid" onClick="{{goSos}}">Open Fight or flight</button></div>
+
+<section class="dark sec" style="padding: 30px 26px; gap: 18px">
+<div class="eyebrow">So what is grounding?</div>
+<h2 class="h2" style="color: #FFF4EE">Grounding is getting back in your body.</h2>
+<p class="lead">Exiting the overthinking, rumination, dark doom hole your mind was headed down, and returning to the land of the living. It’s signalling to your brain that your body still exists here, and that it’s safe living in it.</p>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-radius: 20px; background: rgba(255,244,238,.08)">
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; line-height: 1.3; color: #F1F9A6">Mindfulness, meditation, breathwork… and I know you just checked out.</p>
+<p class="body">“Fuck all of those.” Yep. We’re fed so much bullshit online about them. So put your lens-and-perspective hat on. When the yogi who spent years of his life in silent meditation says you need an hour a day, that’s true in his model of the world. In ours? Two minutes will sometimes do the job. So stop stressing about doing it right or doing it perfect.</p>
+</div>
+</section>
+
+<section class="sec">
+<div class="eyebrow">For the all-or-nothing thinkers</div>
+<h2 class="h2">Good, better, best (and “I fucking did it”).</h2>
+<p class="lead">We’re usually all in or all out, and all in is often more than we can manage. So start small and build from there. One minute is better than not at all.</p>
+<div class="ladder">
+<div class="rung r1"><span class="mins">2 min</span><span class="lbl">I fucking did it</span><p>Even though I didn’t want to. Counts. Fully.</p></div>
+<div class="rung r2"><span class="mins">5 min</span><span class="lbl">Good</span><p>A proper little reset.</p></div>
+<div class="rung r3"><span class="mins">10 min</span><span class="lbl">Better</span><p>Now we’re cooking.</p></div>
+<div class="rung r4"><span class="mins">20 min</span><span class="lbl">Best</span><p>The dream. Build up to it, no rush.</p></div>
+</div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><rect x="3" y="14" width="8" height="6" rx="1"></rect><rect x="13" y="14" width="8" height="6" rx="1"></rect><rect x="8" y="7" width="8" height="6" rx="1"></rect></svg><span><strong>Build the house brick by brick.</strong> You could smash out a whole wall in a day, be exhausted, take three weeks to recover, then do it all again. In six months you’ve built the house the hard way. Or you lay one brick every day, finish in the same time, and actually enjoy the process. Your nervous system agrees with me.</span></div>
+</section>
+
+<section class="sec">
+<div class="eyebrow">The three doors home</div>
+<div class="step">
+<div class="stephead"><img src="/tools/assets/5156dbc53efb3eb2089fc5827d2cc81f.svg" alt="" style="flex: none; width: 64px; height: 64px; border-radius: 18px"><h3 style="margin: 0; font-size: 26px">Mindfulness: come back through your senses</h3></div>
+<p class="body">Mindfulness at its core is noticing your surroundings. You connect back with your body by noticing the world around it: what you can hear, see, smell, taste and touch. It’s why hyperfocus makes you forget you need to pee: all your awareness went to the thing in front of you, and your body got left behind.</p>
+<div class="example"><span class="hand">How it sounds when I do it</span><span>I can <strong>hear</strong> the dog next door licking its bowl clean, the ting of metal on cement. I can <strong>see</strong> all your beautiful faces. I can <strong>smell</strong> my husband frying onions. I can <strong>taste</strong> those onions in my mouth. I can <strong>feel</strong> the pressure of my shoes on my feet and the little ridges of the mouse wheel under my hand. Back in my body.</span></div>
+<p style="margin: 0; font-weight: 600; font-size: 16px">Try it right now. Where you are, as you are.</p>
+<div class="senses">
+<div class="sense"><label for="s-hear">I can hear…</label><input id="s-hear" class="input" type="text" value="{{sHear}}" onChange="{{onHear}}" placeholder="the fridge humming"></div>
+<div class="sense"><label for="s-see">I can see…</label><input id="s-see" class="input" type="text" value="{{sSee}}" onChange="{{onSee}}" placeholder="light on the wall"></div>
+<div class="sense"><label for="s-smell">I can smell…</label><input id="s-smell" class="input" type="text" value="{{sSmell}}" onChange="{{onSmell}}" placeholder="coffee"></div>
+<div class="sense"><label for="s-taste">I can taste…</label><input id="s-taste" class="input" type="text" value="{{sTaste}}" onChange="{{onTaste}}" placeholder="toothpaste, still"></div>
+<div class="sense"><label for="s-feel">I can feel…</label><input id="s-feel" class="input" type="text" value="{{sFeel}}" onChange="{{onFeel}}" placeholder="the chair under my legs"></div>
+</div>
+<sc-if value="{{sensesDone}}" hint-placeholder-val="{{ false }}"><div class="callout lime"><span><strong>Back in your body.</strong> That’s it. That’s the whole thing. Notice how your breath feels now.</span></div></sc-if>
+</div>
+<div class="step">
+<div class="stephead"><img src="/tools/assets/02acac104a668adfde1e12e538c95722.svg" alt="" style="flex: none; width: 64px; height: 64px; border-radius: 18px"><h3 style="margin: 0; font-size: 26px">Meditation: the conveyor belt</h3></div>
+<p class="body">I do meditation differently. You’ve heard you need to clear your mind to be “really” meditating. It’s not about that. It’s working a muscle: practising letting go of your attachment to thoughts, and of having to finish every thought.</p>
+<div class="callout cream"><span>A thought comes in on a conveyor belt. You pick it up, go “hmm, that’s an interesting thought”, put it back down, and watch it leave. Then the next one comes along.</span></div>
+<p class="body">Keep a journal next to you. Anything you want to consciously expand on, give yourself time for later. Sometimes just writing a quick note means you don’t feel like you have to finish the thought. By writing it down, you’ve cut the cord.</p>
+<p class="body">Meditation is just a pause in your day. Remember the rest-and-digest graph: dipping down and resting your brain from all the overstimulating, high mental energy stuff, so your thoughts can catch up with you. If you lie in bed with thought downloads pouring in, that’s a strong sign you didn’t slow down and let them catch up during the day.</p>
+<div class="rest">
+<div class="restc body-r"><span class="hand">Rests your body</span><p>TV, doom scrolling, lying on the couch. Lovely. But your brain is still working overtime.</p></div>
+<div class="restc brain-r"><span class="hand">Rests your brain</span><p>A conveyor-belt pause, a walk with no podcast, a cuppa with no phone, staring at the clouds.</p></div>
+</div>
+</div>
+<div class="step">
+<div class="stephead"><img src="/tools/assets/1f98186a04d8d535455be88f9ee9c6ab.svg" alt="" style="flex: none; width: 64px; height: 64px; border-radius: 18px"><h3 style="margin: 0; font-size: 26px">Movement: breath, sound, touch, motion</h3></div>
+<p class="body">Breathwork. Exercise. Massage. Dancing. Humming. Anything that needs your body to move consciously. These don’t usually happen on autopilot. You have to focus, and the focus is on your body. Even just touch counts: running your hands down your legs, fingertips to fingertips.</p>
+<p class="body">They’re all nervous system regulation tools. They build a strong, resilient vagus nerve, they’re backed by neuroscience, and they’re rooted in somatic therapy.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a class="vbtn" href="https://www.youtube.com/watch?v=7Wiv157HDTM" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>Watch my breathing lesson</a>
+<a class="vbtn" href="https://youtu.be/kvODph3fgdo" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>Watch the physiological sigh</a>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<div class="eyebrow">How I use them</div>
+<h2 class="h2">Three levels of coming home.</h2>
+<p class="lead">The short ones and the long ones are equally important. Together they bring you out of fight or flight and build the baseline you need to reach homeostasis: balance in your mind and body.</p>
+<div class="tiers">
+<div class="tier"><span class="tt">Seconds to 2 min</span><span class="tn">Daily routine</span><p>Multiple times a day, every day. You notice you’re in your head, you do one, you’re back.</p></div>
+<div class="tier"><span class="tt">5 to 15 min</span><span class="tn">A few times a week</span><p>A little pocket of brain rest in your day. Your thoughts get to catch up with you.</p></div>
+<div class="tier"><span class="tt">30 min +</span><span class="tn">A few times a month</span><p>Booked in the calendar. These are your vagus nerve builders.</p></div>
+</div>
+<button class="primary maroon" style="align-self: flex-start" onClick="{{goMenu}}">Explore the 55 ways home</button>
+</section>
+
+<div class="callout white"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg><span><strong>Go gently.</strong> Coming back into your body can sometimes bring up feelings your brain was protecting you from. That’s normal, and it’s okay to stop, open your eyes, and pick something softer. If something big comes up, bring it to our calls, or to your therapist if you have one. You don’t have to do it alone.</span></div>
+</sc-if>
+
+<!-- ================= FIGHT OR FLIGHT ================= -->
+<sc-if value="{{tabSos}}" hint-placeholder-val="{{ false }}">
+<section class="sec">
+<span class="eyebrow">Fight or flight</span>
+<p class="big">Coming home after an amygdala hijack.</p>
+<p class="lead">Your amygdala is your brain’s smoke alarm. When it thinks you’re in danger, it floods your body with adrenaline and cortisol before your thinking brain even gets a say. That’s an amygdala hijack. Your heart races, your breath goes shallow, and logic leaves the building.</p>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>You can’t think your way out of a hijack. You have to body your way out.</strong> Fast, strong, physical tools first. The gentle stuff comes after.</span></div>
+</section>
+
+<section class="sec">
+<h2 class="h2">Which one is happening?</h2>
+<div class="compare">
+<div class="pdoor"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="dn">Fight or flight</span><p>Racing heart, can’t breathe, hot, shaky, want to run or explode. Your body has too much energy. Give it somewhere to go: cold, intensity, long exhales.</p><button class="ghost" onClick="{{tryPanic}}">Open the panic guide</button></div>
+<div class="pdoor"><img src="/tools/assets/5d5e574219f73922043f755784dc386d.svg" alt=""><span class="dn">Freeze</span><p>Numb, floaty, foggy, far away, can’t move or think. Your body hit pause. Bring it back online with sensation and small movement.</p><button class="ghost" onClick="{{tryFreeze}}">Open the freeze guide</button></div>
+<div class="pdoor"><img src="/tools/assets/3483ab7ef64fe4aa0dfaf595410a7b23.svg" alt=""><span class="dn">Meltdown</span><p>Everything is too loud, too bright, too much. Your cup overflowed. Turn the input down first, then deep pressure and rhythm.</p><button class="ghost" onClick="{{tryMelt}}">Open the meltdown guide</button></div>
+</div>
+</section>
+
+<section class="step">
+<h3 style="margin: 0; font-size: 24px">Why the fast tools work</h3>
+<ul class="list">
+<li><img src="/tools/assets/2b53ad178b0e3d521afaed32044bbc9a.svg" alt="" style="flex: none; width: 44px; height: 44px; border-radius: 12px"><span><strong>Cold water on your face</strong> switches on your dive reflex, which slows your heart rate right down. It’s one of the DBT “TIPP” skills therapists teach for exactly these moments.</span></li>
+<li><img src="/tools/assets/27746f0af31163feb01b3a0323738f60.svg" alt="" style="flex: none; width: 44px; height: 44px; border-radius: 12px"><span><strong>Sour lollies, ice, strong scent</strong> are big sensations that yank your attention out of the panic loop and into your body.</span></li>
+<li><img src="/tools/assets/0ce2dc82c689d1a7e56585a59cb18d59.svg" alt="" style="flex: none; width: 44px; height: 44px; border-radius: 12px"><span><strong>Intense movement</strong> burns off the fight-or-flight energy your body just pumped out.</span></li>
+<li><img src="/tools/assets/3b021becdd8ab273a2eeff31458d67f2.svg" alt="" style="flex: none; width: 44px; height: 44px; border-radius: 12px"><span><strong>The physiological sigh</strong> (I call it the psychological sigh) is the fastest breathing reset we know of. The long exhale applies the brakes to your nervous system in under a minute.</span></li>
+</ul>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a class="vbtn" href="https://youtu.be/kvODph3fgdo" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>Watch the physiological sigh</a>
+<a class="vbtn" href="https://www.youtube.com/watch?v=7Wiv157HDTM" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>Watch my breathing lesson</a>
+</div>
+<div class="callout cream"><span>Skip the cold water face if you have a heart condition, and check with your doctor if you’re unsure. Cold hands or a cold pack on your neck is gentler.</span></div>
+</section>
+
+<section class="dark sec" style="padding: 30px 26px; gap: 16px">
+<div class="eyebrow">When it’s all too much</div>
+<h2 class="h2" style="color: #FFF4EE">Meltdowns aren’t a choice.</h2>
+<p class="lead">A meltdown is what happens when your nervous system hits overload. Too much noise, light, emotion, demand or change, for too long, and the cup overflows. It can look like screaming, crying, snapping, or shutting right down. It’s not a tantrum. It’s not you being dramatic. It’s your body saying: I can’t take in any more.</p>
+<a class="video" href="https://www.youtube.com/watch?v=i4qTAoIGBcI" target="_blank" rel="noopener" aria-label="Watch my unhinged 4 step nervous system reset for AuDHD’ers on YouTube (opens in a new tab)" style="border-color: rgba(255,244,238,.25)"><img src="/tools/assets/16ececf4aed9bfe373643768c34d7c7b.png" alt="Video cover: unhinged 4 step nervous system reset for AuDHD’ers"><span class="vb"><span class="vp"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Watch: my unhinged 4-step nervous system reset</span><span style="font-size: 13px; color: #F6D6CF">For AuDHD’ers · 5:30 · YouTube</span></span></span></a>
+<div class="doors">
+<div class="door"><img src="/tools/assets/62768a1cfc0371b2fa3f28ec1434cfe3.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">First</span><span class="dn">Less input</span><p>Lights down, headphones on, somewhere small and quiet, stop talking. Less before more.</p></div>
+<div class="door"><img src="/tools/assets/3f39c5e191cd716cd67b76399e8c408a.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">Then</span><span class="dn">Pressure and rhythm</span><p>Weighted blanket, a tight hug, rocking, humming, butterfly taps. Stimming is regulating.</p></div>
+<div class="door"><img src="/tools/assets/4988304a4110049ec389935f47c4436b.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">After</span><span class="dn">Recover, zero shame</span><p>Water, a snack, rest. Meltdowns are exhausting. You didn’t do anything wrong.</p></div>
+</div>
+</section>
+
+<section class="sec" id="ch-sosplan">
+<div class="eyebrow">My SOS plans</div>
+<h2 class="h2">Decide now, while you’re calm.</h2>
+<p class="lead">In a hijack your thinking brain goes offline. So pick your go-to moves now, in order, for each one. Next time you tap it on Right now, your plan opens straight away.</p>
+<div class="seg" role="group" aria-label="Which plan"><sc-for list="{{sosSeg}}" as="sg" hint-placeholder-count="3"><button class="{{sg.cls}}" aria-pressed="{{sg.pressed}}" onClick="{{sg.pick}}"><img src="{{sg.img}}" alt="">{{sg.l}}</button></sc-for></div>
+<div class="step">
+<span class="fq">{{sosEditTitle}}</span>
+<sc-if value="{{hasSosEdit}}" hint-placeholder-val="{{ false }}">
+<div class="ordered"><sc-for list="{{sosOrdered}}" as="k" hint-placeholder-count="3"><div class="oitem"><span class="on">{{k.i}}</span><img src="{{k.img}}" alt=""><span class="t">{{k.n}}</span><button aria-label="{{k.rmLabel}}" onClick="{{k.remove}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></sc-for></div>
+</sc-if>
+<sc-if value="{{noSosEdit}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing yet. Tap up to 5 below. The best ones for this state are first.</span></sc-if>
+<span class="fq" style="font-weight: 400; color: #463A38">{{sosPickLabel}}</span>
+<div class="chips"><sc-for list="{{sosChips}}" as="o" hint-placeholder-count="12"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><img src="{{o.img}}" alt="">{{o.l}}</button></sc-for></div>
+<div class="senses">
+<div class="sense"><label for="sos-person">My person I can text</label><input id="sos-person" class="input" type="text" value="{{sosPerson}}" onChange="{{onSosPerson}}" placeholder="e.g. my sister, Jess"></div>
+<div class="sense"><label for="sos-place">My safe place to go</label><input id="sos-place" class="input" type="text" value="{{sosPlace}}" onChange="{{onSosPlace}}" placeholder="e.g. the car, my bedroom floor"></div>
+</div>
+<div class="callout cream"><span>Pack a little SOS kit for your bag or car: sour lollies, a cold pack or water bottle, a strong-scented roller, earplugs or headphones, a fidget.</span></div>
+</div>
+</section>
+
+<div class="help">
+<span class="hh">Need more support?</span>
+<span class="hk">In Australia</span>
+<a class="hl" href="tel:131114"><span>Call Lifeline, 24/7</span><span>13 11 14</span></a>
+<a class="hl" href="sms:0477131114"><span>Text Lifeline, 24/7</span><span>0477 13 11 14</span></a>
+<a class="hl" href="https://www.lifeline.org.au/crisis-chat/" target="_blank" rel="noopener"><span>Chat with Lifeline online</span><span>Open</span></a>
+<a class="hl" href="tel:000"><span>If you or someone else is in danger</span><span>000</span></a>
+<span class="hk">Not in Australia?</span>
+<div class="intl">
+<span class="ir"><strong>USA and Canada</strong>Call or text 988</span>
+<span class="ir"><strong>UK and Ireland</strong>Samaritans, call 116 123</span>
+<span class="ir"><strong>New Zealand</strong>Call or text 1737</span>
+<span class="ir"><strong>Anywhere else</strong><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free lines in your country</span>
+</div>
+<p class="hn">In an emergency, call your local emergency number: 911 in the US and Canada, 999 or 112 in the UK and Europe, 111 in New Zealand.</p>
+</div>
+</sc-if>
+
+<!-- ================= 55 WAYS ================= -->
+<sc-if value="{{tabMenu}}" hint-placeholder-val="{{ false }}">
+<section class="sec">
+<p class="big">55 ways home.</p>
+<p class="lead">Pick a category. Try one, then rate it. Tap “Add to my plan” on the keepers.</p>
+</section>
+
+<div class="cats" role="group" aria-label="Categories"><sc-for list="{{cats}}" as="c" hint-placeholder-count="11"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><img src="{{c.img}}" alt=""><span>{{c.l}}</span><span class="cc">{{c.count}}</span></button></sc-for></div>
+
+<sc-if value="{{hasMenuNote}}" hint-placeholder-val="{{ false }}"><div class="callout lime"><span>{{menuNote}}</span></div></sc-if>
+<sc-if value="{{catIsFF}}" hint-placeholder-val="{{ false }}"><div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt">These are calm-down tools you can use anywhere. For full panic, meltdowns or freeze, the Fight or flight page has the fast SOS moves and step-by-step guides.</span><button class="ghost solid" onClick="{{goSos}}">Open Fight or flight</button></div></sc-if>
+
+<div class="bar">
+<span class="hand" style="font-size: 16px; color: #A8231F">{{expLabel}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button class="ghost" aria-expanded="{{filtersOpenA}}" onClick="{{toggleFilters}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>{{filtersLabel}}</button>
+<button class="primary" onClick="{{surpriseMe}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>Surprise me</button>
+</div>
+</div>
+
+<sc-if value="{{filtersOpen}}" hint-placeholder-val="{{ false }}">
+<div class="filters">
+<sc-for list="{{fGroups}}" as="g" hint-placeholder-count="5">
+<div class="fgroup" role="group" aria-label="{{g.q}}">
+<span class="fq">{{g.q}}</span>
+<div class="chips"><sc-for list="{{g.opts}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="radio"><span></span></span>{{o.l}}</button></sc-for></div>
+</div>
+</sc-for>
+<button class="ghost" style="align-self: flex-start" onClick="{{resetFilters}}">Clear filters</button>
+</div>
+</sc-if>
+
+<span class="count">{{countLabel}}</span>
+<sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}"><div class="callout"><span>Nothing fits all of that at once. Loosen a filter or two, or pick another category.</span></div></sc-if>
+
+<div class="cards">
+<sc-for list="{{acts}}" as="a" hint-placeholder-count="9">
+<article class="{{a.cls}}">
+<div class="pic"><img src="{{a.img}}" alt=""><span class="dur">{{a.dur}}</span></div>
+<div class="cb">
+<sc-if value="{{a.isSurprise}}" hint-placeholder-val="{{ false }}"><span class="badge">Your surprise pick. Go try it.</span></sc-if>
+<span class="ctier">{{a.tier}}</span>
+<h4>{{a.n}}</h4>
+<sc-if value="{{a.hasAka}}" hint-placeholder-val="{{ false }}"><span class="aka">{{a.aka}}</span></sc-if>
+<p>{{a.h}}</p>
+<sc-if value="{{a.hasVideo}}" hint-placeholder-val="{{ false }}"><a class="vbtn" href="{{a.video}}" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>{{a.videoLabel}}</a></sc-if>
+<sc-if value="{{a.hasMore}}" hint-placeholder-val="{{ false }}">
+<button class="morebtn" aria-expanded="{{a.moreA}}" onClick="{{a.toggleMore}}">{{a.moreLabel}}</button>
+<sc-if value="{{a.moreOpen}}" hint-placeholder-val="{{ false }}">
+<div class="more">
+<span class="mh">How to do it</span>
+<ol><sc-for list="{{a.mSteps}}" as="ms" hint-placeholder-count="3"><li><strong>{{ms.t}}</strong> {{ms.d}}</li></sc-for></ol>
+<span class="mh">Why it works</span>
+<ul><sc-for list="{{a.mWhy}}" as="mw" hint-placeholder-count="4"><li><strong>{{mw.t}}</strong> {{mw.d}}</li></sc-for></ul>
+<span class="mh">When to use it</span>
+<ul><sc-for list="{{a.mWhen}}" as="mn" hint-placeholder-count="6"><li>{{mn.l}}</li></sc-for></ul>
+<span class="mh">The science</span>
+<p>{{a.mSci}}</p>
+<span class="rem">{{a.mRem}}</span>
+</div>
+</sc-if>
+</sc-if>
+<div class="tags"><sc-for list="{{a.tags}}" as="tg" hint-placeholder-count="4"><span class="tag">{{tg.l}}</span></sc-for></div>
+<div class="rate" role="group" aria-label="How was it?"><sc-for list="{{a.rates}}" as="r" hint-placeholder-count="3"><button class="{{r.cls}}" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}">{{r.l}}</button></sc-for></div>
+<button class="{{a.addCls}}" aria-expanded="{{a.open}}" onClick="{{a.toggleAdd}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{a.addLabel}}</button>
+<sc-if value="{{a.isOpen}}" hint-placeholder-val="{{ false }}">
+<div class="addpanel">
+<span class="hand">My routine</span>
+<div class="slots"><sc-for list="{{a.rSlots}}" as="sl" hint-placeholder-count="3"><button class="{{sl.cls}}" aria-pressed="{{sl.pressed}}" onClick="{{sl.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{sl.l}}</button></sc-for></div>
+<span class="hand">For specific moments</span>
+<div class="slots"><sc-for list="{{a.mSlots}}" as="sl" hint-placeholder-count="4"><button class="{{sl.cls}}" aria-pressed="{{sl.pressed}}" onClick="{{sl.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{sl.l}}</button></sc-for></div>
+</div>
+</sc-if>
+</div>
+</article>
+</sc-for>
+</div>
+<button class="primary maroon" style="align-self: flex-start" onClick="{{goPlan}}">See my plan</button>
+</sc-if>
+
+<!-- ================= MY PLAN ================= -->
+<sc-if value="{{tabPlan}}" hint-placeholder-val="{{ false }}">
+<section class="sec">
+<p class="big">My week of coming home.</p>
+<p class="lead">Your routine, laid out day by day. Tap things off as you do them. No streaks to break, no guilt. Every tick is a brick. It starts fresh every Monday.</p>
+<sc-if value="{{routineEmpty}}" hint-placeholder-val="{{ false }}">
+<div class="callout lime"><span>Your week is empty. Add a few things to your routine below, or tap <strong>Add to my plan</strong> on the cards in 55 ways. A few is plenty.</span></div>
+</sc-if>
+<sc-if value="{{routineHas}}" hint-placeholder-val="{{ true }}">
+<div class="week">
+<sc-for list="{{weekDays}}" as="d" hint-placeholder-count="7">
+<div class="{{d.cls}}">
+<div class="dhd"><span class="dname">{{d.n}}</span><sc-if value="{{d.isToday}}" hint-placeholder-val="{{ false }}"><span class="today-tag">Today</span></sc-if><span class="dcount">{{d.count}}</span></div>
+<sc-for list="{{d.items}}" as="it" hint-placeholder-count="3">
+<button class="{{it.cls}}" aria-pressed="{{it.pressed}}" aria-label="{{it.label}}" onClick="{{it.toggle}}"><img src="{{it.img}}" alt=""><span class="dt"><span class="dk">{{it.k}}</span>{{it.n}}</span><span class="tk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></button>
+</sc-for>
+<sc-if value="{{d.none}}" hint-placeholder-val="{{ false }}"><span class="empty">A rest day. Still counts.</span></sc-if>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{hasMonthly}}" hint-placeholder-val="{{ false }}">
+<div class="day" style="max-width: 560px">
+<div class="dhd"><span class="dname">{{monthName}}</span><span class="dcount">A few times this month</span></div>
+<sc-for list="{{monthItems}}" as="it" hint-placeholder-count="2">
+<div class="mrow"><img src="{{it.img}}" alt=""><span class="mn">{{it.n}}</span><span class="mtk"><sc-for list="{{it.boxes}}" as="bx" hint-placeholder-count="3"><button class="{{bx.cls}}" aria-pressed="{{bx.pressed}}" aria-label="{{bx.label}}" onClick="{{bx.toggle}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button></sc-for></span></div>
+</sc-for>
+</div>
+</sc-if>
+<div class="bar"><span class="count" style="font-weight: 600; color: #4E0C08">{{tickLabel}}</span><button class="{{weekResetCls}}" onClick="{{newWeek}}">{{weekResetLabel}}</button></div>
+</sc-if>
+</section>
+
+<section class="sec">
+<div class="eyebrow">Build my routine</div>
+<h2 class="h2">How often?</h2>
+<p class="lead">Daily routine shows up every day. Pick which days for your few-times-a-week ones. Few-times-a-month ones get their own little tracker.</p>
+<div class="plangrid">
+<sc-for list="{{routineSlots}}" as="sl" hint-placeholder-count="3">
+<div class="slot">
+<div class="sh2"><img src="{{sl.img}}" alt=""><div style="display: flex; flex-direction: column; gap: 2px"><span class="sn">{{sl.n}}</span><p class="sh">{{sl.h}}</p></div></div>
+<sc-if value="{{sl.isEmpty}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing here yet.</span></sc-if>
+<div class="mine"><sc-for list="{{sl.items}}" as="it" hint-placeholder-count="2"><div class="mi"><div class="mr"><span>{{it.n}}</span><button aria-label="{{it.rmLabel}}" onClick="{{it.remove}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div><sc-if value="{{it.hasDays}}" hint-placeholder-val="{{ false }}"><div class="daypick" role="group" aria-label="{{it.dayLabel}}"><sc-for list="{{it.days}}" as="dd" hint-placeholder-count="7"><button class="{{dd.cls}}" aria-pressed="{{dd.pressed}}" aria-label="{{dd.full}}" onClick="{{dd.pick}}">{{dd.l}}</button></sc-for></div></sc-if></div></sc-for></div>
+<sc-if value="{{sl.hasIdeas}}" hint-placeholder-val="{{ true }}">
+<div class="ideas"><span class="hand">Ideas</span><div class="chips"><sc-for list="{{sl.ideas}}" as="idea" hint-placeholder-count="4"><button class="chip small" onClick="{{idea.add}}"><img src="{{idea.img}}" alt="">{{idea.n}}</button></sc-for></div></div>
+</sc-if>
+<div class="addrow"><input class="input" type="text" aria-label="{{sl.ownLabel}}" value="{{sl.draft}}" onChange="{{sl.onDraft}}" placeholder="Add my own…"><button class="ghost" onClick="{{sl.addOwn}}">Add</button></div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section class="sec">
+<div class="eyebrow">My moment plans</div>
+<h2 class="h2">For specific moments.</h2>
+<p class="lead">Build a little plan for each everyday moment. Next time you tap it on Right now, your plan opens straight away.</p>
+<div class="plangrid">
+<sc-for list="{{momentSlots}}" as="sl" hint-placeholder-count="4">
+<div class="slot">
+<div class="sh2"><img src="{{sl.img}}" alt=""><div style="display: flex; flex-direction: column; gap: 2px"><span class="sn">{{sl.n}}</span><p class="sh">{{sl.h}}</p></div></div>
+<sc-if value="{{sl.isEmpty}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing here yet.</span></sc-if>
+<div class="mine"><sc-for list="{{sl.items}}" as="it" hint-placeholder-count="2"><div class="mi"><div class="mr"><span>{{it.n}}</span><button aria-label="{{it.rmLabel}}" onClick="{{it.remove}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></div></sc-for></div>
+<sc-if value="{{sl.hasIdeas}}" hint-placeholder-val="{{ true }}">
+<div class="ideas"><span class="hand">Ideas</span><div class="chips"><sc-for list="{{sl.ideas}}" as="idea" hint-placeholder-count="4"><button class="chip small" onClick="{{idea.add}}"><img src="{{idea.img}}" alt="">{{idea.n}}</button></sc-for></div></div>
+</sc-if>
+<div class="addrow"><input class="input" type="text" aria-label="{{sl.ownLabel}}" value="{{sl.draft}}" onChange="{{sl.onDraft}}" placeholder="Add my own…"><button class="ghost" onClick="{{sl.addOwn}}">Add</button></div>
+</div>
+</sc-for>
+</div>
+<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>My SOS plans:</strong> {{sosSummary}}</span><button class="ghost solid" onClick="{{goSosPlan}}">Build them on Fight or flight</button></div>
+</section>
+</sc-if>
+
+<!-- ================= MY WHY ================= -->
+<sc-if value="{{tabWhy}}" hint-placeholder-val="{{ false }}">
+<section class="sec">
+<p class="big">Why am I coming home?</p>
+<p class="lead">On the days you really don’t want to, your why is what gets you to do the two minutes anyway. Pick what’s true for you, or say it in your own words.</p>
+<div class="step">
+<p style="margin: 0; font-weight: 600; font-size: 16px">Getting into my body will help me…</p>
+<div class="chips"><sc-for list="{{whyChips}}" as="o" hint-placeholder-count="10"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.l}}</button></sc-for></div>
+<label for="why-own" style="font-weight: 600; font-size: 15px">In my own words, it will help me…</label>
+<input id="why-own" class="input" type="text" value="{{whyOwn}}" onChange="{{onWhyOwn}}" placeholder="be calm and present with the people I love">
+<p class="hand" style="margin: 0; font-size: 16px; color: #A8231F">My purpose</p>
+<p class="{{whyCls}}">{{statement}}</p>
+</div>
+
+<div class="step">
+<h3 style="margin: 0; font-size: 26px">Pick a mantra</h3>
+<p class="body">Something to say to yourself when you catch yourself up in your head. Choose one that makes your body go “yeah”.</p>
+<div class="mantras" role="group" aria-label="Mantras"><sc-for list="{{mantraChips}}" as="m" hint-placeholder-count="12"><button class="{{m.cls}}" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}"><span class="radio"><span></span></span>{{m.l}}</button></sc-for></div>
+<label for="mantra-own" style="font-weight: 600; font-size: 15px">Or write my own</label>
+<input id="mantra-own" class="input" type="text" value="{{mantraOwn}}" onChange="{{onMantraOwn}}" placeholder="My own mantra…">
+</div>
+</section>
+
+<section class="dark sec" style="padding: 30px 26px; gap: 18px">
+<div class="eyebrow">Take it with you</div>
+<h2 class="h2" style="color: #FFF4EE">Put it on your lock screen.</h2>
+<p class="lead">You pick up your phone a hundred times a day. Let it remind you to come home. Choose what goes on it and a colour, then download.</p>
+<div class="wall">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{wpGroups}}" as="g" hint-placeholder-count="2">
+<div class="fgroup" role="group" aria-label="{{g.q}}"><span class="fq" style="color: #FFF4EE">{{g.q}}</span><div class="chips"><sc-for list="{{g.opts}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="radio"><span></span></span>{{o.l}}</button></sc-for></div></div>
+</sc-for>
+<button class="primary lime edge" style="align-self: flex-start" onClick="{{download}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download my wallpaper</button>
+<sc-if value="{{hasErr}}" hint-placeholder-val="{{ false }}"><p class="body" style="color: #F1F9A6">{{err}}</p></sc-if>
+<p class="body" style="font-size: 14px">iPhone: open the image in Photos, tap share, then Use as Wallpaper. Android: long-press your home screen, then Wallpaper. The clock area is left clear.</p>
+</div>
+<div class="phone">
+<sc-if value="{{hasPreview}}" hint-placeholder-val="{{ false }}"><img src="{{previewUrl}}" alt="Preview of my lock screen wallpaper"></sc-if>
+<sc-if value="{{noPreview}}" hint-placeholder-val="{{ true }}"><span class="ph">Your preview appears here.</span></sc-if>
+</div>
+</div>
+</section>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<span class="count" style="font-size: 13px">Everything you tick and type saves on this device only.</span>
+<button class="{{clearCls}}" onClick="{{clearAll}}">{{clearLabel}}</button>
+</div>
+
+<footer>
+<div style="background: #4E0C08; color: #FFF4EE; border-radius: 24px; padding: 22px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="#F1F9A6" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 21px">Colour Me Neurospicy</span>
+</div>
+<a href="https://www.instagram.com/colour_me_neurospicy/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #F1F9A6; color: #1F1412; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"></circle></svg>@colour_me_neurospicy</a>
+</div>
+</footer>
+
+</div>
+</div>
+</template>
+<script>
+var BT_ASSETS = {"ef10bcdcd5589c500c63bdf5f1b8414f": "ef10bcdcd5589c500c63bdf5f1b8414f.svg", "b54cf8597b937e67a8020b66d1ce173f": "b54cf8597b937e67a8020b66d1ce173f.svg", "2b53ad178b0e3d521afaed32044bbc9a": "2b53ad178b0e3d521afaed32044bbc9a.svg", "e5c14dd4bed1c2d0ce2392c1bc2d4937": "e5c14dd4bed1c2d0ce2392c1bc2d4937.svg", "71906935f7ead0390bb7742d8e63c8e7": "71906935f7ead0390bb7742d8e63c8e7.jpg", "09119c37c8a55b91cf2d126550d45a8b": "09119c37c8a55b91cf2d126550d45a8b.svg", "7e9394b0f49609b612799761708df1af": "7e9394b0f49609b612799761708df1af.svg", "b57862c5b864a8a3e79922d5081c1283": "b57862c5b864a8a3e79922d5081c1283.jpg", "f255c82adfac072178e45af61ee62c83": "f255c82adfac072178e45af61ee62c83.svg", "965835d597d63dbfb533bd132c48b010": "965835d597d63dbfb533bd132c48b010.svg", "bd303b99bc50c21c97bae21271dfb7f7": "bd303b99bc50c21c97bae21271dfb7f7.jpg", "d1f9b4795dae252f5dcac8de6abe6c17": "d1f9b4795dae252f5dcac8de6abe6c17.svg", "43731cbfd8ad9750c3328571417e1a07": "43731cbfd8ad9750c3328571417e1a07.svg", "10a013e0f6b891409d31736d1344fdf0": "10a013e0f6b891409d31736d1344fdf0.svg", "025d0ad08a140b1b7215508698058e2e": "025d0ad08a140b1b7215508698058e2e.svg", "3ab75ae85fd37ba180922aa6e0d5f4fe": "3ab75ae85fd37ba180922aa6e0d5f4fe.jpg", "b79475d66d94092e94468da4478102ef": "b79475d66d94092e94468da4478102ef.svg", "4258c786c9eccfaff671fe9a3b1ef84c": "4258c786c9eccfaff671fe9a3b1ef84c.svg", "7d27dee54b284a29494d637973548312": "7d27dee54b284a29494d637973548312.svg", "877343dccbde56e6e1f457a2d3ece211": "877343dccbde56e6e1f457a2d3ece211.png", "cc66e7467fffaccd352c974bae6611a8": "cc66e7467fffaccd352c974bae6611a8.svg", "81f32f69ffd7998e4b19f6ed1e33401d": "81f32f69ffd7998e4b19f6ed1e33401d.svg", "b8d6cf789c3b52fd6c8e25329142b20f": "b8d6cf789c3b52fd6c8e25329142b20f.svg", "663cd271223c87a3e9eb85198c255ca8": "663cd271223c87a3e9eb85198c255ca8.svg", "03a1b71b1a1f702415ce3062b36b4132": "03a1b71b1a1f702415ce3062b36b4132.jpg", "1c72b87736b666af4e241b1862672e1e": "1c72b87736b666af4e241b1862672e1e.svg", "3b021becdd8ab273a2eeff31458d67f2": "3b021becdd8ab273a2eeff31458d67f2.svg", "a802f77d6b18e31d9167f9e784a42793": "a802f77d6b18e31d9167f9e784a42793.svg", "bc28e522586c56fb459324f519613318": "bc28e522586c56fb459324f519613318.png", "2aa85a10e798befdc83d0b8a2eb9f860": "2aa85a10e798befdc83d0b8a2eb9f860.jpg", "8d2542df94e91b4e443b9304ceec32bb": "8d2542df94e91b4e443b9304ceec32bb.jpg", "b221da10573087306329469db7d06cf2": "b221da10573087306329469db7d06cf2.svg", "52b17553ad29af6204157d1ee2d48ea0": "52b17553ad29af6204157d1ee2d48ea0.svg", "6fdb31359ffcd34386c1b2a3d1ff2326": "6fdb31359ffcd34386c1b2a3d1ff2326.svg", "f224fca6b2efed3cebbe0db225a0abc2": "f224fca6b2efed3cebbe0db225a0abc2.svg", "452f32bba27a33ca67bbcf34f3330ede": "452f32bba27a33ca67bbcf34f3330ede.svg", "7b84cfb3e4ab4f28e1a861ae1ba93092": "7b84cfb3e4ab4f28e1a861ae1ba93092.svg", "6b709ad5c341dfacd0138210abbfa28e": "6b709ad5c341dfacd0138210abbfa28e.svg", "6c4de069e172edaa21031a8fb148e873": "6c4de069e172edaa21031a8fb148e873.svg", "9190031cc80e54bc31e46ed99c69027a": "9190031cc80e54bc31e46ed99c69027a.svg", "8f13a4480c39f62268d2a911bbd4ea57": "8f13a4480c39f62268d2a911bbd4ea57.jpg", "0ce2dc82c689d1a7e56585a59cb18d59": "0ce2dc82c689d1a7e56585a59cb18d59.svg", "43638181699d127e79d590bfeab1892a": "43638181699d127e79d590bfeab1892a.svg", "738ba7703ba55beb0d52acfc42beea68": "738ba7703ba55beb0d52acfc42beea68.png", "a49bbf3641d388a230741ffb5695ce25": "a49bbf3641d388a230741ffb5695ce25.jpg", "11d8af0544f4ee135324e200958dffee": "11d8af0544f4ee135324e200958dffee.png", "c8af3be239e308bc789ccaf133f93013": "c8af3be239e308bc789ccaf133f93013.svg", "88bb3cb53b2e3e99e5e4cab4f5c5e6b9": "88bb3cb53b2e3e99e5e4cab4f5c5e6b9.svg", "0ef8dcdd586ecd0ff80676f1e620be34": "0ef8dcdd586ecd0ff80676f1e620be34.svg", "fced005bcbb1883b152b43df153597d4": "fced005bcbb1883b152b43df153597d4.svg", "81911b4f2b0a19c8881b592a692b00c5": "81911b4f2b0a19c8881b592a692b00c5.svg", "0a978b3016f288611f08f67842c8b98f": "0a978b3016f288611f08f67842c8b98f.jpg", "1049cd27a6587d7e91092694eab2e91e": "1049cd27a6587d7e91092694eab2e91e.jpg", "405b3bf884136aaf14d362ee919d81a0": "405b3bf884136aaf14d362ee919d81a0.svg", "7e6688190a34abe274c03157e1730a80": "7e6688190a34abe274c03157e1730a80.svg", "55d9dcf01edfe5cec122ae90add04088": "55d9dcf01edfe5cec122ae90add04088.svg", "ed17ec258b156c8af9563a76d76a4939": "ed17ec258b156c8af9563a76d76a4939.jpg", "6bd0fad25e0de596ee8ebb4cbca3bf31": "6bd0fad25e0de596ee8ebb4cbca3bf31.svg", "e3a6bf877a877bbb4f4bfbb92d716f27": "e3a6bf877a877bbb4f4bfbb92d716f27.svg", "f846e29006165c8ba62f143c8d86e3f8": "f846e29006165c8ba62f143c8d86e3f8.jpg", "7ebb757ffeac9fd9a4d4e694c6c3d038": "7ebb757ffeac9fd9a4d4e694c6c3d038.svg", "4d24fca30f926a50d0d14581f83313a8": "4d24fca30f926a50d0d14581f83313a8.svg", "a11ad324fdb2f2c6ffee1e5895c941e5": "a11ad324fdb2f2c6ffee1e5895c941e5.svg", "e01ae0b495eb9a16003c5c3192cb7164": "e01ae0b495eb9a16003c5c3192cb7164.jpg", "67991f5dea14c9c436b7f8e6457ce229": "67991f5dea14c9c436b7f8e6457ce229.svg", "68c35e766ce7ce76f0d716155e97d01a": "68c35e766ce7ce76f0d716155e97d01a.svg", "5156dbc53efb3eb2089fc5827d2cc81f": "5156dbc53efb3eb2089fc5827d2cc81f.svg", "0b3e57663dc4bfebaf05c38b7cbbb3dc": "0b3e57663dc4bfebaf05c38b7cbbb3dc.jpg", "1f98186a04d8d535455be88f9ee9c6ab": "1f98186a04d8d535455be88f9ee9c6ab.svg", "3aed56c14b09721bd71008cf963bddda": "3aed56c14b09721bd71008cf963bddda.svg", "8cedfdc02165a506b164a81914fdb102": "8cedfdc02165a506b164a81914fdb102.svg", "4afec1221a96ad247f8e9047bf2fdccd": "4afec1221a96ad247f8e9047bf2fdccd.png", "32fddd771dd54995c7a682d2971acfab": "32fddd771dd54995c7a682d2971acfab.jpg", "1c5afb0325fedc27b1edea4e86f7787a": "1c5afb0325fedc27b1edea4e86f7787a.jpg", "08e8c138372dc36024988a87f1c28229": "08e8c138372dc36024988a87f1c28229.svg", "e0bc55bd2cd5fbb3817c4052002acb5a": "e0bc55bd2cd5fbb3817c4052002acb5a.svg", "60293a8e33fa4bf39988e78921a49568": "60293a8e33fa4bf39988e78921a49568.svg", "9171e26bad3c0414cf5231254b8e2146": "9171e26bad3c0414cf5231254b8e2146.svg", "7380668367de1af6d003f352f99f4aa5": "7380668367de1af6d003f352f99f4aa5.jpg", "a97517a8baec7a2513ad4de41c038eae": "a97517a8baec7a2513ad4de41c038eae.svg", "4aef4d64618ed5ff25eff66c4068851e": "4aef4d64618ed5ff25eff66c4068851e.svg", "1a4d7d76b40c48461192e9638d478fd0": "1a4d7d76b40c48461192e9638d478fd0.svg", "3dff29bcfb1faf0674d0d563eba2a549": "3dff29bcfb1faf0674d0d563eba2a549.svg", "b85e326874f11fdec73759cb3b297578": "b85e326874f11fdec73759cb3b297578.svg", "5b0320d24f83f454bd2d9624b8d63415": "5b0320d24f83f454bd2d9624b8d63415.svg", "3483ab7ef64fe4aa0dfaf595410a7b23": "3483ab7ef64fe4aa0dfaf595410a7b23.svg", "7205741504b90f111c0451fab85ff2d3": "7205741504b90f111c0451fab85ff2d3.svg", "4d15e84cdb8661ef1361585cdfc81997": "4d15e84cdb8661ef1361585cdfc81997.svg", "c0ee1f2c4eb226136fc9f66e3cd4e33e": "c0ee1f2c4eb226136fc9f66e3cd4e33e.jpg", "1f34b601a2667324ae5114bb4be344d7": "1f34b601a2667324ae5114bb4be344d7.svg", "4269a49363538fe24f761fbe92410788": "4269a49363538fe24f761fbe92410788.svg", "c97210ce3db85305c27738cefa1d232b": "c97210ce3db85305c27738cefa1d232b.svg", "5c6a4701b580c26661b1603710d8b45d": "5c6a4701b580c26661b1603710d8b45d.svg", "114034fde36eefbd5f3ebf16913978a4": "114034fde36eefbd5f3ebf16913978a4.jpg", "86849d58f49611f02400cea832d04565": "86849d58f49611f02400cea832d04565.svg", "423aca9e5b3ef0ad25536bd6b48a95a3": "423aca9e5b3ef0ad25536bd6b48a95a3.jpg", "02acac104a668adfde1e12e538c95722": "02acac104a668adfde1e12e538c95722.svg", "e764c61511bfe0dca82c3f449cc298c5": "e764c61511bfe0dca82c3f449cc298c5.png", "a88193d73fc4900672277473c572dbc5": "a88193d73fc4900672277473c572dbc5.jpg", "6a3871dfb91267d41e8251fe86eb7ba2": "6a3871dfb91267d41e8251fe86eb7ba2.svg", "10ef3dfe4743f20e35f479cfda7bd452": "10ef3dfe4743f20e35f479cfda7bd452.svg", "2698eb06626b25eab3cb6a5f2980bbd4": "2698eb06626b25eab3cb6a5f2980bbd4.svg", "ee8b57bbba94cad10d89e031ef3c7520": "ee8b57bbba94cad10d89e031ef3c7520.svg", "b1b330fb1915ecba19c970fe1a381456": "b1b330fb1915ecba19c970fe1a381456.svg", "2fd7c05d8e6485ce7d82e1b7ae169442": "2fd7c05d8e6485ce7d82e1b7ae169442.svg", "42148b886659a14145d923ab0ee21137": "42148b886659a14145d923ab0ee21137.png", "780a7a3decc747e8abc213e52d1252a8": "780a7a3decc747e8abc213e52d1252a8.svg", "0c09469bcdc2e20c851887902c41e560": "0c09469bcdc2e20c851887902c41e560.svg", "163ccf61ba6c54b85986ba91ed14db5a": "163ccf61ba6c54b85986ba91ed14db5a.png", "cf917aaa32f94007a6787e2fd82f83aa": "cf917aaa32f94007a6787e2fd82f83aa.svg", "27746f0af31163feb01b3a0323738f60": "27746f0af31163feb01b3a0323738f60.svg", "cbfb24b61c4ae6264c959964f082362b": "cbfb24b61c4ae6264c959964f082362b.jpg", "d5f1511a86c00d5f6c0ac6fc45bde973": "d5f1511a86c00d5f6c0ac6fc45bde973.jpg", "62768a1cfc0371b2fa3f28ec1434cfe3": "62768a1cfc0371b2fa3f28ec1434cfe3.svg", "ca584f1d5a317480f9135b46ac102964": "ca584f1d5a317480f9135b46ac102964.svg", "a1d75ea44d2f8b5daa7b340010a626ea": "a1d75ea44d2f8b5daa7b340010a626ea.svg", "2796011af48e177c5e14bfd47588cdac": "2796011af48e177c5e14bfd47588cdac.svg", "16ececf4aed9bfe373643768c34d7c7b": "16ececf4aed9bfe373643768c34d7c7b.png", "e8a0e2ab76757574ee552de21c54ac1e": "e8a0e2ab76757574ee552de21c54ac1e.svg", "1756c7ff302323a2435e501832a39fe4": "1756c7ff302323a2435e501832a39fe4.svg", "c750a2cd8d0086940bbc3eb5d1b276e7": "c750a2cd8d0086940bbc3eb5d1b276e7.svg", "a158db7f93031f794aa3e01d33cb6854": "a158db7f93031f794aa3e01d33cb6854.svg", "49f0892d6b07cf278010027527f0260b": "49f0892d6b07cf278010027527f0260b.jpg", "c6c4d7181abcef8e3f1eb0d6edbe60e5": "c6c4d7181abcef8e3f1eb0d6edbe60e5.jpg", "b56d90f66181fc1cb147686bd30dd4d2": "b56d90f66181fc1cb147686bd30dd4d2.svg", "c1debaa8b5d0bd188a8969bba732958b": "c1debaa8b5d0bd188a8969bba732958b.svg", "f3007d98cfc9c98fbe52e337a6e48165": "f3007d98cfc9c98fbe52e337a6e48165.jpg", "df5f40b96c4c2a449d74b145d546fcc0": "df5f40b96c4c2a449d74b145d546fcc0.svg", "7bc686bd4fdef3500756c9422442a127": "7bc686bd4fdef3500756c9422442a127.svg", "19f0304514144c82ce095a59a4ede0fd": "19f0304514144c82ce095a59a4ede0fd.jpg", "fcb1ffb42bbafddcd8b9d42d3e510752": "fcb1ffb42bbafddcd8b9d42d3e510752.svg", "006fdaca6d5f43b131a7c3d521b57322": "006fdaca6d5f43b131a7c3d521b57322.jpg", "946f61e3191cc43bba687791f5fba00c": "946f61e3191cc43bba687791f5fba00c.jpg", "cc94bb101e31217a6c9b6e75bb4f0c8a": "cc94bb101e31217a6c9b6e75bb4f0c8a.svg", "66a3fb64acd08b469b45a9f212f7767f": "66a3fb64acd08b469b45a9f212f7767f.svg", "21dd3441fa1468c37623c40e7df368b5": "21dd3441fa1468c37623c40e7df368b5.jpg", "d7dfcea1b0c2a7519e1b8001ab335752": "d7dfcea1b0c2a7519e1b8001ab335752.svg", "6c2716ab4aea16ab43052f1471a489ab": "6c2716ab4aea16ab43052f1471a489ab.jpg", "4988304a4110049ec389935f47c4436b": "4988304a4110049ec389935f47c4436b.svg", "6b91806f2ce9b2ff827e2833f57a350b": "6b91806f2ce9b2ff827e2833f57a350b.png", "51497c2cfaa41f0357b287d0f8c03c58": "51497c2cfaa41f0357b287d0f8c03c58.png", "ef629e895e8a8a3f0e492f11489caa92": "ef629e895e8a8a3f0e492f11489caa92.png", "e2fc964b6b5c30a9366d14211bd9d7cc": "e2fc964b6b5c30a9366d14211bd9d7cc.jpg", "dde5b214fec388cbe7d3398ea59dd9fc": "dde5b214fec388cbe7d3398ea59dd9fc.png", "cedbf205ff92f4058c52fd7e5f54ba6a": "cedbf205ff92f4058c52fd7e5f54ba6a.svg", "e27795e5d45b6fa9ef22084a5eaaa3ef": "e27795e5d45b6fa9ef22084a5eaaa3ef.svg", "1623037cd6ab22214835e9942ffb81c5": "1623037cd6ab22214835e9942ffb81c5.svg", "bb13b59b8e3ecad2e8c389d6596a1c51": "bb13b59b8e3ecad2e8c389d6596a1c51.jpg", "3f39c5e191cd716cd67b76399e8c408a": "3f39c5e191cd716cd67b76399e8c408a.svg", "6fd5963d5d88fb450238ac697ca08df7": "6fd5963d5d88fb450238ac697ca08df7.svg", "5d5e574219f73922043f755784dc386d": "5d5e574219f73922043f755784dc386d.svg", "ac603d9216b5df900f2fd5e68226d809": "ac603d9216b5df900f2fd5e68226d809.svg", "8984eb28e549e3701f8618326ded6bbc": "8984eb28e549e3701f8618326ded6bbc.svg", "b63a16aeabaa5e7f2d18fba7b2afb5bf": "b63a16aeabaa5e7f2d18fba7b2afb5bf.svg", "49b9549cb566e401a6413476bea140d6": "49b9549cb566e401a6413476bea140d6.svg", "492bda7f3d146b97ff251c39557adaee": "492bda7f3d146b97ff251c39557adaee.svg", "155c64712190eac9be159d6ad01d6e35": "155c64712190eac9be159d6ad01d6e35.svg", "8ae7156642df3a103106d8a0212efa15": "8ae7156642df3a103106d8a0212efa15.svg", "b75da40bc538e06270e3ddff5ce8ab48": "b75da40bc538e06270e3ddff5ce8ab48.svg", "98ed6256b7ba6446eace5a186aa343d6": "98ed6256b7ba6446eace5a186aa343d6.svg", "51d86cd4ce74b76e1d80802704533ad4": "51d86cd4ce74b76e1d80802704533ad4.svg", "39dc06590a0be01292c4b7e5b25de439": "39dc06590a0be01292c4b7e5b25de439.pdf", "71852cc02f3594a790bd0603f53f2526": "71852cc02f3594a790bd0603f53f2526.svg", "17c3ff0a134e9e88eeb1e075a27b9d14": "17c3ff0a134e9e88eeb1e075a27b9d14.svg", "393d1cd0363a6c807f49f86f0f9c640d": "393d1cd0363a6c807f49f86f0f9c640d.svg", "ed008a9b597eb58f70ccba16ad6f2737": "ed008a9b597eb58f70ccba16ad6f2737.svg", "ce1f0d0a137e909226f899170d5bf322": "ce1f0d0a137e909226f899170d5bf322.jpg", "3ebf6777f12e2a8760725def30113f99": "3ebf6777f12e2a8760725def30113f99.svg"};
+function BT_ASSET(id) { return '/tools/assets/' + (BT_ASSETS[id] || id); }
+
+
+var WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+var ANY = /\{\{\s*([^}]+?)\s*\}\}/g;
+var SVGNS = 'http://www.w3.org/2000/svg';
+function lookup(path, scopes) {
+  path = path.trim();
+  if (path === 'true') return true; if (path === 'false') return false; if (path === 'null') return null;
+  if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+  var parts = path.split('.'), base;
+  for (var i = scopes.length - 1; i >= 0; i--) { var sc = scopes[i]; if (sc && typeof sc === 'object' && parts[0] in sc) { base = sc[parts[0]]; break; } }
+  for (var j = 1; j < parts.length; j++) { if (base == null) return undefined; base = base[parts[j]]; }
+  return base;
+}
+function interp(str, scopes) { var m = WHOLE.exec(str); if (m) return lookup(m[1], scopes); return str.replace(ANY, function (_, p) { var v = lookup(p, scopes); return v == null ? '' : String(v); }); }
+function hole(attr) { return attr.replace(/^\s*\{\{|\}\}\s*$/g, ''); }
+var EVENTS = { onclick: 'click', onkeydown: 'keydown', oninput: 'input', onchange: 'change', onpointerdown: 'pointerdown', onpointermove: 'pointermove', onpointerup: 'pointerup', onwheel: 'wheel' };
+function build(nodes, scopes) {
+  var out = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    if (n.nodeType === 3) { var tv = interp(n.nodeValue, scopes); out.push(tv == null ? '' : String(tv)); continue; }
+    if (n.nodeType !== 1) continue;
+    var tag = n.localName;
+    if (tag === 'sc-if') { if (lookup(hole(n.getAttribute('value')), scopes)) out.push.apply(out, build(n.childNodes, scopes)); continue; }
+    if (tag === 'sc-for') { var list = lookup(hole(n.getAttribute('list')), scopes) || [], as = n.getAttribute('as'); for (var k = 0; k < list.length; k++) { var sc = {}; sc[as] = list[k]; sc.$index = k; out.push.apply(out, build(n.childNodes, scopes.concat([sc]))); } continue; }
+    if (tag === 'dc-import' || tag === 'helmet') continue;
+    var props = {};
+    for (var a = 0; a < n.attributes.length; a++) {
+      var at = n.attributes[a], name = at.name;
+      if (name.indexOf('hint-') === 0) continue;
+      var val = interp(at.value, scopes);
+      if (EVENTS[name]) { var ev = EVENTS[name]; if (name === 'onchange' && (tag === 'textarea' || (tag === 'input' && n.getAttribute('type') !== 'file'))) ev = 'input'; if (typeof val === 'function') props['@' + ev] = val; continue; }
+      props[name] = val;
+    }
+    out.push({ t: tag, p: props, c: tag === 'textarea' ? [] : build(n.childNodes, scopes) });
+  }
+  return out;
+}
+var pendingRefs = [];
+function dispatch(e) { var f = this.__ev && this.__ev[e.type]; if (f) f(e); }
+function setProps(el, props) {
+  var old = el.__p || {};
+  for (var k in old) { if (k in props) continue; if (k[0] === '@') { delete el.__ev[k.slice(1)]; continue; } if (k === 'ref') { if (typeof old.ref === 'function') old.ref(null); continue; } if (k === 'value' || k === 'checked') continue; el.removeAttribute(k); }
+  for (var name in props) {
+    var v = props[name];
+    if (name[0] === '@') { var type = name.slice(1); el.__ev = el.__ev || {}; if (!el.__ev[type] && !(el.__on && el.__on[type])) { el.addEventListener(type, dispatch); (el.__on = el.__on || {})[type] = true; } el.__ev[type] = v; continue; }
+    if (name === 'ref') { if (typeof v === 'function' && old.ref !== v) { if (typeof old.ref === 'function') old.ref(null); pendingRefs.push([v, el]); } continue; }
+    if (name === 'value' && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) { if (el.type === 'file') continue; var sv = v == null ? '' : String(v); if (el.value !== sv) el.value = sv; continue; }
+    if (name === 'checked') { el.checked = !!v && v !== 'false'; continue; }
+    if (name === 'disabled') { if (v === true || v === 'true') el.setAttribute('disabled', ''); else el.removeAttribute('disabled'); continue; }
+    if (v === false || v == null) { el.removeAttribute(name); continue; }
+    if (old[name] !== v || !el.hasAttribute(name)) el.setAttribute(name, v === true ? '' : String(v));
+  }
+  el.__p = props;
+}
+function dropRefs(node) { if (node.nodeType !== 1) return; if (node.__p && typeof node.__p.ref === 'function') node.__p.ref(null); for (var i = 0; i < node.childNodes.length; i++) dropRefs(node.childNodes[i]); }
+function create(v, svg) { if (typeof v === 'string') return document.createTextNode(v); var isSvg = svg || v.t === 'svg'; var el = isSvg ? document.createElementNS(SVGNS, v.t) : document.createElement(v.t); el.__t = v.t; setProps(el, v.p); if (!('data-slot' in v.p)) patchChildren(el, v.c, isSvg && v.t !== 'foreignObject'); return el; }
+function patchChildren(el, kids, svg) {
+  for (var i = 0; i < kids.length; i++) {
+    var v = kids[i], dom = el.childNodes[i];
+    if (typeof v === 'string') { if (dom && dom.nodeType === 3) { if (dom.data !== v) dom.data = v; } else if (dom) { dropRefs(dom); el.replaceChild(document.createTextNode(v), dom); } else el.appendChild(document.createTextNode(v)); continue; }
+    if (dom && dom.nodeType === 1 && dom.__t === v.t) { setProps(dom, v.p); if (!('data-slot' in v.p)) patchChildren(dom, v.c, (svg || v.t === 'svg') && v.t !== 'foreignObject'); }
+    else if (dom) { dropRefs(dom); el.replaceChild(create(v, svg), dom); }
+    else el.appendChild(create(v, svg));
+  }
+  while (el.childNodes.length > kids.length) { var last = el.lastChild; dropRefs(last); el.removeChild(last); }
+}
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(p) { var n = typeof p === 'function' ? p(this.state) : p; this.state = Object.assign({}, this.state, n); this._schedule(); }
+  forceUpdate() { this._schedule(); }
+  _schedule() { var self = this; if (self._queued || self._dead) return; self._queued = true; Promise.resolve().then(function () { self._queued = false; if (self._dead) return; self._render(); if (self.componentDidUpdate) self.componentDidUpdate(); }); }
+  _render() { var vals = this.renderVals(); pendingRefs = []; patchChildren(this._root, build(this._tpl, [vals]), false); var refs = pendingRefs; pendingRefs = []; refs.forEach(function (r) { r[0](r[1]); }); }
+}
+
+window.BT_TOOL = { slug: "coming-home", access: "all", props: {}, cls: (function () {
+
+var CH_KEY = 'coming-home-v3';
+var CH_IMG = {
+  bath: '/tools/assets/780a7a3decc747e8abc213e52d1252a8.svg', blanket: '/tools/assets/3f39c5e191cd716cd67b76399e8c408a.svg', bowl: '/tools/assets/ed008a9b597eb58f70ccba16ad6f2737.svg',
+  breath: '/tools/assets/3b021becdd8ab273a2eeff31458d67f2.svg', butterfly: '/tools/assets/b1b330fb1915ecba19c970fe1a381456.svg', clay: '/tools/assets/09119c37c8a55b91cf2d126550d45a8b.svg',
+  cloud: '/tools/assets/62768a1cfc0371b2fa3f28ec1434cfe3.svg', coldwater: '/tools/assets/2b53ad178b0e3d521afaed32044bbc9a.svg', conveyor: '/tools/assets/02acac104a668adfde1e12e538c95722.svg',
+  count: '/tools/assets/68c35e766ce7ce76f0d716155e97d01a.svg', disco: '/tools/assets/1f98186a04d8d535455be88f9ee9c6ab.svg', dumbbell: '/tools/assets/6bd0fad25e0de596ee8ebb4cbca3bf31.svg',
+  eye: '/tools/assets/5156dbc53efb3eb2089fc5827d2cc81f.svg', feet: '/tools/assets/b63a16aeabaa5e7f2d18fba7b2afb5bf.svg', hand: '/tools/assets/ef10bcdcd5589c500c63bdf5f1b8414f.svg',
+  heart: '/tools/assets/e5c14dd4bed1c2d0ce2392c1bc2d4937.svg', hum: '/tools/assets/4d15e84cdb8661ef1361585cdfc81997.svg', ice: '/tools/assets/e0bc55bd2cd5fbb3817c4052002acb5a.svg',
+  journal: '/tools/assets/b54cf8597b937e67a8020b66d1ce173f.svg', mat: '/tools/assets/3ebf6777f12e2a8760725def30113f99.svg', move: '/tools/assets/0ce2dc82c689d1a7e56585a59cb18d59.svg',
+  mug: '/tools/assets/4988304a4110049ec389935f47c4436b.svg', music: '/tools/assets/10ef3dfe4743f20e35f479cfda7bd452.svg', paw: '/tools/assets/cedbf205ff92f4058c52fd7e5f54ba6a.svg',
+  pencil: '/tools/assets/8984eb28e549e3701f8618326ded6bbc.svg', phone: '/tools/assets/e8a0e2ab76757574ee552de21c54ac1e.svg', plant: '/tools/assets/2fd7c05d8e6485ce7d82e1b7ae169442.svg',
+  scent: '/tools/assets/b79475d66d94092e94468da4478102ef.svg', shake: '/tools/assets/a97517a8baec7a2513ad4de41c038eae.svg', singbowl: '/tools/assets/4aef4d64618ed5ff25eff66c4068851e.svg',
+  sour: '/tools/assets/27746f0af31163feb01b3a0323738f60.svg', squeeze: '/tools/assets/cc94bb101e31217a6c9b6e75bb4f0c8a.svg', stomp: '/tools/assets/43638181699d127e79d590bfeab1892a.svg',
+  stones: '/tools/assets/71852cc02f3594a790bd0603f53f2526.svg', stretch: '/tools/assets/6a3871dfb91267d41e8251fe86eb7ba2.svg', toothbrush: '/tools/assets/98ed6256b7ba6446eace5a186aa343d6.svg',
+  tree: '/tools/assets/cc66e7467fffaccd352c974bae6611a8.svg', wall: '/tools/assets/66a3fb64acd08b469b45a9f212f7767f.svg', wave: '/tools/assets/5c6a4701b580c26661b1603710d8b45d.svg',
+  wheel: '/tools/assets/fced005bcbb1883b152b43df153597d4.svg', window: '/tools/assets/3dff29bcfb1faf0674d0d563eba2a549.svg', yarn: '/tools/assets/a802f77d6b18e31d9167f9e784a42793.svg',
+  energy: '/tools/assets/2698eb06626b25eab3cb6a5f2980bbd4.svg', headdead: '/tools/assets/a11ad324fdb2f2c6ffee1e5895c941e5.svg', heartboom: '/tools/assets/965835d597d63dbfb533bd132c48b010.svg',
+  iceblock: '/tools/assets/5d5e574219f73922043f755784dc386d.svg', meltface: '/tools/assets/3483ab7ef64fe4aa0dfaf595410a7b23.svg', overflow: '/tools/assets/81f32f69ffd7998e4b19f6ed1e33401d.svg',
+  thoughts: '/tools/assets/a1d75ea44d2f8b5daa7b340010a626ea.svg'
+};
+var V_SIGH = 'https://youtu.be/kvODph3fgdo';
+var V_BREATH = 'https://www.youtube.com/watch?v=7Wiv157HDTM';
+var V_ENERGY = 'https://www.instagram.com/p/DZqiPJKBgIp/';
+var CH_TYPES = { breath: 'Breath', move: 'Movement', touch: 'Touch', sound: 'Sound', senses: 'Senses', mind: 'Mind', hands: 'Hands & creative' };
+var CH_TIERS = { micro: 'In-the-moment', brk: 'Mindful break', long: 'Vagus nerve builder' };
+var CH_WHERE = { any: 'Anywhere', 'in': 'Inside', out: 'Outside' };
+// id, name, tier, duration, type, where, discreet, costs money, needs gear, image, how, [video, video label]
+var CH_RAW = [
+  ['sigh', 'Physiological sigh', 'micro', '30 sec', 'breath', 'any', 1, 0, 0, 'breath', 'Long inhale through your nose, a short top-up sniff, then a slow, complete exhale through your mouth. Repeat 1 to 3 times. The fastest reset button you’ve got.', V_SIGH, 'Watch my physiological sigh video'],
+  ['ribs', 'Rib cage breath', 'micro', '1 min', 'breath', 'any', 1, 0, 0, 'breath', 'Breathe a bit deeper than usual, into your sides and back. Feel your rib cage expand like an umbrella. Lovely in bed at night.', V_BREATH, 'Watch my breathing lesson'],
+  ['box', 'Box breathing', 'micro', '1–2 min', 'breath', 'any', 1, 0, 0, 'breath', 'In for 4, hold for 4, out for 4, hold for 4. Trace a square on your leg with a finger if it helps.', V_BREATH, 'Watch my breathing lesson'],
+  ['legs', 'Leg strokes', 'micro', '30 sec', 'touch', 'any', 1, 0, 0, 'hand', 'Run your palms slowly down your thighs and back up. Notice the fabric, the pressure, the warmth. Very meeting-friendly.'],
+  ['fingers', 'Fingertip press', 'micro', '30 sec', 'touch', 'any', 1, 0, 0, 'hand', 'Press your fingertips together one pair at a time. Notice the pressure, the temperature, the little ridges.'],
+  ['energyreel', 'My quick energy reset', 'micro', '1–2 min', 'move', 'any', 0, 0, 0, 'energy', 'Flat, foggy, sluggish? This is my fast way to get back into your body when you need more energy. Watch the reel and do it with me.', V_ENERGY, 'Watch the reel'],
+  ['handrub', 'Hand massage', 'micro', '1–2 min', 'touch', 'any', 1, 0, 0, 'hand', 'Thumb circles into your palm, then squeeze down each finger. Bonus points with hand cream.'],
+  ['feet', 'Feet on the floor', 'micro', '30 sec', 'senses', 'any', 1, 0, 0, 'feet', 'Press your feet into the ground. Feel the weight of your body and the pressure of your shoes. Wiggle your toes.'],
+  ['five', 'Five senses check-in', 'micro', '1 min', 'senses', 'any', 1, 0, 0, 'eye', 'One thing you can hear, see, smell, taste and feel. Name each one in your head, in detail.'],
+  ['fivefour', '5-4-3-2-1', 'micro', '2 min', 'senses', 'any', 1, 0, 0, 'count', '5 things you can see, 4 you can feel, 3 you can hear, 2 you can smell, 1 you can taste.'],
+  ['sip', 'Taste the sip', 'micro', '30 sec', 'senses', 'any', 1, 0, 0, 'mug', 'Lick your lips. Take a sip of whatever you’re drinking and actually taste it. The temperature, the flavour, how it feels going down.'],
+  ['narrate', 'Narrate the room', 'micro', '1 min', 'senses', 'any', 1, 0, 0, 'window', 'Describe three things around you like a nature documentary. Colour, shape, texture. In your head is fine.'],
+  ['mug', 'Warm hands', 'micro', '1 min', 'touch', 'in', 1, 0, 0, 'mug', 'Wrap your hands around a warm mug, or wash them slowly under warm water. Feel every bit of it.'],
+  ['shoulders', 'Shoulder rolls', 'micro', '30 sec', 'move', 'any', 1, 0, 0, 'stretch', 'Roll your shoulders back three times, then forward three times. Unclench your jaw while you’re at it.'],
+  ['redlight', 'Red-light reset', 'micro', '30 sec', 'senses', 'out', 1, 0, 0, 'wheel', 'Stopped in traffic? Feel your hands on the wheel and your back against the seat, and take one deeper breath.'],
+  ['pocket', 'Texture in your pocket', 'micro', '30 sec', 'touch', 'any', 1, 1, 1, 'stones', 'Keep a smooth stone, a fidget or a scrap of soft fabric in your pocket or bag. Rub it with your thumb when you drift.'],
+  ['scent', 'Scent anchor', 'micro', '30 sec', 'senses', 'any', 1, 1, 1, 'scent', 'A roller oil, hand cream or perfume you love. Breathe it in slowly and let it pull you back into your body.'],
+  ['hum', 'Hum it out', 'micro', '1 min', 'sound', 'any', 0, 0, 0, 'hum', 'Hum one low note and feel the buzz in your chest, throat and lips. Your vagus nerve loves this one.'],
+  ['brush', 'Toothbrush sway', 'micro', '2 min', 'move', 'in', 0, 0, 0, 'toothbrush', 'Sway side to side while you brush. Focus on the brush running over each tooth.'],
+  ['microdance', 'Microwave dance', 'micro', '1–2 min', 'move', 'in', 0, 0, 0, 'disco', 'Food heating up? Put a song on and dance in the kitchen until it beeps.'],
+  ['shake', 'Shake it off', 'micro', '30 sec', 'move', 'any', 0, 0, 0, 'shake', 'Shake out your hands, arms, legs, then your whole body, like a dog after a bath.'],
+  ['stretch', 'Big stretch and yawn', 'micro', '30 sec', 'move', 'any', 0, 0, 0, 'stretch', 'Reach up as high as you can, stretch every bit of you, and let a yawn happen if it wants to.'],
+  ['heart', 'Hand on heart', 'micro', '1 min', 'touch', 'any', 0, 0, 0, 'heart', 'One hand on your heart, one on your belly. Feel your own warmth and your breath moving under your hands.'],
+  ['conveyor', 'Conveyor belt meditation', 'brk', '2–10 min', 'mind', 'any', 0, 0, 0, 'conveyor', 'Watch each thought arrive on the conveyor belt. Pick it up, “hmm, interesting”, put it down, watch it leave. Next.'],
+  ['dump', 'Brain dump page', 'brk', '5 min', 'mind', 'any', 1, 0, 1, 'journal', 'Write down every thought that’s looping. You’ll come back to the important ones later. Writing it down cuts the cord.'],
+  ['humbreak', 'Hum-along brain break', 'brk', '5 min', 'sound', 'out', 0, 0, 0, 'music', 'Sit outside, put a song on and hum along. Notice what you can hear, see, smell, taste and feel.'],
+  ['grass', 'Barefoot on the grass', 'brk', '5 min', 'senses', 'out', 0, 0, 0, 'feet', 'Shoes off. Feel the grass, sand or dirt under your feet. Notice the temperature and the texture.'],
+  ['walk', 'Five-senses walk', 'brk', '10–15 min', 'senses', 'out', 1, 0, 0, 'tree', 'A walk with no podcast and no phone call. Just noticing. What can you hear, see, smell and feel?'],
+  ['clouds', 'Cloud watching', 'brk', '5–10 min', 'senses', 'out', 0, 0, 0, 'cloud', 'Lie on the grass or sit outside and watch the sky move. Proper brain rest, no screen required.'],
+  ['cuppa', 'Mindful cuppa', 'brk', '5–10 min', 'senses', 'any', 1, 0, 0, 'mug', 'Make a tea or coffee and notice every step. The kettle, the steam, the warmth in your hands, the first sip. No phone.'],
+  ['disco', 'Kitchen disco', 'brk', '5–10 min', 'move', 'in', 0, 0, 0, 'disco', 'Two or three songs, full body, nobody watching. Extra points for terrible moves.'],
+  ['sing', 'Sing at full volume', 'brk', '5 min', 'sound', 'any', 0, 0, 0, 'music', 'Car, shower, wherever. Feel the sound in your body. Pitch-perfect not required.'],
+  ['floorstretch', 'Floor stretch flow', 'brk', '10 min', 'move', 'in', 0, 0, 0, 'mat', 'Ten minutes on the floor stretching whatever feels tight. Follow your body, no routine needed.'],
+  ['lotion', 'Lotion massage', 'brk', '5–10 min', 'touch', 'in', 0, 1, 1, 'hand', 'Slowly massage lotion or oil into your feet, hands and arms. Notice every bit of skin.'],
+  ['pat', 'Pat an animal', 'brk', '5 min', 'touch', 'any', 0, 0, 0, 'paw', 'Your pet, a friend’s dog, the neighbour’s cat. Feel the fur and breathe with them.'],
+  ['weighted', 'Weighted blanket rest', 'brk', '10–15 min', 'touch', 'in', 0, 1, 1, 'blanket', 'Lie under a weighted blanket and feel the pressure holding you. Deep pressure tells your body it’s safe.'],
+  ['colouring', 'Colouring in', 'brk', '10–20 min', 'hands', 'any', 1, 1, 1, 'pencil', 'Pencils, markers, a colouring book. Notice the colour going on, the sound of the pencil, the pressure in your hand.'],
+  ['doodle', 'Doodle or zentangle', 'brk', '5–15 min', 'hands', 'any', 1, 0, 1, 'pencil', 'Repeating patterns, swirls, shapes. Let your hand lead and your brain take a back seat.'],
+  ['clay', 'Clay or playdough', 'brk', '10 min', 'hands', 'in', 0, 1, 1, 'clay', 'Squish, roll, pinch, shape. Sensory heaven. You don’t need to make anything.'],
+  ['yarn', 'Knit, crochet or stitch', 'brk', '15 min +', 'hands', 'any', 1, 1, 1, 'yarn', 'Rhythmic, repetitive and very good at getting you out of your head and into your fingers.'],
+  ['cook', 'Cook with your hands', 'brk', '15 min +', 'hands', 'in', 0, 0, 1, 'bowl', 'Knead dough, chop veggies, roll something. Smell it, feel it, taste it as you go.'],
+  ['garden', 'Hands in the dirt', 'brk', '15 min +', 'hands', 'out', 0, 0, 1, 'plant', 'Repot a plant, pull some weeds, water the garden. Feel the soil and notice everything alive around you.'],
+  ['yoga', 'Yoga class', 'long', '45–60 min', 'move', 'any', 0, 1, 0, 'mat', 'Studio, community hall or online. Find a teacher whose vibe you like. Gentle, yin and restorative all count.'],
+  ['pilates', 'Pilates class', 'long', '45–60 min', 'move', 'in', 0, 1, 0, 'mat', 'Slow, controlled, all about feeling which muscle is doing what. Very in-your-body.'],
+  ['workout', 'Gym or home workout', 'long', '30–60 min', 'move', 'any', 0, 0, 0, 'dumbbell', 'Anything that gets your body moving. Free at home, or a gym or class. Focus on how it feels, not how it looks.'],
+  ['danceclass', 'Dance class', 'long', '60 min', 'move', 'in', 0, 1, 0, 'disco', 'Pole, salsa, jazz, hip hop, adult ballet. Whatever makes you giggle.'],
+  ['swim', 'Swim or ocean dip', 'long', '30 min +', 'move', 'out', 0, 0, 0, 'wave', 'Pool, ocean, creek. Notice the water on your skin, the temperature, the weightlessness.'],
+  ['bushwalk', 'Nature walk or bushwalk', 'long', '60 min +', 'senses', 'out', 0, 0, 0, 'tree', 'A longer walk somewhere green. Leave the headphones off for at least part of it.'],
+  ['massage', 'Massage', 'long', '60 min', 'touch', 'in', 0, 1, 0, 'stones', 'Literally someone touching you, usually with soft music and a relaxing vibe. Very hard to stay in your head.'],
+  ['bodywork', 'Reiki, acupuncture or acupressure', 'long', '45–60 min', 'touch', 'in', 0, 1, 0, 'stones', 'Body work that brings your awareness right back to the physical. Try one and see what you like.'],
+  ['bath', 'Long bath', 'long', '30 min +', 'touch', 'in', 0, 0, 1, 'bath', 'Candles, music, no phone. Feel the water, the warmth, your body getting heavy.'],
+  ['breathwork', 'Guided breathwork session', 'long', '20–30 min', 'breath', 'in', 0, 0, 0, 'breath', 'Start with my breathing lesson, then there are plenty of free guided sessions online, or book a class. Lie down and follow along.', V_BREATH, 'Watch my breathing lesson'],
+  ['soundbath', 'Sound bath', 'long', '45–60 min', 'sound', 'in', 0, 1, 0, 'singbowl', 'Lie there while bowls and gongs wash over you. Feel the vibrations move through your body.'],
+  ['longmed', '20-minute meditation', 'long', '20 min', 'mind', 'in', 0, 0, 0, 'conveyor', 'The “best” on your good, better, best ladder. Conveyor belt style. Build up to it, no rush.'],
+  ['creativeclass', 'Creative class', 'long', '2–3 hrs', 'hands', 'in', 0, 1, 0, 'clay', 'Pottery, painting, candle making, floristry. A whole afternoon of hands-on, out-of-your-head joy.']
+];
+var CH_ACTS = CH_RAW.map(function (r) { return { id: r[0], n: r[1], t: r[2], d: r[3], k: r[4], w: r[5], q: !!r[6], c: !!r[7], g: !!r[8], img: CH_IMG[r[9]], h: r[10], video: r[11] || '', vlabel: r[12] || '' }; });
+var CH_BY = {};
+CH_ACTS.forEach(function (a) { CH_BY[a.id] = a; });
+
+var CH_SIGH_MORE = {
+  aka: 'I call it the psychological sigh. You’re welcome.',
+  steps: [
+    { t: 'First inhale.', d: 'A slow, deep breath in through your nose, filling your lungs as much as is comfortable.' },
+    { t: 'Second inhale.', d: 'At the very top of that breath, take a second short, sharp inhale through your nose to fully expand your lungs.' },
+    { t: 'Long exhale.', d: 'Slowly and completely breathe out through your mouth, like you’re gently fogging up a mirror or letting the air out through a straw. Make the exhale longer than the inhale.' }
+  ],
+  why: [
+    { t: 'Reinflates the air sacs in your lungs.', d: 'When we’re stressed, some of the tiny air sacs (alveoli) can partially collapse. The second inhale helps reopen them, improving oxygen exchange.' },
+    { t: 'Removes excess carbon dioxide.', d: 'Anxiety can throw your breathing out and change the carbon dioxide levels in your blood. The long exhale helps restore balance.' },
+    { t: 'Slows your heart rate.', d: 'The extended exhale switches on your parasympathetic, rest and digest system. Think of it as putting the brakes on your nervous system.' },
+    { t: 'Sends a safety signal to your brain.', d: '“We’re safe. We can stand down now.” That helps reduce stress, panic and overwhelm.' }
+  ],
+  when: ['Before a stressful conversation', 'During anxiety or panic', 'When you’re feeling overwhelmed', 'After being startled', 'During sensory overload', 'Before public speaking', 'Before bed', 'Any time you need a quick nervous system reset'],
+  sci: 'The physiological sigh has been studied by researchers at Stanford University and popularised by neuroscientist Dr Andrew Huberman. Research has shown that cyclic sighing can improve mood and reduce breathing rate, often more effectively than some other common breathing exercises.',
+  rem: 'If you forget everything else: double inhale through the nose, long slow exhale through the mouth, repeat 1 to 3 times. Your body already does this on its own. You’re just pressing the built-in reset button on purpose.'
+};
+
+var CH_CATS = [
+  ['all', 'All 55', 'disco', function () { return true; }],
+  ['ff', 'Fight or flight', 'heartboom', function (a) { return ['sigh', 'box', 'feet', 'fivefour', 'handrub', 'scent', 'pocket', 'hum', 'shake', 'heart', 'legs', 'mug', 'sip', 'weighted'].indexOf(a.id) >= 0; }],
+  ['quick', 'Quick fixes', 'hand', function (a) { return a.t === 'micro'; }],
+  ['calm', 'Calm and soothe', 'heart', function (a) { return ['sigh', 'ribs', 'box', 'heart', 'weighted', 'cuppa', 'mug', 'handrub', 'lotion', 'conveyor', 'clouds', 'bath', 'pat', 'hum', 'legs', 'fingers', 'massage', 'soundbath'].indexOf(a.id) >= 0; }],
+  ['head', 'Out of my head', 'thoughts', function (a) { return ['five', 'fivefour', 'narrate', 'dump', 'conveyor', 'walk', 'colouring', 'doodle', 'sip', 'feet', 'redlight', 'grass', 'cuppa', 'cook', 'clay', 'yarn'].indexOf(a.id) >= 0; }],
+  ['energy', 'Energy boost', 'energy', function (a) { return a.k === 'move' || ['sing', 'grass', 'humbreak'].indexOf(a.id) >= 0; }],
+  ['breath', 'Breath', 'breath', function (a) { return a.k === 'breath'; }],
+  ['senses', 'Touch and senses', 'eye', function (a) { return a.k === 'touch' || a.k === 'senses' || a.k === 'sound'; }],
+  ['creative', 'Creative hands', 'pencil', function (a) { return a.k === 'hands'; }],
+  ['mind', 'Mind and meditation', 'conveyor', function (a) { return a.k === 'mind'; }],
+  ['vagus', 'Vagus nerve builders', 'singbowl', function (a) { return a.t === 'long' || ['hum', 'sing', 'humbreak', 'sigh'].indexOf(a.id) >= 0; }]
+];
+var CH_CATBY = {};
+CH_CATS.forEach(function (c) { CH_CATBY[c[0]] = c; });
+
+// SOS kit: id, name, image, modes (recommended for), how, note, video
+var CH_SOS = [
+  ['cold', 'Cold water face', 'coldwater', 'panic', 'Fill a sink or bowl with cold water. Take a breath, hold it, and put your face in for 15 to 30 seconds. Or splash your face, or hold a cold pack over your eyes and cheeks. This switches on your dive reflex and slows your heart right down.', 'Skip this if you have a heart condition. Cold hands are gentler.', ''],
+  ['ice', 'Hold some ice', 'ice', 'panic freeze', 'Hold an ice cube in your hand, or press it on the inside of your wrists or the back of your neck. Put all your focus on the cold.', '', ''],
+  ['sour', 'Sour lolly', 'sour', 'panic freeze meltdown', 'Pop a sour lolly, or bite a lemon wedge. The big taste yanks your brain out of the loop and into your mouth. Keep some in your bag and car.', '', ''],
+  ['exhale', 'Physiological sigh', 'breath', 'panic meltdown', 'Long inhale through your nose, a short top-up sniff, then a slow, complete exhale through your mouth. One to three rounds. The fastest breathing reset we know of.', '', V_SIGH],
+  ['burn', 'Burn it off', 'move', 'panic freeze', 'Run on the spot, star jumps, sprint up the stairs, dance like a maniac for 1 to 2 minutes. Give the fight-or-flight energy somewhere to go.', '', ''],
+  ['squeezer', 'Squeeze and release', 'squeeze', 'panic meltdown', 'Clench your fists, shoulders, face, whole body, as tight as you can while you breathe in. Let it all flop on the out breath. Three times.', '', ''],
+  ['wall', 'Push the wall', 'wall', 'panic', 'Both palms on a wall, and push as hard as you can for 10 seconds. Feel your feet, legs and arms working. Release. Repeat.', '', ''],
+  ['butterfly', 'Butterfly hug', 'butterfly', 'panic meltdown', 'Cross your arms over your chest, hands on your shoulders. Tap left, right, left, right, slowly, while you breathe.', '', ''],
+  ['scentsos', 'Strong scent', 'scent', 'panic freeze', 'Peppermint oil, Vicks, coffee beans, your perfume. Breathe it in, deep and slow.', '', ''],
+  ['shakesos', 'Shake it out', 'shake', 'freeze', 'Shake your hands, arms, legs and whole body for 30 seconds. Animals do this after a scare to shake the stress off.', '', ''],
+  ['stomp', 'Stomp your feet', 'stomp', 'freeze', 'Stand up and stomp, heavy and slow, ten times. Feel the ground push back up at you.', '', ''],
+  ['coldhands', 'Cold hands', 'coldwater', 'freeze meltdown', 'Run your hands and wrists under cold water for 30 seconds. Notice every bit of the feeling.', '', ''],
+  ['orient', 'Look around the room', 'window', 'freeze meltdown', 'Slowly turn your head and look around. Find 5 things that are blue. Let your eyes rest on something safe or pretty.', '', ''],
+  ['teaser', 'Brain teaser', 'count', 'panic freeze', 'Count backwards from 100 in 7s. Name every dog breed you know. Say the alphabet backwards. It gives your thinking brain a job.', '', ''],
+  ['humsos', 'Hum or sing loudly', 'hum', 'panic freeze meltdown', 'A loud, long hum, or belt out your favourite song. The vibration tells your vagus nerve to calm down.', '', ''],
+  ['energysos', 'My quick energy reset', 'energy', 'freeze', 'When you’re stuck in freeze and need your body back online. Watch my reel and do it with me.', '', V_ENERGY],
+  ['lessinput', 'Turn the world down', 'cloud', 'meltdown', 'Lights down, headphones or earplugs in, sunglasses on, somewhere small and quiet. Less input first, then everything else.', '', ''],
+  ['weight', 'Get under the weight', 'blanket', 'meltdown', 'Weighted blanket, a heavy jumper, a tight hug, or lie on the floor with a pillow on your belly. Deep pressure says “you’re held”.', '', ''],
+  ['rock', 'Rock or sway', 'wave', 'meltdown', 'Rock back and forth or side to side. Flap, bounce, stim. It’s your body regulating itself, so let it.', '', ''],
+  ['call', 'Text your person', 'phone', 'panic freeze meltdown', 'Text or call someone safe. You don’t have to explain. “Can you talk to me about something random for 5 minutes?” is enough.', '', '']
+];
+var CH_SOSA = CH_SOS.map(function (r) { return { id: r[0], n: r[1], img: CH_IMG[r[2]], modes: r[3].split(' '), h: r[4], note: r[5], video: r[6] }; });
+var CH_SOSBY = {};
+CH_SOSA.forEach(function (a) { CH_SOSBY[a.id] = a; });
+
+var CH_FF = [
+  ['panic', 'I’m panicking', 'Racing heart, can’t breathe, want to run or explode.', 'Fight or flight', 'heartboom'],
+  ['meltdown', 'I’m having a meltdown', 'Too loud, too bright, too much. I can’t take any more.', 'Meltdown', 'meltface'],
+  ['freeze', 'I’m numb or frozen', 'Floaty, foggy, zoned out, not really here.', 'Freeze', 'iceblock']
+];
+var CH_EV = [
+  ['much', 'It’s all a bit much', 'Overwhelmed and overstimulated, but not melting down.', 'calm', 'overflow'],
+  ['head', 'I’m stuck in my head', 'Overthinking, ruminating, spiralling.', 'head', 'thoughts'],
+  ['reset', 'I just want a reset', 'I’m okay. I want a quick top-up.', 'quick', 'plant'],
+  ['energy', 'I need more energy', 'Flat, sluggish, foggy. I need a boost.', 'energy', 'energy']
+];
+var CH_EVBY = {};
+CH_EV.forEach(function (e) { CH_EVBY[e[0]] = e; });
+var CH_FFBY = {};
+CH_FF.forEach(function (e) { CH_FFBY[e[0]] = e; });
+var CH_INFO = {
+  panic: ['What’s happening in my body?', 'heartboom', 'Your amygdala, your brain’s smoke alarm, thinks you’re in danger. It’s flooded you with adrenaline to fight or run: racing heart, fast shallow breath, hot and shaky. Your thinking brain is offline for a bit, so we don’t argue with it. We give your body the signals that the danger has passed: cold, intensity, long out-breaths.'],
+  meltdown: ['What’s happening in my body?', 'meltface', 'Your nervous system is full. Too much noise, light, emotion or demand for too long, and the cup has overflowed. It’s not a tantrum and it’s not a choice. First we take input away, then we add deep pressure and rhythm, then we rest.'],
+  freeze: ['What’s happening in my body?', 'iceblock', 'When fight or flight feels impossible, your body hits pause instead. Numb, floaty, foggy, far away. It’s a protection response, not a flaw. We bring you back online slowly with strong sensations and small movements.']
+};
+var CH_FLOWS = { panic: ['calm', 'breathe', 'jolt', 'land', 'check'], meltdown: ['meltsafe', 'jolt', 'breathe', 'check'], freeze: ['wake', 'jolt', 'land', 'check'] };
+var CH_NEXT = { calm: 'Start with breath', meltsafe: 'Next', wake: 'Let’s go', breathe: 'Next', jolt: 'Next', land: 'Next' };
+var CH_MELT = ['Lights down', 'Headphones or earplugs in', 'Somewhere small and quiet', 'Phone face down', 'Told someone “I need 10 minutes”', 'Stopped talking'];
+var CH_LAND = [['5', 'things I can see'], ['4', 'things I can feel'], ['3', 'things I can hear'], ['2', 'things I can smell'], ['1', 'thing I can taste']];
+
+var CH_RSLOTS = [
+  { k: 'daily', n: 'Daily routine', h: 'Tiny in-the-moment maintenance. Every day.', img: 'feet', fit: function (a) { return a.t === 'micro'; } },
+  { k: 'weekly', n: 'A few times a week', h: 'Mindful breaks. Pick the days.', img: 'mug', fit: function (a) { return a.t === 'brk'; } },
+  { k: 'monthly', n: 'A few times a month', h: 'The bigger vagus nerve builders. Book them in.', img: 'singbowl', fit: function (a) { return a.t === 'long'; } }
+];
+var CH_MSLOTS = CH_EV.map(function (e) { var cat = CH_CATBY[e[3]]; return { k: e[0], n: 'When ' + e[1].charAt(0).toLowerCase() + e[1].slice(1).replace('It’s', 'it’s'), h: e[2], img: e[4], fit: cat[3] }; });
+CH_MSLOTS[0].n = 'When it’s all a bit much';
+CH_MSLOTS[1].n = 'When I’m stuck in my head';
+CH_MSLOTS[2].n = 'When I want a quick reset';
+CH_MSLOTS[3].n = 'When I need more energy';
+var CH_SHORT = { daily: 'Daily routine', weekly: 'A few times a week', monthly: 'A few times a month', much: 'All a bit much', head: 'Stuck in my head', reset: 'Quick reset', energy: 'Need energy' };
+var CH_PLANLBL = { daily: 'DAILY ROUTINE', weekly: 'A FEW TIMES A WEEK', monthly: 'A FEW TIMES A MONTH' };
+var CH_SOSLBL = { panic: 'WHEN I PANIC', meltdown: 'IN A MELTDOWN', freeze: 'WHEN I FREEZE' };
+
+var CH_WHY = ['feel safe in my own body', 'quieten the overthinking', 'stop spiralling down the doom hole', 'sleep better', 'actually remember my life', 'be present with the people I love', 'feel my feelings instead of running from them', 'calm my nervous system', 'get my spark back', 'trust myself again', 'enjoy the process, not just the outcome', 'become who I was always meant to be'];
+var CH_MANTRAS = [
+  'I’m safe to be here, in this body, right now.',
+  'Back in my body. Back to the land of the living.',
+  'Two minutes counts.',
+  'One brick at a time.',
+  'I don’t have to finish every thought.',
+  'Breathe in, I’m here. Breathe out, I’m home.',
+  'My body still exists, and it’s safe to live in it.',
+  'Nothing to fix. Just notice.',
+  'I’m not my thoughts. I’m the one noticing them.',
+  'I’m allowed to feel this.',
+  'I come home to myself, again and again.',
+  'Present beats perfect.'
+];
+var CH_TABS = [['now', 'Right now', 'heart'], ['learn', 'Learn', 'journal'], ['sos', 'Fight or flight', 'heartboom'], ['menu', '55 ways', 'disco'], ['plan', 'My plan', 'pencil'], ['why', 'My why', 'plant']];
+var CH_TOUR = [
+  ['now', 'Welcome home', 'This is Coming Home, your get-back-in-your-body app. Let me show you around. It takes about 30 seconds.'],
+  ['now', 'Right now', 'When you’re in the moment, come here. Tap how you feel and I’ll walk you through it, or open the plan you saved for that moment.'],
+  ['learn', 'Start with Learn', 'Read this first. Associated vs dissociated, changing your state, and why two minutes totally counts.'],
+  ['sos', 'Fight or flight', 'For panic, meltdowns and freeze. What’s happening in your body, the fast tools, my meltdown video, and your SOS plans.'],
+  ['menu', '55 ways home', 'Your menu. Pick a category up top, try things, rate them, and add the keepers to your plan.'],
+  ['plan', 'My plan', 'Your daily routine, a few times a week and a few times a month, laid out as a week you can tick off. Plus plans for specific moments.'],
+  ['why', 'My why', 'Your purpose and your mantra, made into a lock screen wallpaper so you see it every day.'],
+  ['now', 'You’re home', 'That’s it! Head to Learn first. You can replay this tour any time with the button at the top.']
+];
+
+var CH_SAVED = ['tab', 'tourDone', 'cat', 'fTime', 'fWhere', 'fWho', 'fCost', 'fGear', 'rate', 'plan', 'wdays', 'ticks', 'weekStart', 'monthKey', 'why', 'whyOwn', 'mantra', 'mantraOwn', 'wpContent', 'wpTheme', 'senses', 'sosPlans', 'sosEdit', 'sosPerson', 'sosPlace'];
+var CH_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+var CH_DAYN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+var CH_DAYS3 = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+var CH_MONFULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+function chMondayDate() { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+function chMonday() { var d = chMondayDate(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function chMonthKey() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1); }
+function chName(x) { if (String(x).indexOf('x:') === 0) return String(x).slice(2); return CH_BY[x] ? CH_BY[x].n : String(x); }
+function chImg(x) { return CH_BY[x] ? CH_BY[x].img : CH_IMG.heart; }
+function chJoin(list) { if (list.length <= 1) return list.join(''); return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1]; }
+function chEmptyPlan() { return { daily: [], weekly: [], monthly: [], much: [], head: [], reset: [], energy: [] }; }
+function chEmptySos() { return { panic: [], meltdown: [], freeze: [] }; }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: 'now', tour: 0, tourDone: false,
+      view: null, mode: null, step: 0, jolts: {}, landDone: {}, melt: {}, check: null, planDone: {},
+      cat: 'all', menuNote: '', showFilters: false, fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any',
+      rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, surprise: null,
+      ticks: {}, weekStart: chMonday(), monthKey: chMonthKey(), drafts: {},
+      why: {}, whyOwn: '', mantra: null, mantraOwn: '',
+      wpContent: 'both', wpTheme: 'maroon',
+      senses: {}, sosPlans: chEmptySos(), sosEdit: 'panic', sosPerson: '', sosPlace: '',
+      previewUrl: '', exportUrl: null, err: '', confirmClear: false, confirmWeek: false
+    };
+    this._sig = '';
+  }
+
+  componentDidMount() {
+    try {
+      var raw = window.localStorage.getItem(CH_KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (s && typeof s === 'object') {
+          s.plan = Object.assign(chEmptyPlan(), s.plan || {});
+          s.sosPlans = Object.assign(chEmptySos(), s.sosPlans || {});
+          var ticks = s.ticks || {}, keep = {};
+          var wk = chMonday(), mk = chMonthKey();
+          Object.keys(ticks).forEach(function (k) {
+            if (k.indexOf('m|') === 0) { if (s.monthKey === mk) keep[k] = true; }
+            else if (s.weekStart === wk) keep[k] = true;
+          });
+          s.ticks = keep; s.weekStart = wk; s.monthKey = mk;
+          s.tour = s.tourDone ? null : 0;
+          if (!s.tab) s.tab = 'now';
+          this.setState(s);
+        }
+      }
+    } catch (e) {}
+    this.maybePreview();
+  }
+
+  componentDidUpdate() {
+    var s = this.state, out = {};
+    CH_SAVED.forEach(function (k) { out[k] = s[k]; });
+    try { window.localStorage.setItem(CH_KEY, JSON.stringify(out)); } catch (e) {}
+    this.maybePreview();
+  }
+
+  top() { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }
+  scrollTo(id) { setTimeout(function () { try { var el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); } catch (e) {} }, 80); }
+
+  wallData() {
+    var s = this.state;
+    var t = function (v) { return String(v || '').trim(); };
+    var picks = CH_WHY.filter(function (w) { return (s.why || {})[w]; });
+    var own = t(s.whyOwn).replace(/^(it will\s+)?help me\s+/i, '').replace(/[.\s]+$/, '');
+    if (own) picks = picks.concat([own]);
+    var statement = picks.length ? 'I choose to take action on getting into my body because it will help me ' + chJoin(picks) + '.' : '';
+    var mantra = s.mantra === 'own' ? t(s.mantraOwn) : (typeof s.mantra === 'number' ? CH_MANTRAS[s.mantra] : '');
+    var plan = s.plan || {}, sp = s.sosPlans || {};
+    var groups = ['daily', 'weekly', 'monthly'].map(function (k) { return { l: CH_PLANLBL[k], items: (plan[k] || []).map(chName) }; });
+    groups = groups.concat(['panic', 'meltdown', 'freeze'].map(function (k) { return { l: CH_SOSLBL[k], items: (sp[k] || []).filter(function (id) { return CH_SOSBY[id]; }).map(function (id) { return CH_SOSBY[id].n; }) }; }));
+    groups = groups.filter(function (g) { return g.items.length; });
+    return { statement: statement, mantra: mantra || '', groups: groups, content: s.wpContent, theme: s.wpTheme };
+  }
+
+  drawWall(S) {
+    var d = this.wallData();
+    var W = 1179, H = 2556, PX = 116, IW = W - PX * 2, TOP = 1000, BOT = 2200;
+    var PF = '"Playfair Display", Georgia, serif', PP = 'Poppins, system-ui, sans-serif', HD = '"Patrick Hand SC", cursive';
+    var THS = {
+      maroon: { bg: '#4E0C08', o1: 'rgba(244,194,247,0.45)', o2: 'rgba(241,249,166,0.30)', o3: 'rgba(242,140,59,0.30)', text: '#FFF4EE', eye: '#F1F9A6', lbl: '#F4C2F7', boxBg: '#F1F9A6', boxText: '#1F1412', boxLine: null, foot: 'rgba(255,244,238,0.6)', soft: '#F6D6CF', hs: '#F1F9A6', hf: 'rgba(244,194,247,0.9)' },
+      lilac: { bg: '#FBE6FC', o1: 'rgba(241,249,166,0.95)', o2: 'rgba(232,144,236,0.55)', o3: 'rgba(242,140,59,0.35)', text: '#1F1412', eye: '#A8231F', lbl: '#A8231F', boxBg: '#4E0C08', boxText: '#F1F9A6', boxLine: null, foot: 'rgba(31,20,18,0.55)', soft: '#463A38', hs: '#4E0C08', hf: '#FFFFFF' },
+      cream: { bg: '#FAF7F5', o1: 'rgba(244,194,247,0.85)', o2: 'rgba(241,249,166,0.95)', o3: 'rgba(242,140,59,0.30)', text: '#1F1412', eye: '#A8231F', lbl: '#4E0C08', boxBg: '#F1F9A6', boxText: '#1F1412', boxLine: '#1F1412', foot: 'rgba(31,20,18,0.55)', soft: '#463A38', hs: '#4E0C08', hf: '#F4C2F7' }
+    };
+    var TH = THS[d.theme] || THS.maroon;
+    var showWhy = d.content !== 'plan', showPlan = d.content !== 'why';
+    var statement = d.statement || 'I choose to take action on getting into my body because it will help me come home to myself.';
+    var cv = document.createElement('canvas');
+    cv.width = Math.round(W * S); cv.height = Math.round(H * S);
+    var g = cv.getContext('2d'); g.scale(S, S);
+    function rr(x0, y0, w0, h0, r) { g.beginPath(); g.moveTo(x0 + r, y0); g.arcTo(x0 + w0, y0, x0 + w0, y0 + h0, r); g.arcTo(x0 + w0, y0 + h0, x0, y0 + h0, r); g.arcTo(x0, y0 + h0, x0, y0, r); g.arcTo(x0, y0, x0 + w0, y0, r); g.closePath(); }
+    function orb(x, y, r, c) { var gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
+    function wrap(text, maxW) {
+      var out = [];
+      String(text).split('\n').forEach(function (para) {
+        var words = para.split(' '), cur = '';
+        words.forEach(function (w) { var tt = cur ? cur + ' ' + w : w; if (g.measureText(tt).width > maxW && cur) { out.push(cur); cur = w; } else cur = tt; });
+        out.push(cur);
+      });
+      return out;
+    }
+    function house(cx, cy, sc) {
+      g.save(); g.translate(cx, cy); g.scale(sc, sc);
+      g.lineJoin = 'round'; g.lineWidth = 3; g.strokeStyle = TH.hs;
+      g.beginPath(); g.moveTo(-38, 0); g.lineTo(0, -34); g.lineTo(38, 0); g.lineTo(38, 38); g.lineTo(-38, 38); g.closePath(); g.fillStyle = TH.hf; g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(0, 28); g.bezierCurveTo(-18, 18, -18, 8, -18, 4); g.bezierCurveTo(-18, -3, -13, -7, -8, -7); g.bezierCurveTo(-4, -7, -1.5, -5, 0, -2); g.bezierCurveTo(1.5, -5, 4, -7, 8, -7); g.bezierCurveTo(13, -7, 18, -3, 18, 4); g.bezierCurveTo(18, 8, 18, 18, 0, 28); g.closePath(); g.fillStyle = '#D3302B'; g.fill(); g.lineWidth = 2.4; g.stroke();
+      g.restore();
+    }
+    function ls(px) { try { g.letterSpacing = px + 'px'; } catch (e) {} }
+    g.textBaseline = 'top'; g.textAlign = 'left';
+    function layout(f, paint, y0) {
+      var y = y0;
+      if (showWhy) {
+        ls(2.4 * f); g.font = '400 ' + (40 * f) + 'px ' + HD;
+        if (paint) { g.fillStyle = TH.eye; g.fillText('MY WHY', PX, y); }
+        ls(0); y += 40 * f + 22 * f;
+        var fs = 64 * f, lh = fs * 1.32;
+        g.font = 'italic 600 ' + fs + 'px ' + PF;
+        wrap(statement, IW).forEach(function (l) { if (paint) { g.fillStyle = d.statement ? TH.text : TH.soft; g.fillText(l, PX, y + (lh - fs) / 2); } y += lh; });
+        if (d.mantra) {
+          y += 54 * f;
+          var mfs = 44 * f, mlh = mfs * 1.4, pad = 40 * f;
+          g.font = '600 ' + mfs + 'px ' + PP;
+          var ml = wrap(d.mantra, IW - pad * 2), bh = ml.length * mlh + pad * 2;
+          if (paint) {
+            rr(PX - 8, y, IW + 16, bh, 40 * f); g.fillStyle = TH.boxBg; g.fill();
+            if (TH.boxLine) { g.lineWidth = 3; g.strokeStyle = TH.boxLine; g.stroke(); }
+            g.fillStyle = TH.boxText; ml.forEach(function (l, i) { g.fillText(l, PX + pad - 8, y + pad + i * mlh + (mlh - mfs) / 2); });
+          }
+          y += bh;
+        }
+      }
+      if (showPlan) {
+        if (showWhy) y += 70 * f;
+        ls(2.4 * f); g.font = '400 ' + (40 * f) + 'px ' + HD;
+        if (paint) { g.fillStyle = TH.eye; g.fillText('MY COMING HOME PLAN', PX, y); }
+        ls(0); y += 40 * f + 12 * f;
+        if (!d.groups.length) {
+          var efs = 38 * f; g.font = 'italic 400 ' + efs + 'px ' + PF;
+          wrap('Add a few things to your plan and they’ll show up here.', IW).forEach(function (l) { if (paint) { g.fillStyle = TH.soft; g.fillText(l, PX, y + 10 * f); } y += efs * 1.4; });
+        }
+        d.groups.forEach(function (gr) {
+          y += 26 * f;
+          ls(1.6 * f); g.font = '400 ' + (32 * f) + 'px ' + HD;
+          if (paint) { g.fillStyle = TH.lbl; g.fillText(gr.l, PX, y); }
+          ls(0); y += 32 * f + 10 * f;
+          var ifs = 38 * f, ilh = ifs * 1.42;
+          g.font = '400 ' + ifs + 'px ' + PP;
+          wrap(gr.items.join('  ·  '), IW).forEach(function (l) { if (paint) { g.fillStyle = TH.text; g.fillText(l, PX, y + (ilh - ifs) / 2); } y += ilh; });
+        });
+      }
+      return y - y0;
+    }
+    var f = 1, h = layout(f, false, 0);
+    while (h > BOT - TOP && f > 0.42) { f -= 0.04; h = layout(f, false, 0); }
+    g.fillStyle = TH.bg; g.fillRect(0, 0, W, H);
+    orb(980, 330, 760, TH.o1);
+    orb(140, 2250, 900, TH.o2);
+    orb(1080, 1950, 560, TH.o3);
+    var y0 = TOP + Math.max(0, (BOT - TOP - h) * 0.4);
+    house(PX + 40, y0 - 96, 1.05);
+    layout(f, true, y0);
+    g.textAlign = 'center'; ls(1); g.font = '500 26px ' + PP; g.fillStyle = TH.foot;
+    g.fillText('@colour_me_neurospicy', W / 2, 2262);
+    ls(0); g.textAlign = 'left';
+    return cv;
+  }
+
+  withFonts(fn) {
+    try {
+      var specs = ['italic 600 40px "Playfair Display"', '400 30px "Patrick Hand SC"', '400 30px Poppins', '600 30px Poppins', '500 26px Poppins', 'italic 400 30px "Playfair Display"'];
+      if (document.fonts && document.fonts.load) Promise.all(specs.map(function (sp) { return document.fonts.load(sp, 'Come home abc'); })).then(fn, fn); else fn();
+    } catch (e) { fn(); }
+  }
+
+  maybePreview() {
+    if (this.state.tab !== 'why') return;
+    var self = this;
+    var sig = JSON.stringify(this.wallData());
+    if (sig === this._sig && this.state.previewUrl) return;
+    this._sig = sig;
+    clearTimeout(this._pt);
+    this._pt = setTimeout(function () {
+      self.withFonts(function () {
+        try { var cv = self.drawWall(0.45); self.setState({ previewUrl: cv.toDataURL('image/jpeg', 0.88) }); } catch (e) {}
+      });
+    }, 250);
+  }
+
+  saveJpeg(cv, name) {
+    var self = this;
+    var url = cv.toDataURL('image/jpeg', 0.93);
+    var fallback = function () {
+      try { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
+      self.setState({ exportUrl: url });
+    };
+    var C = window.claude;
+    if (!C || typeof C.use !== 'function') { fallback(); return; }
+    C.use('downloads').then(function (dl) {
+      if (!dl) { fallback(); return; }
+      cv.toBlob(function (blob) {
+        if (!blob) { fallback(); return; }
+        dl.save({ filename: name, data: blob }).then(function () {}, function (err) { if (err && err.code === 'declined') return; fallback(); });
+      }, 'image/jpeg', 0.93);
+    }, fallback);
+  }
+
+  togglePlan(slot, id) {
+    var cur = (this.state.plan[slot] || []).slice();
+    var i = cur.indexOf(id);
+    if (i >= 0) cur.splice(i, 1); else cur.push(id);
+    var plan = Object.assign({}, this.state.plan); plan[slot] = cur;
+    this.setState({ plan: plan });
+  }
+
+  toggleSos(mode, id) {
+    var sp = Object.assign(chEmptySos(), this.state.sosPlans);
+    var cur = (sp[mode] || []).slice(), i = cur.indexOf(id);
+    if (i >= 0) cur.splice(i, 1); else if (cur.length < 5) cur.push(id); else return;
+    sp[mode] = cur;
+    this.setState({ sosPlans: sp });
+  }
+
+  flip(field, key) {
+    var n = Object.assign({}, this.state[field]);
+    if (n[key]) delete n[key]; else n[key] = true;
+    var p = {}; p[field] = n; this.setState(p);
+  }
+
+  goTab(k) { this.setState({ tab: k, open: null }); this.top(); }
+
+  startFlow(m) { this.setState({ tab: 'now', view: 'flow', mode: m, step: 0, jolts: {}, landDone: {}, melt: {}, check: null }); this.top(); }
+
+  pickMood(m, isFF) {
+    var s = this.state;
+    var list = isFF ? ((s.sosPlans || {})[m] || []).filter(function (id) { return CH_SOSBY[id]; }) : ((s.plan || {})[m] || []);
+    if (list.length) { this.setState({ tab: 'now', view: 'myplan', mode: m, planDone: {} }); this.top(); return; }
+    if (isFF) { this.startFlow(m); return; }
+    var ev = CH_EVBY[m];
+    this.setState({ tab: 'menu', cat: ev[3], surprise: null, open: null, menuNote: 'Pick one and try it now. Loved it? Tap Add to my plan › ' + CH_SHORT[m] + ', and next time you tap “' + ev[1] + '” it opens straight to your plan.' });
+    this.top();
+  }
+
+  renderVals() {
+    var self = this, s = this.state;
+    var t = function (v) { return String(v || '').trim(); };
+    var plan = Object.assign(chEmptyPlan(), s.plan || {});
+    var rate = s.rate || {};
+    var ticks = s.ticks || {};
+    var sp = Object.assign(chEmptySos(), s.sosPlans || {});
+    var validSos = function (m) { return (sp[m] || []).filter(function (id) { return CH_SOSBY[id]; }); };
+    var tourStep = typeof s.tour === 'number' ? CH_TOUR[s.tour] : null;
+
+    var tabs = CH_TABS.map(function (tb) {
+      var on = s.tab === tb[0];
+      var spot = tourStep && tourStep[0] === tb[0] && s.tour > 0 && s.tour < CH_TOUR.length - 1;
+      return { l: tb[1], img: CH_IMG[tb[2]], cls: 'tab' + (on ? ' on' : '') + (spot ? ' spot' : ''), current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } };
+    });
+
+    // ---------- Right now ----------
+    var ffMoods = CH_FF.map(function (m) { var has = validSos(m[0]).length > 0; return { t: m[1], s: m[2], k: has ? 'Opens my plan' : m[3], kcls: has ? 'mk saved' : 'mk', img: CH_IMG[m[4]], pick: function () { self.pickMood(m[0], true); } }; });
+    var evMoods = CH_EV.map(function (m) { var has = (plan[m[0]] || []).length > 0; return { t: m[1], s: m[2], k: has ? 'Opens my plan' : 'Opens 55 ways', kcls: has ? 'mk saved' : 'mk', img: CH_IMG[m[4]], pick: function () { self.pickMood(m[0], false); } }; });
+
+    var mode = s.mode;
+    var isFFMode = !!CH_FFBY[mode];
+    var flow = (s.view === 'flow' && CH_FLOWS[mode]) || [];
+    var stepKey = flow[s.step] || '';
+    var info = CH_INFO[mode] || ['', 'heart', ''];
+
+    var joltPool = isFFMode ? CH_SOSA.filter(function (a) { return a.modes.indexOf(mode) >= 0; }) : [];
+    var mine = isFFMode ? validSos(mode) : [];
+    var mineFirst = mine.map(function (id) { return CH_SOSBY[id]; });
+    joltPool = mineFirst.concat(joltPool.filter(function (a) { return mineFirst.indexOf(a) < 0; }));
+    var joltCards = joltPool.map(function (a) {
+      var did = !!(s.jolts || {})[a.id], isMine = mine.indexOf(a.id) >= 0;
+      return {
+        n: a.n, h: a.h, img: a.img, note: a.note, hasNote: !!a.note, mine: isMine,
+        hasVideo: !!a.video, video: a.video, videoLabel: 'Watch me do it',
+        cls: 'sos' + (did ? ' did' : (isMine ? ' mine' : '')), pressed: did ? 'true' : 'false',
+        btnCls: did ? 'didbtn on' : 'didbtn', btnLabel: did ? 'Done. Nice work.' : 'I did this one', toggle: function () { self.flip('jolts', a.id); },
+        addCls: isMine ? 'minibtn on' : 'minibtn', mineP: isMine ? 'true' : 'false', addLabel: isMine ? 'In my plan' : '+ My plan', toggleMine: function () { self.toggleSos(mode, a.id); }
+      };
+    });
+    var joltTitle = mode === 'freeze' ? 'Pick one. Give your body a sensation.' : (mode === 'meltdown' ? 'Now, something soothing.' : 'Pick one and do it now.');
+    var joltLead = mode === 'freeze' ? 'Strong, simple sensations wake your body back up. Start with whatever is closest. Tap “+ My plan” on the ones that help.' : (mode === 'meltdown' ? 'Deep pressure, rhythm, long breaths. Pick what your body is asking for. Tap “+ My plan” on the ones that help.' : 'Fast and physical. Don’t think, just pick whatever is closest to you. Tap “+ My plan” on the ones that help.');
+    var landRows = CH_LAND.map(function (l, i) { var on = !!(s.landDone || {})[i]; return { n: l[0], t: l[1], cls: on ? 'lrow on' : 'lrow', pressed: on ? 'true' : 'false', toggle: function () { self.flip('landDone', i); } }; });
+    var meltChips = CH_MELT.map(function (m) { var on = !!(s.melt || {})[m]; return { l: m, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.flip('melt', m); } }; });
+    var checkBtns = [['better', 'Better', 'I’m back in my body'], ['little', 'A little better', 'Still a bit wobbly'], ['bad', 'Still really bad', 'I need more help']].map(function (c) {
+      var on = s.check === c[0];
+      return { t: c[1], s: c[2], cls: on ? 'cbtn on' : 'cbtn', pressed: on ? 'true' : 'false', pick: function () { self.setState({ check: c[0] }); } };
+    });
+    var doneIds = Object.keys(s.jolts || {}).filter(function (id) { return CH_SOSBY[id] && mine.indexOf(id) < 0; });
+
+    // my plan view
+    var planCards = [], planTitle = '', planImg = CH_IMG.heart;
+    if (s.view === 'myplan' && mode) {
+      if (isFFMode) {
+        planTitle = { panic: 'When I’m panicking', meltdown: 'When I’m having a meltdown', freeze: 'When I’m numb or frozen' }[mode];
+        planImg = CH_IMG[CH_FFBY[mode][4]];
+        planCards = mine.map(function (id, i) {
+          var a = CH_SOSBY[id], did = !!(s.planDone || {})[id];
+          return { num: 'Step ' + (i + 1), n: a.n, h: a.h, img: a.img, hasVideo: !!a.video, video: a.video, videoLabel: 'Watch me do it', cls: did ? 'sos did' : 'sos mine', pressed: did ? 'true' : 'false', btnCls: did ? 'didbtn on' : 'didbtn', btnLabel: did ? 'Done. Nice work.' : 'I did this one', toggle: function () { self.flip('planDone', id); } };
+        });
+      } else if (CH_EVBY[mode]) {
+        planTitle = CH_MSLOTS.filter(function (m) { return m.k === mode; })[0].n;
+        planImg = CH_IMG[CH_EVBY[mode][4]];
+        planCards = (plan[mode] || []).map(function (id, i) {
+          var a = CH_BY[id], did = !!(s.planDone || {})[id];
+          return { num: 'Option ' + (i + 1), n: chName(id), h: a ? a.h : 'My own.', img: chImg(id), hasVideo: !!(a && a.video), video: a ? a.video : '', videoLabel: a ? a.vlabel : '', cls: did ? 'sos did' : 'sos mine', pressed: did ? 'true' : 'false', btnCls: did ? 'didbtn on' : 'didbtn', btnLabel: did ? 'Done. Nice work.' : 'I did this one', toggle: function () { self.flip('planDone', id); } };
+        });
+      }
+    }
+
+    // ---------- 55 ways ----------
+    var radio = function (key, opts) {
+      return opts.map(function (o) { var on = s[key] === o[0]; return { l: o[1], cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { var p = {}; p[key] = on && o[0] !== 'any' ? 'any' : o[0]; p.surprise = null; self.setState(p); } }; });
+    };
+    var fGroups = [
+      { q: 'How much time have you got?', opts: radio('fTime', [['any', 'Any'], ['micro', 'Under 2 minutes'], ['brk', '5 to 15 minutes'], ['long', '30 minutes +']]) },
+      { q: 'Where are you?', opts: radio('fWhere', [['any', 'Either'], ['in', 'Inside'], ['out', 'Outside']]) },
+      { q: 'Who’s around?', opts: radio('fWho', [['any', 'I’m alone, anything goes'], ['public', 'I’m in public, keep it low-key']]) },
+      { q: 'Money?', opts: radio('fCost', [['any', 'Happy to spend'], ['free', 'Free only']]) },
+      { q: 'Equipment?', opts: radio('fGear', [['any', 'I’ve got stuff'], ['none', 'Nothing needed']]) }
+    ];
+    var catNow = CH_CATBY[s.cat] || CH_CATS[0];
+    var cats = CH_CATS.map(function (c) {
+      var on = catNow[0] === c[0];
+      return { l: c[1], img: CH_IMG[c[2]], count: CH_ACTS.filter(c[3]).length + ' ways', cls: on ? 'cat on' : 'cat', pressed: on ? 'true' : 'false', pick: function () { self.setState({ cat: c[0], surprise: null, menuNote: '' }); } };
+    });
+    var activeFilters = ['fTime', 'fWhere', 'fWho', 'fCost', 'fGear'].filter(function (k) { return s[k] !== 'any'; }).length;
+    var filtered = CH_ACTS.filter(function (a) {
+      if (!catNow[3](a)) return false;
+      if (s.fTime !== 'any' && a.t !== s.fTime) return false;
+      if (s.fWhere !== 'any' && a.w !== 'any' && a.w !== s.fWhere) return false;
+      if (s.fWho === 'public' && !a.q) return false;
+      if (s.fCost === 'free' && a.c) return false;
+      if (s.fGear === 'none' && a.g) return false;
+      return true;
+    });
+    if (s.surprise && CH_BY[s.surprise]) filtered = [CH_BY[s.surprise]].concat(filtered.filter(function (a) { return a.id !== s.surprise; }));
+    var allSlots = CH_RSLOTS.concat(CH_MSLOTS);
+    var inSlots = function (id) { return allSlots.filter(function (sl) { return (plan[sl.k] || []).indexOf(id) >= 0; }); };
+    var slotBtn = function (a) { return function (sl) { var on = (plan[sl.k] || []).indexOf(a.id) >= 0; return { l: CH_SHORT[sl.k], cls: on ? 'chip small on' : 'chip small', pressed: on ? 'true' : 'false', toggle: function () { self.togglePlan(sl.k, a.id); } }; }; };
+    var acts = s.tab === 'menu' ? filtered.map(function (a) {
+      var r = rate[a.id] || '', used = inSlots(a.id), open = s.open === a.id, isSigh = a.id === 'sigh', moreOpen = s.more === a.id;
+      var tags = [{ l: CH_TYPES[a.k] }, { l: CH_WHERE[a.w] }];
+      if (a.q) tags.push({ l: 'Low-key' });
+      tags.push({ l: a.c ? 'Costs $' : 'Free' });
+      tags.push({ l: a.g ? 'Needs stuff' : 'No gear' });
+      return {
+        n: a.n, h: a.h, dur: a.d, img: a.img, tier: CH_TIERS[a.t], tags: tags,
+        hasAka: isSigh, aka: isSigh ? CH_SIGH_MORE.aka : '',
+        hasVideo: !!a.video, video: a.video, videoLabel: a.vlabel,
+        hasMore: isSigh, moreOpen: moreOpen, moreA: moreOpen ? 'true' : 'false', moreLabel: moreOpen ? 'Hide the how-to' : 'How to do it, and why it works',
+        toggleMore: function () { self.setState({ more: self.state.more === a.id ? null : a.id }); },
+        mSteps: isSigh ? CH_SIGH_MORE.steps : [], mWhy: isSigh ? CH_SIGH_MORE.why : [], mWhen: isSigh ? CH_SIGH_MORE.when.map(function (w) { return { l: w }; }) : [],
+        mSci: isSigh ? CH_SIGH_MORE.sci : '', mRem: isSigh ? CH_SIGH_MORE.rem : '',
+        isSurprise: s.surprise === a.id,
+        cls: 'card' + (r ? ' ' + r : '') + (s.surprise === a.id ? ' surprise' : ''),
+        rates: [['love', 'Loved it'], ['maybe', 'Maybe'], ['nope', 'Not for me']].map(function (o) {
+          var on = r === o[0];
+          return { l: o[1], cls: on ? 'rb on' : 'rb', pressed: on ? 'true' : 'false', pick: function () { var n = Object.assign({}, self.state.rate); if (on) delete n[a.id]; else n[a.id] = o[0]; self.setState({ rate: n }); } };
+        }),
+        open: open ? 'true' : 'false', isOpen: open,
+        toggleAdd: function () { self.setState({ open: self.state.open === a.id ? null : a.id }); },
+        addCls: used.length ? 'addbtn has' : 'addbtn',
+        addLabel: used.length ? 'In my plan: ' + used.map(function (sl) { return CH_SHORT[sl.k]; }).join(', ') : 'Add to my plan',
+        rSlots: CH_RSLOTS.map(slotBtn(a)), mSlots: CH_MSLOTS.map(slotBtn(a))
+      };
+    }) : [];
+    var rated = Object.keys(rate).length;
+    var loved = Object.keys(rate).filter(function (k) { return rate[k] === 'love'; }).length;
+    var expLabel = rated ? 'Experiment log: tried ' + rated + ' of ' + CH_ACTS.length + ', loved ' + loved + '.' : 'Experiment log: nothing tried yet. ' + CH_ACTS.length + ' ways home to play with.';
+
+    // ---------- Plan ----------
+    var wdays = s.wdays || {};
+    var daysFor = function (id) { return Array.isArray(wdays[id]) ? wdays[id] : [1, 3, 5]; };
+    var buildSlot = function (sl, withDays) {
+      var list = plan[sl.k] || [];
+      var pool = CH_ACTS.filter(function (a) { return sl.fit(a) && list.indexOf(a.id) < 0 && rate[a.id] !== 'nope'; });
+      var ordered = pool.filter(function (a) { return rate[a.id] === 'love'; }).concat(pool.filter(function (a) { return rate[a.id] === 'maybe'; })).concat(pool.filter(function (a) { return !rate[a.id]; }));
+      var ideas = ordered.slice(0, 4).map(function (a) { return { n: a.n, img: a.img, add: function () { self.togglePlan(sl.k, a.id); } }; });
+      return {
+        n: sl.n, h: sl.h, img: CH_IMG[sl.img], isEmpty: list.length === 0,
+        items: list.map(function (id) {
+          var ds = daysFor(id);
+          return {
+            n: chName(id), rmLabel: 'Remove ' + chName(id), remove: function () { self.togglePlan(sl.k, id); },
+            hasDays: withDays && sl.k === 'weekly', dayLabel: 'Which days for ' + chName(id),
+            days: CH_DAYS.map(function (dl, i) { var on = ds.indexOf(i) >= 0; return { l: dl, full: CH_DAYN[i], cls: on ? 'dp on' : 'dp', pressed: on ? 'true' : 'false', pick: function () { var w = Object.assign({}, self.state.wdays); var cur = daysFor(id).slice(); var j = cur.indexOf(i); if (j >= 0) cur.splice(j, 1); else cur.push(i); cur.sort(); w[id] = cur; self.setState({ wdays: w }); } }; })
+          };
+        }),
+        ideas: ideas, hasIdeas: ideas.length > 0 && list.length < 6,
+        draft: (s.drafts || {})[sl.k] || '', ownLabel: 'Add my own to ' + sl.n,
+        onDraft: function (e) { var dr = Object.assign({}, self.state.drafts); dr[sl.k] = e.target.value; self.setState({ drafts: dr }); },
+        addOwn: function () {
+          var v = t((self.state.drafts || {})[sl.k]);
+          if (!v) return;
+          var cur = (self.state.plan[sl.k] || []).slice();
+          if (cur.indexOf('x:' + v) < 0) cur.push('x:' + v);
+          var dr = Object.assign({}, self.state.drafts); dr[sl.k] = '';
+          var p = Object.assign({}, self.state.plan); p[sl.k] = cur;
+          self.setState({ plan: p, drafts: dr });
+        }
+      };
+    };
+    var routineSlots = CH_RSLOTS.map(function (sl) { return buildSlot(sl, true); });
+    var momentSlots = CH_MSLOTS.map(function (sl) { return buildSlot(sl, false); });
+
+    var today = (new Date().getDay() + 6) % 7;
+    var mon = chMondayDate();
+    var weekDays = CH_DAYS.map(function (dl, i) {
+      var date = new Date(mon.getTime()); date.setDate(mon.getDate() + i);
+      var items = [];
+      var add = function (slot, id, k) {
+        var key = 'd|' + i + '|' + slot + '|' + id, on = !!ticks[key];
+        items.push({ n: chName(id), k: k, img: chImg(id), cls: on ? 'ditem on' : 'ditem', pressed: on ? 'true' : 'false', label: chName(id) + ', ' + CH_DAYN[i], on: on, toggle: function () { self.flip('ticks', key); } });
+      };
+      (plan.daily || []).forEach(function (id) { add('daily', id, 'Daily routine'); });
+      (plan.weekly || []).forEach(function (id) { if (daysFor(id).indexOf(i) >= 0) add('weekly', id, 'A few times a week'); });
+      var done = items.filter(function (x) { return x.on; }).length;
+      return { n: CH_DAYS3[i] + ' ' + date.getDate(), isToday: i === today, cls: i === today ? 'day today' : 'day', items: items, none: items.length === 0, count: items.length ? done + ' of ' + items.length : '' };
+    });
+    var mk = chMonthKey();
+    var monthItems = (plan.monthly || []).map(function (id) {
+      return { n: chName(id), img: chImg(id), boxes: [0, 1, 2].map(function (n) { var key = 'm|' + mk + '|' + id + '|' + n, on = !!ticks[key]; return { cls: on ? 'on' : '', pressed: on ? 'true' : 'false', label: chName(id) + ', time ' + (n + 1) + ' this month', toggle: function () { self.flip('ticks', key); } }; }) };
+    });
+    var routineCount = (plan.daily || []).length + (plan.weekly || []).length + (plan.monthly || []).length;
+    var tickCount = Object.keys(ticks).filter(function (k) { return k.indexOf('d|') === 0; }).length;
+    var sosSummary = ['panic', 'meltdown', 'freeze'].map(function (m) { var n = validSos(m).length; return CH_FFBY[m][3] + ': ' + (n ? n + ' move' + (n === 1 ? '' : 's') : 'not set yet'); }).join(' · ');
+
+    // ---------- SOS tab ----------
+    var editMode = CH_FFBY[s.sosEdit] ? s.sosEdit : 'panic';
+    var editList = validSos(editMode);
+    var sosSeg = CH_FF.map(function (m) { var on = editMode === m[0]; return { l: m[3], img: CH_IMG[m[4]], cls: on ? 'on' : '', pressed: on ? 'true' : 'false', pick: function () { self.setState({ sosEdit: m[0] }); } }; });
+    var rec = CH_SOSA.filter(function (a) { return a.modes.indexOf(editMode) >= 0; });
+    var other = CH_SOSA.filter(function (a) { return a.modes.indexOf(editMode) < 0; });
+    var sosChips = rec.concat(other).map(function (a) { var on = editList.indexOf(a.id) >= 0; return { l: a.n, img: a.img, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.toggleSos(editMode, a.id); } }; });
+    var sosOrdered = editList.map(function (id, i) { var a = CH_SOSBY[id]; return { i: i + 1, n: a.n, img: a.img, rmLabel: 'Remove ' + a.n, remove: function () { self.toggleSos(editMode, id); } }; });
+
+    // ---------- Why ----------
+    var whyChips = CH_WHY.map(function (w) { var on = !!(s.why || {})[w]; return { l: w.charAt(0).toUpperCase() + w.slice(1), cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.flip('why', w); } }; });
+    var wd2 = this.wallData();
+    var mantraChips = CH_MANTRAS.map(function (m, i) { var on = s.mantra === i; return { l: m, cls: on ? 'mantra on' : 'mantra', pressed: on ? 'true' : 'false', pick: function () { self.setState({ mantra: on ? null : i }); } }; });
+    var sn = s.senses || {};
+    var senseSet = function (k) { return function (e) { var n = Object.assign({}, self.state.senses); n[k] = e.target.value; self.setState({ senses: n }); }; };
+    var opt = function (key, list) { return list.map(function (o) { var on = s[key] === o[0]; return { l: o[1], cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { var p = {}; p[key] = o[0]; self.setState(p); } }; }); };
+    var wpGroups = [
+      { q: 'What goes on it?', opts: opt('wpContent', [['both', 'My why + plan'], ['why', 'My why + mantra'], ['plan', 'Just my plan']]) },
+      { q: 'Colour', opts: opt('wpTheme', [['maroon', 'Deep maroon'], ['lilac', 'Lilac pink'], ['cream', 'Soft cream']]) }
+    ];
+
+    var finishTour = function () { self.setState({ tour: null, tourDone: true, tab: 'now', view: null }); self.top(); };
+
+    return {
+      tabs: tabs,
+      tabNow: s.tab === 'now', tabLearn: s.tab === 'learn', tabSos: s.tab === 'sos', tabMenu: s.tab === 'menu', tabPlan: s.tab === 'plan', tabWhy: s.tab === 'why',
+      goMenu: function () { self.goTab('menu'); }, goPlan: function () { self.goTab('plan'); }, goLearn: function () { self.goTab('learn'); }, goSos: function () { self.goTab('sos'); },
+      goSosPlan: function () { self.setState({ tab: 'sos' }); self.scrollTo('ch-sosplan'); },
+      tryPanic: function () { self.startFlow('panic'); }, tryMelt: function () { self.startFlow('meltdown'); }, tryFreeze: function () { self.startFlow('freeze'); },
+
+      inTour: !!tourStep, tourTitle: tourStep ? tourStep[1] : '', tourText: tourStep ? tourStep[2] : '',
+      tourKicker: tourStep ? 'Step ' + (s.tour + 1) + ' of ' + CH_TOUR.length : '',
+      tourDots: CH_TOUR.map(function (x, i) { return { cls: i === s.tour ? 'on' : '' }; }),
+      tourHasBack: typeof s.tour === 'number' && s.tour > 0,
+      tourNextLabel: s.tour === 0 ? 'Show me around' : (s.tour === CH_TOUR.length - 1 ? 'Let’s go' : 'Next'),
+      tourSkipLabel: s.tour === CH_TOUR.length - 1 ? 'Close' : 'Skip tour',
+      tourNext: function () { var n = self.state.tour + 1; if (n >= CH_TOUR.length) { finishTour(); return; } self.setState({ tour: n, tab: CH_TOUR[n][0], view: null }); self.top(); },
+      tourBack: function () { var n = Math.max(0, self.state.tour - 1); self.setState({ tour: n, tab: CH_TOUR[n][0], view: null }); self.top(); },
+      tourSkip: finishTour,
+      startTour: function () { self.setState({ tour: 0, tab: 'now', view: null }); self.top(); },
+
+      nowHome: !s.view, nowPlan: s.view === 'myplan', nowFlow: s.view === 'flow',
+      ffMoods: ffMoods, evMoods: evMoods,
+      backHome: function () { self.setState({ view: null, mode: null, step: 0, check: null }); self.top(); },
+      planTitle: planTitle, planImg: planImg, planCards: planCards, planIsFF: s.view === 'myplan' && isFFMode, planIsEv: s.view === 'myplan' && !isFFMode,
+      editPlan: function () { if (isFFMode) { self.setState({ tab: 'sos', sosEdit: mode, view: null }); self.scrollTo('ch-sosplan'); } else { self.setState({ tab: 'plan', view: null }); self.top(); } },
+      openGuide: function () { self.startFlow(mode); },
+      browseMore: function () { var ev = CH_EVBY[mode]; self.setState({ tab: 'menu', cat: ev ? ev[3] : 'all', view: null, menuNote: '' }); self.top(); },
+      infoTitle: info[0], infoImg: CH_IMG[info[1]], infoText: info[2],
+
+      modeLabel: CH_FFBY[mode] ? CH_FFBY[mode][3] + ' guide · step ' + (s.step + 1) + ' of ' + flow.length : '',
+      stepLabel: 'Step ' + (s.step + 1) + ' of ' + flow.length,
+      dots: flow.map(function (k, i) { return { cls: i === s.step ? 'dot on' : (i < s.step ? 'dot done' : 'dot') }; }),
+      backLabel: s.step > 0 ? 'Back' : 'Start over',
+      flowBack: function () {
+        if (self.state.step > 0) { self.setState({ step: self.state.step - 1, check: null }); self.top(); return; }
+        self.setState({ view: null, mode: null, step: 0, check: null }); self.top();
+      },
+      isFirst: s.view === 'flow' && s.step === 0,
+      isCalm: stepKey === 'calm', isMeltsafe: stepKey === 'meltsafe', isWake: stepKey === 'wake', isBreathe: stepKey === 'breathe',
+      isJolt: stepKey === 'jolt', isLand: stepKey === 'land', isCheck: stepKey === 'check',
+      showNext: !!stepKey && stepKey !== 'check', nextLabel: CH_NEXT[stepKey] || 'Next',
+      nextStep: function () { self.setState({ step: Math.min(self.state.step + 1, flow.length - 1) }); self.top(); },
+      joltCards: joltCards, joltTitle: joltTitle, joltLead: joltLead,
+      landRows: landRows, meltChips: meltChips,
+      checkBtns: checkBtns, resBetter: s.check === 'better', resLittle: s.check === 'little', resBad: s.check === 'bad',
+      canSaveDone: doneIds.length > 0 && mine.length < 5,
+      saveDoneLabel: 'Save what I did as my ' + ({ panic: 'panic', meltdown: 'meltdown', freeze: 'freeze' }[mode] || '') + ' plan',
+      saveDone: function () {
+        var sp2 = Object.assign(chEmptySos(), self.state.sosPlans);
+        var cur = (sp2[mode] || []).slice();
+        Object.keys(self.state.jolts || {}).forEach(function (id) { if (CH_SOSBY[id] && cur.indexOf(id) < 0 && cur.length < 5) cur.push(id); });
+        sp2[mode] = cur; self.setState({ sosPlans: sp2 });
+      },
+      againFlow: function () {
+        var f = CH_FLOWS[self.state.mode] || [];
+        var idx = f.indexOf('jolt'); if (idx < 0) idx = 0;
+        self.setState({ step: idx, check: null }); self.top();
+      },
+      hasPerson: !!t(s.sosPerson), sosPerson: s.sosPerson || '',
+      onSosPerson: function (e) { self.setState({ sosPerson: e.target.value }); },
+      sosPlace: s.sosPlace || '', onSosPlace: function (e) { self.setState({ sosPlace: e.target.value }); },
+      sosSeg: sosSeg, sosChips: sosChips, sosOrdered: sosOrdered,
+      hasSosEdit: editList.length > 0, noSosEdit: editList.length === 0,
+      sosEditTitle: 'My ' + CH_FFBY[editMode][3].toLowerCase() + ' plan',
+      sosPickLabel: editList.length >= 5 ? 'That’s 5, plenty. Tap one to swap it out.' : 'Tap to add, in the order you’d do them. Best ones for this state come first.',
+      sosSummary: sosSummary,
+
+      cats: cats, catIsFF: catNow[0] === 'ff',
+      hasMenuNote: !!s.menuNote, menuNote: s.menuNote || '',
+      filtersOpen: !!s.showFilters, filtersOpenA: s.showFilters ? 'true' : 'false',
+      filtersLabel: s.showFilters ? 'Hide filters' : (activeFilters ? 'Filters (' + activeFilters + ')' : 'More filters'),
+      toggleFilters: function () { self.setState({ showFilters: !self.state.showFilters }); },
+      fGroups: fGroups,
+      countLabel: 'Showing ' + filtered.length + ' in ' + catNow[1] + '.',
+      noResults: filtered.length === 0,
+      resetFilters: function () { self.setState({ fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any', surprise: null }); },
+      surpriseMe: function () {
+        var pool = filtered.filter(function (a) { return rate[a.id] !== 'nope' && a.id !== s.surprise; });
+        if (!pool.length) pool = CH_ACTS.filter(function (a) { return rate[a.id] !== 'nope'; });
+        var pick = pool[Math.floor(Math.random() * pool.length)];
+        if (pick) self.setState({ surprise: pick.id, open: null });
+      },
+      acts: acts, expLabel: expLabel,
+
+      routineSlots: routineSlots, momentSlots: momentSlots, weekDays: weekDays,
+      routineEmpty: routineCount === 0, routineHas: routineCount > 0,
+      hasMonthly: monthItems.length > 0, monthItems: monthItems, monthName: CH_MONFULL[new Date().getMonth()],
+      tickLabel: tickCount === 0 ? 'No ticks yet this week. One is plenty to start.' : (tickCount === 1 ? '1 brick laid this week. Look at you.' : tickCount + ' bricks laid this week. Your nervous system thanks you.'),
+      weekResetCls: s.confirmWeek ? 'ghost warn' : 'ghost',
+      weekResetLabel: s.confirmWeek ? 'Tap again to clear this week' : 'Clear this week’s ticks',
+      newWeek: function () {
+        if (!self.state.confirmWeek) { self.setState({ confirmWeek: true }); setTimeout(function () { self.setState({ confirmWeek: false }); }, 4000); return; }
+        var n = {}; Object.keys(self.state.ticks || {}).forEach(function (k) { if (k.indexOf('m|') === 0) n[k] = true; });
+        self.setState({ ticks: n, weekStart: chMonday(), confirmWeek: false });
+      },
+
+      whyChips: whyChips,
+      whyOwn: s.whyOwn || '', onWhyOwn: function (e) { self.setState({ whyOwn: e.target.value }); },
+      statement: wd2.statement || 'Pick a few above and your purpose writes itself here.',
+      whyCls: wd2.statement ? 'why-out' : 'why-out blank',
+      mantraChips: mantraChips,
+      mantraOwn: s.mantraOwn || '',
+      onMantraOwn: function (e) { var v = e.target.value; self.setState({ mantraOwn: v, mantra: t(v) ? 'own' : (self.state.mantra === 'own' ? null : self.state.mantra) }); },
+      sHear: sn.hear || '', sSee: sn.see || '', sSmell: sn.smell || '', sTaste: sn.taste || '', sFeel: sn.feel || '',
+      onHear: senseSet('hear'), onSee: senseSet('see'), onSmell: senseSet('smell'), onTaste: senseSet('taste'), onFeel: senseSet('feel'),
+      sensesDone: ['hear', 'see', 'smell', 'taste', 'feel'].every(function (k) { return t(sn[k]); }),
+      wpGroups: wpGroups,
+      hasPreview: !!s.previewUrl, noPreview: !s.previewUrl, previewUrl: s.previewUrl || '',
+      download: function () {
+        self.setState({ err: '' });
+        self.withFonts(function () {
+          try { self.saveJpeg(self.drawWall(1), 'coming-home-wallpaper.jpg'); } catch (e) { self.setState({ err: 'Couldn’t make the image on this device. Try a screenshot of the preview instead.' }); }
+        });
+      },
+      hasExport: !!s.exportUrl, exportUrl: s.exportUrl || '',
+      closeExport: function () { self.setState({ exportUrl: null }); },
+      hasErr: !!s.err, err: s.err || '',
+      clearCls: s.confirmClear ? 'ghost warn' : 'ghost',
+      clearLabel: s.confirmClear ? 'Tap again to clear everything' : 'Start fresh',
+      clearAll: function () {
+        if (!self.state.confirmClear) { self.setState({ confirmClear: true }); setTimeout(function () { self.setState({ confirmClear: false }); }, 4000); return; }
+        self.setState({ view: null, mode: null, step: 0, cat: 'all', menuNote: '', fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any', rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, surprise: null, ticks: {}, drafts: {}, why: {}, whyOwn: '', mantra: null, mantraOwn: '', senses: {}, sosPlans: chEmptySos(), sosPerson: '', sosPlace: '', confirmClear: false });
+        self.top();
+      }
+    };
+  }
+}
+
+return Component;
+})() };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/course.js"></script>
+<script src="/js/saves.js"></script>
+<script src="/js/tool-shell.js"></script>
+</body>
+</html>
