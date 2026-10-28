@@ -1,156 +1,165 @@
 [
- {
-  "id": "setup",
-  "cover": "#F4C2F7",
-  "week": 0,
-  "title": "Set yourself up for success",
-  "desc": "Seven quick steps so this is the course you actually finish. Come back any time you’ve lapsed.",
-  "href": "#Setup",
-  "target": "_self"
- },
- {
-  "id": "intent",
-  "cover": "#F1F9A6",
-  "week": 0,
-  "title": "Intentions",
-  "desc": "Anchor into your why and your North Star, then turn them into your lock screen."
- },
- {
-  "id": "whatif",
-  "cover": "#F8FCD6",
-  "week": 1,
-  "title": "The What If Workout",
-  "desc": "Whenever fear, anxiety or worry is on your mind.",
-  "href": "/tools/what-if-workout.html",
-  "target": "_self"
- },
- {
-  "id": "vagal",
-  "cover": "#BFE3D0",
-  "week": 1,
-  "title": "Vagal Tone Workout",
-  "desc": "Your daily embodiment series: DOSE, Breathe, Pause and Move, plus Coming Home and the Emotional Blueprint.",
-  "href": "#Vagal",
-  "target": "_self",
-  "parts": [
-   "dose",
-   "breathe",
-   "pause",
-   "move",
-   "comehome",
-   "blueprint"
-  ]
- },
- {
-  "id": "breathe",
-  "cover": "#DCEFF7",
-  "week": 1,
-  "title": "Breathe",
-  "desc": "Your 5-minute daily breath, the physiological sigh, and a guided breathing tool with soothing sounds.",
-  "href": "#Breathe",
-  "target": "_self",
-  "videos": [
-   {
-    "title": "The 5-minute daily breath",
-    "lesson": "w1l9",
-    "desc": "From Lesson 9. Your daily vagal tone workout."
-   },
-   {
-    "title": "The physiological sigh",
-    "vimeo": "",
-    "video": "",
-    "desc": "Your in-the-moment reset for panic, anger and overwhelm."
-   }
-  ]
- },
- {
-  "id": "dose",
-  "cover": "#F1F9A6",
-  "week": 1,
-  "title": "DOSE",
-  "desc": "Pick your daily dose of dopamine, oxytocin, serotonin and endorphins, and build a quick daily plan.",
-  "href": "#Dose",
-  "target": "_self"
- },
- {
-  "id": "pause",
-  "cover": "#FFF4EE",
-  "week": 1,
-  "title": "Pause",
-  "desc": "Little pockets of slow, so you can catch up to yourself. (Scrolling doesn’t count.)",
-  "href": "#Pause",
-  "target": "_self"
- },
- {
-  "id": "move",
-  "cover": "#FFD9A8",
-  "week": 1,
-  "title": "Move",
-  "desc": "Fill in your daily move card, build a streak, and watch your progress.",
-  "href": "#Move",
-  "target": "_self"
- },
- {
-  "id": "proof",
-  "cover": "#E4F27A",
-  "week": 2,
-  "title": "Your proof portfolio",
-  "desc": "Wins, achievements, joy and proof, collected in your Becoming Book.",
-  "href": "#Proof",
-  "target": "_self"
- },
- {
-  "id": "box",
-  "cover": "#FBE6FC",
-  "week": 2,
-  "title": "Breaking Out of Your Box",
-  "desc": "From limited to limitless: bust the lid open on your limiting beliefs.",
-  "href": "BreakingOut.dc.html",
-  "target": "_self"
- },
- {
-  "id": "ub",
-  "cover": "#F6EFEC",
-  "week": 3,
-  "title": "The Understanding Bridge",
-  "desc": "Take the lesson. Leave the pain. A bridge between your perspective, theirs, and a new understanding that lets you move forward.",
-  "href": "/tools/understanding-bridge.html",
-  "target": "_self"
- },
- {
-  "id": "rewind",
-  "cover": "#FFF4EE",
-  "week": 3,
-  "title": "Pause and Rewind",
-  "desc": "For when you’ve reacted in a way you wish you could take back, or do differently next time.",
-  "href": "/tools/rewind.html",
-  "target": "_self"
- },
- {
-  "id": "comehome",
-  "cover": "#FFD9A8",
-  "week": 4,
-  "title": "Coming Home",
-  "desc": "Back into your body when you’re stuck in your head, overthinking or heading for a meltdown.",
-  "href": "/tools/coming-home.html",
-  "target": "_self"
- },
- {
-  "id": "blueprint",
-  "cover": "#F4C2F7",
-  "week": 4,
-  "title": "Emotional Blueprint",
-  "desc": "Map your emotional patterns and start rewriting them.",
-  "href": "/tools/emotional-blueprint.html",
-  "target": "_self"
- },
- {
-  "id": "star",
-  "cover": "#F1F9A6",
-  "week": 7,
-  "title": "North Star & STAR Goals",
-  "desc": "Who you’re becoming, and the goals that get you there.",
-  "href": "StarHome.dc.html",
-  "target": "_self"
- }
+  {
+    "id": "setup",
+    "cover": "#F4C2F7",
+    "week": 0,
+    "title": "Set yourself up for success",
+    "desc": "Seven quick steps so this is the course you actually finish. Come back any time you’ve lapsed.",
+    "href": "#Setup",
+    "target": "_self"
+  },
+  {
+    "id": "intent",
+    "cover": "#F1F9A6",
+    "week": 0,
+    "title": "Intentions",
+    "desc": "Anchor into your why and your North Star, then turn them into your lock screen."
+  },
+  {
+    "id": "whatif",
+    "cover": "#F8FCD6",
+    "week": 1,
+    "title": "The What If Workout",
+    "desc": "Whenever fear, anxiety or worry is on your mind.",
+    "href": "/tools/what-if-workout.html",
+    "target": "_self"
+  },
+  {
+    "id": "vagal",
+    "cover": "#BFE3D0",
+    "week": 1,
+    "title": "Vagal Tone Workout",
+    "desc": "Your daily embodiment series: DOSE, Breathe, Pause and Move, plus Coming Home and the Emotional Blueprint.",
+    "href": "#Vagal",
+    "target": "_self",
+    "parts": [
+      "dose",
+      "breathe",
+      "pause",
+      "move",
+      "comehome",
+      "blueprint"
+    ]
+  },
+  {
+    "id": "breathe",
+    "cover": "#DCEFF7",
+    "week": 1,
+    "title": "Breathe",
+    "desc": "Your 5-minute daily breath, the physiological sigh, and a guided breathing tool with soothing sounds.",
+    "href": "#Breathe",
+    "target": "_self",
+    "videos": [
+      {
+        "title": "The 5-minute daily breath",
+        "desc": "Diaphragmatic breathing. Pick a voiceover to guide you, or music only.",
+        "options": [
+          {
+            "label": "Voiceover",
+            "vimeo": "https://vimeo.com/1239768510"
+          },
+          {
+            "label": "Music only",
+            "vimeo": "https://vimeo.com/1239768509"
+          }
+        ]
+      },
+      {
+        "title": "The physiological sigh",
+        "vimeo": "",
+        "video": "",
+        "desc": "Your in-the-moment reset for panic, anger and overwhelm."
+      }
+    ]
+  },
+  {
+    "id": "dose",
+    "cover": "#F1F9A6",
+    "week": 1,
+    "title": "DOSE",
+    "desc": "Pick your daily dose of dopamine, oxytocin, serotonin and endorphins, and build a quick daily plan.",
+    "href": "#Dose",
+    "target": "_self"
+  },
+  {
+    "id": "pause",
+    "cover": "#FFF4EE",
+    "week": 1,
+    "title": "Pause",
+    "desc": "Little pockets of slow, so you can catch up to yourself. (Scrolling doesn’t count.)",
+    "href": "#Pause",
+    "target": "_self"
+  },
+  {
+    "id": "move",
+    "cover": "#FFD9A8",
+    "week": 1,
+    "title": "Move",
+    "desc": "Fill in your daily move card, build a streak, and watch your progress.",
+    "href": "#Move",
+    "target": "_self"
+  },
+  {
+    "id": "proof",
+    "cover": "#E4F27A",
+    "week": 2,
+    "title": "Your proof portfolio",
+    "desc": "Wins, achievements, joy and proof, collected in your Becoming Book.",
+    "href": "#Proof",
+    "target": "_self"
+  },
+  {
+    "id": "box",
+    "cover": "#FBE6FC",
+    "week": 2,
+    "title": "Breaking Out of Your Box",
+    "desc": "From limited to limitless: bust the lid open on your limiting beliefs.",
+    "href": "BreakingOut.dc.html",
+    "target": "_self"
+  },
+  {
+    "id": "ub",
+    "cover": "#F6EFEC",
+    "week": 3,
+    "title": "The Understanding Bridge",
+    "desc": "Take the lesson. Leave the pain. A bridge between your perspective, theirs, and a new understanding that lets you move forward.",
+    "href": "/tools/understanding-bridge.html",
+    "target": "_self"
+  },
+  {
+    "id": "rewind",
+    "cover": "#FFF4EE",
+    "week": 3,
+    "title": "Pause and Rewind",
+    "desc": "For when you’ve reacted in a way you wish you could take back, or do differently next time.",
+    "href": "/tools/rewind.html",
+    "target": "_self"
+  },
+  {
+    "id": "comehome",
+    "cover": "#FFD9A8",
+    "week": 4,
+    "title": "Coming Home",
+    "desc": "Back into your body when you’re stuck in your head, overthinking or heading for a meltdown.",
+    "href": "/tools/coming-home.html",
+    "target": "_self"
+  },
+  {
+    "id": "blueprint",
+    "cover": "#F4C2F7",
+    "week": 4,
+    "title": "Emotional Blueprint",
+    "desc": "Map your emotional patterns and start rewriting them.",
+    "href": "/tools/emotional-blueprint.html",
+    "target": "_self"
+  },
+  {
+    "id": "star",
+    "cover": "#F1F9A6",
+    "week": 7,
+    "title": "North Star & STAR Goals",
+    "desc": "Who you’re becoming, and the goals that get you there.",
+    "href": "StarHome.dc.html",
+    "target": "_self"
+  }
 ]

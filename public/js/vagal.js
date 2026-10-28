@@ -217,11 +217,23 @@
         when: [['⚡', 'Panic'], ['♨', 'Anger'], ['≋', 'Overwhelm'], ['☏', 'Before a hard conversation'], ['!', 'After a fright']] }
     ];
     wrap.appendChild(h('div', { class: 'vg-gos' }, GO.map(function (g) {
-      var l = g.v && g.v.lesson ? (kit.findLesson(g.v.lesson) || {}).l : (g.v ? { title: g.v.title, vimeo: g.v.vimeo || '', video: g.v.video || '' } : null);
+      // a video can come with a choice (e.g. voiceover or music only); the choice is remembered on this phone
+      var opts = g.v && g.v.options && g.v.options.length ? g.v.options : null, pickKey = 'bt-vpick-' + g.p, pick = 0;
+      if (opts) { try { pick = Math.min(opts.length - 1, Number(localStorage.getItem(pickKey)) || 0); } catch (e) {} }
+      var lessonFor = function (i) { var o = opts[i]; return { id: 'opt-' + g.p + '-' + i, title: g.title + ' · ' + o.label, vimeo: o.vimeo || '', video: o.video || '' }; };
+      var l = opts ? lessonFor(pick) : g.v && g.v.lesson ? (kit.findLesson(g.v.lesson) || {}).l : (g.v ? { title: g.v.title, vimeo: g.v.vimeo || '', video: g.v.video || '' } : null);
       var has = l && (kit.tx(l.vimeo) || kit.tx(l.video));
+      var slot = h('div', { class: 'vg-vslot' }, [has ? kit.videoBlock(l, l.id || '') : h('div', { class: 'bt-video empty' }, [h('div', { class: 'bt-video-ph' }, [h('span', { text: 'Video coming soon' })])])]);
+      var chooser = opts ? h('div', { class: 'vg-vpick', role: 'group', 'aria-label': 'Choose a version' }, opts.map(function (o, i) {
+        return h('button', { class: 'vg-vpick-b' + (i === pick ? ' on' : ''), type: 'button', 'aria-pressed': i === pick ? 'true' : 'false', text: o.label, onclick: function (e) {
+          pick = i; try { localStorage.setItem(pickKey, String(i)); } catch (x) {}
+          [].forEach.call(e.currentTarget.parentNode.children, function (b, k) { b.classList.toggle('on', k === i); b.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+          slot.innerHTML = ''; slot.appendChild(kit.videoBlock(lessonFor(i), 'opt-' + g.p + '-' + i));
+        } });
+      })) : null;
       return h('section', { class: 'vg-go-c' }, [
         h('span', { class: 'vg-go-tag', text: g.tag }), h('h2', { class: 'vg-h', text: g.title }),
-        has ? kit.videoBlock(l, l.id || '') : h('div', { class: 'bt-video empty' }, [h('div', { class: 'bt-video-ph' }, [h('span', { text: 'Video coming soon' })])]),
+        chooser, slot,
         h('p', { class: 'vg-go-why', text: g.why }),
         h('span', { class: 'vg-ml', text: 'When to use it' }),
         h('div', { class: 'vg-whens' }, g.when.map(function (w) { return h('span', { class: 'vg-when-b' }, [h('span', { class: 'vg-when-ic', 'aria-hidden': 'true', text: w[0] }), w[1]]); })),

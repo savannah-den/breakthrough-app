@@ -1762,3 +1762,8 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 @media (prefers-reduced-motion:reduce){.bt-l.cur .bt-l-ic{animation:none}}
 .bt-l-mins{display:block;font-size:12.5px;color:#6A5A57;font-weight:500;margin-top:1px}
 .bt-push{display:flex;flex-direction:column;gap:10px}.bt-push select.bt-in{max-width:260px}
+
+/* choose a version of a video (e.g. voiceover / music only) */
+.vg-vpick{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 4px}
+.vg-vpick-b{min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;color:#1F1412;font:600 14px Poppins,system-ui,sans-serif;cursor:pointer}
+.vg-vpick-b.on{background:#F1F9A6;box-shadow:2px 2px 0 #1F1412}
