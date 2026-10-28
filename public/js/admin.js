@@ -540,6 +540,7 @@
       if (m) { m.flag = x; used[x.id] = 1; }
     });
   }
+  function payGroup(p) { var src = (p.auto && p.auto.src) || (p.real && p.real.src) || ''; return /^Stripe/.test(src) ? 'stripe' : /^Shopify/.test(src) ? 'shopify' : ''; }
   function payStatus(p) {
     var today = ymd(new Date());
     if (p.paid) return { cls: 'paid', text: p.auto ? '✓ Paid · ' + p.auto.src : p.real ? '✓ ' + p.src : '✓ Received' };
@@ -623,14 +624,17 @@
     var um = unmatchedCard(); if (um) sec.appendChild(um);
     // monthly bars: last 6 months + next 6
     var months = []; for (var m = -5; m <= 6; m++) months.push(new Date(now.getFullYear(), now.getMonth() + m, 1));
-    var vals = months.map(function (d) { var l = all.filter(function (p) { return mk(p.date) === mk(d); }); return { d: d, got: sum(l.filter(function (p) { return p.paid; })), due: sum(l.filter(function (p) { return !p.paid; })) }; });
+    // received money split by where it came from: Stripe, Shopify, everything else (bank transfers, manual ticks, other income)
+    var vals = months.map(function (d) { var l = all.filter(function (p) { return mk(p.date) === mk(d); }), got = l.filter(function (p) { return p.paid; });
+      var st = sum(got.filter(function (p) { return payGroup(p) === 'stripe'; })), sh = sum(got.filter(function (p) { return payGroup(p) === 'shopify'; }));
+      return { d: d, stripe: st, shopify: sh, other: sum(got) - st - sh, got: sum(got), due: sum(l.filter(function (p) { return !p.paid; })) }; });
     var max = Math.max.apply(null, vals.map(function (v) { return v.got + v.due; }).concat([1]));
-    sec.appendChild(h('div', { class: 'ad-card' }, [h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: 'Month by month' }), h('span', { class: 'ad-fin-key' }, [h('i', { class: 'got' }), 'Received ', h('i', { class: 'due' }), 'Scheduled'])]),
-      h('div', { class: 'ad-fin-bars', role: 'img', 'aria-label': 'Income by month' }, vals.map(function (v) {
-        var cur = mk(v.d) === thisM;
-        return h('div', { class: 'ad-fin-col' + (cur ? ' cur' : ''), title: v.d.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) + ': ' + money0(v.got) + ' received, ' + money0(v.due) + ' scheduled' }, [
+    sec.appendChild(h('div', { class: 'ad-card' }, [h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: 'Month by month' }), h('span', { class: 'ad-fin-key' }, [h('i', { class: 'stripe' }), 'Stripe ', h('i', { class: 'shopify' }), 'Shopify ', h('i', { class: 'other' }), 'Bank + other ', h('i', { class: 'due' }), 'Scheduled'])]),
+      h('div', { class: 'ad-fin-bars', role: 'img', 'aria-label': 'Income by month, split into Stripe, Shopify, bank and other, and scheduled' }, vals.map(function (v) {
+        var cur = mk(v.d) === thisM, seg = function (cls, n) { return n ? h('div', { class: cls, style: 'height:' + (n / max * 100) + '%' }) : null; };
+        return h('div', { class: 'ad-fin-col' + (cur ? ' cur' : ''), title: v.d.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) + ': Stripe ' + money0(v.stripe) + ', Shopify ' + money0(v.shopify) + ', bank + other ' + money0(v.other) + ', scheduled ' + money0(v.due) }, [
           h('span', { class: 'ad-fin-v', text: v.got + v.due ? money0(v.got + v.due) : '' }),
-          h('div', { class: 'ad-fin-stack' }, [h('div', { class: 'due', style: 'height:' + (v.due / max * 100) + '%' }), h('div', { class: 'got', style: 'height:' + (v.got / max * 100) + '%' })]),
+          h('div', { class: 'ad-fin-stack' }, [seg('due', v.due), seg('other', v.other), seg('shopify', v.shopify), seg('stripe', v.stripe)]),
           h('span', { class: 'ad-fin-m', text: v.d.toLocaleDateString('en-AU', { month: 'short' }) })]);
       }))]));
     // calendar
@@ -640,9 +644,14 @@
     for (var i = 0; i < lead; i++) grid.appendChild(h('span', { class: 'ad-fin-day empty' }));
     for (var dd = 1; dd <= dim; dd++) {
       var key = ymd(new Date(fm.getFullYear(), fm.getMonth(), dd)), ps = monthPays.filter(function (p) { return p.key === key; });
-      grid.appendChild(h('div', { class: 'ad-fin-day' + (key === today ? ' today' : '') + (ps.length ? ' has' : '') }, [h('b', { text: String(dd) })].concat(ps.map(function (p) {
-        return h('span', { class: 'ad-fin-pay' + (p.paid ? ' paid' : p.key < today ? ' late' : ''), title: (p.c ? (p.c.full_name || p.c.email) + ' · payment ' + p.n + ' of ' + p.of : p.other) + ' · ' + money0(p.amount) }, [p.c ? photoBox(p.c, 'xxs') : null, money0(p.amount)]);
-      }))));
+      // Stripe and plan payments one by one; Shopify sales added up into one total for the day
+      var shop = ps.filter(function (p) { return payGroup(p) === 'shopify' && !p.c; }), solo = ps.filter(function (p) { return shop.indexOf(p) < 0; });
+      var chips = solo.map(function (p) {
+        var g = payGroup(p);
+        return h('span', { class: 'ad-fin-pay' + (p.paid ? ' paid' : p.key < today ? ' late' : '') + (g ? ' ' + g : ''), title: (p.c ? (p.c.full_name || p.c.email) + ' · payment ' + p.n + ' of ' + p.of : p.other) + ' · ' + money0(p.amount) + (g ? ' · ' + (g === 'stripe' ? 'Stripe' : 'Shopify') : '') }, [p.c ? photoBox(p.c, 'xxs') : null, money0(p.amount)]);
+      });
+      if (shop.length) chips.push(h('span', { class: 'ad-fin-pay paid shopify sum', title: 'Shopify · ' + shop.length + ' sale' + (shop.length === 1 ? '' : 's') + ' · ' + money0(sum(shop)) }, ['Shopify ' + money0(sum(shop)) + (shop.length > 1 ? ' ×' + shop.length : '')]));
+      grid.appendChild(h('div', { class: 'ad-fin-day' + (key === today ? ' today' : '') + (ps.length ? ' has' : '') }, [h('b', { text: String(dd) })].concat(chips)));
     }
     sec.appendChild(h('div', { class: 'ad-card' }, [h('div', { class: 'ad-ct-top' }, [
       h('button', { class: 'bt-btn ghost sm', type: 'button', text: '‹', 'aria-label': 'Previous month', onclick: function () { S.finMonth = new Date(fm.getFullYear(), fm.getMonth() - 1, 1); page(); } }),
