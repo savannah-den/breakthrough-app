@@ -143,7 +143,12 @@
         { id: 'ch_demo1', src: 'Stripe', date: dd(16), amount: 1275, currency: 'AUD', status: 'paid', email: 'example.anna@sample.test', name: 'Anna Example', desc: 'Breakthrough 1:1 · payment 1 of 4' },
         { id: 'ch_demo2', src: 'Stripe', date: dd(2), amount: 1275, currency: 'AUD', status: 'failed', email: 'example.anna@sample.test', name: 'Anna Example', desc: 'Breakthrough 1:1 · payment 2 of 4', reason: 'Your card was declined.' },
         { id: 'ch_demo3', src: 'Stripe', date: dd(5), amount: 297, currency: 'AUD', status: 'paid', email: 'jess.course@sample.test', name: 'Jess Sample', desc: 'Breakthrough self-paced course (Stan Store)' },
-        { id: 'shp_demo4', src: 'Shopify', date: dd(9), amount: 47, currency: 'AUD', status: 'paid', email: 'kim.shop@sample.test', name: 'Kim Sample', desc: '#1042 · Money Magic' }
+        { id: 'shp_demo4', src: 'Shopify', date: dd(9), amount: 47, currency: 'AUD', status: 'paid', email: 'kim.shop@sample.test', name: 'Kim Sample', desc: '#1042 · Money Magic' },
+        { id: 'shp_demo5', src: 'Shopify', date: dd(9, 14), amount: 47, currency: 'AUD', status: 'paid', email: 'lee.shop@sample.test', name: 'Lee Sample', desc: '#1043 · Money Magic' },
+        { id: 'shp_demo6', src: 'Shopify', date: dd(9, 19), amount: 29, currency: 'AUD', status: 'paid', email: 'max.shop@sample.test', name: 'Max Sample', desc: '#1044 · Journal prompts' },
+        { id: 'shp_demo7', src: 'Shopify', date: dd(3, 11), amount: 47, currency: 'AUD', status: 'paid', email: 'ola.shop@sample.test', name: 'Ola Sample', desc: '#1045 · Money Magic' },
+        { id: 'shp_demo8', src: 'Shopify', date: dd(40), amount: 94, currency: 'AUD', status: 'paid', email: 'pip.shop@sample.test', name: 'Pip Sample', desc: '#1031 · Money Magic x2' },
+        { id: 'ch_demo9', src: 'Stripe', date: dd(45), amount: 297, currency: 'AUD', status: 'paid', email: 'quinn.course@sample.test', name: 'Quinn Sample', desc: 'Breakthrough self-paced course' }
       ];
       return Promise.resolve(new Response(JSON.stringify({ stripe: { connected: true }, shopify: { connected: true }, items: items, demo: true }), { status: 200, headers: { 'content-type': 'application/json' } }));
     }

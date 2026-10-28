@@ -462,3 +462,12 @@ svg.ct-shot{border:0;height:auto}
 @media (max-width:560px){.ad-fin-row{flex-wrap:wrap}.ad-pay-st{order:5}}
 .ad-fin-row .ad-fin-rt{flex:1;min-width:0}.ad-fin-row select.bt-in{flex:none;width:auto;max-width:190px}
 .ad-vapid{display:flex;flex-direction:column;gap:10px;margin-top:10px}.ad-vapid input{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+
+/* month bars split by source; Shopify days as one total */
+.ad-fin-key{flex-wrap:wrap}
+.ad-fin-key i.stripe,.ad-fin-stack .stripe{background:#4E0C08}
+.ad-fin-key i.shopify,.ad-fin-stack .shopify{background:#3E7A2F}
+.ad-fin-key i.other,.ad-fin-stack .other{background:#F28C3B}
+.ad-fin-pay.paid.stripe{background:#E9E0F7;box-shadow:inset 3px 0 0 #4E0C08}
+.ad-fin-pay.paid.shopify{background:#DDF1E4;box-shadow:inset 3px 0 0 #3E7A2F}
+.ad-fin-src{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:4px;background:#3E7A2F;color:#FFFFFF;font-size:9px}
