@@ -2,8 +2,10 @@
 // Stripe) and Shopify orders. Read-only. Clients are matched by email in the dashboard.
 // Setup (Netlify → Site configuration → Environment variables, never paste these anywhere else):
 //   STRIPE_KEY       a Stripe *restricted* key with Read access to Charges, Invoices and Customers (starts rk_live_)
-//   SHOPIFY_STORE    your store's myshopify address, e.g. colour-me-neurospicy.myshopify.com
-//   SHOPIFY_TOKEN    Admin API access token from a custom app with read_orders + read_customers
+//   SHOPIFY_STORE          your store's myshopify address, e.g. 7at1m1-yy.myshopify.com
+//   SHOPIFY_CLIENT_ID      from your app in Shopify's Dev Dashboard (scopes read_orders + read_customers,
+//   SHOPIFY_CLIENT_SECRET  installed on your store). The app swaps these for a short-lived token each time.
+//   (or SHOPIFY_TOKEN      an older-style Admin API access token, if you have one)
 const { requireAdmin, json } = require('../lib/admin');
 
 const DAYS = 400; // how far back to look
@@ -37,9 +39,18 @@ async function stripe(key) {
   });
   return items;
 }
+const shopHost = s => String(s || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+async function shopifyToken() {
+  if (process.env.SHOPIFY_TOKEN) return process.env.SHOPIFY_TOKEN;
+  const r = await fetch(`https://${shopHost(process.env.SHOPIFY_STORE)}/admin/oauth/access_token`, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'client_credentials', client_id: process.env.SHOPIFY_CLIENT_ID || '', client_secret: process.env.SHOPIFY_CLIENT_SECRET || '' }).toString() });
+  if (!r.ok) throw new Error('shopify login ' + r.status);
+  return (await r.json()).access_token;
+}
 async function shopify(store, token) {
+  token = token || await shopifyToken();
   const since = new Date(Date.now() - DAYS * 864e5).toISOString(), items = [];
-  let url = `https://${store.replace(/^https?:\/\//, '').replace(/\/.*$/, '')}/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=${encodeURIComponent(since)}&fields=id,name,created_at,total_price,current_total_price,currency,financial_status,email,customer,line_items`;
+  let url = `https://${shopHost(store)}/admin/api/2025-10/orders.json?status=any&limit=250&created_at_min=${encodeURIComponent(since)}&fields=id,name,created_at,total_price,current_total_price,currency,financial_status,email,customer,line_items`;
   for (let pages = 0; url && pages < 6; pages++) {
     const r = await fetch(url, { headers: { 'X-Shopify-Access-Token': token } });
     if (!r.ok) throw new Error('shopify ' + r.status);
@@ -58,10 +69,10 @@ async function shopify(store, token) {
 
 exports.handler = async (event) => {
   const w = await requireAdmin(event); if (w.error) return w.error;
-  const out = { stripe: { connected: !!process.env.STRIPE_KEY }, shopify: { connected: !!(process.env.SHOPIFY_STORE && process.env.SHOPIFY_TOKEN) }, items: [] };
+  const out = { stripe: { connected: !!process.env.STRIPE_KEY }, shopify: { connected: !!(process.env.SHOPIFY_STORE && (process.env.SHOPIFY_TOKEN || (process.env.SHOPIFY_CLIENT_ID && process.env.SHOPIFY_CLIENT_SECRET))) }, items: [] };
   const jobs = [];
   if (out.stripe.connected) jobs.push(stripe(process.env.STRIPE_KEY).then(x => { out.items.push(...x); }, e => { out.stripe.error = String(e.message || e); }));
-  if (out.shopify.connected) jobs.push(shopify(process.env.SHOPIFY_STORE, process.env.SHOPIFY_TOKEN).then(x => { out.items.push(...x); }, e => { out.shopify.error = String(e.message || e); }));
+  if (out.shopify.connected) jobs.push(shopify(process.env.SHOPIFY_STORE, '').then(x => { out.items.push(...x); }, e => { out.shopify.error = String(e.message || e); }));
   await Promise.all(jobs);
   out.items.sort((a, b) => a.date.localeCompare(b.date));
   return json(out);

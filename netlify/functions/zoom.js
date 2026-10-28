@@ -5,6 +5,7 @@
 //   meeting:read:summary:admin (or meeting_summary:read:admin), meeting:read:list_summaries:admin
 // Activate it, then add its three values in Netlify → Environment variables (never paste them anywhere else):
 //   ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET
+// Optional: ZOOM_USER_EMAIL, the Zoom login whose recordings to read (defaults to the app's owner).
 const { requireAdmin, json } = require('../lib/admin');
 const Z = 'https://api.zoom.us/v2';
 const WINDOW = 90 * 60000; // a meeting within 90 minutes of the booked time counts as that session
@@ -50,7 +51,7 @@ exports.handler = async (event) => {
   for (let a = first; a < last; a += 30 * 864e5) {
     const from = day(a), to = day(Math.min(last, a + 29 * 864e5));
     try {
-      const r = await fetch(`${Z}/users/me/recordings?page_size=300&from=${from}&to=${to}`, { headers: H });
+      const r = await fetch(`${Z}/users/${encodeURIComponent(process.env.ZOOM_USER_EMAIL || 'me')}/recordings?page_size=300&from=${from}&to=${to}`, { headers: H });
       if (r.ok) ((await r.json()).meetings || []).forEach(m => meetings.push(m));
     } catch (e) {}
     try {
