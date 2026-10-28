@@ -215,6 +215,21 @@
     if (src) { e.preventDefault(); e.stopPropagation(); openVideo(src); }
   }, true);
 
+  // "Done" on a card that folds away: bring them to the folded card + the top of the next one, so they don't scroll back up
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('button') : null;
+    if (!b || !/^\s*(✓\s*)?done\b/i.test(b.textContent || '') || /→/.test(b.textContent || '')) return;
+    var card = b.closest('section, .cc, .bt-card2, .ad-card, details, article') || b.parentElement; if (!card) return;
+    var top = card.getBoundingClientRect().top + window.scrollY, before = card.getBoundingClientRect().height;
+    var nav = document.getElementById('bt-top'), off = (nav ? nav.getBoundingClientRect().bottom : 0) + 12;
+    var settle = function () {
+      var still = document.body.contains(card) ? card.getBoundingClientRect().height : 0;
+      if (still && still > before - 40) return; // it didn't fold away, leave them where they are
+      if (window.scrollY > top - off - 4) window.scrollTo({ top: Math.max(0, top - off), behavior: 'smooth' });
+    };
+    setTimeout(settle, 120); setTimeout(settle, 450);
+  });
+
   /* ---------------- router (replaces each artifact's own) ---------------- */
   // Everyone lands on the same home; 1:1 clients get the 1:1 extras on top.
   function homeView() { return 'Dashboard.dc.html'; }
