@@ -1049,6 +1049,26 @@
   /* ---------- Course builder ---------- */
   function vimeoId(u) { var m = /vimeo\.com\/(?:video\/|manage\/videos\/)?(\d+)/.exec(u || ''); return m ? m[1] : ''; }
   function normT(t) { return String(t || '').toLowerCase().replace(/^activity:\s*/, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+  // which lesson a Vimeo video belongs to, from names like "WEEK 2 - 3. Proof Portfolio", "WEEK 3 - Q+A", "INTRO 1 - in full"
+  function words(t) { return normT(t).split(' ').filter(function (w) { return w.length > 2 && !/^(lesson|week|activity|intro|the|and|your|with|for|bonus|side|quest|full|mp4)$/.test(w); }); }
+  function matchLesson(name, open, weekOf) {
+    var n = String(name || ''), wk = /\bweek\s*(\d+)/i.exec(n), week = wk ? Number(wk[1]) : /^\s*intro\b/i.test(n) ? 0 : null;
+    var rest = n.replace(/^\s*(week\s*\d+|bt\.?|intro)\s*[-–:]?\s*/i, '');
+    var exact = open.filter(function (l) { return l.title && normT(l.title) === normT(n); })[0]; if (exact) return exact;
+    if (week === null) return null; // no week in the name: leave it for the "choose from your Vimeo" list
+    var pool = open.filter(function (l) { return weekOf[l.id] === week; });
+    if (!pool.length) return null;
+    if (/q\s*\+\s*a|q&a/i.test(n)) return pool.filter(function (l) { return /q\s*\+\s*a|q&a/i.test(l.title); })[0] || null;
+    if (/side\s*quest/i.test(n) || /^\s*\d*\.?\s*intro\b/i.test(rest) || /^\s*intro\s*$/i.test(rest)) {
+      if (!/side\s*quest/i.test(n)) { var intro = pool.filter(function (l) { return /^intro\b/i.test(l.title); })[0]; if (intro) return intro; }
+    }
+    var num = /^\s*(\d+)\s*[.)-]/.exec(rest) || (week === 0 ? /^\s*(\d+)\b/.exec(rest) : null);
+    if (num && !/side\s*quest|activity/i.test(n)) { var byNum = pool.filter(function (l) { return new RegExp('^lesson\\s*' + Number(num[1]) + '\\b', 'i').test(l.title); })[0]; if (byNum) return byNum; }
+    var isAct = /\bactivity\b|embodiment|exercise/i.test(n); pool = pool.filter(function (l) { return isAct === /^(activity|embodiment)/i.test(l.title); });
+    var vw = words(rest), best = null, bestScore = 0;
+    pool.forEach(function (l) { var lw = words(l.title), sc = vw.filter(function (w) { return lw.some(function (x) { return x === w || (w.length > 4 && x.indexOf(w.slice(0, 5)) === 0); }); }).length; if (sc > bestScore) { bestScore = sc; best = l; } });
+    return bestScore >= 1 ? best : null;
+  }
   function syncVimeo(C, btn, msg, dirty, rerender) {
     var call = function (want) { return sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token; return fetch('/.netlify/functions/vimeo', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ want: want }) }); }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
     var all = []; C.weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { all.push(l); }); });
@@ -1057,10 +1077,18 @@
     call([]).then(function (d) {
       if (d.setup) return done('Vimeo isn’t connected yet: add VIMEO_TOKEN in Netlify (ask Claude for the steps).');
       if (d.error) return done('Couldn’t reach Vimeo: ' + d.error);
-      var byId = {}, byName = {}; (d.videos || []).forEach(function (v) { byId[v.id] = v; if (!byName[normT(v.name)]) byName[normT(v.name)] = v; });
-      var linked = 0, lens = 0, want = [];
+      var byId = {}; (d.videos || []).forEach(function (v) { byId[v.id] = v; });
+      S.vimeoList = (d.videos || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name, undefined, { numeric: true }); });
+      var linked = 0, lens = 0, want = [], taken = {};
+      all.forEach(function (l) { var id = vimeoId(l.vimeo); if (id) taken[id] = 1; });
+      // match each video to a lesson: by its week + lesson number ("WEEK 1 - 3. Nervous System"), or by its words
+      var weekOf = {}; C.weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { weekOf[l.id] = w.week; }); });
+      (d.videos || []).forEach(function (v) {
+        if (taken[v.id]) return;
+        var l = matchLesson(v.name, all.filter(function (l) { return !vimeoId(l.vimeo); }), weekOf);
+        if (l) { l.vimeo = v.link; taken[v.id] = 1; linked++; }
+      });
       all.forEach(function (l) {
-        if (!vimeoId(l.vimeo)) { var v0 = byName[normT(l.title)]; if (v0 && l.title) { l.vimeo = v0.link; linked++; } }
         var v = byId[vimeoId(l.vimeo)]; if (!v) return;
         var m = Math.max(1, Math.round(v.duration / 60)); if (v.duration && l.mins !== m) { l.mins = m; lens++; }
         if (!(l.transcript || '').trim() || l.trSrc === 'vimeo') want.push(v.id);
@@ -1122,6 +1150,7 @@
           h('div', { class: 'cb-lb' }, [
             h('label', { class: 'ad-field' }, ['Title', titleEl]),
             h('label', { class: 'ad-field' }, ['Vimeo link', vim, vNote, l.video && !l.vimeo ? h('span', { class: 'ad-muted', text: 'Until you add one, students see the video copied from Stan.' }) : null]),
+            (S.vimeoList || []).length ? (function () { var sel = h('select', { class: 'bt-in sm', 'aria-label': 'Choose a video from your Vimeo' }, [h('option', { value: '', text: 'Or choose from your Vimeo…' })].concat(S.vimeoList.map(function (v) { return h('option', { value: v.link, text: v.name + ' (' + Math.max(1, Math.round(v.duration / 60)) + ' min)' }); }))); sel.addEventListener('change', function () { if (!sel.value) return; l.vimeo = sel.value; l.transcript = l.trSrc === 'vimeo' ? '' : l.transcript; dirty(); rerender(); }); return sel; })() : null,
             h('label', { class: 'ad-field' }, ['Description (shows under the video)', input(l, 'desc', { rows: '4', placeholder: 'What this lesson is about, what to do after watching…' }, true)]),
             h('div', { class: 'ad-field' }, ['Journal questions (students type their answers under the video)',
               h('div', { class: 'cb-qs' }, l.prompts.map(function (q, qi) {
