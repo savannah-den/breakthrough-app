@@ -1606,11 +1606,11 @@
       if (!agree.checked) { msg.textContent = 'Tick the box to say you agree.'; agree.focus(); return; }
       delete v.notesLeft; var sig = Object.assign({}, v, { signedName: tx(sigName.value), agreed: doc.agreeText, tz: (window.BT_TIME && BT_TIME.tz()) || '', ua: navigator.userAgent.slice(0, 160) });
       btn.disabled = true; btn.textContent = 'Signing…';
-      (sb ? sb.rpc('sign_my_contract', { sig: sig }) : Promise.resolve({ data: new Date().toISOString() })).then(function (r) {
+      (sb && !APP.state.trial ? sb.rpc('sign_my_contract', { sig: sig }) : Promise.resolve({ data: new Date().toISOString() })).then(function (r) {
         if (r && r.error) { btn.disabled = false; btn.textContent = 'I agree & sign'; msg.textContent = 'That didn’t go through: ' + (r.error.message || 'try again in a minute.'); return; }
         var at = (r && r.data) || new Date().toISOString();
         S.contract = Object.assign({}, ct, { status: 'signed', signed_at: at, signed: { client: sig, terms: ct.terms } });
-        if (window.BT_NOTIFY) BT_NOTIFY('signed');
+        if (window.BT_NOTIFY && !APP.state.trial) BT_NOTIFY('signed');
         if (pd.phone !== v.phone) { var d = profileData(); d.phone = v.phone; wr(K.prof, d); }
         sparkleBurst(e.currentTarget); document.body.classList.remove('bt-welcoming');
         wrap.innerHTML = '';
@@ -1761,7 +1761,7 @@
         body.appendChild(nav(function () {
           var v = tx(nm.value); if (!v) { msg.textContent = 'Pop your name in first.'; nm.focus(); return; }
           draft.name = v;
-          (sb ? sb.rpc('update_my_profile', { new_name: v }) : Promise.resolve({})).then(function () { S.profile = Object.assign({}, S.profile, { full_name: v }); });
+          (sb && !APP.state.trial ? sb.rpc('update_my_profile', { new_name: v }) : Promise.resolve({})).then(function () { S.profile = Object.assign({}, S.profile, { full_name: v }); });
           wState.step = 1; draw();
         }));
         setTimeout(function () { nm.focus(); }, 50);
@@ -1907,7 +1907,7 @@
       field('Name', name),
       h('button', { class: 'bt-btn', type: 'button', text: 'Save name', onclick: function () {
         var v = tx(name.value); if (!v) { m1.textContent = 'Pop your name in first.'; return; }
-        (sb ? sb.rpc('update_my_profile', { new_name: v }) : Promise.resolve({})).then(function (r) {
+        (sb && !APP.state.trial ? sb.rpc('update_my_profile', { new_name: v }) : Promise.resolve({})).then(function (r) {
           if (r && r.error) { m1.textContent = 'Couldn’t save that. Try again in a minute.'; return; }
           S.profile = Object.assign({}, S.profile, { full_name: v }); m1.textContent = 'Saved ✓';
         });
@@ -1933,7 +1933,7 @@
     ]));
 
     // phone notifications: a gentle daily reminder at the time they pick (and for Sav, pings about wins + agreements)
-    if (window.BT_PUSH && !S.viewAs) (function () {
+    if (window.BT_PUSH && !S.viewAs && !S.trial) (function () {
       var coachMode = S.isAdmin && !window.BT_DEMO;
       var body = h('div', { class: 'bt-push' }), msg = h('p', { class: 'bt-sub small', role: 'status' });
       var hourSel = h('select', { class: 'bt-in sm', 'aria-label': 'Reminder time' }, [h('option', { value: '', text: 'No daily reminder' })].concat([7, 8, 9, 10, 12, 15, 17, 19, 20, 21].map(function (hr) { return h('option', { value: String(hr), text: 'Remind me at ' + (hr % 12 || 12) + (hr < 12 ? 'am' : 'pm') }); })));

@@ -3,7 +3,9 @@
    your own app data on this device, and nothing you tap here is saved to her account. */
 (function () {
   var q = new URLSearchParams(location.search), id = (window.BT_DEMO && window.BT_DEMO.viewAs) || q.get('viewas');
-  if (!id) return;
+  // ?trial=1: the coach walks through the brand-new 1:1 client journey in a throwaway copy (nothing is saved)
+  var trial = !window.BT_DEMO && q.get('trial') === '1';
+  if (!id && !trial) return;
   var real = window.localStorage, mem = {}, keys = [];
   // keep the login session so the coach stays signed in
   try { for (var i = 0; i < real.length; i++) { var k = real.key(i); if (/^(__bt_auth|sb-|__bt_demo_db)/.test(k)) { mem[k] = real.getItem(k); keys.push(k); } } } catch (e) {}
@@ -16,5 +18,5 @@
     get length() { return keys.length; }
   };
   try { Object.defineProperty(window, 'localStorage', { configurable: true, get: function () { return store; } }); } catch (e) {}
-  window.BT_VIEWAS = id;
+  if (trial) window.BT_TRIAL = true; else window.BT_VIEWAS = id;
 })();

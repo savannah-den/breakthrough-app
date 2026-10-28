@@ -677,6 +677,13 @@
       p.c && !p.auto ? h('button', { class: 'bt-btn ' + (p.paid ? 'ghost' : 'lime') + ' sm', type: 'button', text: p.paid ? 'Undo' : 'Mark received', onclick: function () { var pays = Object.assign({}, coach(p.c).payments || {}); if (pays[p.key]) delete pays[p.key]; else pays[p.key] = Date.now(); saveCoach(p.c, { payments: pays }); } }) : null]);
   }
 
+  // links to other websites open in a new tab
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || window.BT_DEMO) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (a && /^https?:/i.test(a.href) && a.origin !== location.origin && a.target !== '_blank') { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
+  });
+
   /* ---------- state ---------- */
   var S = { tab: 'clients', clients: [], filter: 'all', q: '', open: null, data: {}, me: null };
 
@@ -712,7 +719,7 @@
       h('header', { class: 'ad-hero' }, [
         h('div', { class: 'ad-hero-t' }, [
           h('div', null, [h('p', { class: 'ad-kick', text: 'Back of house' }), h('h1', { class: 'ad-h1', text: 'Hey Sav' })]),
-          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
+          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
         ]),
         h('div', { class: 'ad-stats' }, [
           stat(real.length, 'clients', '#F1F9A6'),

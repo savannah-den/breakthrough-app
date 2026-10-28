@@ -11,11 +11,11 @@
 
   // Keys that are UI-only and never need syncing
   var LOCAL_ONLY = /^(__bt|bt-return$|cmn-open-tab$|cmn-dash-focus$|sb-)/;
-  var LS = window.localStorage, VIEWAS = window.BT_VIEWAS || null;
+  var LS = window.localStorage, VIEWAS = window.BT_VIEWAS || null, TRIAL = !!window.BT_TRIAL;
   var rawSet = Storage.prototype.setItem, rawRemove = Storage.prototype.removeItem;
   function lsGet(k) { try { return LS.getItem(k); } catch (e) { return null; } }
-  function lsSet(k, v) { try { if (VIEWAS) LS.setItem(k, v); else rawSet.call(LS, k, v); } catch (e) {} }
-  function lsDel(k) { try { if (VIEWAS) LS.removeItem(k); else rawRemove.call(LS, k); } catch (e) {} }
+  function lsSet(k, v) { try { if (VIEWAS || TRIAL) LS.setItem(k, v); else rawSet.call(LS, k, v); } catch (e) {} }
+  function lsDel(k) { try { if (VIEWAS || TRIAL) LS.removeItem(k); else rawRemove.call(LS, k); } catch (e) {} }
 
   var state = { user: null, profile: null, tier: 'self_paced', isAdmin: false, settings: {}, door: doorFromUrl() };
 
@@ -50,7 +50,7 @@
   var flushTimer = null, flushing = false;
 
   function queueWrite(key, value) {
-    if (VIEWAS || LOCAL_ONLY.test(key)) return;
+    if (VIEWAS || TRIAL || LOCAL_ONLY.test(key)) return;
     queue[key] = { v: value, t: new Date().toISOString() };
     lsSet('__bt_queue', JSON.stringify(queue));
     clearTimeout(flushTimer);
@@ -65,13 +65,13 @@
   };
   // a brand-new win (added in the last few minutes) pings Sav's phone, once
   function newWin(before, after) {
-    if (VIEWAS || !LIVE || !state.user || window.BT_DEMO) return;
+    if (VIEWAS || TRIAL || !LIVE || !state.user || window.BT_DEMO) return;
     var a = JSON.parse(after || '{}').evidence || [], b = {}; (JSON.parse(before || '{}').evidence || []).forEach(function (e) { b[e.id] = 1; });
     var w = a.filter(function (e) { return e && e.win && !b[e.id] && Date.now() - Number(e.id) < 10 * 60000; })[0];
     if (w) notify('win', w.text);
   }
   function notify(type, text) {
-    if (VIEWAS || !LIVE || !state.user || window.BT_DEMO) return;
+    if (VIEWAS || TRIAL || !LIVE || !state.user || window.BT_DEMO) return;
     sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token; if (!tok) return;
       return fetch('/.netlify/functions/push-notify', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ type: type, text: String(text || '').slice(0, 200) }) });
     }).catch(function () {});
@@ -276,7 +276,9 @@
     if (!a) return;
     var x = a.getAttribute('href') || '';
     if (/^[A-Za-z0-9_-]+\.dc\.html$/.test(x)) { e.preventDefault(); go(x); return; }
-    if (/^\/(tools\/|#)/.test(x) && a.target === '_blank') { e.preventDefault(); if (x.charAt(1) === '#') { location.hash = x.slice(1); } else location.href = x; }
+    if (/^\/(tools\/|#)/.test(x) && a.target === '_blank') { e.preventDefault(); if (x.charAt(1) === '#') { location.hash = x.slice(1); } else location.href = x; return; }
+    // links to other websites always open in a new tab/window, so the app stays where they left it
+    if (!window.BT_DEMO && /^https?:/i.test(a.href) && a.origin !== location.origin) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
   });
 
   /* ---------------- menu ---------------- */
@@ -450,6 +452,7 @@
     state.user = session.user;
     gate.hidden = false; gate.innerHTML = '<div class="bt-gwrap"><p class="bt-lede">Opening your space…</p></div>';
     if (VIEWAS) return startViewAs(session);
+    if (TRIAL) return startTrial(session);
     Promise.all([
       sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle(),
       sb.from('app_settings').select('key,value'),
@@ -462,6 +465,28 @@
       sb.rpc('touch_last_seen').then(function () {}, function () {});
       return hydrate();
     }).then(boot, function (e) { console.error(e); boot(); });
+  }
+
+
+  // Coach trying the new-client journey: her login, but as a brand-new 1:1 client with a sample agreement. Nothing saves.
+  function startTrial(session) {
+    Promise.all([
+      sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+      sb.from('app_settings').select('key,value')
+    ]).then(function (r) {
+      var me = r[0].data;
+      if (!me || !me.is_admin) { gate.hidden = false; gate.innerHTML = '<div class="bt-gwrap"><p class="bt-lede">This view is for your coach only.</p></div>'; return; }
+      (r[1].data || []).forEach(function (row) { state.settings[row.key] = row.value; });
+      state.trial = true; state.profile = Object.assign({}, me, { is_admin: false, tier: 'private' }); state.tier = 'private'; state.isAdmin = false;
+      var C = window.BT_CONTRACT, t = C ? C.defaults() : {};
+      t.call = { zoom: 'https://zoom.us/j/0000000000', times: 'Tuesdays at 10am (your time)', upcoming: [new Date(Date.now() + 3 * 864e5).toISOString()] };
+      state.contract = { user_id: session.user.id, status: 'sent', terms: t };
+      try { sessionStorage.removeItem('bt-ns-ok'); } catch (e) {}
+      var bar = h('div', { id: 'bt-viewas', class: 'bt-viewas', role: 'status' }, [h('span', { text: '🧪 Trying the new-client journey. Nothing you do here is saved, and the agreement is a sample.' }), h('a', { href: '/admin.html', text: 'Back to dashboard' })]);
+      document.body.appendChild(bar); document.body.classList.add('bt-viewing');
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      boot();
+    }, function () { boot(); });
   }
 
   // Coach viewing a client's app: load her data into the throwaway copy, read-only

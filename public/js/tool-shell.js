@@ -88,7 +88,9 @@
       return;
     }
     var href = a.getAttribute('href') || '';
-    if (href.charAt(0) === '/' && a.target === '_blank') { e.preventDefault(); location.href = href; }
+    if (href.charAt(0) === '/' && a.target === '_blank') { e.preventDefault(); location.href = href; return; }
+    // other websites open in a new tab/window
+    if (!window.BT_DEMO && /^https?:/i.test(a.href) && a.origin !== location.origin) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
   }, true);
 
   function start() {
