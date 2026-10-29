@@ -939,7 +939,11 @@
     if (d.contractOff) { card.appendChild(h('p', { class: 'ad-muted', text: 'Agreements need one quick database update before they work. Ask Claude for the “contracts” SQL to run in Supabase.' })); return card; }
     function save(terms, status, extra) {
       var row = Object.assign({ user_id: c.id, terms: terms, status: status, updated_at: new Date().toISOString() }, extra || {});
-      return sb.from('contracts').upsert(row).then(function (r) { if (r.error) { alert0('Couldn’t save: ' + r.error.message); return; } d.contract = Object.assign({}, d.contract || {}, row); page(); });
+      return sb.from('contracts').upsert(row).then(function (r) {
+        if (r.error) { alert0('Couldn’t save: ' + r.error.message); toastA('Couldn’t save the agreement: ' + r.error.message); return; }
+        var was = (d.contract || {}).status; d.contract = Object.assign({}, d.contract || {}, row); page();
+        toastA(status === 'sent' ? (was === 'sent' ? 'Agreement updated ✓ ' + first + ' sees the changes straight away.' : 'Sent ✓ ' + first + '’s app now opens on the agreement until they sign.') : 'Saved as a draft ✓ ' + first + ' can’t see it until you send it.');
+      }, function (e) { toastA('Couldn’t save the agreement. Check your internet and try again.'); });
     }
     var msgEl = h('p', { class: 'ad-muted', role: 'status' }); function alert0(t) { msgEl.textContent = t; }
     if (ct && ct.status === 'signed' && ct.signed) {
