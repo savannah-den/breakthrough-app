@@ -1137,14 +1137,22 @@
         var on = done[q[0]];
         return h('button', { class: 'rp-qi' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', 'data-rp': q[0], onclick: function (e) {
           if (q[0] === 'water') { setV(k, 'water', on ? { level: '', n: 0, ml: null } : { level: 'good', n: 0, ml: null }); }
-          else if (q[0] === 'win') { setV(k, 'win', { done: !on }); }
+          else if (q[0] === 'win') { if (!on) { vs.winOpen = true; redraw(); setTimeout(function () { var wi = document.getElementById('rp-win-in'); if (wi) wi.focus(); }, 60); return; } setV(k, 'win', { done: false }); vs.winOpen = false; }
           else { setV(k, q[0], { done: !on }); if (!on) tickLesson(q[0]); }
           if (!on) kit.sparkleBurst(e.currentTarget);
           var c = !on ? (cheerLine(q[0]) || CHEERS[q[0]]) : '';
           setTimeout(function () { redraw(c, 'all'); }, on ? 0 : 250);
         } }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]), h('b', { text: q[2] }), h('span', { class: 'rp-tick', 'aria-hidden': 'true', text: on ? '✓' : '' })]);
       })));
-      if (done.win && !wins.length) box.appendChild(h('button', { class: 'rp-more', type: 'button', text: 'Want to write your win down? It becomes proof in your portfolio →', onclick: function () { var d = vw(); d.repsMode = 'detail'; wr(VK, d); redraw(); } }));
+      // "Had a win": opens a little box right here to write it in (it becomes proof in their portfolio)
+      if (vs.winOpen || (done.win && !wins.length)) {
+        var qwIn = h('input', { class: 'bt-in sm', id: 'rp-win-in', placeholder: 'Today I…', 'aria-label': 'Your win today' });
+        var qwAdd = function () { var t = kit.tx(qwIn.value); if (!t) { qwIn.focus(); return; } var ab = kit.addWin(t); setV(k, 'win', { done: true }); vs.winOpen = false; redraw('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.', 'all'); };
+        qwIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') qwAdd(); });
+        box.appendChild(h('div', { class: 'rp-winbox' }, [h('b', { text: '✦ What was your win?' }), h('span', { class: 'rp-sub', text: 'Big or tiny, it all counts. It goes into your proof portfolio.' }),
+          h('div', { class: 'rp-inrow' }, [qwIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: qwAdd })]),
+          h('button', { class: 'rp-more', type: 'button', text: done.win ? 'Close' : 'Just tick it for now', onclick: function (e) { if (!done.win) { setV(k, 'win', { done: true }); kit.sparkleBurst(e.currentTarget); } vs.winOpen = false; setTimeout(function () { redraw(done.win ? '' : CHEERS.win, 'all'); }, done.win ? 0 : 250); } })]));
+      } else if (wins.length) box.appendChild(h('ul', { class: 'rp-wins' }, wins.map(function (w) { return h('li', { text: '“' + w.text + '”' }); })));
       box.appendChild(dayDone());
       return box;
     }
@@ -1286,8 +1294,8 @@
         var kg = unitW === 'lb' ? w * 0.4536 : w;
         if (!(kg >= 25 && kg <= 300)) { tOut.textContent = ''; return; }
         target = Math.round(kg * 35 / 50) * 50; vs.waterTarget = target;
-        tOut.textContent = 'Your body’s full daily amount is about ' + fmtL(target) + ' (' + fmtOz(target) + '). No need to start there.';
-        if (!vs.waterPick) { vs.waterPick = 'small'; vs.waterDraft = Math.max(750, Math.round(target * 0.5 / 50) * 50); bt.setTo(vs.waterDraft); }
+        tOut.textContent = 'Your body’s full daily amount is about ' + fmtL(target) + ' (' + fmtOz(target) + '). That’s set as your goal below. Feels like too much? Pick a smaller start.';
+        if (!vs.waterPick || vs.waterPick === 'full') { vs.waterPick = 'full'; vs.waterDraft = Math.max(750, Math.round(target / 50) * 50); bt.setTo(vs.waterDraft); }
         drawOpts();
       }
       var tOut = h('p', { class: 'rp-guide-out', 'aria-live': 'polite' });

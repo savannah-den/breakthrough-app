@@ -1954,3 +1954,6 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 
 .bt-find-kind.act .bt-emb{width:38px;height:38px}.bt-find-kind.act .bt-emb svg{width:100%;height:100%}
 .bt-find-kind.act:has(.bt-emb){background:#fff}
+.rp-winbox{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:18px;background:#F8FCD6;border:2px solid #1F1412;animation:btFindUp .25s ease-out}
+.rp-winbox>b{font:700 16px 'Playfair Display',Georgia,serif;color:#4E0C08}
+.rp-winbox .rp-more{align-self:flex-start}
