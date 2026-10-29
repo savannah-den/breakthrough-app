@@ -304,7 +304,7 @@
   var MENU = [
     { view: 'Course', label: 'Course', sub: 'Pick up where you left off' },
     { view: 'Dashboard.dc.html', label: 'Home', sub: 'Proof, reminders & what’s next' },
-    { view: 'Book', label: 'The Becoming Book', sub: 'Your journal + your journey, dated' },
+    { view: 'Book', label: 'The Becoming Book', sub: 'Your notebook + your journey, dated' },
     { view: 'BreakingOut.dc.html', label: 'Breaking Out of Your Box', sub: 'Bust open limiting beliefs', week: 2 },
     { view: 'StarHome.dc.html', label: 'North Star & STAR Goals', sub: 'Who you’re becoming', week: 7 },
     { view: 'StarPlan.dc.html', label: 'Do what they would do', sub: 'Your daily plan & check-ins', week: 7 },
@@ -323,9 +323,11 @@
   function markMenu(name) { if (!menuEl) return; menuEl.querySelectorAll('[data-view]').forEach(function (b) { b.classList.toggle('on', b.dataset.view === name); }); }
   function buildMenu() {
     if (menuBtn) menuBtn.remove(); if (menuEl) menuEl.remove();
-    menuBtn = h('button', { class: 'bt-menubtn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'bt-menu', onclick: function () { toggleMenu(); } }, [
-      h('span', { id: 'bt-sync', class: 'bt-dot', 'data-s': LIVE ? 'ok' : 'local', 'aria-hidden': 'true' }), 'Menu'
+    // the floating bubble is a search now: "find anything" (the top menu and profile cover the rest)
+    menuBtn = h('button', { class: 'bt-menubtn bt-findbtn', type: 'button', 'aria-label': 'Find anything', title: 'Find anything', onclick: function () { if (window.BT_COURSE && window.BT_COURSE.find) window.BT_COURSE.find(); else toggleMenu(); } }, [
+      h('span', { id: 'bt-sync', class: 'bt-dot', 'data-s': LIVE ? 'ok' : 'local', 'aria-hidden': 'true' })
     ]);
+    menuBtn.insertAdjacentHTML('beforeend', '<svg class="bt-find-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>');
     var items = MENU.filter(function (m) { return (VIEWS[m.view] || nativeView(m.view)) && (!m.private || state.tier === 'private'); }).map(function (m) {
       var locked = weekLocked(m.view);
       return h('button', { class: 'bt-mi' + (locked ? ' lock' : ''), type: 'button', 'data-view': m.view, 'aria-disabled': locked ? 'true' : null, onclick: function () { if (locked) { toast('This opens in Week ' + WEEK_OF[m.view] + ' of the course.'); return; } toggleMenu(false); go(m.view); } }, [

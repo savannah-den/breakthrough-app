@@ -82,6 +82,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
   <section class="todo" aria-labelledby="todo-h">
     <h2 id="todo-h">My to-do list</h2>
     <p class="todo-sub">Tick things off as you go. Your ticks are saved in this browser.</p>
+    <div class="todo-g"><b>New this round: check you like them</b><ul id="todo-check"></ul></div>
     <div class="todo-g"><b>Videos to film</b><ul id="todo-film"></ul></div>
     <div class="todo-g"><b>Also waiting on you</b><ul id="todo-more"></ul></div>
     <form id="todo-add" class="todo-add"><input id="todo-new" placeholder="Add something…" aria-label="Add a to-do"><button type="submit">Add</button></form>
@@ -200,6 +201,26 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     ['library', 'Build the resource library'],
     ['reps', 'Pick a name for “Today’s reps”']
   ];
+  var CHECK = [
+    ['c-banner', 'Branding banner above the menu', 'Any view: “Colour Me Neurospicy · Neurodivergent breakthrough program” at the very top'],
+    ['c-tour', 'The new full app tour', 'Tap “▶ App tour” below. It walks every page part by part'],
+    ['c-w1l1', 'Week 1 Lesson 1: shorter description + the two new questions', 'Self-paced view → Course → Week 1 → Lesson 1'],
+    ['c-notebook', '“Journal” is now “Becoming Notebook entry”', 'Under any lesson, and My Book → Becoming Notebook tab'],
+    ['c-markdone', 'Mark as done → “Don’t forget your Becoming Notebook entry”', 'In a lesson, leave the notebook empty and tap Mark as done'],
+    ['c-done', 'Done under the notebook → “You haven’t filled in…” (Remind me later / Do it now)', 'Bottom of a lesson, notebook empty'],
+    ['c-nbtour', 'First notebook entry → mini tour to My Book, then back to the course', 'Fill in a lesson’s notebook and tap Done (first time only)'],
+    ['c-act', 'Lesson → Done lands on the activity card', 'Lesson 4 (Neurotransmitters) → Done → Course, on the DOSE card. The activity also shows under the description'],
+    ['c-breath', 'Activity: Breathwork goes straight to Breathe', 'Course → Week 1 → Activity: Breathwork'],
+    ['c-book', 'Breathe: “♥ Add to my book” is readable', 'Resources → Breathe, under the breathing ball'],
+    ['c-learn', 'DOSE: “Learn more” stays minimised (+)', 'DOSE → Step 1 → any letter. Tap options: it no longer pops open'],
+    ['c-dose', 'DOSE: steps 1, 2, 3, pick ONE plan or “Build your own”', 'DOSE → Step 2. Then Step 2 done → DOSE tour → Home reps tour → back to course'],
+    ['c-reps', 'Today’s reps: the key to rewiring, parts switch on one by one', 'Home. Locked parts say which activity switches them on'],
+    ['c-why', '“Why we’re doing this” at the top of every resource', 'Open any resource. Open the first time, minimised (+) after that'],
+    ['c-pause', 'Pause: your hubby story + “Where in your day can you take a pause?”', 'Resources → Pause. Done → tour of Pause in Today’s reps → back to course'],
+    ['c-whatif', 'What If Workout: “When to come back to this” with ADHD + autistic examples', 'Under the three drawings. Minimised after the first read'],
+    ['c-wtips', 'What If Workout: tips pop up as you scroll (first time)', 'Includes long vs short'],
+    ['c-wsave', 'What If Workout: Save above the final message, Book + JPEG', '“This is to remind you next time you have the same thoughts.”']
+  ];
   var KEY = 'sav-todo-v1', st = {};
   try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { st = {}; }
   st.done = st.done || {}; st.extra = st.extra || [];
@@ -212,7 +233,8 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     lab.appendChild(cb); lab.appendChild(t); li.appendChild(lab); return li;
   }
   function draw() {
-    var f = document.getElementById('todo-film'), m = document.getElementById('todo-more'); f.innerHTML = ''; m.innerHTML = '';
+    var f = document.getElementById('todo-film'), m = document.getElementById('todo-more'), ck = document.getElementById('todo-check'); f.innerHTML = ''; m.innerHTML = ''; ck.innerHTML = '';
+    CHECK.forEach(function (it) { ck.appendChild(item(it)); });
     FILM.forEach(function (it) { f.appendChild(item(it)); });
     MORE.concat(st.extra).forEach(function (it) { m.appendChild(item(it)); });
   }

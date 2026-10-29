@@ -117,6 +117,28 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 .modal-bg{position:fixed;inset:0;z-index:30;border:0;padding:0;margin:0;background:rgba(31,20,18,.45);cursor:pointer}
 .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;width:min(540px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:#FFFFFF;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 70px rgba(31,20,18,.3);animation:wf-pop .3s cubic-bezier(.2,1.2,.4,1)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.wi-intro{display:flex;flex-direction:column;gap:0;border-radius:24px;background:#FFFFFF;border:2px solid #4E0C08;box-shadow:5px 5px 0 #F4C2F7;overflow:hidden}
+.wi-intro-h{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;border:0;background:transparent;color:#1F1412;font:inherit;text-align:left;cursor:pointer}
+.wi-intro-h b{flex:1;font-family:'Playfair Display',Georgia,serif;font-size:21px;line-height:1.2}
+.wi-tg{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:999px;background:#F1F9A6;border:1.5px solid #1F1412;font-weight:700;font-size:18px}
+.wi-intro-b{display:flex;flex-direction:column;gap:14px;padding:0 18px 20px}
+.wi-intro-b p{margin:0;font-size:15px;line-height:1.6;color:#463A38}
+.wi-when{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.wi-when li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-radius:16px;background:#FAF7F5;font-size:15px;line-height:1.45}
+.wi-when li::before{content:'✦';color:#A8231F;flex:none}
+.wi-ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.wi-ladder{display:flex;flex-direction:column;gap:0;padding:14px 16px;border-radius:20px;background:#FBE6FC}
+.wi-ladder.au{background:#E8F4EE}
+.wi-ladder .wi-lk{font-family:'Patrick Hand SC',cursive;letter-spacing:.06em;font-size:16px;color:#A8231F;margin-bottom:6px}
+.wi-rung{position:relative;padding:8px 10px 8px 30px;font-size:14px;line-height:1.45}
+.wi-rung::before{content:'';position:absolute;left:10px;top:13px;width:10px;height:10px;border-radius:999px;background:#4E0C08}
+.wi-rung:not(:last-child)::after{content:'';position:absolute;left:14px;top:23px;bottom:-8px;width:2px;background:#4E0C08;opacity:.35}
+.wi-rung.big{font-weight:600;font-size:15px}
+.wi-rung.step{font-weight:600;background:#F1F9A6;border-radius:12px;margin-top:4px}
+.wi-rung.step::before{background:#A8231F}
+.wi-keep{padding:14px 16px;border-radius:18px;background:#F1F9A6;font-size:15px;line-height:1.5;font-weight:600}
+.wi-bookbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 22px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid #1F1412}
+.wi-bookbtn:hover{background:#A8231F;color:#FFFFFF}
 </style>
 <style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
 </head>
@@ -168,17 +190,50 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </div>
 </header>
 
-<section style="display: flex; flex-direction: column; gap: 14px">
-<div class="hand" style="font-size: 17px; color: #A8231F">Pick your version</div>
+<section class="wi-intro" data-tour="intro">
+<button class="wi-intro-h" type="button" aria-expanded="{{introExp}}" onClick="{{toggleIntro}}"><span style="font-size: 22px" aria-hidden="true">🧭</span><b>When to come back to this</b><span class="wi-tg" aria-hidden="true">{{introSign}}</span></button>
+<sc-if value="{{introOpen}}" hint-placeholder-val="{{ true }}">
+<div class="wi-intro-b">
+<p>This isn’t a one-off. It’s an activity to come back to whenever you find yourself:</p>
+<ul class="wi-when">
+<li>lying awake running “what if…” on a loop</li>
+<li>dreading a phone call, an appointment or a conversation</li>
+<li>replaying what someone might think of you, or what you said</li>
+<li>frozen before starting something new or unfamiliar</li>
+<li>anything fear, anxiety or worry related</li>
+</ul>
+<p><strong style="color: #1F1412">Start big, then chunk it down.</strong> Write the big scary what-if first. Then keep asking “what’s the smaller what-if underneath it?” until you reach one you can actually do something about today.</p>
+<div class="wi-ex">
+<div class="wi-ladder"><span class="wi-lk">An ADHD example</span>
+<span class="wi-rung big">What if I lose my job?</span>
+<span class="wi-rung">What if I miss Friday’s deadline?</span>
+<span class="wi-rung">What if I can’t start the report today?</span>
+<span class="wi-rung">What if I open it and just stare at the screen?</span>
+<span class="wi-rung step">Do this: a 10-minute timer, and just write the headings.</span>
+</div>
+<div class="wi-ladder au"><span class="wi-lk">An autistic example</span>
+<span class="wi-rung big">What if the party is too much and I melt down in front of everyone?</span>
+<span class="wi-rung">What if it’s loud and I can’t get out?</span>
+<span class="wi-rung">What if I don’t know what to say to people?</span>
+<span class="wi-rung">What if I don’t know when it’s okay to leave?</span>
+<span class="wi-rung step">Do this: pack my headphones, plan my exit, and tell one person I might leave early.</span>
+</div>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px" data-tour="length">
+<div class="hand" style="font-size: 17px; color: #A8231F">Long or short?</div>
 <div class="segwrap" role="group" aria-label="Workout length">
 <button class="{{segLongCls}}" aria-pressed="{{segLongPressed}}" onClick="{{pickLong}}">Long · 7 steps</button>
 <button class="{{segShortCls}}" aria-pressed="{{segShortPressed}}" onClick="{{pickShort}}">Short · 3 steps</button>
 </div>
 <sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
-<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>Use the long one the first few times you do it, until you become <strong>Consciously Competent</strong>. You learn about this in the Neuroplasticity Module.</span></div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Long: use this one during the program.</strong> Every step, every time, until you become <strong>Consciously Competent</strong> (you learn about this in the Neuroplasticity lesson). The short one is for after the program, or for little things.</span></div>
 </sc-if>
 <sc-if value="{{isShort}}" hint-placeholder-val="{{ false }}">
-<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span>The quick version, for once you know the moves. Your answers carry across, so you can switch any time.</span></div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Short: for after the program, or for little things.</strong> The quick version, once you know the moves. During the program, use the long one. Your answers carry across, so you can switch any time.</span></div>
 </sc-if>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <div class="meter" style="grid-template-columns: repeat({{stepCount}}, minmax(0, 1fr))" aria-hidden="true"><sc-for list="{{meter}}" as="m" hint-placeholder-count="7"><span class="{{m.cls}}"></span></sc-for></div>
@@ -197,7 +252,7 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </sc-if>
 
 <sc-if value="{{isLong}}" hint-placeholder-val="{{ true }}">
-<section class="step">
+<section class="step" data-tour="step1">
 <div class="stephead"><span class="{{done.fear}}">{{n.fear}}</span><div style="display: flex; flex-direction: column"><span class="hand" style="font-size: 16px; color: #A8231F">Step {{n.fear}}</span><h2 style="margin: 0; font-weight: 700; font-size: 30px; line-height: 1.1">Write down the fear</h2></div></div>
 <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">What is the “what if” your brain is currently focused on?</p>
 <label class="whatwrap"><span class="whatlead">What if…</span><textarea class="whatif" value="{{fear}}" onChange="{{onFear}}" placeholder="…I mess this up and everyone sees it?"></textarea></label>
@@ -312,20 +367,14 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </section>
 </sc-if>
 
-<section class="dark" style="position: relative; overflow: hidden; padding: 32px 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="120" height="120" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="position: absolute; right: -18px; top: -18px; opacity: .25"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
-<div class="hand" style="font-size: 17px; color: #F1F9A6">Final reminder</div>
-<h2 style="margin: 0; font-weight: 700; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.08">Your brain’s prediction is not a prophecy.</h2>
-<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">It’s just one possible story. And until the future arrives, every outcome exists only in your imagination.</p>
-<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; color: #F1F9A6">Choose the one that helps you move forward.</p>
-</section>
-
-<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start">
+<section data-tour="save" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start">
 <div style="display: flex; flex-direction: column; gap: 14px">
 <div class="hand" style="font-size: 17px; color: #A8231F">Keep it</div>
 <h2 style="margin: 0; font-weight: 700; font-size: 32px; line-height: 1.1">Save your workout</h2>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Save it to your Becoming Book with today’s date. Looking back at old what-ifs (and how they actually turned out) is great proof for your brain.</p>
+<div class="wi-keep">This is to remind you next time you have the same thoughts.</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6A5A57">Save it to your Becoming Book, download it as a picture, or both. Looking back at old what-ifs (and how they actually turned out) is great proof for your brain.</p>
 <div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a class="wi-bookbtn" href="#bt-book-save" data-tool="what-if-workout">♥ Save to my Becoming Book</a>
 <a class="primary lime edge" href="#bt-book-save" style="text-decoration:none">Save to my Becoming Book</a>
 </div>
 <sc-if value="{{hasErr}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A8231F">{{err}}</span></sc-if>
@@ -343,6 +392,14 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <sc-if value="{{noSummary}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 0; font-size: 14px; color: #6A5A57">Your answers will show up here as you go.</span></sc-if>
 </div>
 </div>
+</section>
+
+<section class="dark" style="position: relative; overflow: hidden; padding: 32px 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="120" height="120" viewBox="0 0 24 24" fill="#F4C2F7" aria-hidden="true" style="position: absolute; right: -18px; top: -18px; opacity: .25"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>
+<div class="hand" style="font-size: 17px; color: #F1F9A6">Final reminder</div>
+<h2 style="margin: 0; font-weight: 700; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.08">Your brain’s prediction is not a prophecy.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.65; color: #F6D6CF">It’s just one possible story. And until the future arrives, every outcome exists only in your imagination.</p>
+<p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: 22px; color: #F1F9A6">Choose the one that helps you move forward.</p>
 </section>
 
 <footer style="display: flex; flex-direction: column; gap: 18px; padding-top: 20px; border-top: 1.5px solid #EDE3DF">
@@ -452,7 +509,8 @@ var WF_SAVED = ['mode', 'bad', 'danger', 'proof', 'safeStory', 'fear', 'worst', 
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { mode: 'long', bad: null, danger: null, proof: null, safeStory: null, fear: '', worst: '', survive: null, evidenceText: '', evidence: {}, protect: {}, protectOther: '', need: '', best: '', focus: null, action: '', confirmClear: false, copied: '', exportUrl: null, celebrate: false, err: '' };
+    this.state = { mode: 'long', bad: null, danger: null, proof: null, safeStory: null, fear: '', worst: '', survive: null, evidenceText: '', evidence: {}, protect: {}, protectOther: '', need: '', best: '', focus: null, action: '', confirmClear: false, copied: '', exportUrl: null, celebrate: false, err: '', introOpen: true };
+    try { if (window.localStorage.getItem('bt-intro-whatif')) this.state.introOpen = false; else window.localStorage.setItem('bt-intro-whatif', String(Date.now())); } catch (e) {}
   }
 
   componentDidMount() {
@@ -677,6 +735,8 @@ class Component extends DCLogic {
         } catch (e) {}
         try { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove(); done(ok); } catch (e) { done(false); }
       },
+      introOpen: !!s.introOpen, introExp: s.introOpen ? 'true' : 'false', introSign: s.introOpen ? '−' : '+',
+      toggleIntro: function () { self.setState({ introOpen: !self.state.introOpen }); },
       copyLabel: s.copied === 'ok' ? 'Copied!' : (s.copied === 'fail' ? 'Couldn’t copy, try a screenshot' : 'Copy to my notes'),
       hasErr: !!s.err, err: s.err || '',
       clearCls: s.confirmClear ? 'ghost warn' : 'ghost',
@@ -695,6 +755,7 @@ return Component;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="/js/config.js"></script>
+<script src="/js/course-data.js"></script>
 <script src="/js/course.js"></script>
 <script src="/js/saves.js"></script>
 <script src="/js/tool-shell.js"></script>

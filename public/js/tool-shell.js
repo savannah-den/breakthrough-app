@@ -102,6 +102,7 @@
     if (inst.componentDidMount) inst.componentDidMount();
     // the app's top navigation, so the menu is always at the top
     var nav = document.createElement('nav'); nav.className = 'bt-top'; nav.id = 'bt-top'; nav.setAttribute('aria-label', 'Main');
+    var brand = document.createElement('div'); brand.className = 'bt-brand'; brand.setAttribute('aria-hidden', 'true'); brand.innerHTML = '<span class="bt-brand-n">Colour Me Neurospicy</span><span class="bt-brand-s">Neurodivergent breakthrough program</span>'; nav.appendChild(brand);
     var inner = document.createElement('div'); inner.className = 'bt-top-in'; nav.appendChild(inner);
     [['Home', '/#Dashboard'], ['Course', '/#Course'], ['My Book', '/#Book'], ['Resources', '/#Resources']].forEach(function (n) {
       var a = document.createElement('a'); a.className = 'bt-top-i' + (n[0] === 'Resources' ? ' on' : ''); a.href = n[1]; a.textContent = n[0]; inner.appendChild(a);
@@ -127,7 +128,44 @@
       }
     } catch (e) {}
     document.body.classList.add('bt-has-top');
+    // why we're doing this: links the tool back to its lesson (the What If Workout has its own, inside the page)
+    try { var RID = { 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'understanding-bridge': 'ub' }[TOOL.slug]; var why = RID && window.BT_COURSE && window.BT_COURSE.resIntro(RID); if (why) { why.classList.add('bt-why-tool'); host.parentNode.insertBefore(why, host); } } catch (e) {}
     if (window.BT_SAVES) window.BT_SAVES.mount(TOOL.slug);
+    try { scrollTour(TOOL.slug); } catch (e) {}
+  }
+
+  /* first time in a tool: little bubbles pop up as they scroll to each part */
+  var TOOL_TOURS = {
+    'what-if-workout': [
+      ['[data-tour="intro"]', 'Start here', 'When to come back to this, and how to chunk a big worry down into something you can actually do today.'],
+      ['[data-tour="length"]', 'Long or short?', 'There are two versions. Use the long one during the program, every time. The short one is for after the program, or for little things.'],
+      ['[data-tour="step1"]', 'One step at a time', 'Work your way down the page. Your answers save as you go, so you can stop and come back.'],
+      ['[data-tour="save"]', 'Keep it', 'Save it to your Becoming Book, download it as a picture, or both. This is to remind you next time you have the same thoughts.']
+    ]
+  };
+  function scrollTour(slug) {
+    var steps = TOOL_TOURS[slug], key = 'bt-tt-' + slug; if (!steps) return;
+    try { if (localStorage.getItem(key)) return; } catch (e) { return; }
+    var i = 0, bub = null, lit = null, shown = -1;
+    function clear() { if (bub) { bub.remove(); bub = null; } if (lit) { lit.classList.remove('bt-tt-on'); lit = null; } }
+    function show(k) {
+      clear(); shown = k; var st = steps[k], el = document.querySelector(st[0]); if (!el) return;
+      lit = el; el.classList.add('bt-tt-on');
+      bub = document.createElement('div'); bub.className = 'bt-tt'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-label', st[1]);
+      bub.innerHTML = '<span class="bt-tt-k"></span><b></b><p></p><div class="bt-tt-btns"><button type="button" class="bt-tt-x">Skip the tips</button><button type="button" class="bt-tt-ok">Got it</button></div>';
+      bub.querySelector('.bt-tt-k').textContent = 'Tip ' + (k + 1) + ' of ' + steps.length; bub.querySelector('b').textContent = st[1]; bub.querySelector('p').textContent = st[2];
+      bub.querySelector('.bt-tt-ok').onclick = function () { clear(); i = k + 1; if (i >= steps.length) end(); else check(); };
+      bub.querySelector('.bt-tt-x').onclick = function () { clear(); end(); };
+      document.body.appendChild(bub);
+    }
+    function end() { i = steps.length; try { localStorage.setItem(key, String(Date.now())); } catch (e) {} window.removeEventListener('scroll', check); }
+    function check() {
+      if (i >= steps.length || shown === i) return;
+      var el = document.querySelector(steps[i][0]); if (!el) { i++; return check(); }
+      var r = el.getBoundingClientRect(); if (r.top < window.innerHeight * 0.7 && r.bottom > 60) show(i);
+    }
+    window.addEventListener('scroll', check, { passive: true });
+    setTimeout(check, 900);
   }
 
   if (!LIVE) { start(); return; }

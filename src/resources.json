@@ -22,7 +22,11 @@
     "title": "The What If Workout",
     "desc": "Whenever fear, anxiety or worry is on your mind.",
     "href": "/tools/what-if-workout.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 1 · Lesson 5: Anxiety",
+      "text": "In the anxiety lesson you learned your brain predicts the future to keep you safe, not to be accurate. Here we get those what-ifs out of your head and onto the page, so you can see what’s a fact and what’s a story, and choose the one that helps you move forward."
+    }
   },
   {
     "id": "vagal",
@@ -39,7 +43,11 @@
       "move",
       "comehome",
       "blueprint"
-    ]
+    ],
+    "intro": {
+      "from": "Week 1 · Lessons 3 to 9",
+      "text": "This brings Week 1 together. Your DOSE, your breath, your pauses and moving your body are the daily reps that build your vagal tone, so you bounce back from stress faster instead of staying stuck in it."
+    }
   },
   {
     "id": "breathe",
@@ -70,7 +78,11 @@
         "video": "",
         "desc": "Your in-the-moment reset for panic, anger and overwhelm."
       }
-    ]
+    ],
+    "intro": {
+      "from": "Week 1 · Lesson 9: Breathing",
+      "text": "In the breathing lesson you learned your breath is the main key to a resilient nervous system. Here are your go-to breaths, so you can calm your body in a few minutes, every day, and grow that spindly tree into a stable one."
+    }
   },
   {
     "id": "dose",
@@ -79,7 +91,11 @@
     "title": "DOSE",
     "desc": "Pick your daily dose of dopamine, oxytocin, serotonin and endorphins, and build a quick daily plan.",
     "href": "#Dose",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 1 · Lesson 4: Neurotransmitters + Hormones",
+      "text": "Remember how your brain grabs the quickest hit of feel-good chemicals: the scroll, the snack, the cart? Here we build healthier ways to get your dopamine, oxytocin, serotonin and endorphins on purpose, so your brain stops reaching for the quick fix."
+    }
   },
   {
     "id": "pause",
@@ -88,7 +104,11 @@
     "title": "Pause",
     "desc": "Little pockets of slow, so you can catch up to yourself. (Scrolling doesn’t count.)",
     "href": "#Pause",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 1 · Lesson 6: Fight or Flight",
+      "text": "Remember my story? If I had just paused before hubby came home, I would have reacted differently. So where in your day can you take a pause? Let’s make a plan to add to your daily reps, to rewire your brain and your behaviour."
+    }
   },
   {
     "id": "move",
@@ -97,7 +117,11 @@
     "title": "Move",
     "desc": "Fill in your daily move card, build a streak, and watch your progress.",
     "href": "#Move",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 1 · Lesson 7: Body",
+      "text": "In the body lesson you learned your body was built to move, and moving is how stress leaves the building. Here we build a move menu for every energy level, so moving becomes part of your daily reps, even on the low days."
+    }
   },
   {
     "id": "proof",
@@ -106,7 +130,11 @@
     "title": "Your proof portfolio",
     "desc": "Wins, achievements, joy and proof, collected in your Becoming Book.",
     "href": "#Proof",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 2 · Lesson 3: Proof Portfolio",
+      "text": "Your RAS filter collects proof for whatever you already believe. Here we train it to collect proof of who you’re becoming instead, one win at a time."
+    }
   },
   {
     "id": "box",
@@ -115,7 +143,11 @@
     "title": "Breaking Out of Your Box",
     "desc": "From limited to limitless: bust the lid open on your limiting beliefs.",
     "href": "BreakingOut.dc.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 2 · Lesson 5: Programs",
+      "text": "You learned about the programs running underneath your behaviour. Here you find the beliefs keeping you in the box, see where they came from, and start busting the lid off."
+    }
   },
   {
     "id": "ub",
@@ -124,7 +156,11 @@
     "title": "The Understanding Bridge",
     "desc": "Take the lesson. Leave the pain. A bridge between your perspective, theirs, and a new understanding that lets you move forward.",
     "href": "/tools/understanding-bridge.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 3 · Model of the World + Perspectives",
+      "text": "Everyone sees the world through their own model of it. Here you build a bridge between your perspective and theirs, so you can take the lesson, leave the pain, and move forward."
+    }
   },
   {
     "id": "rewind",
@@ -133,7 +169,11 @@
     "title": "Pause and Rewind",
     "desc": "For when you’ve reacted in a way you wish you could take back, or do differently next time.",
     "href": "/tools/rewind.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 3 · Triggers + Cause and Effect",
+      "text": "When you react in a way you wish you could take back, it says more about what was triggered in you than about them. Here you rewind the moment, understand what happened, and plan how you’ll respond next time."
+    }
   },
   {
     "id": "comehome",
@@ -142,7 +182,11 @@
     "title": "Coming Home",
     "desc": "Back into your body when you’re stuck in your head, overthinking or heading for a meltdown.",
     "href": "/tools/coming-home.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 4 · Lesson 1: Association vs Disassociation",
+      "text": "If you’re in your head, you’re dead! When you’re overthinking or heading down the doom hole, this brings you back into your body, where you can actually feel and move through it."
+    }
   },
   {
     "id": "blueprint",
@@ -151,7 +195,11 @@
     "title": "Emotional Blueprint",
     "desc": "Map your emotional patterns and start rewriting them.",
     "href": "/tools/emotional-blueprint.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 4 · Lessons 2 to 4: Emotions",
+      "text": "You’ve learned how emotions work and why we suppress them. Here you map your own emotional patterns, so you can process them instead of being run by them, and start rewriting them."
+    }
   },
   {
     "id": "star",
@@ -160,6 +208,10 @@
     "title": "North Star & STAR Goals",
     "desc": "Who you’re becoming, and the goals that get you there.",
     "href": "StarHome.dc.html",
-    "target": "_self"
+    "target": "_self",
+    "intro": {
+      "from": "Week 7 · North Star + STAR Goals",
+      "text": "Who you’re becoming, and the goals that get you there. Everything you’ve rewired so far points here."
+    }
   }
 ]

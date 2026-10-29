@@ -996,7 +996,7 @@
 
   /* ---------- course content (what Sav edits) ---------- */
   function defaultCourse() { var d = window.BT_COURSE_DEFAULT; return JSON.parse(JSON.stringify(d && d.weeks ? d : { weeks: [] })); }
-  function courseData() { var c = S.settings && S.settings.course; return c && c.weeks && c.weeks.length ? c : defaultCourse(); }
+  function courseData() { var c = S.settings && S.settings.course; if (c && c.weeks && c.weeks.length && window.BT_PATCH_COURSE) window.BT_PATCH_COURSE(c); return c && c.weeks && c.weeks.length ? c : defaultCourse(); }
   function lessonIndex() { var m = {}; courseData().weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { m[l.id] = { w: w, l: l }; }); }); return m; }
   function weekLabel(w) { return w.week === 0 ? w.title : 'Week ' + w.week + ' · ' + w.title; }
   function weeksOpenFor(c) {
@@ -1040,7 +1040,7 @@
     if (ids.length) {
       var order = []; courseData().weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { if (byLesson[l.id]) order.push(l.id); }); });
       ids.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
-      out.push(h('div', { class: 'ad-block' }, [h('p', { class: 'ad-bk', text: 'Their journal' })].concat(order.map(function (id) {
+      out.push(h('div', { class: 'ad-block' }, [h('p', { class: 'ad-bk', text: 'Their Becoming Notebook' })].concat(order.map(function (id) {
         var f = idx[id];
         return h('div', { class: 'jr-l' }, [h('b', { class: 'jr-t', text: f ? f.l.title : id }), f ? h('span', { class: 'ad-muted', text: weekLabel(f.w) }) : null].concat(byLesson[id].sort(function (a, b) { return a.i === 'n' ? 1 : b.i === 'n' ? -1 : a.i - b.i; }).map(function (x) {
           var q = x.i === 'n' ? 'Their notes' : f && f.l.prompts && f.l.prompts[+x.i] ? f.l.prompts[+x.i][0] : 'Question ' + (+x.i + 1);
@@ -1159,7 +1159,7 @@
             h('label', { class: 'ad-field' }, ['Vimeo link', vim, vNote, l.video && !l.vimeo ? h('span', { class: 'ad-muted', text: 'Until you add one, students see the video copied from Stan.' }) : null]),
             (S.vimeoList || []).length ? (function () { var sel = h('select', { class: 'bt-in sm', 'aria-label': 'Choose a video from your Vimeo' }, [h('option', { value: '', text: 'Or choose from your Vimeo…' })].concat(S.vimeoList.map(function (v) { return h('option', { value: v.link, text: v.name + ' (' + Math.max(1, Math.round(v.duration / 60)) + ' min)' }); }))); sel.addEventListener('change', function () { if (!sel.value) return; l.vimeo = sel.value; l.transcript = l.trSrc === 'vimeo' ? '' : l.transcript; dirty(); rerender(); }); return sel; })() : null,
             h('label', { class: 'ad-field' }, ['Description (shows under the video)', input(l, 'desc', { rows: '4', placeholder: 'What this lesson is about, what to do after watching…' }, true)]),
-            h('div', { class: 'ad-field' }, ['Journal questions (students type their answers under the video)',
+            h('div', { class: 'ad-field' }, ['Becoming Notebook questions (students type their answers under the video)',
               h('div', { class: 'cb-qs' }, l.prompts.map(function (q, qi) {
                 var qa = h('textarea', { class: 'bt-in ad-ta cb-q', rows: '2', placeholder: 'The question' }); qa.value = q[0] || '';
                 qa.addEventListener('input', function () { q[0] = qa.value; dirty(); });
@@ -1200,7 +1200,7 @@
     return h('section', { class: 'ad-sec' }, [
       h('div', { class: 'cb-bar' }, [h('div', null, [h('h2', { class: 'ad-h2', text: 'Your course' }), status]), saveBtn]),
       vCard,
-      h('p', { class: 'ad-text', text: 'Students see every week and lesson, locked until they get there. A lesson unlocks as soon as they’ve finished the one before it, so they go at their own pace. Activities never hold them up: they can move on and the activity stays un-ticked, with reminders on their home page to go back and do it. Tap a lesson to add its Vimeo link, description, journal questions, resources and transcript. Nothing changes for students until you tap Save course.' })
+      h('p', { class: 'ad-text', text: 'Students see every week and lesson, locked until they get there. A lesson unlocks as soon as they’ve finished the one before it, so they go at their own pace. Activities never hold them up: they can move on and the activity stays un-ticked, with reminders on their home page to go back and do it. Tap a lesson to add its Vimeo link, description, Becoming Notebook questions, resources and transcript. Nothing changes for students until you tap Save course.' })
     ].concat(weeks).concat([
       h('button', { type: 'button', class: 'bt-btn ghost cb-addw', text: '+ Add a week', onclick: function () { var n = C.weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 0) + 1; C.weeks.push({ week: n, title: 'New week', res: [], lessons: [] }); dirty(); rerender(); } })
     ]));
@@ -1229,7 +1229,7 @@
     return h('section', { class: 'ad-sec' }, [
       h('div', { class: 'ad-card' }, [h('h2', { class: 'ad-h2', text: 'Open loops on the home page' }),
         h('p', { class: 'ad-text', text: 'The app already nudges students automatically when:' }),
-        h('div', { class: 'ad-chips' }, ['a new week opens', 'they haven’t been in for 3+ days', 'journal questions are waiting from lessons they’ve watched', 'intentions aren’t set', '1:1 set-up steps are unfinished'].map(function (t) { return h('span', { class: 'ad-chip on', text: t }); })),
+        h('div', { class: 'ad-chips' }, ['a new week opens', 'they haven’t been in for 3+ days', 'Becoming Notebook entries are waiting from lessons they’ve watched', 'intentions aren’t set', '1:1 set-up steps are unfinished'].map(function (t) { return h('span', { class: 'ad-chip on', text: t }); })),
         h('p', { class: 'ad-text', text: 'Add your own announcements here. Students can tick them off once they’ve seen them.' })]),
       list,
       h('div', { class: 'ad-topbtns' }, [

@@ -37,7 +37,7 @@
   var DEF = null;
   function course() {
     var c = APP && APP.state.settings.course;
-    if (c && c.weeks && c.weeks.length) return c;
+    if (c && c.weeks && c.weeks.length) { if (!c.__patched && window.BT_PATCH_COURSE) { window.BT_PATCH_COURSE(c); c.__patched = 1; } return c; }
     return DEF || (DEF = fromDefault());
   }
   function allLessons() {
@@ -169,6 +169,81 @@
     return hits.sort(function (a, b) { return b.score - a.score; }).slice(0, 3).map(function (x) { return x.e; });
   }
 
+  /* ---------------- the search bubble: "find anything" ----------------
+     Floating magnifying glass. Type where you're stuck or how you're feeling and it points you to
+     the right place: your next video, your notebook, a tool, a lesson, or how to get help. */
+  var FIND_INTENTS = [
+    { re: /(lost|up to|where am i|where was i|next (video|lesson)|what('?s| is) next|which (video|lesson)|carry on|keep going|continue)/, go: function () { var nx = upNext(); return nx ? { t: 'You’re up to: ' + nx.l.title, s: (nx.w.week === 0 ? 'Introduction' : 'Week ' + nx.w.week + ' · ' + nx.w.title) + '. Tap to go straight there.', href: lessonHref(nx.l), cta: 'Take me there →' } : { t: 'You’re all caught up', s: 'Nothing waiting right now. Have a look at your course.', href: '#Course', cta: 'Open my course →' }; } },
+    { re: /(notebook|journal|entr(y|ies)|what i wrote|my answers|questions? under)/, go: function () { return { t: 'Your Becoming Notebook', s: 'Every entry from every lesson lives in My Book → Becoming Notebook. You can edit them there too.', href: '#Book', cta: 'Open my notebook →', before: function () { bookState.tab = 'journal'; bookState.day = ''; bookState.q = ''; } }; } },
+    { re: /(reps|tick|daily (list|check)|today'?s)/, go: function () { return { t: 'Today’s reps', s: 'Your daily ticks live on Home, in Today’s reps.', href: '#Dashboard', cta: 'Go to Home →' }; } },
+    { re: /(calendar|progress|streak|how far|achievement|milestone)/, go: function () { return { t: 'Your progress', s: 'My Book has your calendar, streaks and every milestone, dated.', href: '#Book', cta: 'Open My Book →' }; } },
+    { re: /(dose|dopamine|happy hormone)/, go: function () { return { t: 'Your daily DOSE', s: 'Your DOSE plan, your menu, and “Get more dopamine”.', href: '#Dose', cta: 'Open DOSE →' }; } },
+    { re: /(zoom|call|session|appointment|book (a|my) call)/, go: function () { return APP.state.tier === 'private' ? { t: 'Your calls with Sav', s: 'Your call times and Zoom link are in your profile. Zoom works best on a laptop.', href: '#Profile', cta: 'Open my calls →' } : { t: 'Want to work with Sav 1:1?', s: 'Email savannah@colourmeneurospicy.com.au and ask about the next 1:1 or live round.', href: 'mailto:savannah@colourmeneurospicy.com.au', cta: 'Email Sav →' }; } },
+    { re: /(photo|name|profile|password|log ?out|sign ?out|email address|terms|privacy|agreement|contract)/, go: function () { return { t: 'Your profile', s: 'Your photo, name, reminders, terms and your agreement all live in your profile.', href: '#Profile', cta: 'Open my profile →' }; } },
+    { re: /(notification|remind|alert|ping)/, go: function () { return { t: 'Reminders', s: 'Turn on a daily reminder in your profile, under Notifications. On iPhone, add the app to your Home Screen first.', href: '#Profile', cta: 'Set up reminders →' }; } },
+    { re: /(tour|how (does|do) (this|the app)|show me around|how it works|confus)/, go: function () { return { t: 'Take the app tour', s: 'A walk through every page and how it all connects.', tour: true, cta: 'Start the tour →' }; } },
+    { re: /(video (won'?t|not|doesn'?t)|can'?t (play|watch|hear)|no sound|buffer|black screen|loading)/, go: function () { return { t: 'Video not playing?', s: 'Check you’re online, then close the app fully and open it again. Still stuck? Try it on a laptop, or message Sav and tell her which lesson.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } },
+    { re: /(lost (my|all)|disappear|gone|not sav|didn'?t save|missing|deleted)/, go: function () { return { t: 'Something missing?', s: 'Everything saves to your account. Make sure you’re logged in with the same email, then pull down to refresh. Still missing? Message Sav.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } },
+    { re: /(home ?screen|install|app icon|add to)/, go: function () { return { t: 'Add the app to your Home Screen', s: 'iPhone, in Safari: tap the three lines left of the web address, then Share, scroll down, and tap Add to Home Screen.', href: '#Setup', cta: 'Show me the steps →' }; } },
+    { re: /(help|stuck|talk to|contact|message sav|ask sav|question for sav)/, go: function () { return { t: 'Ask Sav', s: 'Can’t find it here? Send Sav a message.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } }
+  ];
+  var CRISIS = /(suicid|kill myself|end it all|self[- ]?harm|hurt myself|don'?t want to (live|be here)|want to die)/;
+  function findSheet() {
+    if (!APP) return;
+    var old = document.getElementById('bt-find'); if (old) { old.remove(); return; }
+    var close = function () { var m = document.getElementById('bt-find'); if (m) m.remove(); document.body.classList.remove('bt-finding'); };
+    var input = h('input', { class: 'bt-in bt-find-in', id: 'bt-find-q', type: 'search', placeholder: 'Try “what video am I up to?” or “I’m overwhelmed”', 'aria-label': 'What are you looking for?', autocomplete: 'off' });
+    var out = h('div', { class: 'bt-find-out', 'aria-live': 'polite' });
+    function link(r) {
+      var a = h('a', { class: 'bt-find-r' + (r.big ? ' big' : ''), href: r.href || '#', onclick: function (e) { if (r.before) r.before(); if (r.tour) { e.preventDefault(); close(); goHref('#Dashboard'); setTimeout(appTour, 700); return; } if (/^https?:|^mailto:/.test(r.href || '')) { close(); return; } e.preventDefault(); close(); goHref(r.href); } }, [h('span', { class: 'bt-find-rt' }, [h('b', { text: r.t }), r.s ? h('span', { text: r.s }) : null]), h('span', { class: 'bt-find-go', 'aria-hidden': 'true', text: r.cta ? '' : '→' }), r.cta ? h('span', { class: 'bt-find-cta', text: r.cta }) : null]);
+      if (/^https?:/.test(r.href || '')) { a.target = '_blank'; a.rel = 'noopener'; }
+      return a;
+    }
+    function group(title, rows) { if (!rows.length) return; out.appendChild(h('span', { class: 'bt-find-h', text: title })); rows.forEach(function (r) { out.appendChild(link(r)); }); }
+    function chips() {
+      out.appendChild(h('span', { class: 'bt-find-h', text: 'Try one of these' }));
+      out.appendChild(h('div', { class: 'bt-find-chips' }, ['What video am I up to?', 'Where are my notebook entries?', 'I’m overwhelmed', 'I can’t sleep', 'My video won’t play', 'How does this app work?'].map(function (c) { return h('button', { class: 'bt-find-chip', type: 'button', text: c, onclick: function () { input.value = c; run(); } }); })));
+    }
+    function run() {
+      var q = tx(input.value).toLowerCase().replace(/[’‘]/g, "'"); out.innerHTML = '';
+      if (!q) { chips(); return; }
+      if (CRISIS.test(q)) { out.appendChild(h('div', { class: 'bt-find-care' }, [h('b', { text: 'You don’t have to hold this on your own.' }), h('span', { text: 'If you’re in danger right now, call 000. You can talk to someone any time at Lifeline on 13 11 14, or Beyond Blue on 1300 22 4636. Then let Sav know how you’re going.' }), h('a', { class: 'bt-btn lime', href: 'tel:131114', text: 'Call Lifeline 13 11 14' })])); return; }
+      var quick = FIND_INTENTS.filter(function (x) { return x.re.test(q); }).slice(0, 2).map(function (x) { var r = x.go(); r.big = true; return r; });
+      group('Here you go', quick);
+      // feelings + problems: what helps (tools, lessons, a tip)
+      var STOP = ['what', 'video', 'videos', 'your', 'with', 'have', 'this', 'that', 'keep', 'feel', 'feeling', 'want', 'need', 'about', 'where', 'when', 'how', 'the', 'and', 'can', 'cant', "can't", 'dont', "don't", 'wont', "won't", 'just', 'really', 'some', 'from', 'into', 'like', 'lesson', 'lessons', 'app', 'help', 'find', 'does', 'work', 'am', 'are', 'my', 'me', 'i\'m', 'im'];
+      var words = q.split(/[^a-z0-9']+/).filter(function (w) { return w.length > 2 && STOP.indexOf(w) < 0; });
+      if (quick.length) words = words.filter(function (w) { return w.length > 5; });
+      var kb = (window.BT_SEARCH_DB || []).map(function (e) { var sc = 0; (e.kw || []).forEach(function (k) { if (q.indexOf(k) >= 0) sc += k.length > 5 ? 3 : 2; }); words.forEach(function (w) { if ((e.label || '').toLowerCase().indexOf(w) >= 0) sc += 1; }); return { e: e, sc: sc }; }).filter(function (x) { return x.sc > 1; }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 2);
+      kb.forEach(function (x) {
+        var e = x.e, rows = [];
+        out.appendChild(h('div', { class: 'bt-find-kb' }, [h('b', { text: e.label }), h('span', { text: e.line }), e.tip ? h('span', { class: 'bt-find-tip', text: 'Right now: ' + e.tip }) : null]));
+        (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = !r.week || isOpen(r.week); rows.push(op ? { t: r.title, s: r.desc, href: resHref(r) } : { t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }); });
+        (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { t: 'Rewatch: ' + f.l.title, s: 'Week ' + f.w.week + ' · ' + f.w.title, href: lessonHref(f.l) } : { t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
+        rows.forEach(function (r) { out.appendChild(link(r)); });
+      });
+      // lessons and tools by name
+      var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { return lessonOpen(x.l.id) ? { t: x.l.title, s: x.w.week === 0 ? 'Introduction' : 'Week ' + x.w.week + ' · ' + x.w.title, href: lessonHref(x.l) } : { t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
+      var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = !r.week || isOpen(r.week); return op ? { t: r.title, s: r.desc, href: resHref(r) } : { t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }; });
+      group('In the course', ls); group('Tools', rs);
+      // from inside the videos (transcripts)
+      var tr = search(q).filter(function (e) { return !ls.some(function (l) { return e.watch && l.href === lessonHref(findLesson(e.watch[0]).l); }); }).map(function (e) { var f = findLesson(e.watch[0]); return { t: e.label, s: e.line, href: lessonHref(f.l) }; });
+      group('Mentioned in a video', tr);
+      if (!out.children.length) { out.appendChild(h('p', { class: 'bt-find-none', text: 'Hmm, nothing for that yet. Try different words, or ask Sav.' })); out.appendChild(link({ t: 'Ask Sav', s: 'Send her a message.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' })); }
+    }
+    var t; input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(run, 180); });
+    var box = h('div', { id: 'bt-find', class: 'bt-find', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Find anything', onclick: function (e) { if (e.target === box) close(); } }, [
+      h('div', { class: 'bt-find-card' }, [
+        h('div', { class: 'bt-find-top' }, [h('span', { class: 'bt-find-k', text: '🔎 Find anything' }), h('button', { class: 'bt-find-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close })]),
+        h('b', { class: 'bt-find-t', text: 'What are you looking for?' }),
+        h('span', { class: 'bt-find-s', text: 'Lost, stuck, or something’s going on for you? Type it how you’d say it.' }),
+        input, out
+      ])
+    ]);
+    document.body.appendChild(box); document.body.classList.add('bt-finding');
+    run(); setTimeout(function () { input.focus(); }, 60);
+  }
+
   /* ---------------- avatar + characters ---------------- */
   var CHARS = [
     { id: 'spark', name: 'Spark', bg: '#F1F9A6', fg: '#D3302B', draw: '<path class="cb" d="M32 8C33.6 22 42 30.4 56 32C42 33.6 33.6 42 32 56C30.4 42 22 33.6 8 32C22 30.4 30.4 22 32 8Z" fill="#D3302B"/>' },
@@ -196,11 +271,14 @@
   }
   /* Top navigation: always at the top of every page */
   var NAV = [['Home', '#Dashboard', /^(Dashboard|Setup|Intentions)/], ['Course', '#Course', /^(Course|Lesson)/], ['My Book', '#Book', /^(Book|Journal)/], ['Resources', '#Resources', /^Resources/]];
+  // a skinny branding banner above the menu, so the name shows on every screenshot and screen recording
+  function brandStrip() { return h('div', { class: 'bt-brand', 'aria-hidden': 'true' }, [h('span', { class: 'bt-brand-n', text: 'Colour Me Neurospicy' }), h('span', { class: 'bt-brand-s', text: 'Neurodivergent breakthrough program' })]); }
   function renderTopNav(route) {
     var key = String(route || '').replace('.dc.html', '');
     var old = document.getElementById('bt-top'); if (old) old.remove();
     var av = document.getElementById('bt-avbtn'); if (av) av.remove();
     var nav = h('nav', { id: 'bt-top', class: 'bt-top', 'aria-label': 'Main' }, [
+      brandStrip(),
       h('div', { class: 'bt-top-in' }, NAV.map(function (n) {
         var on = n[2].test(key);
         return h('a', { class: 'bt-top-i' + (on ? ' on' : ''), href: n[1], 'aria-current': on ? 'page' : null, text: n[0] });
@@ -235,7 +313,7 @@
     // journal questions waiting from lessons they've finished
     var waiting = 0, firstW = null;
     allLessons().forEach(function (x) { if (!p.done[x.l.id]) return; (x.l.prompts || []).forEach(function (q, i) { if (!tx((d.j || {})[x.l.id + '_' + i])) { waiting++; if (!firstW) firstW = x.l.id; } }); });
-    if (waiting) out.push({ id: 'journal-' + waiting, kind: 'journal', title: waiting + ' journal question' + (waiting === 1 ? '' : 's') + ' waiting', text: 'From lessons you’ve watched. Writing it down is where the rewiring sticks.', href: '#Lesson-' + firstW, cta: 'Answer now' });
+    if (waiting) out.push({ id: 'journal-' + waiting, kind: 'journal', title: waiting + ' Becoming Notebook entr' + (waiting === 1 ? 'y' : 'ies') + ' waiting', text: 'From lessons you’ve watched. Writing it down is where the rewiring sticks.', href: '#Lesson-' + firstW, cta: 'Answer now' });
     // her daily DOSE plan
     if (window.BT_VAGAL) { try { var dsd = window.BT_VAGAL.doseData(), tdk = dayKey(Date.now()), dn0 = dsd.plan.filter(function (x) { return (dsd.days[tdk] || {})[x]; }).length; if (dsd.plan.length && dn0 < dsd.plan.length) out.push({ id: 'dose-' + tdk, kind: 'act', title: 'Today’s DOSE: ' + dn0 + ' of ' + dsd.plan.length, text: dn0 ? 'Nice start. One more little hit of the good stuff?' : 'Your daily plan is ready. Tick off just one to start.', href: '#Dose', cta: 'Open my DOSE plan' }); } catch (e) {} }
     // activities she skipped past: the doing is what creates the change
@@ -345,7 +423,7 @@
     oneStart(slot);
     var c = continueCard(), r = reminderList();
     var pages = 0; try { pages = bookEntries().length; } catch (e) {}
-    var bk = h('a', { class: 'bt-bookln', href: '#Book' }, [icon('star', 'bt-bookln-ic'), h('span', null, [h('b', { text: 'Your Becoming Book' }), h('span', { text: 'Your journal + ' + pages + ' page' + (pages === 1 ? '' : 's') + ' of your story' })]), h('span', { class: 'bt-bookln-go', text: 'Open →' })]);
+    var bk = h('a', { class: 'bt-bookln', href: '#Book' }, [icon('star', 'bt-bookln-ic'), h('span', null, [h('b', { text: 'Your Becoming Book' }), h('span', { text: 'Your notebook + ' + pages + ' page' + (pages === 1 ? '' : 's') + ' of your story' })]), h('span', { class: 'bt-bookln-go', text: 'Open →' })]);
     if (c) slot.appendChild(c);
     if (window.BT_VAGAL && window.BT_VAGAL.repsCard) { try { slot.appendChild(window.BT_VAGAL.repsCard()); } catch (e) {} }
     var tw = thisWeek(); if (tw) slot.appendChild(tw);
@@ -953,7 +1031,7 @@
       h('div', { class: 'bt-jy-stats' }, [
         h('div', null, [h('b', { text: String(st.done) }), h('span', { text: 'lessons done' })]),
         h('div', null, [h('b', { text: String(weeksDone) }), h('span', { text: weeksDone === 1 ? 'part complete' : 'parts complete' })]),
-        h('div', null, [h('b', { text: String(Object.keys((comp().j) || {}).filter(function (k) { return tx(comp().j[k]); }).length) }), h('span', { text: 'journal answers' })])
+        h('div', null, [h('b', { text: String(Object.keys((comp().j) || {}).filter(function (k) { return tx(comp().j[k]); }).length) }), h('span', { text: 'notebook entries' })])
       ])
     ]);
     setTimeout(function () { var here = map.querySelector('.bt-jy-n.here'); if (here && map.scrollWidth > map.clientWidth) { var bb = here.getBBox(); map.scrollLeft = Math.max(0, bb.x - map.clientWidth / 2 + 20); } }, 60);
@@ -1073,18 +1151,20 @@
   function lessonHref(l) {
     if ((l.res || []).length && IN_PAGE[l.res[0]]) { var ri = resource(l.res[0]); if (ri) return resHref(ri); }
     if ((l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var r = resource(l.res[0]); if (r) return resHref(r); }
+    // activities and embodiments always open the activity itself, never an in-between lesson page
+    if ((l.res || []).length && /^(activity|embodiment)/i.test(l.title || '')) { var ra = resource(l.res[0]); if (ra) return resHref(ra); }
     return '#Lesson-' + l.id;
   }
   function isActivityCard(l) { return (l.res || []).length && ((!tx(l.video) && !tx(l.vimeo)) || /^(activity|embodiment)/i.test(l.title)); }
   function activityCard(l, li, dn) {
     var r = resource(l.res[0]); if (!r) return null;
     var hasVid = tx(l.video) || tx(l.vimeo);
-    var card = li.open ? h('a', { class: 'bt-act' + (dn ? ' done' : ''), href: hasVid && !IN_PAGE[r.id] ? '#Lesson-' + l.id : resHref(r), style: '--cv:' + (r.cover || '#FFF4EE') }) : h('div', { class: 'bt-act lock', style: '--cv:' + (r.cover || '#FFF4EE') });
+    var card = li.open ? h('a', { class: 'bt-act' + (dn ? ' done' : ''), href: lessonHref(l), style: '--cv:' + (r.cover || '#FFF4EE') }) : h('div', { class: 'bt-act lock', style: '--cv:' + (r.cover || '#FFF4EE') });
     card.appendChild(h('span', { class: 'bt-act-art' }, [emblem(r.id)]));
     card.appendChild(h('span', { class: 'bt-act-b' }, [
       h('span', { class: 'bt-act-k', text: l.title.replace(/:.*/, '') }),
       h('b', { text: r.title }),
-      h('span', { class: 'bt-act-d', text: li.open ? (hasVid && !IN_PAGE[r.id] ? 'Watch the video, then open ' + r.title + '.' : (r.desc || '')) : li.why }),
+      h('span', { class: 'bt-act-d', text: li.open ? (hasVid && !IN_PAGE[r.id] && lessonHref(l).indexOf('#Lesson-') === 0 ? 'Watch the video, then open ' + r.title + '.' : (r.desc || '')) : li.why }),
       li.open && !dn && skippedActs().some(function (x) { return x.l.id === l.id; }) ? h('span', { class: 'bt-act-wait', text: 'Keep coming back to this one. The doing creates the change.' }) : null
     ]));
     if (r.parts && r.parts.length && li.open) { var wrapP = h('div', { class: 'bt-act-group' }); setTimeout(function () { if (card.parentNode && !card.__grouped) { card.__grouped = true; card.parentNode.insertBefore(wrapP, card); wrapP.appendChild(card); wrapP.appendChild(h('div', { class: 'bt-act-parts' }, r.parts.map(function (pid) { var pr = resource(pid); if (!pr) return null; var op = pr.week <= 1 || isOpen(pr.week); return op ? h('a', { class: 'bt-act-part', href: resHref(pr) }, [emblem(pid), h('span', { text: pr.title })]) : h('span', { class: 'bt-act-part lock' }, [emblem(pid), h('span', { text: pr.title + ' · Week ' + pr.week })]); }))); } }, 0); }
@@ -1213,39 +1293,80 @@
       else if (next && !prog().done[id] && !l.optional) nextSlot.appendChild(h('span', { class: 'bt-next-hint', text: 'Mark this as done to unlock the next lesson.' }));
       else if (next) nextSlot.appendChild(h('span', { class: 'bt-next-hint', text: 'Next: ' + next.l.title + ' · ' + lessonWhy(next.l.id) }));
     };
-    var doneBtn = h('button', { id: 'bt-done', class: 'bt-btn ' + (p.done[id] ? 'ghost' : 'lime'), type: 'button', text: p.done[id] ? '✓ Done' : 'Mark as done', onclick: function () { markDone(id, !prog().done[id]); } });
+    var doneBtn = h('button', { id: 'bt-done', class: 'bt-btn ' + (p.done[id] ? 'ghost' : 'lime'), type: 'button', text: p.done[id] ? '✓ Done' : 'Mark as done', onclick: function () {
+      if (prog().done[id]) { markDone(id, false); return; }
+      saveNotebook();
+      if (notebookEmpty()) nbNudge('top', function () { markDone(id, true); }); else markDone(id, true);
+    } });
     onDone = function (now) {
       doneBtn.textContent = now ? '✓ Done' : 'Mark as done'; doneBtn.className = 'bt-btn ' + (now ? 'ghost' : 'lime'); drawNext();
-      if (now && next && lessonOpen(next.l.id)) APP.toast('Nice work. Unlocked: ' + next.l.title);
-      if (now) setTimeout(celebrate, 300);
+      if (now && next && lessonOpen(next.l.id) && !leaving) APP.toast('Nice work. Unlocked: ' + next.l.title);
+      if (now && !leaving) setTimeout(celebrate, 300);
     };
     drawNext();
     wrap.appendChild(h('div', { class: 'bt-les-actions' }, [doneBtn, nextSlot]));
     if (tx(l.desc) || tx(l.tip)) wrap.appendChild(h('div', { class: 'bt-desc' }, [h('p', { text: tx(l.desc) || tx(l.tip) })]));
     if (id === PROOF_LESSON) { wrap.appendChild(proofHome(false, true)); wrap.appendChild(h('a', { class: 'bt-btn ghost', href: '#Proof', text: 'Explore the proof part of your Becoming Book →' })); }
     var lres = (l.res || []).map(resource).filter(Boolean);
+    // a lesson followed by an activity: show that activity here too, so they know what's coming
+    var nextAct = next && isActivityCard(next.l) && !lres.length ? resource(next.l.res[0]) : null;
     if (lres.length) wrap.appendChild(h('section', { class: 'bt-lres' }, [h('h2', { text: lres.length > 1 ? 'Open the activities' : 'Open the activity' })].concat(lres.map(function (r) {
       return h('a', { class: 'bt-rcard', href: resHref(r), style: 'background:' + (r.cover || '#FFF4EE') }, [h('b', { text: r.title + ' →' }), h('span', { text: r.desc || '' })]);
     }))));
-    // journal prompts (same answers as the Journal tab)
-    var prompts = l.prompts || [], j = comp().j || {};
+    else if (nextAct) wrap.appendChild(h('section', { class: 'bt-lres' }, [h('h2', { text: 'Your activity after this lesson' }), h('p', { class: 'bt-jr-s', text: 'Do your Becoming Notebook entry first, tap Done, and I’ll take you straight to it.' }),
+      h('a', { class: 'bt-rcard', href: resHref(nextAct), style: 'background:' + (nextAct.cover || '#FFF4EE'), onclick: function () { if (!prog().done[id]) { leaving = true; saveNotebook(); markDone(id, true); } } }, [h('b', { text: nextAct.title + ' →' }), h('span', { text: nextAct.desc || '' })])]));
+    // Becoming Notebook entry (same answers as the Becoming Notebook in My Book)
+    var prompts = l.prompts || [], j = comp().j || {}, boxes = [];
+    function saveNotebook() { boxes.forEach(function (b) { if ((comp().j || {})[b[0]] !== b[1].value) setJournal(b[0], b[1].value); }); }
+    function notebookEmpty() { return prompts.length > 0 && boxes.some(function (b) { return /_\d+$/.test(b[0]) && !tx(b[1].value); }); }
+    function goOn() {
+      leaving = true; saveNotebook();
+      if (!prog().done[id]) markDone(id, true);
+      var nx = nextAfter(id), act = nx && isActivityCard(nx);
+      try { sessionStorage.setItem('bt-scrollto', nx ? lessonHref(nx) : lessonHref(l)); if (act) sessionStorage.setItem('bt-scrollto-act', '1'); } catch (e) {}
+      var pd = profileData(), wrote = prompts.length && boxes.some(function (b) { return tx(b[1].value); });
+      if (wrote && !pd.nbTour) { pd.nbTour = Date.now(); wr(K.prof, pd); notebookTour(id, function () { setTimeout(celebrate, 400); goHref('#Course'); }); return; }
+      goHref('#Course'); setTimeout(celebrate, 600);
+    }
+    function nbNudge(kind, later) {
+      var old = document.getElementById('bt-nbn'); if (old) old.remove();
+      var close = function () { var m = document.getElementById('bt-nbn'); if (m) m.remove(); };
+      document.body.appendChild(h('div', { id: 'bt-nbn', class: 'bt-party', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Your Becoming Notebook entry' }, [
+        h('div', { class: 'bt-party-card bt-vdone-card' }, [
+          h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+          h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '✎' }),
+          h('h2', { text: kind === 'top' ? 'Don’t forget your Becoming Notebook entry' : 'You haven’t filled in your Becoming Notebook entry' }),
+          h('p', { text: 'Writing it down is where the rewiring sticks. It only takes a couple of minutes.' }),
+          h('div', { class: 'bt-row bt-nbn-btns' }, [
+            h('button', { class: 'bt-btn ghost', type: 'button', text: 'Remind me later', onclick: function () { close(); later(); } }),
+            h('button', { class: 'bt-btn lime', type: 'button', text: 'Do it now', onclick: function () { close(); var jb = document.querySelector('.bt-jr'); if (jb) { jb.scrollIntoView({ behavior: 'smooth', block: 'start' }); var empty = boxes.filter(function (b) { return !tx(b[1].value); })[0]; setTimeout(function () { (empty ? empty[1] : boxes[0][1]).focus({ preventScroll: true }); }, 500); jb.classList.add('bt-here'); setTimeout(function () { jb.classList.remove('bt-here'); }, 2600); } } })
+          ])
+        ])
+      ]));
+    }
+    var leaving = false;
     if (prompts.length || l.notes) {
-      var jbox = h('section', { class: 'bt-jr' }, [h('h2', { text: 'Your journal' }), h('p', { class: 'bt-jr-s', text: 'Type your answers straight in. They save as you go and show up in your Journal tab, and anything you change there shows up here.' })]);
+      var jbox = h('section', { class: 'bt-jr' }, [h('span', { class: 'bt-jr-k', text: '✎ Becoming Notebook' }), h('h2', { text: 'Your Becoming Notebook entry' }), h('p', { class: 'bt-jr-s', text: 'Type straight in. It saves as you go and lives in your Becoming Notebook in My Book, so you can look back and see who you’re becoming.' })]);
       prompts.forEach(function (q, i) {
         var key = id + '_' + i, ta = h('textarea', { id: 'jq-' + key, rows: '4', placeholder: 'Write whatever comes up…' });
-        ta.value = j[key] || '';
+        ta.value = j[key] || ''; boxes.push([key, ta]);
         var t; ta.addEventListener('input', function () { clearTimeout(t); var v = ta.value; t = setTimeout(function () { setJournal(key, v); }, 400); });
         ta.addEventListener('blur', function () { setJournal(key, ta.value); });
         jbox.appendChild(h('label', { class: 'bt-q', for: 'jq-' + key }, [h('b', { text: q[0] }), q[1] ? h('span', { class: 'bt-q-n', text: q[1] }) : null]));
         jbox.appendChild(ta);
       });
       if (l.notes) {
-        var nk = id + '_n', nt = h('textarea', { id: 'jq-' + nk, rows: '4', placeholder: 'Notes from this lesson…' }); nt.value = j[nk] || '';
+        var nk = id + '_n', nt = h('textarea', { id: 'jq-' + nk, rows: '4', placeholder: 'Notes from this lesson…' }); nt.value = j[nk] || ''; boxes.push([nk, nt]);
         nt.addEventListener('input', function () { setJournal(nk, nt.value); });
         jbox.appendChild(h('label', { class: 'bt-q', for: 'jq-' + nk }, [h('b', { text: 'My notes' })])); jbox.appendChild(nt);
       }
       wrap.appendChild(jbox);
     }
+    // a plain Done at the bottom: notebook entry → Done → on to what's next (the activity card, if there is one)
+    wrap.appendChild(h('div', { class: 'bt-les-end' }, [h('button', { class: 'bt-btn lime bt-les-done', type: 'button', text: 'Done', onclick: function (e) {
+      saveNotebook(); sparkleBurst(e.currentTarget);
+      if (notebookEmpty()) nbNudge('done', goOn); else goOn();
+    } })]));
     wrap.appendChild(h('div', { class: 'bt-les-nav' }, [
       prev ? h('a', { href: lessonHref(prev.l), text: '← ' + prev.l.title }) : h('span'),
       next && lessonOpen(next.l.id) ? h('a', { href: lessonHref(next.l), text: next.l.title + ' →' }) : null
@@ -1260,7 +1381,7 @@
      Her whole journey, dated: milestones, activities she saved, journal answers, wins, proof she's
      collected, and "before vs now" where her answers have changed. */
   var KINDS = {
-    milestone: ['Milestone', '#6B1510', 'star'], activity: ['Activity', '#F4C2F7', 'tick'], journal: ['Journal', '#FFF4EE', 'play'],
+    milestone: ['Milestone', '#6B1510', 'star'], activity: ['Activity', '#F4C2F7', 'tick'], journal: ['Notebook entry', '#FFF4EE', 'play'],
     win: ['Wins & joy', '#E4F27A', 'star'], proof: ['Proof', '#E4F27A', 'tick'], vagal: ['Vagal tone', '#BFE3D0', 'play'], change: ['Before & now', '#F28C3B', 'star']
   };
   function parseDate(v) { if (!v) return null; var n = typeof v === 'number' ? v : Date.parse(v); return isNaN(n) ? null : n; }
@@ -1287,7 +1408,7 @@
     Object.keys(j).forEach(function (key) {
       var val = tx(j[key]); if (!val) return;
       var m = /^(.*)_(\d+|n)$/.exec(key); if (!m) return;
-      var f = idx[m[1]], q = m[2] === 'n' ? 'My notes' : f && f.l.prompts && f.l.prompts[+m[2]] ? f.l.prompts[+m[2]][0] : 'Journal';
+      var f = idx[m[1]], q = m[2] === 'n' ? 'My notes' : f && f.l.prompts && f.l.prompts[+m[2]] ? f.l.prompts[+m[2]][0] : 'Becoming Notebook entry';
       var log = jl[key] || {};
       push({ kind: 'journal', key: key, at: log.at || null, title: q, text: val, sub: f ? f.l.title : '', lesson: f ? f.l.id : '' });
       if (log.first && tx(log.first) !== val && log.firstAt) push({ kind: 'change', key: key, at: log.at || null, title: q, before: log.first, beforeAt: log.firstAt, text: val, sub: f ? f.l.title : '' });
@@ -1304,7 +1425,7 @@
   function journalEditor(key, val, onDone) {
     var ta = h('textarea', { class: 'bt-in bk-ta', rows: '4', 'aria-label': 'Your answer' }); ta.value = val || '';
     return h('div', { class: 'bk-edit' }, [ta, h('div', { class: 'bt-row' }, [
-      h('button', { class: 'bt-btn lime', type: 'button', text: 'Save', onclick: function () { var v = tx(ta.value); setJournal(key, v); APP.toast('Saved to your journal. It’s under the lesson too.'); onDone(); } }),
+      h('button', { class: 'bt-btn lime', type: 'button', text: 'Save', onclick: function () { var v = tx(ta.value); setJournal(key, v); APP.toast('Saved to your Becoming Notebook. It’s under the lesson too.'); onDone(); } }),
       val ? h('button', { class: 'bt-btn ghost', type: 'button', text: 'Cancel', onclick: function () { onDone(true); } }) : null])]);
   }
   function waitingPrompts() {
@@ -1317,32 +1438,65 @@
   // A short, calm tour: just the four places they'll use. Nothing that won't make sense yet.
   function tourSteps() {
     var one = APP.state.tier === 'private', first = tx((APP.state.profile || {}).full_name).split(' ')[0];
+    var reps = 'Today’s reps: the key to rewiring. One tap each day for your DOSE, breathwork, a pause, moving your body, water and a win. Each part switches on as you do its activity in Week 1, and every tick lands in My Book as evidence you’re growing.';
     var steps = [
-      { route: '#Dashboard', title: 'Nice work' + (first ? ', ' + first : '') + '!', text: one ? 'You’ve finished the Introduction. Now let’s get your bearings: a quick look around, about 30 seconds.' : 'You’ve done the start-here bit. Now a quick look around: just four places, about 30 seconds.', photo: true },
-      { route: '#Dashboard', sel: '#bt-top a[href="#Dashboard"]', title: 'Home', text: 'This is Home, your daily base.' },
-      { route: '#Dashboard', sel: '.bt-cont', title: 'Your next step lives here', text: 'Your next lesson always sits right here, so you never have to hunt for your place. The rest of Home will make sense as you go.' },
-      { route: '#Dashboard', sel: '#bt-top a[href="#Course"]', title: 'Your course', text: 'Tap here any time to see your whole course. Let’s have a look.' },
-      { route: '#Course', sel: '.bt-wk', title: 'Your course', text: 'Every lesson, in order. Each one opens when you finish the one before' + (one ? ', and I open each new week for you.' : '.') + ' The coloured cards with a logo are activities: that’s where you do the work. Have a scroll.' },
-      { route: '#Course', sel: '#bt-top a[href="#Book"]', title: 'My Book', text: 'Next, your Becoming Book.' },
-      { route: '#Book', sel: '.bt-bkh', title: 'Your Becoming Book', text: 'Your journal and your story, dated. Lessons, activities and wins land here by themselves, so it fills up as you go.' },
-      { route: '#Book', sel: '#bt-top a[href="#Resources"]', title: 'Resources', text: 'Next, Resources.' },
-      { route: '#Resources', sel: '.srch', title: 'Resources', text: 'Every tool you unlock lives here. Not sure what you need? Type how you’re feeling and it’ll point you to what helps.' }
+      { route: '#Dashboard', title: 'Nice work' + (first ? ', ' + first : '') + '!', text: (one ? 'You’ve finished the Introduction. ' : 'You’ve done the start-here bit. ') + 'Now a proper look around: every page, each part of it, and how it all connects. About two minutes.', photo: true },
+      { route: '#Dashboard', sel: '#bt-top .bt-top-in', title: 'Your menu', text: 'Four places: Home, Course, My Book and Resources. Your profile is the circle on the right. It’s always at the top, wherever you are.' },
+      { route: '#Dashboard', sel: '#app header', title: 'Home', text: 'Home is your daily base. Open the app, start here. Let’s scroll down and see what’s on it.' },
+      { route: '#Dashboard', sel: '.bt-onebox', title: 'Your 1:1 bits', text: 'Anything to do with our 1:1 work shows up here first.' },
+      { route: '#Dashboard', sel: '.bt-cont', title: 'Your next step', text: 'Your next lesson always sits right here, so you never have to hunt for your place. Tap it and it takes you straight into that lesson in the Course.' },
+      { route: '#Dashboard', sel: '.rp', title: 'Today’s reps', text: reps },
+      { route: '#Dashboard', sel: '.bt-proof', title: 'Your proof portfolio', text: 'Opens in Week 2. Proof that you’re changing (wins, joy, things you did differently) goes in here and builds up in My Book.' },
+      { route: '#Dashboard', sel: '.bt-rem', title: 'Open loops', text: 'Gentle nudges for anything you started and didn’t finish: a notebook entry waiting, an activity to come back to. Tap one and it takes you there. Swipe it away with the ✕.' },
+      { route: '#Dashboard', sel: '#bt-top a[href="#Course"]', title: 'Next: your Course', text: 'This is where all the lessons live. Let’s go.' },
+      { route: '#Course', sel: '.bt-jy', title: 'Your learning journey', text: 'Where you are, where you’re heading, and how far you’ve come. It fills up as you tick lessons off.' },
+      { route: '#Course', sel: '#app .bt-cont', title: 'Pick up where you left off', text: 'The same next step you saw on Home. Home and Course always point at the same place.' },
+      { route: '#Course', pick: function () { var c = document.querySelector('#app .bt-l.cur'), d = c && c.closest('details.bt-wk'); d = d || document.querySelector('details.bt-wk:not(.lock)'); if (d && !d.open) d.open = true; return d; }, title: 'Your weeks', text: 'Every lesson, in order. The videos are the lessons. The coloured cards with a little drawing are activities: that’s where you do the work, and they live in Resources too. Your current lesson has the pulsing red play button.' },
+      { route: '#Course', sel: 'details.bt-wk.lock', title: 'What’s still to come', text: one ? 'Each new week opens for you as we go. You’ll get a little celebration when it does.' : 'Each lesson opens when you finish the one before, and the weeks open as you go.' },
+      { route: '#Course', sel: '#bt-top a[href="#Book"]', title: 'Next: My Book', text: 'Your Becoming Book. This is where everything you do ends up.' },
+      { route: '#Book', sel: '.bt-bkh', title: 'Your Becoming Book', text: 'The story of who you’re becoming, written as you go. You don’t have to add anything here yourself: it fills up from everything else.' },
+      { route: '#Book', sel: '.bk-cal', title: 'Your calendar', text: 'Every day you show up gets marked. Tap a day to see exactly what you did.' },
+      { route: '#Book', sel: '.bk-tabs', title: 'Find anything', text: 'Filter it: your Becoming Notebook entries (the questions under each lesson), wins, proof, your daily reps, saved activities and milestones.' },
+      { route: '#Book', sel: '.bk-pages', title: 'Every page, dated', text: 'Newest first. Change your mind about a notebook entry? Edit it here, and it changes under the lesson too.' },
+      { route: '#Book', sel: '#bt-top a[href="#Resources"]', title: 'Next: Resources', text: 'Your toolbox.' },
+      { route: '#Resources', sel: '.srch', title: 'What’s going on for you?', text: 'Not sure what you need? Type how you’re feeling (or tap one) and it points you to the tool that helps.' },
+      { route: '#Resources', sel: '#app section.rs', title: 'Every tool you unlock', text: 'Each activity from the Course lives here too, so you can come back to it any time, not just during the lesson. Locked ones open as you reach them.' },
+      { route: '#Resources', sel: '#bt-top .bt-top-av', title: 'Last stop: your profile', text: 'Tap the circle any time.' },
+      { route: '#Profile', sel: '.bt-pro-av', title: 'Your profile', text: 'Your photo (or character) and name.' },
+      { route: '#Profile', find: ['section.bt-card2', /Notifications/], title: 'Reminders', text: 'Turn on a daily reminder to your phone, at the time that suits you.' },
+      { route: '#Profile', sel: '.bt-calls', title: 'Your calls with me', text: 'Your call times and Zoom link live here. Zoom works best on a laptop: log in to the app on your computer and open the link from there.' },
+      { route: '#Profile', find: ['section.bt-card2', /app tour/i], title: 'This tour lives here', text: 'Want to see it again? It’s right here.' }
     ];
-    if (one) steps.push(
-      { route: '#Resources', sel: '#bt-top .bt-top-av', title: 'Your profile', text: 'Last stop: your profile.' },
-      { route: '#Profile', sel: '.bt-calls', title: 'Your calls with me', text: 'Your call times and Zoom link live here. Tapping the link opens Zoom, and it works best on a laptop: log in to the app on your computer and open the link from there.' },
-      { route: '#Course', title: 'Want to start Week 1?', text: 'Everything’s unlocked now. You don’t need to start Week 1 before our first call, but you can if you’d like a head start. Totally up to you.', last: true, cta: 'Yes, start Week 1 →', alt: 'Not yet, I’ll wait for our call' });
-    else steps.push({ route: '#Course', title: 'That’s it!', text: 'Your profile is the circle at the top right if you ever need it. Now, let’s start your first lesson.', last: true });
+    if (one) steps.push({ route: '#Course', title: 'Want to start Week 1?', text: 'Everything’s unlocked now. You don’t need to start Week 1 before our first call, but you can if you’d like a head start. Totally up to you.', last: true, cta: 'Yes, start Week 1 →', alt: 'Not yet, I’ll wait for our call' });
+    else steps.push({ route: '#Course', title: 'That’s it!', text: 'Now you know where everything lives and how it connects. Let’s start your next lesson.', last: true });
     return steps;
   }
   function appTour() {
+    runTour(tourSteps(), {
+      kicker: 'How it works', id: 'app',
+      finish: function () { var d = profileData(); d.tourDone = Date.now(); wr(K.prof, d); },
+      skip: function () { if (location.hash !== '#Course') goHref('#Course'); else APP.reload(); },
+      last: function (st) { var nx = upNext(); if (st.alt) { var w1 = allLessons().filter(function (x) { return x.w.week === 1; })[0]; if (w1) nx = w1; } try { if (nx) sessionStorage.setItem('bt-scrollto', lessonHref(nx.l)); } catch (x) {} if (location.hash === '#Course') APP.reload(); else goHref('#Course'); },
+      alt: function () { goHref('#Dashboard'); }
+    });
+  }
+  // the tour engine: one step at a time, it goes to the page, scrolls to the part and lights it up
+  // step: { route, sel | find:[sel, /text/], title, text, photo, before(), last, cta, alt, noSkip }
+  function tourTarget(st) {
+    if (st.pick) return st.pick();
+    if (st.find) { var all = document.querySelectorAll(st.find[0]); for (var i = 0; i < all.length; i++) if (st.find[1].test(all[i].textContent)) return all[i]; return null; }
+    return st.sel ? document.querySelector(st.sel) : null;
+  }
+  function runTour(steps, o) {
+    o = o || {};
     if (document.getElementById('bt-tour')) return;
     var ask0 = document.getElementById('bt-tourask'); if (ask0) ask0.remove();
-    var steps = tourSteps(), i = 0, ov = h('div', { id: 'bt-tour', class: 'bt-tour', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'How the app works' });
+    var i = 0, back = false, ov = h('div', { id: 'bt-tour', class: 'bt-tour', role: 'dialog', 'aria-modal': 'true', 'aria-label': o.label || 'How the app works' });
     var spot = h('div', { class: 'bt-tour-spot', 'aria-hidden': 'true' }), scrim = h('div', { class: 'bt-tour-scrim', 'aria-hidden': 'true' }), card = h('div', { class: 'bt-tour-card' });
     ov.appendChild(scrim); ov.appendChild(spot); ov.appendChild(card); document.body.appendChild(ov);
-    function finish() { var d = profileData(); d.tourDone = Date.now(); wr(K.prof, d); ov.remove(); document.body.classList.remove('bt-touring'); window.removeEventListener('resize', place); window.removeEventListener('scroll', place); }
-    function target(st) { if (!st.sel) return null; var el = document.querySelector(st.sel); if (!el) return null; var r = el.getBoundingClientRect(); return r.width && r.height ? el : null; }
+    document.body.classList.add('bt-touring');
+    function finish() { if (o.finish) o.finish(); ov.remove(); document.body.classList.remove('bt-touring'); window.removeEventListener('resize', place); window.removeEventListener('scroll', place); }
+    function target(st) { var el = tourTarget(st); if (!el) return null; var r = el.getBoundingClientRect(); return r.width && r.height ? el : null; }
     function place() {
       var st = steps[i], el = target(st);
       if (!el) { spot.hidden = true; scrim.hidden = false; card.className = 'bt-tour-card mid'; card.style.top = ''; card.style.bottom = ''; return; }
@@ -1359,31 +1513,64 @@
     }
     function draw() {
       var st = steps[i]; card.innerHTML = '';
-      if (st.route && location.hash.split('-')[0] !== st.route) { spot.hidden = true; scrim.hidden = false; location.hash = st.route; var tries = 0; (function waitFor() { if ((!st.sel || document.querySelector(st.sel)) || tries++ > 20) { window.scrollTo(0, 0); draw(); } else setTimeout(waitFor, 150); })(); return; }
-      // skip a step whose spot isn't on this screen
-      if (st.sel && !document.querySelector(st.sel)) { if (i < steps.length - 1) { i++; return draw(); } }
-      var el = st.sel ? document.querySelector(st.sel) : null;
-      if (el) { var r0 = el.getBoundingClientRect(); if (r0.top < 70 || r0.bottom > window.innerHeight - 40) { if (r0.height > window.innerHeight * 0.45) window.scrollBy(0, r0.top - 80); else el.scrollIntoView({ block: 'center' }); } }
+      if (st.route && location.hash.split('?')[0] !== st.route && !(st.route === '#Dashboard' && !location.hash)) {
+        spot.hidden = true; scrim.hidden = false; if (st.before) st.before(); location.hash = st.route; var tries = 0;
+        (function waitFor() { if ((location.hash === st.route && (!(st.sel || st.find || st.pick) || tourTarget(st))) || tries++ > 20) { window.scrollTo(0, 0); draw(); } else setTimeout(waitFor, 150); })(); return;
+      }
+      // skip a step whose part isn't on this screen (e.g. 1:1-only bits)
+      if ((st.sel || st.find || st.pick) && !target(st)) { if (back && i > 0) { i--; return draw(); } if (i < steps.length - 1) { i++; return draw(); } }
+      back = false;
+      var el = target(st);
+      if (el) { var r0 = el.getBoundingClientRect(), topNav = document.getElementById('bt-top'), tn = topNav ? topNav.getBoundingClientRect().bottom : 0; if (!topNav || !topNav.contains(el)) { if (r0.height > window.innerHeight * 0.45) window.scrollBy({ top: r0.top - tn - 16, behavior: 'smooth' }); else window.scrollBy({ top: r0.top + r0.height / 2 - window.innerHeight * 0.38, behavior: 'smooth' }); } }
       if (st.photo) card.appendChild(h('img', { class: 'bt-tour-photo', src: (window.BT_DEMO ? '' : '/') + 'img/sav/jump.jpg', alt: 'Sav with her arms in the air' }));
       if (st.last) { var big = h('div', { class: 'bt-tour-done', 'aria-hidden': 'true' }); big.innerHTML = '<svg viewBox="0 0 120 120"><path d="M60 8C63 42 78 57 112 60C78 63 63 78 60 112C57 78 42 63 8 60C42 57 57 42 60 8Z" fill="#F1F9A6" stroke="#1F1412" stroke-width="3" stroke-linejoin="round"/></svg>'; card.appendChild(big); }
-      var real = steps.length;
+      var many = steps.length > 1;
       card.appendChild(h('div', { class: 'bt-tour-b' }, [
-        h('span', { class: 'bt-tour-k', text: 'How it works · ' + (i + 1) + ' of ' + real }),
+        h('span', { class: 'bt-tour-k', text: (o.kicker || 'How it works') + (many ? ' · ' + (i + 1) + ' of ' + steps.length : '') }),
         h('h2', { class: 'bt-tour-t', text: st.title }), h('p', { class: 'bt-tour-p', text: st.text }),
-        h('div', { class: 'bt-tour-dots', 'aria-hidden': 'true' }, steps.map(function (_, k) { return h('span', { class: k === i ? 'on' : k < i ? 'done' : '' }); })),
+        many && steps.length <= 30 ? h('div', { class: 'bt-tour-dots', 'aria-hidden': 'true' }, steps.map(function (_, k) { return h('span', { class: k === i ? 'on' : k < i ? 'done' : '' }); })) : null,
         h('div', { class: 'bt-tour-btns' }, [
-          i > 0 && !st.last ? h('button', { class: 'bt-tour-back', type: 'button', text: 'Back', onclick: function () { i--; draw(); } }) : null,
-          h('button', { class: 'bt-tour-skip', type: 'button', text: st.last ? (st.alt || 'I’ll look around') : 'Skip tour', onclick: function () { finish(); if (st.alt) goHref('#Dashboard'); else if (location.hash !== '#Course') goHref('#Course'); else APP.reload(); } }),
-          h('button', { class: 'bt-tour-next', type: 'button', text: st.last ? (st.cta || 'Take me to my first lesson →') : i === 0 ? 'Show me around →' : 'Next →', onclick: function (e) {
-            if (st.last) { sparkleBurst(e.currentTarget); finish(); var nx = upNext(); if (st.alt) { var w1 = allLessons().filter(function (x) { return x.w.week === 1; })[0]; if (w1) nx = w1; } try { if (nx) sessionStorage.setItem('bt-scrollto', lessonHref(nx.l)); } catch (x) {} if (location.hash === '#Course') APP.reload(); else goHref('#Course'); return; }
+          i > 0 && !st.last ? h('button', { class: 'bt-tour-back', type: 'button', text: 'Back', onclick: function () { i--; back = true; draw(); } }) : null,
+          o.noSkip && !st.alt ? null : h('button', { class: 'bt-tour-skip', type: 'button', text: st.last ? (st.alt || 'I’ll look around') : 'Skip tour', onclick: function () { finish(); if (st.alt && o.alt) o.alt(st); else if (o.skip) o.skip(st); } }),
+          h('button', { class: 'bt-tour-next', type: 'button', text: st.last ? (st.cta || 'Take me to my next lesson →') : i === 0 && st.photo ? 'Show me around →' : (st.next || 'Next →'), onclick: function (e) {
+            if (st.last) { sparkleBurst(e.currentTarget); finish(); if (o.last) o.last(st); return; }
             i++; draw(); } })
         ])
       ]));
-      setTimeout(place, 60); setTimeout(place, 400);
+      setTimeout(place, 60); setTimeout(place, 450); setTimeout(place, 800);
       var nb = card.querySelector('.bt-tour-next'); if (nb) nb.focus({ preventScroll: true });
     }
     window.addEventListener('resize', place); window.addEventListener('scroll', place, { passive: true });
     draw();
+  }
+  // after their first Becoming Notebook entry: where the entries live, then back to the course
+  function notebookTour(id, done) {
+    var nx = nextAfter(id);
+    runTour([
+      { route: '#Lesson-' + id, sel: '.bt-jr', title: 'Your first Becoming Notebook entry!', text: 'It saved itself as you typed. Let me show you where your entries live, so you can look back on them any time.' },
+      { route: '#Book', sel: '.bk-tabs .bk-tab.on', before: function () { bookState.tab = 'journal'; bookState.day = ''; bookState.q = ''; }, title: 'Find your entries here', text: 'My Book → Becoming Notebook. Every entry from every lesson lands here.' },
+      { route: '#Book', sel: '.bk-pages', title: 'Every entry, dated', text: 'Newest first. Tap Edit on any of them to change it, and it changes under the lesson too.' },
+      { route: '#Book', title: 'Now, back to the course', text: nx ? 'Next up: ' + nx.title + '.' : 'Let’s see what’s next.', last: true, cta: nx && isActivityCard(nx) ? 'Take me to my activity →' : 'Watch the next video →' }
+    ], { kicker: 'Your Becoming Notebook', label: 'Your Becoming Notebook', noSkip: true, last: function () { done(); } });
+  }
+  // a short "why we're doing this" at the top of each resource, linking it back to the lesson it came from.
+  // Open the first time; after that it folds away to one line they can tap open.
+  function resIntro(resId) {
+    var r = (window.BT_RESOURCES || []).filter(function (x) { return x.id === resId; })[0]; if (!r || !r.intro) return null;
+    var key = 'bt-intro-' + resId, seen = null; try { seen = localStorage.getItem(key); } catch (e) {}
+    var d = document.createElement('details'); d.className = 'bt-why'; if (!seen) d.open = true;
+    d.innerHTML = '<summary><span class="bt-why-ic" aria-hidden="true">✦</span><span class="bt-why-s">Why we’re doing this</span><span class="bt-why-tg" aria-hidden="true"></span></summary><div class="bt-why-b"><span class="bt-why-k"></span><p></p></div>';
+    d.querySelector('.bt-why-k').textContent = 'From ' + r.intro.from; d.querySelector('p').textContent = r.intro.text;
+    if (!seen) try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
+    return d;
+  }
+  var INTRO_ROUTES = { Breathe: 'breathe', Dose: 'dose', Pause: 'pause', Move: 'move', Proof: 'proof', 'BreakingOut.dc.html': 'box', 'StarHome.dc.html': 'star' };
+  function addIntro(route) {
+    var rid = INTRO_ROUTES[route], app = document.getElementById('app'); if (!rid || !app || app.querySelector('.bt-why')) return;
+    var el = resIntro(rid); if (!el) return;
+    var hero = app.querySelector('.vg-hero');
+    if (hero && hero.parentNode) hero.parentNode.insertBefore(el, hero.nextSibling);
+    else { var w0 = app.querySelector('.bt-wrap') || app.firstElementChild; if (w0 && w0.parentNode === app && !w0.classList.contains('bt-wrap')) app.insertBefore(el, w0.nextSibling); else if (w0) w0.insertBefore(el, w0.firstChild); else app.appendChild(el); }
   }
   function startHereDone() {
     if (APP.state.tier === 'private') return (oneSetupDone() || !!profileData().startDone) && introDone();
@@ -1470,7 +1657,7 @@
     var all = bookEntries();
     var count = function (k) { return all.filter(function (e) { return k === 'all' || e.kind === k || (k === 'proof' && e.kind === 'win'); }).length; };
     root.appendChild(pageHead('Your story so far', 'The Becoming Book', 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + all.length + ' pages'));
-    var wrap = h('div', { class: 'bt-wrap bk' }, [back('Home', '#Dashboard'), h('p', { class: 'bt-bk-about', text: 'This is the story of who you’re becoming. Your journal answers, finished lessons and activities, wins and proof, workouts and milestones all land here by themselves, dated, so you can look back and see how far you’ve come.' }), bookHero()]);
+    var wrap = h('div', { class: 'bt-wrap bk' }, [back('Home', '#Dashboard'), h('p', { class: 'bt-bk-about', text: 'This is the story of who you’re becoming. Your Becoming Notebook entries, finished lessons and activities, wins and proof, workouts and milestones all land here by themselves, dated, so you can look back and see how far you’ve come.' }), bookHero()]);
     // calendar: symbols on the days she moved forward + win streaks
     var GLY = { milestone: '★', activity: '◆', journal: '✎', win: '✦', proof: '✓', change: '↻', vagal: '≈' };
     var byDay = {}; all.forEach(function (e) { if (!e.at) return; var k = dayKey(e.at); (byDay[k] = byDay[k] || {})[e.kind] = (byDay[k][e.kind] || 0) + 1; });
@@ -1521,7 +1708,7 @@
     // add proof: the same card as on Home
     wrap.appendChild(proofHome());
     // tabs + search
-    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Journal'], ['vagal', 'Vagal tone'], ['activity', 'Activities'], ['milestone', 'Milestones'], ['change', 'Before & now']];
+    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Becoming Notebook'], ['vagal', 'Vagal tone'], ['activity', 'Activities'], ['milestone', 'Milestones'], ['change', 'Before & now']];
     var list = h('div', { class: 'bk-pages' });
     var search = h('input', { class: 'bt-in bk-search', type: 'search', id: 'bk-q', placeholder: 'Search your book', value: bookState.q, 'aria-label': 'Search your book' });
     var tabRow = h('div', { class: 'bk-tabs', role: 'tablist' }, tabs.map(function (t) {
@@ -1579,7 +1766,7 @@
       else if (bookState.range === 'custom') { if (bookState.from) rf = new Date(bookState.from + 'T00:00:00').getTime(); if (bookState.to) rt = new Date(bookState.to + 'T23:59:59').getTime(); }
       var items = all.filter(function (e) { return (bookState.range === 'all' || (e.at && e.at >= rf && e.at <= rt)) && (bookState.tab === 'all' || e.kind === bookState.tab || (bookState.tab === 'proof' && e.kind === 'win') || (bookState.day && false)) && true && (!q || [e.title, e.text, e.sub, e.before].join(' ').toLowerCase().indexOf(q) >= 0); });
       if (bookState.tab === 'journal' && !q && !bookState.day) { var wp = waitingPrompts(); if (wp.length) { var wbox = h('section', { class: 'bk-wait' }, [h('h2', { class: 'bk-month', text: 'Waiting for you' }), h('p', { class: 'bk-sub', text: 'Prompts from lessons you’ve opened. Answer here or under the video, they stay in sync.' })]); wp.slice(0, 3).forEach(function (w) { wbox.appendChild(h('article', { class: 'bk-e journal bk-w', style: '--kc:#FFF4EE' }, [h('div', { class: 'bk-body' }, [h('span', { class: 'bk-sub', text: w.lesson.title }), h('b', { class: 'bk-t', text: w.q }), journalEditor(w.key, '', function () { APP.reload(); })])])); }); if (wp.length > 3) wbox.appendChild(h('p', { class: 'bk-sub', text: '+ ' + (wp.length - 3) + ' more waiting' })); list.appendChild(wbox); } }
-      if (!items.length) { if (bookState.tab === 'journal' && list.querySelector('.bk-wait')) return; list.appendChild(h('p', { class: 'bk-empty', text: q ? 'Nothing matches that yet.' : bookState.tab === 'change' ? 'When you go back and rewrite a journal answer, the old and new versions show up here side by side.' : 'This part of your book is still blank. It fills up as you go.' })); return; }
+      if (!items.length) { if (bookState.tab === 'journal' && list.querySelector('.bk-wait')) return; list.appendChild(h('p', { class: 'bk-empty', text: q ? 'Nothing matches that yet.' : bookState.tab === 'change' ? 'When you go back and rewrite a notebook entry, the old and new versions show up here side by side.' : 'This part of your book is still blank. It fills up as you go.' })); return; }
       var month = '';
       items.forEach(function (e, i) {
         var m = e.at ? new Date(e.at).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : 'Earlier';
@@ -2132,7 +2319,7 @@
       h('div', { class: 'bt-stats' }, [
         h('div', null, [h('b', { text: String(st.done) }), h('span', { text: 'lessons done' })]),
         h('div', null, [h('b', { text: uw >= 99 ? 'All' : String(Math.min(uw, maxWeek)) }), h('span', { text: 'weeks open' })]),
-        h('div', null, [h('b', { text: String(answered) }), h('span', { text: 'journal answers' })])
+        h('div', null, [h('b', { text: String(answered) }), h('span', { text: 'notebook entries' })])
       ]),
       h('div', { class: 'bt-bar' }, [h('span', { style: 'width:' + Math.max(st.pct, 2) + '%' })]),
       h('p', { class: 'bt-sub', text: 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + (uw < maxWeek ? '. Week ' + (uw + 1) + ' opens ' + fmt(opensOn(uw + 1)) + '.' : '.') })
@@ -2220,10 +2407,11 @@
         var mb = document.querySelector('.bt-menubtn'); if (mb) mb.classList.add('bt-hide-lock');
       };
       lockNav();
-      try { var st0 = sessionStorage.getItem('bt-scrollto'); if (st0 && /^Course/.test(route)) { sessionStorage.removeItem('bt-scrollto'); [120, 500].forEach(function (ms) { setTimeout(function () { var el = document.querySelector('#app a[href="' + st0 + '"]'); if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('bt-here'); setTimeout(function () { el.classList.remove('bt-here'); }, 2600); } }, ms); }); } } catch (e) {}
+      try { var st0 = sessionStorage.getItem('bt-scrollto'); if (st0 && /^Course/.test(route)) { sessionStorage.removeItem('bt-scrollto'); [120, 500].forEach(function (ms) { setTimeout(function () { var el = document.querySelector('#app details.bt-wk a[href="' + st0 + '"]') || document.querySelector('#app a[href="' + st0 + '"]'); if (el) { var dw = el.closest('details'); if (dw && !dw.open) dw.open = true; el.scrollIntoView({ block: 'center' }); el.classList.add('bt-here'); setTimeout(function () { el.classList.remove('bt-here'); }, 2600); if (ms === 500) { try { if (sessionStorage.getItem('bt-scrollto-act')) { sessionStorage.removeItem('bt-scrollto-act'); APP.toast('Your activity is next. Tap it to do it now.'); } } catch (x) {} } } }, ms); }); } } catch (e) {}
       try { var sb0 = JSON.parse(sessionStorage.getItem('bt-scrollback') || 'null'); if (sb0) { sessionStorage.removeItem('bt-scrollback'); if (sb0.route === route) [80, 400].forEach(function (ms) { setTimeout(function () { window.scrollTo(0, sb0.y); }, ms); }); } } catch (e) {}
       var oldR = document.getElementById('bt-ret'); if (oldR) oldR.remove();
       if (RET_ROUTES[route]) { var rs = retStrip(RET_ROUTES[route]); if (rs) { rs.id = 'bt-ret'; var host = document.getElementById('app'); if (host && host.parentNode) host.parentNode.insertBefore(rs, host); } }
+      try { addIntro(route); } catch (e) {}
       if (window.BT_SAVES) { if (route === 'BreakingOut.dc.html') window.BT_SAVES.mount('breaking-out', function () { APP.reload(); }); else window.BT_SAVES.unmount(); }
     },
     needsWelcome: function () { return APP ? needsWelcome() : false; },
@@ -2231,6 +2419,10 @@
     needsStart: function () { return APP ? needsStart() : false; },
     introBlocked: function (route) { return APP ? introStage() && !introAllowed(String(route).replace('.dc.html', '')) : false; },
     tour: function () { if (APP) appTour(); },
+    runTour: function (steps, o) { if (APP) runTour(steps, o); },
+    resIntro: resIntro,
+    find: function () { findSheet(); },
+    toCourseNext: function (resId) { if (!APP) return; var f = lessonForRes(resId); if (f && lessonOpen(f.l.id) && !prog().done[f.l.id]) markDone(f.l.id, true); wr(RETK, null); var nx = f ? nextAfter(f.l.id) : null; try { sessionStorage.setItem('bt-scrollto', nx ? lessonHref(nx) : (f ? lessonHref(f.l) : '')); if (nx && isActivityCard(nx)) sessionStorage.setItem('bt-scrollto-act', '1'); } catch (e) {} goHref('#Course'); setTimeout(celebrate, 700); },
     hasLibrary: function () { var c = APP && APP.state.contract; return !!(c && c.status === 'signed' && ((c.signed && c.signed.terms) || c.terms || {}).inclusions && ((c.signed && c.signed.terms) || c.terms).inclusions.library); },
     unlockedWeek: function () { return APP ? unlockedWeek() : 1; },
     weekComplete: function (n) { if (!APP) return true; var w = course().weeks.filter(function (x) { return x.week === n; })[0], p = prog(); return !!w && (w.lessons || []).filter(function (l) { return !l.optional; }).every(function (l) { return p.done[l.id]; }); },

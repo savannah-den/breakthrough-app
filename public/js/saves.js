@@ -182,7 +182,7 @@
   /* profile section */
   function profileSection() {
     var items = list();
-    var wrap = h('section', { class: 'bt-card2 bs-prof' }, [h('h2', { text: 'Your Becoming Book' }), h('p', { class: 'bt-sub', text: 'Your milestones, saved activities, journal, wins and proof, all dated.' }), h('a', { class: 'bt-btn lime', href: '#Book', style: 'align-self:flex-start', text: 'Open my Becoming Book' }), h('p', { class: 'bs-k2', text: 'Saved activities' })]);
+    var wrap = h('section', { class: 'bt-card2 bs-prof' }, [h('h2', { text: 'Your Becoming Book' }), h('p', { class: 'bt-sub', text: 'Your milestones, saved activities, Becoming Notebook, wins and proof, all dated.' }), h('a', { class: 'bt-btn lime', href: '#Book', style: 'align-self:flex-start', text: 'Open my Becoming Book' }), h('p', { class: 'bs-k2', text: 'Saved activities' })]);
     if (!items.length) { wrap.appendChild(h('p', { class: 'bt-sub', text: 'When you finish an activity (like the What If Workout or REWIND), tap “Save this one” at the bottom and it shows up here.' })); return wrap; }
     var groups = {};
     items.forEach(function (x) { (groups[x.tool] = groups[x.tool] || []).push(x); });
