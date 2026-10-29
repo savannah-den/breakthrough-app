@@ -74,9 +74,17 @@
       },
       {
         "title": "The physiological sigh",
-        "vimeo": "",
-        "video": "",
-        "desc": "Your in-the-moment reset for panic, anger and overwhelm."
+        "desc": "Your in-the-moment reset for panic, anger and overwhelm.",
+        "options": [
+          {
+            "label": "How to do it",
+            "vimeo": ""
+          },
+          {
+            "label": "In practice with a client",
+            "vimeo": ""
+          }
+        ]
       }
     ],
     "intro": {

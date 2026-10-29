@@ -122,6 +122,7 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 .wi-when{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
 .wi-when li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-radius:16px;background:#FAF7F5;font-size:15px;line-height:1.45}
 .wi-when li::before{content:'✦';color:#A8231F;flex:none}
+.wi-when li b{color:#1F1412}
 .wi-ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .wi-ladder{display:flex;flex-direction:column;gap:0;padding:14px 16px;border-radius:20px;background:#FBE6FC}
 .wi-ladder.au{background:#E8F4EE}
@@ -184,13 +185,11 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <button class="wi-intro-h" type="button" aria-expanded="{{introExp}}" onClick="{{toggleIntro}}"><span style="font-size: 22px" aria-hidden="true">🧭</span><b>When to come back to this</b><span class="wi-tg" aria-hidden="true">{{introSign}}</span></button>
 <sc-if value="{{introOpen}}" hint-placeholder-val="{{ true }}">
 <div class="wi-intro-b">
-<p>This isn’t a one-off. It’s an activity to come back to whenever you find yourself:</p>
+<p>This isn’t a one-off. Come back to it whenever fear, anxiety or worry shows up. For example, when:</p>
 <ul class="wi-when">
-<li>lying awake running “what if…” on a loop</li>
-<li>dreading a phone call, an appointment or a conversation</li>
-<li>replaying what someone might think of you, or what you said</li>
-<li>frozen before starting something new or unfamiliar</li>
-<li>anything fear, anxiety or worry related</li>
+<li><b>you’re scared to do something.</b> Starting a business, picking up the phone, taking a leap into something new.</li>
+<li><b>you’re worried about something in the future.</b> What someone will think. What will happen if you…</li>
+<li><b>you can feel anxiety in your body.</b> A tight chest, a racing heart, a knot in your stomach, and your brain starts running the “what ifs”.</li>
 </ul>
 <p><strong style="color: #1F1412">Start big, then chunk it down.</strong> Write the big scary what-if first. Then keep asking “what’s the smaller what-if underneath it?” until you reach one you can actually do something about today.</p>
 <div class="wi-ex">

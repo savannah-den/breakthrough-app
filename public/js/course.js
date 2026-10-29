@@ -195,7 +195,7 @@
     var input = h('input', { class: 'bt-in bt-find-in', id: 'bt-find-q', type: 'search', placeholder: 'Try “what video am I up to?” or “I’m overwhelmed”', 'aria-label': 'What are you looking for?', autocomplete: 'off' });
     var out = h('div', { class: 'bt-find-out', 'aria-live': 'polite' });
     function link(r) {
-      var a = h('a', { class: 'bt-find-r' + (r.big ? ' big' : ''), href: r.href || '#', onclick: function (e) { if (r.before) r.before(); if (r.tour) { e.preventDefault(); close(); goHref('#Dashboard'); setTimeout(appTour, 700); return; } if (/^https?:|^mailto:/.test(r.href || '')) { close(); return; } e.preventDefault(); close(); goHref(r.href); } }, [h('span', { class: 'bt-find-rt' }, [h('b', { text: r.t }), r.s ? h('span', { text: r.s }) : null]), h('span', { class: 'bt-find-go', 'aria-hidden': 'true', text: r.cta ? '' : '→' }), r.cta ? h('span', { class: 'bt-find-cta', text: r.cta }) : null]);
+      var a = h('a', { class: 'bt-find-r' + (r.big ? ' big' : ''), href: r.href || '#', onclick: function (e) { if (r.before) r.before(); if (r.tour) { e.preventDefault(); close(); goHref('#Dashboard'); setTimeout(appTour, 700); return; } if (/^https?:|^mailto:/.test(r.href || '')) { close(); return; } e.preventDefault(); close(); goHref(r.href); } }, [r.kind ? h('span', { class: 'bt-find-kind ' + r.kind, 'aria-label': r.kind === 'video' ? 'Video' : 'Activity' }, [h('span', { 'aria-hidden': 'true', text: r.kind === 'video' ? '▶' : '✎' }), h('small', { text: r.kind === 'video' ? 'Video' : 'Activity' })]) : null, h('span', { class: 'bt-find-rt' }, [h('b', { text: r.t }), r.s ? h('span', { text: r.s }) : null]), h('span', { class: 'bt-find-go', 'aria-hidden': 'true', text: r.cta ? '' : '→' }), r.cta ? h('span', { class: 'bt-find-cta', text: r.cta }) : null]);
       if (/^https?:/.test(r.href || '')) { a.target = '_blank'; a.rel = 'noopener'; }
       return a;
     }
@@ -218,16 +218,16 @@
       kb.forEach(function (x) {
         var e = x.e, rows = [];
         out.appendChild(h('div', { class: 'bt-find-kb' }, [h('b', { text: e.label }), h('span', { text: e.line }), e.tip ? h('span', { class: 'bt-find-tip', text: 'Right now: ' + e.tip }) : null]));
-        (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = !r.week || isOpen(r.week); rows.push(op ? { t: r.title, s: r.desc, href: resHref(r) } : { t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }); });
-        (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { t: 'Rewatch: ' + f.l.title, s: 'Week ' + f.w.week + ' · ' + f.w.title, href: lessonHref(f.l) } : { t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
+        (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = !r.week || isOpen(r.week); rows.push(op ? { kind: 'act', t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }); });
+        (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { kind: 'video', t: 'Rewatch: ' + f.l.title, s: 'Week ' + f.w.week + ' · ' + f.w.title, href: lessonHref(f.l) } : { kind: 'video', t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
         rows.forEach(function (r) { out.appendChild(link(r)); });
       });
       // lessons and tools by name
-      var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { return lessonOpen(x.l.id) ? { t: x.l.title, s: x.w.week === 0 ? 'Introduction' : 'Week ' + x.w.week + ' · ' + x.w.title, href: lessonHref(x.l) } : { t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
-      var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = !r.week || isOpen(r.week); return op ? { t: r.title, s: r.desc, href: resHref(r) } : { t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }; });
+      var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { var kd = isActivityCard(x.l) ? 'act' : 'video'; return lessonOpen(x.l.id) ? { kind: kd, t: x.l.title, s: x.w.week === 0 ? 'Introduction' : 'Week ' + x.w.week + ' · ' + x.w.title, href: lessonHref(x.l) } : { kind: kd, t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
+      var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = !r.week || isOpen(r.week); return op ? { kind: 'act', t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', t: '🔒 ' + r.title, s: 'Opens in Week ' + r.week, href: '#Resources' }; });
       group('In the course', ls); group('Tools', rs);
       // from inside the videos (transcripts)
-      var tr = search(q).filter(function (e) { return !ls.some(function (l) { return e.watch && l.href === lessonHref(findLesson(e.watch[0]).l); }); }).map(function (e) { var f = findLesson(e.watch[0]); return { t: e.label, s: e.line, href: lessonHref(f.l) }; });
+      var tr = search(q).filter(function (e) { return !ls.some(function (l) { return e.watch && l.href === lessonHref(findLesson(e.watch[0]).l); }); }).map(function (e) { var f = findLesson(e.watch[0]); return { kind: 'video', t: e.label, s: e.line, href: lessonHref(f.l) }; });
       group('Mentioned in a video', tr);
       if (!out.children.length) { out.appendChild(h('p', { class: 'bt-find-none', text: 'Hmm, nothing for that yet. Try different words, or ask Sav.' })); out.appendChild(link({ t: 'Ask Sav', s: 'Send her a message.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' })); }
     }
@@ -272,7 +272,7 @@
   /* Top navigation: always at the top of every page */
   var NAV = [['Home', '#Dashboard', /^(Dashboard|Setup|Intentions)/], ['Course', '#Course', /^(Course|Lesson)/], ['My Book', '#Book', /^(Book|Journal)/], ['Resources', '#Resources', /^Resources/]];
   // a skinny branding banner above the menu, so the name shows on every screenshot and screen recording
-  function brandStrip() { return h('div', { class: 'bt-brand', 'aria-hidden': 'true' }, [h('span', { class: 'bt-brand-n', text: 'Colour Me Neurospicy' }), h('span', { class: 'bt-brand-s', text: 'Neurodivergent breakthrough program' })]); }
+  function brandStrip() { return h('div', { class: 'bt-brand', 'aria-hidden': 'true' }, [h('span', { class: 'bt-brand-n', text: 'Colour Me Neurospicy' }), h('span', { class: 'bt-brand-s', text: 'Neurodivergent Breakthrough Program' })]); }
   function renderTopNav(route) {
     var key = String(route || '').replace('.dc.html', '');
     var old = document.getElementById('bt-top'); if (old) old.remove();
@@ -1514,8 +1514,9 @@
     }
     function draw() {
       var st = steps[i]; card.innerHTML = '';
+      if (st.before && !st._ran) { st._ran = true; st.before(); if (location.hash === st.route) { spot.hidden = true; APP.reload(); setTimeout(draw, 450); return; } }
       if (st.route && location.hash.split('?')[0] !== st.route && !(st.route === '#Dashboard' && !location.hash)) {
-        spot.hidden = true; scrim.hidden = false; if (st.before) st.before(); location.hash = st.route; var tries = 0;
+        spot.hidden = true; scrim.hidden = false; location.hash = st.route; var tries = 0;
         (function waitFor() { if ((location.hash === st.route && (!(st.sel || st.find || st.pick) || tourTarget(st))) || tries++ > 20) { window.scrollTo(0, 0); draw(); } else setTimeout(waitFor, 150); })(); return;
       }
       // skip a step whose part isn't on this screen (e.g. 1:1-only bits)
@@ -1546,14 +1547,22 @@
   }
   // after their first Becoming Notebook entry: where the entries live, then back to the course
   function notebookTour(id, done) {
-    var nx = nextAfter(id);
+    var nx = nextAfter(id), journal = function () { bookState.tab = 'journal'; bookState.day = ''; bookState.q = ''; bookState.range = 'all'; };
+    var all = function () { bookState.tab = 'all'; bookState.day = ''; bookState.q = ''; bookState.range = 'all'; };
     runTour([
-      { route: '#Lesson-' + id, sel: '.bt-jr', title: 'Your first Becoming Notebook entry!', text: 'It saved itself as you typed. Let me show you where your entries live, so you can look back on them any time.' },
-      { route: '#Book', sel: '.bk-tabs .bk-tab.on', before: function () { bookState.tab = 'journal'; bookState.day = ''; bookState.q = ''; }, title: 'Find your entries here', text: 'My Book → Becoming Notebook. Every entry from every lesson lands here.' },
-      { route: '#Book', sel: '.bk-pages', title: 'Every entry, dated', text: 'Newest first. Tap Edit on any of them to change it, and it changes under the lesson too.' },
+      { route: '#Lesson-' + id, sel: '.bt-jr', title: 'Your first Becoming Notebook entry!', text: 'It saved itself as you typed. Let me show you where it lives, so you can look back on it any time.' },
+      { route: '#Lesson-' + id, sel: '#bt-top a[href="#Book"]', title: 'Step 1: tap My Book', text: 'Everything you write lives in My Book, up here in the menu.', next: 'Tap My Book →' },
+      { route: '#Book', sel: '.bt-bkh', before: all, title: 'This is your Becoming Book', text: 'The story of who you’re becoming. Your notebook entries, finished lessons, activities, wins and reps all land here by themselves, dated.' },
+      { route: '#Book', sel: '.bk-cal', title: 'Step 2: your calendar', text: 'Every day you show up gets a mark. Tap a day to see only that day. Use the arrows to flick between months.' },
+      { route: '#Book', sel: '.bk-tabs', title: 'Step 3: scroll down to the tabs', text: 'These sort your book: everything, proof, wins, your reps, activities, milestones. Swipe them sideways to see them all.' },
+      { route: '#Book', pick: function () { var t = document.querySelector('.bk-tabs .bk-tab.on'); if (t && t.parentNode) { var row = t.parentNode; row.scrollLeft = Math.max(0, t.offsetLeft - 16); } return t; }, before: journal, title: 'Step 4: find your entries here', text: 'Tap Becoming Notebook and every entry from every lesson shows up, newest first.' },
+      { route: '#Book', sel: '.bk-range', title: 'Step 5: narrow it down', text: 'Pick a time frame, like the last 7 days or this month, or choose your own dates.' },
+      { route: '#Book', sel: '#bk-q', title: 'Step 6: search your book', text: 'Looking for something you wrote? Type a word and it finds it.' },
+      { route: '#Book', pick: function () { return document.querySelector('.bk-pages .bk-e:not(.bk-w)') || document.querySelector('.bk-pages'); }, title: 'Step 7: read or edit', text: 'Here’s your entry. Tap Edit on any of them to change it, and it changes under the lesson too.' },
       { route: '#Book', title: 'Now, back to the course', text: nx ? 'Next up: ' + nx.title + '.' : 'Let’s see what’s next.', last: true, cta: nx && isActivityCard(nx) ? 'Take me to my activity →' : 'Watch the next video →' }
-    ], { kicker: 'Your Becoming Notebook', label: 'Your Becoming Notebook', noSkip: true, last: function () { done(); } });
+    ], { kicker: 'Your Becoming Notebook', label: 'Your Becoming Notebook', noSkip: true, last: function () { all(); done(); } });
   }
+
   // a short "why we're doing this" at the top of each resource, linking it back to the lesson it came from.
   // Open the first time; after that it folds away to one line they can tap open.
   function resIntro(resId) {
@@ -1897,13 +1906,20 @@
       if (!agree.checked) { msg.textContent = 'Tick the box to say you agree.'; agree.focus(); return; }
       delete v.notesLeft; var sig = Object.assign({}, v, { signedName: tx(sigName.value), agreed: doc.agreeText, tz: (window.BT_TIME && BT_TIME.tz()) || '', ua: navigator.userAgent.slice(0, 160) });
       btn.disabled = true; btn.textContent = 'Signing…';
-      (sb && !APP.state.trial ? sb.rpc('sign_my_contract', { sig: sig }) : Promise.resolve({ data: new Date().toISOString() })).then(function (r) {
-        if (r && r.error) { btn.disabled = false; btn.textContent = 'I agree & sign'; msg.textContent = 'That didn’t go through: ' + (r.error.message || 'try again in a minute.'); return; }
+      // never leave them stuck on "Signing…": give the save 20 seconds, then let them try again
+      var call = sb && !APP.state.trial ? sb.rpc('sign_my_contract', { sig: sig }) : Promise.resolve({ data: new Date().toISOString() });
+      var slow = new Promise(function (res) { setTimeout(function () { res({ error: { message: 'it’s taking too long. Check your internet and tap again.', slow: true } }); }, 20000); });
+      Promise.race([call, slow]).then(function (r) {
+        if (r && r.error) {
+          // already signed (e.g. the first tap went through but the screen didn't update)? treat it as done
+          if (/No agreement waiting/i.test(r.error.message || '')) { refreshContract(true); setTimeout(function () { location.reload(); }, 1500); msg.textContent = 'Checking your agreement…'; return; }
+          btn.disabled = false; btn.textContent = 'I agree & sign'; msg.textContent = 'That didn’t go through: ' + (r.error.message || 'try again in a minute.'); return;
+        }
         var at = (r && r.data) || new Date().toISOString();
         S.contract = Object.assign({}, ct, { status: 'signed', signed_at: at, signed: { client: sig, terms: ct.terms } });
         if (window.BT_NOTIFY && !APP.state.trial) BT_NOTIFY('signed');
         if (pd.phone !== v.phone) { var d = profileData(); d.phone = v.phone; wr(K.prof, d); }
-        sparkleBurst(e.currentTarget); document.body.classList.remove('bt-welcoming');
+        try { sparkleBurst(btn); } catch (x) {} document.body.classList.remove('bt-welcoming');
         wrap.innerHTML = '';
         wrap.appendChild(h('section', { class: 'bt-card2 bt-wel-card bt-ct-done' }, [
           h('span', { class: 'bt-wel-art done', 'aria-hidden': 'true' }, [h('span', { class: 'bt-wel-spark', text: '✓' })]),
@@ -1918,7 +1934,7 @@
           ])
         ]));
         window.scrollTo(0, 0);
-      });
+      }).catch(function () { btn.disabled = false; btn.textContent = 'I agree & sign'; msg.textContent = 'That didn’t go through. Check your internet and tap again.'; });
     } });
     wrap.appendChild(h('section', { class: 'bt-card2 bt-ct-sign' }, [
       h('h2', { text: 'Sign' }),

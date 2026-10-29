@@ -284,10 +284,10 @@ a.bt-act:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(31,20,18,.85)}
 .bt-top-av.on .bt-av{border-color:#F4C2F7;box-shadow:0 0 0 3px rgba(244,194,247,.45)}
 .bt-top-i:focus-visible,.bt-top-av:focus-visible{outline:3px solid #F1F9A6;outline-offset:2px}
 body.bt-has-top{padding-top:calc(var(--bt-toph) + env(safe-area-inset-top,0px))}
-:root{--bt-toph:92px}
-.bt-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;height:34px;padding-top:2px;box-sizing:border-box;background:#2A0806;border-bottom:1px solid rgba(241,249,166,.18);line-height:1;pointer-events:none;user-select:none}
-.bt-brand-n{font-family:'Patrick Hand SC','Patrick Hand',cursive;font-size:15px;letter-spacing:.06em;color:#F1F9A6}
-.bt-brand-s{margin-top:2px;font:500 9px Poppins,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#F4C2F7}
+:root{--bt-toph:96px}
+.bt-brand{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:38px;padding:3px max(16px,calc((100% - 760px) / 2 + 16px)) 0;box-sizing:border-box;background:transparent;border-bottom:1px solid rgba(241,249,166,.14);line-height:1;pointer-events:none;user-select:none}
+.bt-brand-n{font-family:'Patrick Hand SC','Patrick Hand',cursive;font-size:16px;letter-spacing:.05em;color:#F1F9A6}
+.bt-brand-s{margin-top:2px;font:italic 600 12px 'Playfair Display',Georgia,serif;letter-spacing:.01em;color:#F4C2F7}
 body.bt-has-top .bt-ph{padding-top:22px}
 @media (max-width:380px){.bt-top-i{font-size:13px;padding:0 4px}}
 
@@ -1947,3 +1947,7 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 @keyframes gvWalk{from{stroke-dashoffset:0}to{stroke-dashoffset:-420}}
 @media (prefers-reduced-motion:reduce){.emb-chip,.gv-new,.gv-walk,.emb-bar span{animation:none}}
 .bt-ct .bt-wel-card .bt-btn.ghost{color:#1F1412;border-color:#E6C3BC;background:#fff}
+.bt-find-kind{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:46px;height:46px;border-radius:14px;border:1.5px solid #1F1412;font-size:15px}
+.bt-find-kind small{font:600 9px Poppins,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.bt-find-kind.video{background:#4E0C08;color:#F1F9A6}
+.bt-find-kind.act{background:#F4C2F7;color:#1F1412}

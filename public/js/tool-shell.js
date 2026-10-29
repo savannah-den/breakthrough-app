@@ -102,7 +102,7 @@
     if (inst.componentDidMount) inst.componentDidMount();
     // the app's top navigation, so the menu is always at the top
     var nav = document.createElement('nav'); nav.className = 'bt-top'; nav.id = 'bt-top'; nav.setAttribute('aria-label', 'Main');
-    var brand = document.createElement('div'); brand.className = 'bt-brand'; brand.setAttribute('aria-hidden', 'true'); brand.innerHTML = '<span class="bt-brand-n">Colour Me Neurospicy</span><span class="bt-brand-s">Neurodivergent breakthrough program</span>'; nav.appendChild(brand);
+    var brand = document.createElement('div'); brand.className = 'bt-brand'; brand.setAttribute('aria-hidden', 'true'); brand.innerHTML = '<span class="bt-brand-n">Colour Me Neurospicy</span><span class="bt-brand-s">Neurodivergent Breakthrough Program</span>'; nav.appendChild(brand);
     var inner = document.createElement('div'); inner.className = 'bt-top-in'; nav.appendChild(inner);
     [['Home', '/#Dashboard'], ['Course', '/#Course'], ['My Book', '/#Book'], ['Resources', '/#Resources']].forEach(function (n) {
       var a = document.createElement('a'); a.className = 'bt-top-i' + (n[0] === 'Resources' ? ' on' : ''); a.href = n[1]; a.textContent = n[0]; inner.appendChild(a);
