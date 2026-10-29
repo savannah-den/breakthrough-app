@@ -904,8 +904,28 @@
       h('h3', { class: 'ad-h3', text: 'Their details' }),
       wk && wk > 0 ? h('p', { class: 'ad-week' }, [h('b', { text: 'Week ' + wk }), ' since they started']) : null,
       h('label', { class: 'ad-field' }, ['Name', name]), h('label', { class: 'ad-field' }, ['Access', tier]), h('label', { class: 'ad-field' }, ['Program start (week 1 opens this day)', start]), save,
-      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), dripMsg
+      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), dripMsg,
+      loginHelp(c)
     ]);
+  }
+  // Login help: passwords are stored scrambled, so nobody (not even you) can see them. You can set a new one for them.
+  function loginHelp(c) {
+    var first = (c.full_name || 'them').replace(/^Example:\s*/, '').split(' ')[0];
+    var pw = h('input', { class: 'bt-in', type: 'text', autocomplete: 'off', placeholder: 'New password (8+ characters)', 'aria-label': 'New password for ' + first });
+    var msg = h('span', { class: 'ad-muted', role: 'status' });
+    var gen = function () { var w = ['spark', 'calm', 'brave', 'sunny', 'steady', 'bloom', 'glow', 'river', 'maple', 'coral'], a = w[Math.floor(Math.random() * w.length)], b = w[Math.floor(Math.random() * w.length)]; pw.value = a.charAt(0).toUpperCase() + a.slice(1) + '-' + b + '-' + (100 + Math.floor(Math.random() * 900)); };
+    var go = function (btn) {
+      var v = pw.value.trim(); if (v.length < 8) { msg.textContent = 'Make it at least 8 characters.'; return; }
+      btn.disabled = true; msg.textContent = 'Saving…';
+      sb.auth.getSession().then(function (ss) { var tok = ss.data && ss.data.session && ss.data.session.access_token;
+        return fetch('/.netlify/functions/admin-user', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ id: c.id, action: 'password', password: v }) }).then(function (r) { return r.json(); });
+      }).then(function (o) { btn.disabled = false; msg.textContent = o && o.ok ? 'Saved ✓ ' + first + ' can log in with “' + v + '” now. Send it to them privately; they can change it in their profile.' : 'Couldn’t save: ' + ((o && o.error) || 'try again'); })
+        .catch(function () { btn.disabled = false; msg.textContent = 'Couldn’t save. Check your internet and try again.'; });
+    };
+    var btn = h('button', { class: 'bt-btn lime', type: 'button', text: 'Set password', onclick: function () { go(btn); } });
+    return h('div', { class: 'ad-field ad-login' }, [h('span', { text: 'Login help' }),
+      h('p', { class: 'ad-muted', text: 'Passwords are stored scrambled, so no one can see them, including you. If ' + first + ' is locked out, set a new one here and send it to them. They can also always log in with a 6-digit code to their email.' }),
+      h('div', { class: 'ad-row' }, [pw, h('button', { class: 'bt-btn ghost', type: 'button', text: 'Make one up', onclick: gen }), btn]), msg]);
   }
 
   /* ---------- package + coaching agreement ---------- */
