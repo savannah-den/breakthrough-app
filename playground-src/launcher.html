@@ -62,6 +62,46 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
 .tour-btn{display:flex;flex-direction:column;align-items:flex-start;padding:10px 18px;border-radius:999px;background:var(--maroon);color:#FFF4EE;text-decoration:none;line-height:1.2}
 .tour-btn b{font-size:15px}.tour-btn span{font-size:12px;color:#F6D6CF}
 .tour-btn:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.nf{margin:0 0 14px;padding:18px;border-radius:22px;background:#FFFFFF;border:2px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.nf h2{margin:0;font-family:var(--display);font-size:22px;color:var(--maroon)}
+.nf-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.nf-tab{min-height:38px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 13px var(--body);color:var(--ink)}
+.nf-tab.on{background:var(--maroon);border-color:var(--maroon);color:#FFF4EE}
+.nf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:12px}
+.nf-card{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:20px;background:var(--cream);border:1.5px solid var(--line)}
+.nf-card h3{margin:0;font:700 17px var(--display);color:var(--maroon);display:flex;align-items:center;gap:8px}
+.nf-card h3 i{flex:none;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ink)}
+.nf-who{align-self:flex-start;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:var(--lime);border:1px solid var(--ink)}
+.nf-who.sav{background:var(--pink)}
+.nf-phone{border-radius:22px;padding:14px 12px;background:linear-gradient(160deg,#3a1a2e,#13121d);}
+.nf-bub{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:rgba(245,240,240,.92);color:#111;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.nf-ic{flex:none;width:30px;height:30px;border-radius:8px;background:var(--maroon);display:grid;place-items:center;color:var(--lime);font:16px var(--hand)}
+.nf-bt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.nf-bt small{display:flex;justify-content:space-between;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.03em}
+.nf-bt b{font-size:13.5px;line-height:1.3}
+.nf-bt span{font-size:13px;line-height:1.35;color:#222}
+.nf-mail{border-radius:16px;overflow:hidden;border:1.5px solid var(--ink);background:#4E0C08;padding:10px}
+.nf-mail div{background:#FFF4EE;border-radius:12px;padding:12px}
+.nf-mail b{display:block;font:700 17px var(--display);color:var(--maroon)}
+.nf-mail span{display:block;font-size:12.5px;color:#3A2A27;margin:4px 0 8px}
+.nf-mail em{display:inline-block;font-style:normal;padding:6px 12px;border-radius:999px;background:var(--lime);border:1.5px solid var(--ink);font-size:12px;font-weight:700}
+.nf-dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px}
+.nf-dl dt{font-weight:600;color:var(--maroon)}
+.nf-dl dd{margin:0;color:#3A2A27}
+.nf-legend{display:flex;flex-wrap:wrap;gap:8px}
+.nf-legend span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+.nf-legend i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ink)}
+.nf-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.nf-d{position:relative;min-height:58px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:5px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:600 11px var(--body);color:var(--muted);text-align:left;cursor:pointer}
+.nf-d.act{background:#F7F3FF}
+.nf-d .dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto}
+.nf-d .dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ink)}
+.nf-d .tag{font-size:10px;font-weight:500;color:var(--ink);line-height:1.2}
+.nf-d.on{outline:3px solid var(--orange);outline-offset:1px}
+.nf-pv{display:flex;flex-direction:column;gap:8px}
+.nf-pv h4{margin:6px 0 0;font:700 16px var(--display);color:var(--maroon)}
+.nf-pv p{margin:0;font-size:13px;color:#3A2A27}
+.k-reps{background:#F1F9A6}.k-back{background:#F4C2F7}.k-gentle{background:#BFE3D0}.k-week{background:#F28C3B}.k-sav{background:#8FA6C9}.k-act{background:#E9E1FF}
 </style>
 
 <div class="wrap">
@@ -86,6 +126,18 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     <div class="todo-g"><b>Videos to film</b><ul id="todo-film"></ul></div>
     <div class="todo-g"><b>Also waiting on you</b><ul id="todo-more"></ul></div>
     <form id="todo-add" class="todo-add"><input id="todo-new" placeholder="Add something…" aria-label="Add a to-do"><button type="submit">Add</button></form>
+  </section>
+  <section class="nf" aria-labelledby="nf-h">
+    <h2 id="nf-h">Notifications: what goes out, and when</h2>
+    <p class="todo-sub">Clients get <b>one kind reminder a day at most</b>, at the time they pick in their profile, in their own timezone. Nothing if they’ve turned notifications off. Tap any card or day to see the preview.</p>
+    <div class="nf-tabs" role="tablist"><button class="nf-tab on" type="button" data-t="list" role="tab" aria-selected="true">All notifications</button><button class="nf-tab" type="button" data-t="cal" role="tab" aria-selected="false">An example month</button></div>
+    <div id="nf-list" class="nf-grid"></div>
+    <div id="nf-cal" hidden>
+      <p class="todo-sub"><b>Example: Bec, a 1:1 client.</b> Reminder time 7pm. She starts on day 1, builds her DOSE on day 4 (her reps switch on), watches lessons until day 9, ticks her reps most days, then life gets busy and she stops. You unlock Week 2 for her on day 8.</p>
+      <div class="nf-legend" id="nf-legend"></div>
+      <div class="nf-cal" id="nf-days" role="grid" aria-label="Bec’s first five weeks"></div>
+      <div class="nf-pv" id="nf-pv" aria-live="polite"></div>
+    </div>
   </section>
   <div class="tourbar">
     <span>See what new clients see first</span>
@@ -199,6 +251,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     ['vimeo-embed', 'Lock down Vimeo embedding to your app’s web address'],
     ['lawyer', 'Ask your lawyer to check the agreement + app terms'],
     ['library', 'Build the resource library'],
+    ['email', 'Set up email sending (Resend)', 'So “Week unlocked” emails go out. I’ll walk you through it: a free Resend account, verify your domain, then two Netlify keys'],
     ['reps', 'Pick a name for “Today’s reps”']
   ];
   var CHECK = [
@@ -243,5 +296,75 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     st.extra.push(['x' + Date.now(), v]); save(); i.value = ''; draw();
   });
   draw();
+})();
+</script>
+<script>
+/* Notifications overview: the same rules as netlify/lib/nudges.js (the hourly sender) */
+(function () {
+  var N = [
+    { k: 'reps', who: 'Client', name: 'Today’s reps', title: 'Today’s reps 💪', body: 'One tap each: DOSE, breathe, pause, move. That’s you rewiring, one rep at a time.', when: 'Every day at the time they picked', often: 'Daily, once their reps switch on (after they build their DOSE). Skipped if they’ve already ticked something off that day.', opens: 'Home, scrolled to Today’s reps', alt: ['Have you done your reps? ✨', 'Little reps, big change 🌱', 'Your daily evidence 💛'] },
+    { k: 'back', who: 'Client', name: 'Come back to the course', title: 'Bec, your next lesson is waiting ✨', body: 'Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.', when: 'At their reminder time, counted from the last time they opened a lesson', often: 'Day 3, 7, 14, 21 and 30 after they stop, then every 15 days. Uses their why, North Star and anchor word. Replaces the reps reminder that day.', opens: 'The Course, at their next lesson', alt: ['Day 7: Future you says hi 💛 · “Remember who you’re becoming: …”', 'Day 14: No catching up needed 🌿 · “No guilt, no pressure. Just the next small step. Your word: Steady.”', 'Day 21: Still cheering for you 📣', 'Day 30+: Whenever you’re ready 💌'] },
+    { k: 'gentle', who: 'Client', name: 'Gentle 1% nudge', title: 'Your 1% for today 💛', body: 'Five minutes counts. Open Breakthrough and do one small thing.', when: 'Every day at the time they picked', often: 'Only early in Week 1, before their reps switch on, and only on days they haven’t opened a lesson', opens: 'The Course' },
+    { k: 'week', who: 'Client (1:1)', name: 'Next week unlocked', title: '🔓 Week 2 is open!', body: 'Bec, your next week is ready for you. One small step at a time.', when: 'The moment you tap “Unlock Week…” for them in the coach dashboard', often: 'Each time you open a new week', opens: 'The Course', email: { s: 'Week 2 is open for you ✨', h: 'Week 2 is open for you: The Reality Framework', b: 'I’ve just unlocked your next week. Go at your own pace, one small step at a time.', c: 'Open Week 2 →' } },
+    { k: 'sav', who: 'You', name: 'A client added a win', title: '🏆 Bec added a win', body: '“I said no without explaining myself”', when: 'Straight away', often: 'Every win', opens: 'Your coach dashboard' },
+    { k: 'sav', who: 'You', name: 'A client signed their agreement', title: '✍️ Bec signed their agreement', body: 'Their package is locked in. Time to welcome them!', when: 'Straight away', often: 'Once per client', opens: 'Your coach dashboard' },
+    { k: 'sav', who: 'You', name: 'A client is waiting for their agreement', title: '📝 Bec is waiting for their agreement', body: 'They can’t go any further until you send it. Open their profile to send it.', when: 'When a 1:1 client reaches the agreement step and you haven’t sent it yet', often: 'Once per client', opens: 'Your coach dashboard' }
+  ];
+  var COL = { reps: 'k-reps', back: 'k-back', gentle: 'k-gentle', week: 'k-week', sav: 'k-sav' };
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function phone(n, time) {
+    var p = el('div', 'nf-phone'), b = el('div', 'nf-bub'), i = el('span', 'nf-ic', '✦'), t = el('div', 'nf-bt'), s = el('small');
+    s.appendChild(el('span', null, n.who === 'You' ? 'Breakthrough · coach' : 'Breakthrough')); s.appendChild(el('span', null, time || 'now'));
+    t.appendChild(s); t.appendChild(el('b', null, n.title)); t.appendChild(el('span', null, n.body)); b.appendChild(i); b.appendChild(t); p.appendChild(b); return p;
+  }
+  function mail(e) { var m = el('div', 'nf-mail'), d = el('div'); d.appendChild(el('small', null, '✉ ' + e.s)); d.appendChild(el('b', null, e.h)); d.appendChild(el('span', null, e.b)); d.appendChild(el('em', null, e.c)); m.appendChild(d); return m; }
+  var list = document.getElementById('nf-list');
+  N.forEach(function (n) {
+    var c = el('article', 'nf-card'), h = el('h3'), dot = el('i', COL[n.k]); h.appendChild(dot); h.appendChild(document.createTextNode(n.name));
+    c.appendChild(h); c.appendChild(el('span', 'nf-who' + (n.who === 'You' ? ' sav' : ''), n.who === 'You' ? 'Goes to you' : 'Goes to: ' + n.who));
+    c.appendChild(phone(n, n.k === 'sav' || n.k === 'week' ? 'now' : '7:00 pm'));
+    if (n.email) c.appendChild(mail(n.email));
+    var dl = el('dl', 'nf-dl'); [['When', n.when], ['How often', n.often], ['Tapping opens', n.opens]].concat(n.alt ? [['It rotates', n.alt.join(' · ')]] : []).concat(n.email ? [['Email', 'Sent too, once email is set up (see your to-do list)']] : []).forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); });
+    c.appendChild(dl); list.appendChild(c);
+  });
+  // the example month: run the real rules day by day
+  var lessonDays = [1, 2, 3, 4, 5, 6, 7, 8, 9], ticked = { 4: 1, 5: 1, 6: 1, 8: 1, 9: 1, 11: 1 }, repsFrom = 4, DUE = [3, 7, 14, 21, 30];
+  function due(d) { return d >= 3 && (DUE.indexOf(d) >= 0 || (d > 30 && (d - 30) % 15 === 0)); }
+  var BACK = { 3: ['Bec, your next lesson is waiting ✨', 'Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.'], 7: ['Future you says hi 💛', 'Remember who you’re becoming: “I am calm, grounded and trust myself”. She’s built one small step at a time. Ready for the next one?'], 14: ['No catching up needed 🌿', 'No guilt, no pressure. Just the next small step. Your word: Steady.'], 21: ['Still cheering for you 📣', '“I want to stop living in survival mode and actually enjoy my kids” still matters. Your course is right where you left it.'] };
+  var days = [], legend = document.getElementById('nf-legend');
+  [['k-act', 'Bec opened a lesson'], ['k-reps', 'Today’s reps'], ['k-back', 'Come back to the course'], ['k-gentle', 'Gentle 1% nudge'], ['k-week', 'Week unlocked (+ email)']].forEach(function (l) { var s = el('span'); s.appendChild(el('i', l[0])); s.appendChild(document.createTextNode(l[1])); legend.appendChild(s); });
+  for (var d = 1; d <= 35; d++) {
+    var last = lessonDays.filter(function (x) { return x <= d; }).pop() || 1, since = d - last, items = [];
+    if (d === 8) items.push({ k: 'week', n: N[3], t: 'when you unlock it' });
+    if (lessonDays.indexOf(d) >= 0) items.push({ k: 'act', label: 'Opened a lesson' });
+    if (due(since)) { var b = BACK[since] || ['Whenever you’re ready 💌', 'Life gets full. That’s okay. Your next lesson is here when you are, and so is your why.']; items.push({ k: 'back', n: { who: 'Client', title: b[0], body: b[1] }, t: '7:00 pm', label: 'Day ' + since + ' since her last lesson' }); }
+    else if (d >= repsFrom && !ticked[d]) items.push({ k: 'reps', n: N[0], t: '7:00 pm' });
+    else if (d >= repsFrom && ticked[d]) items.push({ k: 'none', label: 'Did her reps: no reminder needed' });
+    else if (since === 0) items.push({ k: 'none', label: 'Watched a lesson today: no nudge needed' });
+    else items.push({ k: 'gentle', n: N[2], t: '7:00 pm' });
+    days.push({ d: d, items: items });
+  }
+  var grid = document.getElementById('nf-days'), pv = document.getElementById('nf-pv');
+  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function (w) { var h = el('span', 'nf-wd', w); h.style.cssText = 'font-size:11px;font-weight:600;color:var(--muted);text-align:center'; grid.appendChild(h); });
+  function show(x, btn) {
+    grid.querySelectorAll('.nf-d').forEach(function (b) { b.classList.remove('on'); }); if (btn) btn.classList.add('on');
+    pv.innerHTML = ''; pv.appendChild(el('h4', null, 'Day ' + x.d));
+    x.items.forEach(function (it) {
+      if (it.k === 'act') { pv.appendChild(el('p', null, '📖 Bec opened a lesson today.')); return; }
+      if (it.k === 'none') { pv.appendChild(el('p', null, '✓ ' + it.label + '.')); return; }
+      if (it.label) pv.appendChild(el('p', null, it.label + ':'));
+      pv.appendChild(phone(it.n, it.t)); if (it.k === 'week') pv.appendChild(mail(N[3].email));
+    });
+  }
+  days.forEach(function (x) {
+    var b = el('button', 'nf-d' + (x.items.some(function (i) { return i.k === 'act'; }) ? ' act' : '')); b.type = 'button';
+    b.appendChild(el('span', null, String(x.d)));
+    var tag = x.items.filter(function (i) { return i.k === 'back'; })[0]; if (tag) b.appendChild(el('span', 'tag', 'come back'));
+    var dots = el('span', 'dots'); x.items.forEach(function (i) { if (i.k !== 'none') dots.appendChild(el('i', i.k === 'act' ? 'k-act' : COL[i.k])); }); b.appendChild(dots);
+    b.setAttribute('aria-label', 'Day ' + x.d); b.addEventListener('click', function () { show(x, b); });
+    grid.appendChild(b);
+  });
+  show(days[2], grid.querySelectorAll('.nf-d')[2]);
+  document.querySelectorAll('.nf-tab').forEach(function (t) { t.addEventListener('click', function () { document.querySelectorAll('.nf-tab').forEach(function (x) { var on = x === t; x.classList.toggle('on', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); }); document.getElementById('nf-list').hidden = t.dataset.t !== 'list'; document.getElementById('nf-cal').hidden = t.dataset.t !== 'cal'; }); });
 })();
 </script>

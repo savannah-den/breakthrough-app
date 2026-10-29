@@ -11,6 +11,7 @@ exports.handler = async (event) => {
   const first = String(w.profile.full_name || w.profile.email || 'A client').split(' ')[0];
   const text = String(b.text || '').replace(/\s+/g, ' ').trim().slice(0, 110);
   const msg = b.type === 'signed' ? { title: '✍️ ' + first + ' signed their agreement', body: 'Their package is locked in. Time to welcome them!', url: '/admin.html' }
+    : b.type === 'waiting' ? { title: '📝 ' + first + ' is waiting for their agreement', body: 'They can’t go any further until you send it. Open their profile to send it.', url: '/admin.html' }
     : b.type === 'win' ? { title: '🏆 ' + first + ' added a win', body: text ? '“' + text + '”' : 'Go celebrate it in the group chat!', url: '/admin.html' } : null;
   if (!msg) return json({ ok: false });
   const admins = await (await push.svc('profiles?is_admin=eq.true&select=id')).json();

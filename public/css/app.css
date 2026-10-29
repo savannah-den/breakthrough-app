@@ -1946,3 +1946,4 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 .gv-walk{animation:gvWalk 6s linear infinite}
 @keyframes gvWalk{from{stroke-dashoffset:0}to{stroke-dashoffset:-420}}
 @media (prefers-reduced-motion:reduce){.emb-chip,.gv-new,.gv-walk,.emb-bar span{animation:none}}
+.bt-ct .bt-wel-card .bt-btn.ghost{color:#1F1412;border-color:#E6C3BC;background:#fff}

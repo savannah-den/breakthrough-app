@@ -3,6 +3,7 @@
 (function () {
   'use strict';
   var CFG = window.BT_CONFIG || {};
+  function toastA(m) { var t = document.createElement('div'); t.className = 'bt-toast'; t.setAttribute('role', 'status'); t.textContent = m; document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 5200); setTimeout(function () { t.remove(); }, 5800); }
   var root = document.getElementById('admin'), gate = document.getElementById('bt-gate');
   if (!(CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase)) {
     root.innerHTML = '<div class="ad-wrap"><h1 class="ad-h1">Coach dashboard</h1><p class="ad-card">Connect Supabase first: add your project URL and anon key to <b>public/js/config.js</b>.</p></div>';
@@ -876,7 +877,19 @@
       var setCap = function (v) {
         var u = Object.assign({}, S.settings.unlocks || {}); u[c.id] = v;
         dripMsg.textContent = 'Saving…';
-        sb.from('app_settings').upsert({ key: 'unlocks', value: u, updated_at: new Date().toISOString() }).then(function (r) { if (r.error) { dripMsg.textContent = 'Couldn’t save'; return; } S.settings.unlocks = u; page(); });
+        sb.from('app_settings').upsert({ key: 'unlocks', value: u, updated_at: new Date().toISOString() }).then(function (r) {
+          if (r.error) { dripMsg.textContent = 'Couldn’t save'; return; } S.settings.unlocks = u; page();
+          // tell them: a phone notification + an email that their next week is open
+          var wn = v === 'all' ? null : Number(v);
+          if (wn && wn > cur && !(c.email || '').match(/sample\.test$/)) {
+            var wObj = courseData().weeks.filter(function (x) { return x.week === wn; })[0];
+            sb.auth.getSession().then(function (ss) { var tok = ss.data && ss.data.session && ss.data.session.access_token; if (!tok) return;
+              return fetch('/.netlify/functions/notify-client', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ to: c.id, type: 'week', week: wn, title: wObj ? wObj.title : '' }) }).then(function (x) { return x.json(); }).then(function (o) {
+                toastA('Week ' + wn + ' is open for ' + first + '. ' + (o.push ? 'Phone notification sent. ' : 'No phone notifications on for them. ') + (o.email ? 'Email sent.' : o.emailSetup ? 'Email isn’t set up yet.' : 'Email didn’t send.'));
+              });
+            }).catch(function () {});
+          }
+        });
       };
       weekCtl = h('div', { class: 'ad-weeklock' }, [
         h('div', { class: 'ad-wl-row', role: 'list' }, Array.from({ length: maxW }, function (_, i) { var n = i + 1, on = n <= cur; return h('span', { class: 'ad-wl-w' + (on ? ' on' : ''), role: 'listitem', title: 'Week ' + n + (on ? ' open' : ' locked'), text: (on ? '' : '🔒 ') + n }); })),

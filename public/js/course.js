@@ -420,7 +420,8 @@
   function fillHomeTop(slot) {
     slot.innerHTML = '';
     var wa = waButton(); if (wa) slot.appendChild(wa);
-    oneStart(slot);
+    // once the 1:1 setup is done it's tucked away (the tests and agreement live in the profile)
+    if (APP.state.tier === 'private' && !oneSetupDone()) oneStart(slot);
     var c = continueCard(), r = reminderList();
     var pages = 0; try { pages = bookEntries().length; } catch (e) {}
     var bk = h('a', { class: 'bt-bookln', href: '#Book' }, [icon('star', 'bt-bookln-ic'), h('span', null, [h('b', { text: 'Your Becoming Book' }), h('span', { text: 'Your notebook + ' + pages + ' page' + (pages === 1 ? '' : 's') + ' of your story' })]), h('span', { class: 'bt-bookln-go', text: 'Open →' })]);
@@ -1811,8 +1812,8 @@
     var c = APP && APP.state && APP.state.contract; if (APP && APP.state && APP.state.tier === 'private' && !(rd(K.one) || {}).homeSaved) return false;
     if (!APP || !APP.state || APP.state.viewAs || (window.BT_DEMO && window.BT_DEMO.tour) || (APP.state.isAdmin && !playground())) return false;
     if (c && c.status === 'sent') return true;
-    // 1:1 client whose agreement Sav hasn't sent yet: show the "on its way" page once, then let them carry on
-    return APP.state.tier === 'private' && (!c || c.status === 'draft') && !profileData().ctWait;
+    // 1:1 clients can't go any further until their agreement is signed: if Sav hasn't sent it yet, they wait on the "on its way" page
+    return APP.state.tier === 'private' && !(c && c.status === 'signed');
   }
   // check for a newly sent agreement (Sav may send it after they've opened the app)
   var ctChecked = 0;
@@ -1850,12 +1851,18 @@
     if (!C || !ct || ct.status === 'draft') {
       if (S.tier === 'private' && !S.viewAs) {
         refreshContract(true);
+        // let Sav know (once) that this client is waiting for their agreement
+        try { var pw = profileData(); if (!pw.ctPinged && window.BT_NOTIFY && !S.trial) { pw.ctPinged = Date.now(); wr(K.prof, pw); window.BT_NOTIFY('waiting'); } } catch (e) {}
         var poll = setInterval(function () { if (!document.body.contains(root)) { clearInterval(poll); return; } refreshContract(true); }, 20000);
         root.appendChild(h('div', { class: 'bt-wrap bt-ct' }, [h('section', { class: 'bt-card2 bt-wel-card' }, [
           h('p', { class: 'bt-wel-k', text: 'Step 2 · your agreement' }),
           h('h1', { class: 'bt-wel-h', text: 'Your agreement is on its way' }),
-          h('p', { class: 'bt-sub', text: 'Sav is putting the finishing touches on your coaching agreement. It pops up right here as soon as she sends it, usually within a day. You can keep going in the meantime and sign it when it arrives.' }),
-          h('button', { class: 'bt-btn lime', type: 'button', text: 'Carry on for now →', onclick: function () { var d = profileData(); d.ctWait = Date.now(); wr(K.prof, d); document.body.classList.remove('bt-welcoming'); goHref('#Dashboard'); } })
+          h('p', { class: 'bt-sub', text: 'Sav is putting the finishing touches on your coaching agreement. It pops up right here as soon as she sends it, usually within a day. Once you’ve signed it, everything opens up.' }),
+          h('p', { class: 'bt-sub', text: 'I’ve let Sav know you’re ready. You can close the app: it’ll be waiting for you next time you open it.' }),
+          h('div', { class: 'bt-row' }, [
+            h('button', { class: 'bt-btn lime', type: 'button', text: 'Check again', onclick: function (e) { e.currentTarget.textContent = 'Checking…'; refreshContract(true); var b = e.currentTarget; setTimeout(function () { b.textContent = 'Check again'; APP.toast('Not here yet. It’ll pop up as soon as Sav sends it.'); }, 2500); } }),
+            h('a', { class: 'bt-btn ghost', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), target: '_blank', rel: 'noopener', text: 'Message Sav' })
+          ])
         ])]));
         return;
       }
@@ -1928,7 +1935,7 @@
     return !(o.homeSaved && o.wa && (testsDone() || profileData().startDone));
   }
   function testsDone() { var o = rd(K.one) || {}, rep = rd(K.rep); return !!(((rep && rep.ranks) || o.repDone || o.repImg) && o.hd && o.disc); }
-  function contractStepDone() { var c = APP.state.contract; return !!(c && c.status === 'signed') || (!!profileData().ctWait && (!c || c.status === 'draft')); }
+  function contractStepDone() { var c = APP.state.contract; return !!(c && c.status === 'signed'); }
   var INTRO = ['i1', 'i3', 'i2'];
   function introDone() { var p = prog(); return INTRO.every(function (id) { return p.done[id] || !findLesson(id); }); }
   // 1:1: after the start steps, only the Course (intro lessons) is open until the intro is done
@@ -1937,7 +1944,7 @@
     if (APP.state.isAdmin && !playground()) return false;
     return !needsStart() && !introDone();
   }
-  function introAllowed(route) { route = String(route || ''); return /^(Course|Setup|Intentions|ActDone|Back|Profile)/.test(route) || INTRO.some(function (id) { return route === 'Lesson-' + id; }); }
+  function introAllowed(route) { route = String(route || ''); return /^(Course|Setup|Intentions|ActDone|Back|Profile|NextTest)/.test(route) || INTRO.some(function (id) { return route === 'Lesson-' + id; }); }
   function StartView(root) {
     var first = tx((APP.state.profile || {}).full_name).split(' ')[0];
     // the same welcome banner as Home inside the app
@@ -2279,7 +2286,7 @@
         body.innerHTML = '';
         if (!BT_PUSH.supported()) { body.appendChild(h('p', { class: 'bt-sub', text: 'This browser can’t do notifications. On an iPhone, add the app to your home screen first (Share → Add to Home Screen), then open it from there.' })); return; }
         if (!BT_PUSH.standalone() && /iPhone|iPad/.test(navigator.userAgent)) body.appendChild(h('p', { class: 'bt-sub small', text: 'On iPhone this only works from the app on your home screen, not in Safari.' }));
-        body.appendChild(h('p', { class: 'bt-sub', text: coachMode ? 'A ping when a client adds a win or signs their agreement.' : 'A gentle nudge once a day, at the time you pick, in your timezone. Nothing spammy.' }));
+        body.appendChild(h('p', { class: 'bt-sub', text: coachMode ? 'A ping when a client adds a win, signs their agreement, or is waiting for you to send it.' : 'One kind reminder a day at most, at the time you pick: your Today’s reps, or a gentle nudge back to your course if it’s been a while. Nothing spammy, and nothing on days you’ve already done your reps.' }));
         if (!coachMode) body.appendChild(h('label', { class: 'bt-f' }, [h('span', { text: 'When' }), hourSel]));
         var on = st && st.on;
         body.appendChild(h('div', { class: 'bt-row' }, [
@@ -2297,7 +2304,7 @@
       wrap.appendChild(card('Notifications', [body]));
     })();
     wrap.appendChild(card('Terms + privacy', [h('p', { class: 'bt-sub', text: profileData().termsAt ? 'You agreed on ' + new Date(profileData().termsAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + '.' : 'How the app works and how your information is looked after.' }), h('button', { class: 'bt-btn ghost', type: 'button', text: 'Read the terms + privacy', onclick: showTerms })]));
-    wrap.appendChild(card('The app tour', [h('p', { class: 'bt-sub', text: 'A 30-second walk around the app, any time you want it.' }), h('button', { class: 'bt-btn', type: 'button', text: 'Take the tour →', onclick: function () { goHref('#Dashboard'); setTimeout(appTour, 900); } })]));
+    wrap.appendChild(card('The app tour', [h('p', { class: 'bt-sub', text: 'A walk through every page and how it all connects, any time you want it.' }), h('button', { class: 'bt-btn', type: 'button', text: 'Take the tour →', onclick: function () { goHref('#Dashboard'); setTimeout(appTour, 900); } })]));
     // 1:1 calls: times, Zoom link and booked dates (set by Sav in the coach dashboard)
     if (S.tier === 'private') {
       var call = ((S.contract || {}).terms || {}).call || {}, tz0 = (window.BT_TIME && BT_TIME.tz()) || undefined;
@@ -2315,15 +2322,7 @@
     var st = stats(), uw = unlockedWeek();
     var maxWeek = course().weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 1);
     var j = comp().j || {}, answered = Object.keys(j).filter(function (k) { return tx(j[k]); }).length;
-    wrap.appendChild(card('Your progress', [
-      h('div', { class: 'bt-stats' }, [
-        h('div', null, [h('b', { text: String(st.done) }), h('span', { text: 'lessons done' })]),
-        h('div', null, [h('b', { text: uw >= 99 ? 'All' : String(Math.min(uw, maxWeek)) }), h('span', { text: 'weeks open' })]),
-        h('div', null, [h('b', { text: String(answered) }), h('span', { text: 'notebook entries' })])
-      ]),
-      h('div', { class: 'bt-bar' }, [h('span', { style: 'width:' + Math.max(st.pct, 2) + '%' })]),
-      h('p', { class: 'bt-sub', text: 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + (uw < maxWeek ? '. Week ' + (uw + 1) + ' opens ' + fmt(opensOn(uw + 1)) + '.' : '.') })
-    ]));
+    // (progress, proof and saved activities live in My Book, so the profile stays simple)
 
     // intentions
     var d = comp();
@@ -2361,16 +2360,6 @@
       wrap.appendChild(card('Your tests', [h('p', { class: 'bt-sub', text: 'Saved to your profile, so Savannah can see them too.' }), h('div', { class: 'bt-tests' }, kids)]));
     }
 
-    (function () {
-      var ev = evidence(), wins = ev.filter(function (e) { return e.win; }), st = winStreak();
-      wrap.appendChild(card('Your proof portfolio', [
-        h('div', { class: 'bt-pf-stats' }, [h('span', null, [h('b', { text: String(wins.length) }), ' wins']), h('span', null, [h('b', { text: String(ev.length - wins.length) }), ' other proof']), h('span', null, [h('b', { text: String(st.best) }), ' best streak'])]),
-        streakPill(st, true),
-        wins.length ? winList(wins.slice(0, 5), true) : h('p', { class: 'bt-sub', text: 'Add your first win on the home page. Tiny ones count.' }),
-        h('button', { class: 'bt-btn lime', type: 'button', text: proofOpen() ? 'Open my proof portfolio' : 'See it in my Becoming Book', onclick: openProof })
-      ]));
-    })();
-    if (window.BT_SAVES) wrap.appendChild(window.BT_SAVES.profileSection());
     wrap.appendChild(h('div', { class: 'bt-row' }, [
       h('button', { class: 'bt-btn ghost', type: 'button', text: 'Back up my answers', onclick: function () { APP.exportData(); } }),
       APP.live ? h('button', { class: 'bt-btn ghost', type: 'button', text: 'Log out', onclick: function () { APP.logout(); } }) : null
@@ -2378,7 +2367,13 @@
     root.appendChild(wrap); waves(root);
   }
 
-  window.BT_NATIVE = { Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: function (root) { bookState.tab = 'proof'; bookState.day = ''; BookView(root); }, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: homeOn('home', 'setup'), Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
+  // "Next test" from the Rep System Test: back to the start steps (or the profile) at the next test to do
+  function NextTestView(root) {
+    var o = rd(K.one) || {}, id = !o.hd ? 'test-hd' : !o.disc ? 'test-disc' : '';
+    try { sessionStorage.setItem('bt-focus-el', id || 'tests'); } catch (e) {}
+    setTimeout(function () { goHref(needsStart() ? '#Start' : '#Profile'); }, 0);
+  }
+  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: function (root) { bookState.tab = 'proof'; bookState.day = ''; BookView(root); }, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: homeOn('home', 'setup'), Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
     afterShow: function (route) {
@@ -2412,6 +2407,9 @@
       var oldR = document.getElementById('bt-ret'); if (oldR) oldR.remove();
       if (RET_ROUTES[route]) { var rs = retStrip(RET_ROUTES[route]); if (rs) { rs.id = 'bt-ret'; var host = document.getElementById('app'); if (host && host.parentNode) host.parentNode.insertBefore(rs, host); } }
       try { addIntro(route); } catch (e) {}
+      // opened from the "Today's reps" notification: land on the reps card
+      try { if (/[?&]go=reps/.test(location.search)) { sessionStorage.setItem('bt-go', 'reps'); history.replaceState(null, '', location.pathname + location.hash); } if (sessionStorage.getItem('bt-go') === 'reps' && /^Dashboard/.test(route)) { sessionStorage.removeItem('bt-go'); [300, 900].forEach(function (ms) { setTimeout(function () { var rp = document.querySelector('#app .rp'); if (rp) { rp.scrollIntoView({ block: 'start' }); window.scrollBy(0, -110); if (ms === 900) { rp.classList.add('bt-here'); setTimeout(function () { rp.classList.remove('bt-here'); }, 2600); } } }, ms); }); } } catch (e) {}
+      try { var fe = sessionStorage.getItem('bt-focus-el'); if (fe && /^(Start|Profile)/.test(route)) { sessionStorage.removeItem('bt-focus-el'); [200, 700].forEach(function (ms) { setTimeout(function () { var el = (fe !== 'tests' && document.getElementById(fe)) || Array.prototype.filter.call(document.querySelectorAll('#app section'), function (x) { return /Your tests|three tests/i.test((x.querySelector('h2,h3') || {}).textContent || ''); })[0]; if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -110); if (ms === 700) { el.classList.add('bt-here'); setTimeout(function () { el.classList.remove('bt-here'); }, 2600); } } }, ms); }); } } catch (e) {}
       if (window.BT_SAVES) { if (route === 'BreakingOut.dc.html') window.BT_SAVES.mount('breaking-out', function () { APP.reload(); }); else window.BT_SAVES.unmount(); }
     },
     needsWelcome: function () { return APP ? needsWelcome() : false; },
