@@ -9,10 +9,13 @@
   var real = window.localStorage, mem = {}, keys = [];
   // keep the login session so the coach stays signed in
   try { for (var i = 0; i < real.length; i++) { var k = real.key(i); if (/^(__bt_auth|sb-|__bt_demo_db)/.test(k)) { mem[k] = real.getItem(k); keys.push(k); } } } catch (e) {}
+  // the login itself always lives in the real storage: when the sign-in quietly refreshes in here, the new one is
+  // kept for next time (otherwise the old one gets cancelled and you'd have to sign in again)
+  var AUTH = /^(__bt_auth|sb-)/;
   var store = {
-    getItem: function (k) { k = String(k); return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
-    setItem: function (k, v) { k = String(k); if (/^__bt_demo_db/.test(k)) { try { Storage.prototype.setItem.call(real, k, v); } catch (e) {} } if (!(k in mem)) keys.push(k); mem[k] = String(v); },
-    removeItem: function (k) { k = String(k); delete mem[k]; keys = keys.filter(function (x) { return x !== k; }); },
+    getItem: function (k) { k = String(k); if (AUTH.test(k)) { try { return real.getItem(k); } catch (e) {} } return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+    setItem: function (k, v) { k = String(k); if (/^__bt_demo_db/.test(k) || AUTH.test(k)) { try { Storage.prototype.setItem.call(real, k, v); } catch (e) {} } if (!(k in mem)) keys.push(k); mem[k] = String(v); },
+    removeItem: function (k) { k = String(k); if (AUTH.test(k)) { try { Storage.prototype.removeItem.call(real, k); } catch (e) {} } delete mem[k]; keys = keys.filter(function (x) { return x !== k; }); },
     key: function (i) { return keys[i] == null ? null : keys[i]; },
     clear: function () { mem = {}; keys = []; },
     get length() { return keys.length; }

@@ -215,19 +215,20 @@
     if (src) { e.preventDefault(); e.stopPropagation(); openVideo(src); }
   }, true);
 
-  // "Done" on a card that folds away: bring them to the folded card + the top of the next one, so they don't scroll back up
+  // Tapping something that folds a card away (Done, a tick, "I'm committed"…): keep their place.
+  // The folded card lands at the top of the screen with the start of the next card right under it.
   document.addEventListener('click', function (e) {
-    var b = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!b || !/^\s*(✓\s*)?done\b/i.test(b.textContent || '') || /→/.test(b.textContent || '')) return;
-    var card = b.closest('section, .cc, .bt-card2, .ad-card, details, article') || b.parentElement; if (!card) return;
-    var top = card.getBoundingClientRect().top + window.scrollY, before = card.getBoundingClientRect().height;
+    var b = e.target && e.target.closest ? e.target.closest('button, label, [role="button"], input[type="checkbox"]') : null;
+    if (!b || b.closest('#bt-top, .bt-menu, .bt-party, .bt-tour, .bt-point, dialog')) return;
+    var card = b.closest('section, .cc, .bt-card2, details, article, .card') || b.parentElement; if (!card) return;
+    var top = card.getBoundingClientRect().top + window.scrollY, docH = document.documentElement.scrollHeight;
     var nav = document.getElementById('bt-top'), off = (nav ? nav.getBoundingClientRect().bottom : 0) + 12;
-    var settle = function () {
-      var still = document.body.contains(card) ? card.getBoundingClientRect().height : 0;
-      if (still && still > before - 40) return; // it didn't fold away, leave them where they are
+    var done = false, settle = function () {
+      if (done || document.documentElement.scrollHeight > docH - 120) return; // nothing folded away (yet)
+      done = true;
       if (window.scrollY > top - off - 4) window.scrollTo({ top: Math.max(0, top - off), behavior: 'smooth' });
     };
-    setTimeout(settle, 120); setTimeout(settle, 450);
+    setTimeout(settle, 140); setTimeout(settle, 500);
   });
 
   /* ---------------- router (replaces each artifact's own) ---------------- */
@@ -280,21 +281,24 @@
     try { window.scrollTo(0, 0); } catch (e) {}
   }
   function go(name) {
+    name = VIEW_ALIAS[name] || name;
     var target = '#' + String(name).replace('.dc.html', '');
     if (location.hash === target) show(name); else location.hash = target;
   }
   function fromHash() { var x = decodeURIComponent((location.hash || '').replace('#', '')); if (x && nativeView(x)) return x; return x && VIEWS[x + '.dc.html'] ? x + '.dc.html' : homeView(); }
   window.addEventListener('hashchange', function () { if (state.booted) show(fromHash()); });
+  // some tools still call a page by its old name (the Rep System test was "Main")
+  var VIEW_ALIAS = { 'Main.dc.html': 'RepTest.dc.html' };
+  // capture phase, so the tools' own link handling can't swallow these first
   document.addEventListener('click', function (e) {
-    if (e.defaultPrevented) return;
     var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
     if (!a) return;
     var x = a.getAttribute('href') || '';
-    if (/^[A-Za-z0-9_-]+\.dc\.html$/.test(x)) { e.preventDefault(); go(x); return; }
-    if (/^\/(tools\/|#)/.test(x) && a.target === '_blank') { e.preventDefault(); if (x.charAt(1) === '#') { location.hash = x.slice(1); } else location.href = x; return; }
+    if (/^[A-Za-z0-9_-]+\.dc\.html$/.test(x)) { e.preventDefault(); e.stopPropagation(); go(VIEW_ALIAS[x] || x); return; }
+    if (/^\/(tools\/|#)/.test(x) && a.target === '_blank') { e.preventDefault(); e.stopPropagation(); if (x.charAt(1) === '#') { location.hash = x.slice(1); } else location.href = x; return; }
     // links to other websites always open in a new tab/window, so the app stays where they left it
-    if (!window.BT_DEMO && /^https?:/i.test(a.href) && a.origin !== location.origin) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
-  });
+    if (!window.BT_DEMO && /^https?:/i.test(a.href) && a.origin !== location.origin && !/^https?:\/\/(www\.)?(vimeo|youtube|youtu|loom)\./i.test(a.href)) { e.preventDefault(); e.stopPropagation(); window.open(a.href, '_blank', 'noopener'); }
+  }, true);
 
   /* ---------------- menu ---------------- */
   var MENU = [

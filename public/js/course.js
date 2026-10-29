@@ -714,6 +714,30 @@
   function doneLabel(resId, dflt) { var r = retGet(resId), k = retKind(r); return k === 'course' ? 'Done · back to the course →' : k === 'res' ? 'Done, back to resources' : dflt; }
   function backLabel(resId, dflt) { var k = retKind(retGet(resId)); return k === 'course' ? '← Back to the course' : k === 'res' ? '← Back to resources' : dflt; }
   // returns true when it took her somewhere
+  // "I am ready to change my world": tick the set-up activity off, move straight on to Setting Intentions,
+  // with a little pop-up on the way (closes with the ✕, a tap anywhere, or by itself after 5 seconds)
+  function setupReady() {
+    var f = lessonForRes('setup'); if (f && !prog().done[f.l.id]) markDone(f.l.id, true);
+    wr(RETK, null);
+    goHref('#Intentions');
+    setTimeout(function () {
+      var old = document.getElementById('bt-next-pop'); if (old) old.remove();
+      var box, close = function () { if (box && box.parentNode) box.remove(); document.removeEventListener('pointerdown', close, true); };
+      box = h('div', { id: 'bt-next-pop', class: 'bt-party bt-next-pop', role: 'dialog', 'aria-label': 'Next step' }, [
+        h('div', { class: 'bt-party-card bt-vdone-card' }, [
+          h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕' }),
+          h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '✨' }),
+          h('h2', { text: 'You’re set up for success' }),
+          h('p', { text: 'Ticked off for you. Next up: Setting Intentions, where you write your North Star and your why.' }),
+          h('span', { class: 'bt-next-pop-bar', 'aria-hidden': 'true' })
+        ])
+      ]);
+      document.body.appendChild(box);
+      setTimeout(function () { document.addEventListener('pointerdown', close, true); }, 50);
+      setTimeout(close, 5000);
+      try { window.scrollTo(0, 0); } catch (e) {}
+    }, 350);
+  }
   function activityDone(resId) {
     var r = retGet(resId), k = retKind(r), f = lessonForRes(resId);
     if (f && lessonOpen(f.l.id) && !prog().done[f.l.id]) { markDone(f.l.id, true); setTimeout(celebrate, 600); }
@@ -944,7 +968,31 @@
     saveProg(function (q) { q.cheered = q.cheered || {}; if (fresh) q.cheered[fresh.week] = Date.now(); if (all) q.cheered.all = Date.now(); });
     var title = all ? 'You finished the whole program!' : (fresh.week === 0 ? 'Introduction complete!' : 'Week ' + fresh.week + ' complete!');
     var msg = all ? 'Every lesson, every question, every bit of showing up. Take a second and let that land. I’m so proud of you.' : (fresh.week === 0 ? 'You’ve set your intentions and set yourself up for success. Now the real work begins.' : 'That’s a whole week of showing up for yourself. Give yourself the credit, you earned it.');
+    if (!all && fresh.week === 0 && APP.state.tier === 'private') { readyForCall(); return; }
     party(title, msg, 'Hell yes');
+  }
+  // 1:1: the introduction is done, so they're ready for the first call. Two ways forward.
+  function readyForCall() {
+    if (document.getElementById('bt-tour')) { setTimeout(readyForCall, 900); return; }
+    var bg = h('div', { class: 'bt-party', role: 'dialog', 'aria-label': 'You’re ready for your first call' });
+    var conf = h('div', { class: 'bt-confetti', 'aria-hidden': 'true' }), cols = ['#F1F9A6', '#F4C2F7', '#F28C3B', '#D3302B', '#FFF4EE', '#3E9B4F'];
+    for (var i = 0; i < 70; i++) conf.appendChild(h('i', { style: 'left:' + Math.round(Math.random() * 100) + '%;background:' + cols[i % cols.length] + ';animation-delay:' + (Math.random() * 0.8).toFixed(2) + 's;animation-duration:' + (2.2 + Math.random() * 1.6).toFixed(2) + 's' }));
+    var close = function () { bg.remove(); };
+    var wk1 = (course().weeks.filter(function (w) { return w.week === 1; })[0] || {}).lessons || [];
+    var card = h('div', { class: 'bt-party-card bt-ready-card' }, [
+      h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+      icon('star', 'bt-party-star'),
+      h('b', { text: 'Great! You’re ready for your first call with Sav' }),
+      h('p', { text: 'You can either wait, or get ahead on your Week 1 lessons.' }),
+      h('p', { class: 'bt-ready-q' }, [h('span', { text: 'If you want to change…' }), h('span', { text: 'When do we take action? ' }), h('strong', { text: 'NOW.' })]),
+      h('div', { class: 'bt-ready-btns' }, [
+        h('button', { class: 'bt-btn lime', type: 'button', text: 'Start Week 1 →', onclick: function () { close(); goHref(wk1[0] ? lessonHref(wk1[0]) : '#Course'); } }),
+        h('button', { class: 'bt-btn ghost', type: 'button', text: 'Take a tour of the app', onclick: function () { close(); goHref('#Dashboard'); setTimeout(appTour, 700); } })
+      ])
+    ]);
+    bg.appendChild(conf); bg.appendChild(card);
+    bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
+    document.body.appendChild(bg);
   }
   function party(title, msg, btn, onClose) {
     if (document.getElementById('bt-tour')) { setTimeout(function () { party(title, msg, btn, onClose); }, 900); return; }
@@ -1083,9 +1131,9 @@
       if (d.event === 'timeupdate' && d.data && Date.now() - lastSave > 4000) {
         lastSave = Date.now();
         var pct = Math.round(100 * (d.data.percent || 0));
-        saveProg(function (p) { p.pct[id] = Math.max(p.pct[id] || 0, pct); p.pos[id] = d.data.seconds; p.last = id; p.lastAt = Date.now(); if (pct >= 92 && !p.done[id]) { p.done[id] = true; p.doneAt = p.doneAt || {}; p.doneAt[id] = Date.now(); } });
+        saveProg(function (p) { p.pct[id] = Math.max(p.pct[id] || 0, pct); p.pos[id] = d.data.seconds; p.last = id; p.lastAt = Date.now(); }); if (pct >= 95) videoFinished(id);
       }
-      if (d.event === 'ended') markDone(id, true);
+      if (d.event === 'ended') videoFinished(id);
     };
     window.addEventListener('message', vimeoListener);
   }
@@ -1106,9 +1154,9 @@
       v.addEventListener('timeupdate', function () {
         if (Date.now() - lastSave < 4000 || !v.duration) return; lastSave = Date.now();
         var pct = Math.round(100 * v.currentTime / v.duration);
-        saveProg(function (p) { p.pct[id] = Math.max(p.pct[id] || 0, pct); p.pos[id] = v.currentTime; p.last = id; p.lastAt = Date.now(); if (pct >= 92 && !p.done[id]) { p.done[id] = true; p.doneAt = p.doneAt || {}; p.doneAt[id] = Date.now(); } });
+        saveProg(function (p) { p.pct[id] = Math.max(p.pct[id] || 0, pct); p.pos[id] = v.currentTime; p.last = id; p.lastAt = Date.now(); }); if (pct >= 95) videoFinished(id);
       });
-      v.addEventListener('ended', function () { markDone(id, true); });
+      v.addEventListener('ended', function () { videoFinished(id); });
       v.addEventListener('error', function () { var ph = v.parentNode; if (ph) { ph.className = 'bt-video empty'; ph.innerHTML = ''; ph.appendChild(h('div', { class: 'bt-video-ph' }, [icon('play', 'bt-play'), h('span', { text: 'This video can’t play here yet. It’ll be swapped for the Vimeo version soon.' })])); } });
       return h('div', { class: 'bt-video' }, [v]);
     }
@@ -1117,6 +1165,23 @@
       h('span', { text: src ? 'The video plays here in the real app.' : (l.res && l.res.length && !l.video ? 'This one’s an activity. Open it below.' : 'Video coming soon.') }),
       src && playground() ? h('a', { href: tx(l.vimeo), target: '_blank', rel: 'noopener', text: 'Open it on Vimeo' }) : null
     ])]);
+  }
+  // when they reach the end of a lesson video: a pop-up to mark it as done (once per visit)
+  var finishedShown = {};
+  function videoFinished(id) {
+    if (finishedShown[id] || prog().done[id] || !findLesson(id) || document.getElementById('bt-vdone')) return;
+    finishedShown[id] = true;
+    var close = function () { var m = document.getElementById('bt-vdone'); if (m) m.remove(); };
+    var box = h('div', { id: 'bt-vdone', class: 'bt-party', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Video finished', onclick: function (e) { if (e.target === box) close(); } }, [
+      h('div', { class: 'bt-party-card bt-vdone-card' }, [
+        h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+        h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '🎉' }),
+        h('h2', { text: 'That’s the video done!' }),
+        h('p', { text: 'Mark it as done to unlock what’s next.' }),
+        h('button', { class: 'bt-btn lime', type: 'button', text: 'Mark as done ✓', onclick: function () { close(); var b = document.getElementById('bt-done'); if (b && !prog().done[id]) b.click(); else markDone(id, true); } })
+      ])
+    ]);
+    document.body.appendChild(box);
   }
   var onDone = null;
   function markDone(id, now) {
@@ -1555,7 +1620,26 @@
     return !profileData().onboarded;
   }
   /* ---------------- coaching agreement: signed in the app before anything else opens ---------------- */
-  function needsContract() { var c = APP && APP.state && APP.state.contract; if (APP && APP.state && APP.state.tier === 'private' && !(rd(K.one) || {}).homeSaved) return false; return !!(c && !APP.state.viewAs && !(window.BT_DEMO && window.BT_DEMO.tour) && c.status === 'sent' && !(APP.state.isAdmin && !playground())); }
+  function needsContract() {
+    var c = APP && APP.state && APP.state.contract; if (APP && APP.state && APP.state.tier === 'private' && !(rd(K.one) || {}).homeSaved) return false;
+    if (!APP || !APP.state || APP.state.viewAs || (window.BT_DEMO && window.BT_DEMO.tour) || (APP.state.isAdmin && !playground())) return false;
+    if (c && c.status === 'sent') return true;
+    // 1:1 client whose agreement Sav hasn't sent yet: show the "on its way" page once, then let them carry on
+    return APP.state.tier === 'private' && (!c || c.status === 'draft') && !profileData().ctWait;
+  }
+  // check for a newly sent agreement (Sav may send it after they've opened the app)
+  var ctChecked = 0;
+  function refreshContract(force) {
+    var S = APP && APP.state, sb = APP && APP.sb && APP.sb();
+    if (!sb || !S || !S.user || S.viewAs || S.trial || S.tier !== 'private' || (S.contract && S.contract.status === 'signed')) return;
+    if (!force && Date.now() - ctChecked < 45000) return; ctChecked = Date.now();
+    sb.from('contracts').select('*').eq('user_id', S.user.id).maybeSingle().then(function (r) {
+      var c = r && !r.error ? r.data : null, was = S.contract ? S.contract.status : 'none';
+      if ((c ? c.status : 'none') === was) return;
+      S.contract = c; if (needsContract() && !/^#Contract/.test(location.hash)) location.hash = '#Contract'; else if (/^#Contract/.test(location.hash)) location.reload();
+    }, function () {});
+  }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refreshContract(true); });
   // save the signed agreement as a PDF (the device's print sheet: "Save as PDF")
   function contractPdf(ct) {
     var C = window.BT_CONTRACT; if (!C || !ct || !ct.signed) return;
@@ -1576,7 +1660,20 @@
   function ContractView(root) {
     var C = window.BT_CONTRACT, ct = APP.state.contract, S = APP.state, sb = APP.sb();
     document.body.classList.toggle('bt-welcoming', needsContract());
-    if (!C || !ct) { root.appendChild(h('div', { class: 'bt-wrap' }, [h('p', { class: 'bt-sub', text: 'There’s no agreement on your account yet.' }), back('Home', '#Dashboard')])); return; }
+    if (!C || !ct || ct.status === 'draft') {
+      if (S.tier === 'private' && !S.viewAs) {
+        refreshContract(true);
+        var poll = setInterval(function () { if (!document.body.contains(root)) { clearInterval(poll); return; } refreshContract(true); }, 20000);
+        root.appendChild(h('div', { class: 'bt-wrap bt-ct' }, [h('section', { class: 'bt-card2 bt-wel-card' }, [
+          h('p', { class: 'bt-wel-k', text: 'Step 2 · your agreement' }),
+          h('h1', { class: 'bt-wel-h', text: 'Your agreement is on its way' }),
+          h('p', { class: 'bt-sub', text: 'Sav is putting the finishing touches on your coaching agreement. It pops up right here as soon as she sends it, usually within a day. You can keep going in the meantime and sign it when it arrives.' }),
+          h('button', { class: 'bt-btn lime', type: 'button', text: 'Carry on for now →', onclick: function () { var d = profileData(); d.ctWait = Date.now(); wr(K.prof, d); document.body.classList.remove('bt-welcoming'); goHref('#Dashboard'); } })
+        ])]));
+        return;
+      }
+      root.appendChild(h('div', { class: 'bt-wrap' }, [h('p', { class: 'bt-sub', text: 'There’s no agreement on your account yet.' }), back('Home', '#Dashboard')])); return;
+    }
     var wrap = h('div', { class: 'bt-wrap bt-ct' }); root.appendChild(wrap);
     if (ct.status === 'signed' && ct.signed) {
       wrap.appendChild(back('My profile', '#Profile'));
@@ -1644,7 +1741,7 @@
     return !(o.homeSaved && o.wa && (testsDone() || profileData().startDone));
   }
   function testsDone() { var o = rd(K.one) || {}, rep = rd(K.rep); return !!(((rep && rep.ranks) || o.repDone || o.repImg) && o.hd && o.disc); }
-  function contractStepDone() { var c = APP.state.contract; return !c || c.status !== 'sent'; }
+  function contractStepDone() { var c = APP.state.contract; return !!(c && c.status === 'signed') || (!!profileData().ctWait && (!c || c.status === 'draft')); }
   var INTRO = ['i1', 'i3', 'i2'];
   function introDone() { var p = prog(); return INTRO.every(function (id) { return p.done[id] || !findLesson(id); }); }
   // 1:1: after the start steps, only the Course (intro lessons) is open until the intro is done
@@ -1729,6 +1826,17 @@
     pointAt(el, firstOne ? 'Start here: watch this first 👇' : 'Next up 👇', firstOne ? 'Your welcome video. Then “Set yourself up for success” and “Setting Intentions”.' : nx.l.title.replace(/^Activity:\s*/, ''));
   }
   var wState = { step: 0 };
+  // Terms of Use + Privacy (public/js/terms.js), shown in a pop-up
+  function termsNode() { var T0 = window.BT_TERMS || { sections: [] }; return h('div', { class: 'bt-terms' }, T0.sections.map(function (x) { return h('div', null, [h('b', { text: x[0] }), h('p', { text: x[1] })]); })); }
+  function showTerms() {
+    var bg, close = function () { bg.remove(); };
+    bg = h('div', { class: 'bt-party', role: 'dialog', 'aria-label': 'Terms of use and privacy' }, [h('div', { class: 'bt-party-card bt-terms-card' }, [
+      h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+      h('b', { text: 'Terms of use + privacy' }), termsNode(),
+      h('button', { class: 'bt-btn lime', type: 'button', text: 'Close', onclick: close })])]);
+    bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
+    document.body.appendChild(bg);
+  }
   function WelcomeView(root) {
     document.body.classList.add('bt-welcoming');
     var S = APP.state, prof = S.profile || {}, pd = profileData(), sb = APP.sb();
@@ -1757,9 +1865,13 @@
         body.appendChild(h('h1', { class: 'bt-wel-h', text: 'Let’s set you up. It takes about a minute.' }));
         body.appendChild(h('p', { class: 'bt-sub', text: 'A few quick questions so your days, streaks and reminders all run on your time.' }));
         body.appendChild(field('What should we call you?', nm));
+        var agree = h('input', { type: 'checkbox', id: 'wl-terms' }); agree.checked = !!profileData().termsAt;
+        body.appendChild(h('label', { class: 'bt-ct-check bt-wel-terms', for: 'wl-terms' }, [agree, h('span', null, ['I agree to the ', h('a', { href: '#', text: 'terms of use and privacy policy', onclick: function (e) { e.preventDefault(); showTerms(); } }), '.'])]));
         body.appendChild(msg);
         body.appendChild(nav(function () {
           var v = tx(nm.value); if (!v) { msg.textContent = 'Pop your name in first.'; nm.focus(); return; }
+          if (!agree.checked) { msg.textContent = 'Tick that you agree to the terms of use and privacy policy first.'; agree.focus(); return; }
+          save({ termsAt: profileData().termsAt || Date.now(), termsV: (window.BT_TERMS || {}).version || '' });
           draft.name = v;
           (sb && !APP.state.trial ? sb.rpc('update_my_profile', { new_name: v }) : Promise.resolve({})).then(function () { S.profile = Object.assign({}, S.profile, { full_name: v }); });
           wState.step = 1; draw();
@@ -1816,7 +1928,7 @@
         var big = avatarNode('big');
         var file = h('input', { type: 'file', accept: 'image/*', class: 'bt-file', id: 'wl-photo', onchange: function (e) {
           var f = e.target.files && e.target.files[0]; if (!f) return;
-          resizeImage(f, 360).then(function (url) { var d = profileData(); d.photo = url; delete d.char; wr(K.prof, d); draw(); }, function () { msg.textContent = 'Couldn’t read that photo. Try another one.'; });
+          e.target.value = ''; cropPhoto(f).then(function (url) { var d = profileData(); d.photo = url; delete d.char; wr(K.prof, d); draw(); }, function (er) { if (!er || er.message !== 'cancel') msg.textContent = 'Couldn’t read that photo. Try another one.'; });
         } });
         var chars = h('div', { class: 'bt-chars', role: 'list' }, CHARS.map(function (c) {
           var b = h('button', { type: 'button', class: 'bt-charbtn' + (pd.char === c.id && !pd.photo ? ' on' : ''), 'aria-label': c.name, title: c.name, onclick: function () { var d = profileData(); d.char = c.id; delete d.photo; wr(K.prof, d); pd = d; draw(); } });
@@ -1870,6 +1982,44 @@
       r.readAsDataURL(file);
     });
   }
+  // pick a photo, then drag + zoom it into the circle before it's saved (square, 360px)
+  function cropPhoto(file) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader(); r.onerror = rej;
+      r.onload = function () {
+        var img = new Image(); img.onerror = rej;
+        img.onload = function () {
+          var V = 280, base = Math.max(V / img.width, V / img.height), z = 1, x = 0, y = 0;
+          var cv = h('canvas', { class: 'bt-crop-cv', width: String(V * 2), height: String(V * 2), 'aria-label': 'Drag to move your photo' });
+          var ctx = cv.getContext('2d');
+          var clamp = function () { var w = img.width * base * z, hh = img.height * base * z; x = Math.min(0, Math.max(V - w, x)); y = Math.min(0, Math.max(V - hh, y)); };
+          var draw = function () { clamp(); ctx.clearRect(0, 0, V * 2, V * 2); ctx.drawImage(img, x * 2, y * 2, img.width * base * z * 2, img.height * base * z * 2); };
+          x = (V - img.width * base) / 2; y = (V - img.height * base) / 2; draw();
+          var drag = null;
+          cv.addEventListener('pointerdown', function (e) { drag = { px: e.clientX, py: e.clientY, x: x, y: y }; try { cv.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault(); });
+          cv.addEventListener('pointermove', function (e) { if (!drag) return; var k = V / cv.getBoundingClientRect().width; x = drag.x + (e.clientX - drag.px) * k; y = drag.y + (e.clientY - drag.py) * k; draw(); });
+          var up = function () { drag = null; }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+          var zoom = h('input', { type: 'range', min: '1', max: '4', step: '0.01', value: '1', class: 'bt-crop-z', 'aria-label': 'Zoom' });
+          zoom.addEventListener('input', function () { var nz = Number(zoom.value), cx = V / 2, cy = V / 2; x = cx - (cx - x) * nz / z; y = cy - (cy - y) * nz / z; z = nz; draw(); });
+          var bg, finish = function (ok) {
+            bg.remove();
+            if (!ok) { rej(new Error('cancel')); return; }
+            var out = document.createElement('canvas'); out.width = 360; out.height = 360;
+            out.getContext('2d').drawImage(cv, 0, 0, V * 2, V * 2, 0, 0, 360, 360);
+            res(out.toDataURL('image/jpeg', 0.85));
+          };
+          bg = h('div', { class: 'bt-party bt-crop', role: 'dialog', 'aria-label': 'Crop your photo' }, [h('div', { class: 'bt-party-card bt-crop-card' }, [
+            h('b', { text: 'Fit your photo' }), h('p', { text: 'Drag to move it, slide to zoom.' }),
+            h('div', { class: 'bt-crop-frame' }, [cv]), h('div', { class: 'bt-crop-zrow' }, [h('span', { 'aria-hidden': 'true', text: '−' }), zoom, h('span', { 'aria-hidden': 'true', text: '+' })]),
+            h('div', { class: 'bt-ready-btns' }, [h('button', { class: 'bt-btn lime', type: 'button', text: 'Use this photo', onclick: function () { finish(true); } }), h('button', { class: 'bt-btn ghost', type: 'button', text: 'Cancel', onclick: function () { finish(false); } })])
+          ])]);
+          document.body.appendChild(bg);
+        };
+        img.src = r.result;
+      };
+      r.readAsDataURL(file);
+    });
+  }
   function card(title, kids, cls) { return h('section', { class: 'bt-card2 ' + (cls || '') }, [title ? h('h2', { text: title }) : null].concat(kids)); }
   function field(label, input) { return h('label', { class: 'bt-f' }, [h('span', { text: label }), input]); }
 
@@ -1882,7 +2032,7 @@
     var msgAv = h('p', { class: 'bt-msg', role: 'status' });
     var file = h('input', { type: 'file', accept: 'image/*', class: 'bt-file', id: 'bt-photo', onchange: function (e) {
       var f = e.target.files && e.target.files[0]; if (!f) return;
-      resizeImage(f, 360).then(function (url) { var d = profileData(); d.photo = url; delete d.char; wr(K.prof, d); APP.reload(); }, function () { msgAv.textContent = 'Couldn’t read that photo. Try another one.'; });
+      e.target.value = ''; cropPhoto(f).then(function (url) { var d = profileData(); d.photo = url; delete d.char; wr(K.prof, d); APP.reload(); }, function (er) { if (!er || er.message !== 'cancel') msgAv.textContent = 'Couldn’t read that photo. Try another one.'; });
     } });
     var chars = h('div', { class: 'bt-chars', role: 'list' }, CHARS.map(function (c) {
       var b = h('button', { type: 'button', class: 'bt-charbtn' + (pd.char === c.id && !pd.photo ? ' on' : ''), 'aria-label': c.name, title: c.name, onclick: function () { var d = profileData(); d.char = c.id; delete d.photo; wr(K.prof, d); APP.reload(); } });
@@ -1959,6 +2109,7 @@
       BT_PUSH.status().then(draw);
       wrap.appendChild(card('Notifications', [body]));
     })();
+    wrap.appendChild(card('Terms + privacy', [h('p', { class: 'bt-sub', text: profileData().termsAt ? 'You agreed on ' + new Date(profileData().termsAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + '.' : 'How the app works and how your information is looked after.' }), h('button', { class: 'bt-btn ghost', type: 'button', text: 'Read the terms + privacy', onclick: showTerms })]));
     wrap.appendChild(card('The app tour', [h('p', { class: 'bt-sub', text: 'A 30-second walk around the app, any time you want it.' }), h('button', { class: 'bt-btn', type: 'button', text: 'Take the tour →', onclick: function () { goHref('#Dashboard'); setTimeout(appTour, 900); } })]));
     // 1:1 calls: times, Zoom link and booked dates (set by Sav in the coach dashboard)
     if (S.tier === 'private') {
@@ -2044,6 +2195,7 @@
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
     afterShow: function (route) {
+      try { refreshContract(false); } catch (e) {}
       if (route !== 'Welcome' && route !== 'Start' && !(route === 'Contract' && needsContract())) document.body.classList.remove('bt-welcoming');
       document.body.classList.toggle('bt-intro', introStage());
 
@@ -2084,7 +2236,7 @@
     weekComplete: function (n) { if (!APP) return true; var w = course().weeks.filter(function (x) { return x.week === n; })[0], p = prog(); return !!w && (w.lessons || []).filter(function (l) { return !l.optional; }).every(function (l) { return p.done[l.id]; }); },
     shareProof: function (t, s) { if (APP) shareProof(t, s || 'win'); },
     kit: function () { return { addWin: function (t) { var ab = autoBeliefs(t, 'win', []); setTimeout(function () { shareProof(t, 'win', 'Added to your proof portfolio'); }, 700); addEvidence(t, { spark: 'win', beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves }); return ab; }, winsOn: function (k) { return evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === k; }); }, winStreak: winStreak, pageHead: pageHead, back: back, waves: waves, icon: icon, emblem: emblem, party: party, sparkleBurst: sparkleBurst, dayKey: dayKey, videoBlock: videoBlock, findLesson: findLesson, lessonForRes: lessonForRes, lessonOpen: lessonOpen, isOpen: isOpen, markDone: function (id) { if (lessonOpen(id) && !prog().done[id]) { markDone(id, true); return true; } return false; }, isDone: function (id) { return !!prog().done[id]; }, resource: resource, rd: rd, wr: wr, tx: tx, playground: playground }; },
-    activityDone: function (r) { return APP ? activityDone(r) : false; }, activityBack: function (r) { return APP ? activityBack(r) : false; },
+    activityDone: function (r) { return APP ? activityDone(r) : false; }, setupReady: function () { if (APP) setupReady(); }, activityBack: function (r) { return APP ? activityBack(r) : false; },
     doneLabel: function (r, d) { return APP ? doneLabel(r, d) : d; }, backLabel: function (r, d) { return APP ? backLabel(r, d) : d; }, returnKind: function (r) { return retKind(retGet(r)); },
     weekOpen: function (n) { if (window.BT_DEMO && window.BT_DEMO.peek) return true; return APP ? isOpen(n) : true; },
     unlockText: function (n) { return APP ? unlockText(n) : ''; },

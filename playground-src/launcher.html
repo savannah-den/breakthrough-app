@@ -43,6 +43,22 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .tourbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;border-radius:24px;background:var(--lime);border:1.5px solid var(--ink)}
 .tourbar>span{flex:1 1 200px;font-family:var(--display);font-size:20px;font-weight:700;color:var(--maroon)}
+.todo{margin:0 0 14px;padding:18px;border-radius:22px;background:#FFFFFF;border:2px solid var(--line)}
+.todo h2{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:22px;color:var(--maroon)}
+.todo-sub{margin:2px 0 10px;font-size:13px;color:var(--muted)}
+.todo-g{margin-top:8px}.todo-g>b{font-size:14px;color:var(--maroon)}
+.todo ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.todo li label{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:12px;background:var(--cream);cursor:pointer;font-size:14.5px;line-height:1.4}
+.todo li input{margin-top:2px;width:18px;height:18px;accent-color:var(--maroon);flex:none}
+.todo li.done label{opacity:.55;text-decoration:line-through}
+.todo li small{display:block;color:var(--muted);font-size:12.5px}
+.todo-add{display:flex;gap:8px;margin-top:10px}.todo-add input{flex:1;min-width:0;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);font:inherit}
+.todo-add button{padding:10px 16px;border-radius:999px;border:0;background:var(--maroon);color:#FFF4EE;font:700 14px Poppins,system-ui,sans-serif;cursor:pointer}
+.livebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px;padding:14px 16px;border-radius:22px;background:#F1F9A6;border:2px solid var(--maroon)}
+.livebar>span{width:100%;font-weight:700;color:var(--maroon)}.livebar>span i{font-weight:500;font-style:normal;color:#6A5A57}
+.live-btn{display:flex;flex-direction:column;align-items:flex-start;padding:10px 18px;border-radius:999px;background:#FFFFFF;color:var(--maroon);border:1.5px solid var(--maroon);text-decoration:none;line-height:1.2}
+.live-btn b{font-size:15px}.live-btn span{font-size:12px;color:#6A5A57}
+.live-btn:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
 .tour-btn{display:flex;flex-direction:column;align-items:flex-start;padding:10px 18px;border-radius:999px;background:var(--maroon);color:#FFF4EE;text-decoration:none;line-height:1.2}
 .tour-btn b{font-size:15px}.tour-btn span{font-size:12px;color:#F6D6CF}
 .tour-btn:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
@@ -56,6 +72,20 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     <svg class="wave" viewBox="0 0 400 40" aria-hidden="true"><path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20 T 250 20 T 300 20 T 350 20 T 400 20" fill="none" stroke="#F1F9A6" stroke-width="3" stroke-linecap="round"/></svg>
   </header>
 
+  <div class="livebar" aria-label="The real app">
+    <span>The real thing <i>(opens in a new tab)</i></span>
+    <a class="live-btn" href="https://app.colourmeneurospicy.com.au/" target="_blank" rel="noopener"><b>📱 Live app</b><span>What your clients use</span></a>
+    <a class="live-btn" href="https://app.colourmeneurospicy.com.au/admin" target="_blank" rel="noopener"><b>🗂 Coach dashboard</b><span>Your real clients, payments and course</span></a>
+    <a class="live-btn" href="https://app.colourmeneurospicy.com.au/?trial=1" target="_blank" rel="noopener"><b>🧪 Try the new-client journey</b><span>On the live app, nothing saved</span></a>
+    <a class="live-btn" href="https://preview--breakthrough-with-sav.netlify.app/" target="_blank" rel="noopener"><b>🔒 Preview</b><span>Changes before they go live</span></a>
+  </div>
+  <section class="todo" aria-labelledby="todo-h">
+    <h2 id="todo-h">My to-do list</h2>
+    <p class="todo-sub">Tick things off as you go. Your ticks are saved in this browser.</p>
+    <div class="todo-g"><b>Videos to film</b><ul id="todo-film"></ul></div>
+    <div class="todo-g"><b>Also waiting on you</b><ul id="todo-more"></ul></div>
+    <form id="todo-add" class="todo-add"><input id="todo-new" placeholder="Add something…" aria-label="Add a to-do"><button type="submit">Add</button></form>
+  </section>
   <div class="tourbar">
     <span>See what new clients see first</span>
     <a class="tour-btn" href="app.html?door=course&amp;tour=1"><b>▶ App tour</b><span>Self-paced</span></a>
@@ -147,5 +177,49 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     try { var ks = []; for (var i = 0; i < localStorage.length; i++) ks.push(localStorage.key(i)); ks.forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
     armed = false; btn.textContent = 'Clear my playground answers'; msg.textContent = 'Cleared. The playground is fresh.';
   });
+})();
+</script>
+
+<script>
+(function () {
+  var FILM = [
+    ['film-welcome', 'Re-write and film the welcome video'],
+    ['film-setup', 'Film the Setting yourself up for success video', 'Fed, watered and rested; present (watch the intentions video to remember that); explain be, do, have a bit'],
+    ['film-home', 'Film a saving-to-your-home-screen tutorial'],
+    ['film-move', 'Film a moving-the-app-to-your-doom-scroll-app-spot tutorial'],
+    ['film-howto', 'Make a how-to-use-the-app video (full)'],
+    ['film-intent', 'Remake the intentions video to link to the app']
+  ];
+  var MORE = [
+    ['sigh', 'Film the physiological sigh video (Breathe tool)'],
+    ['wk4', 'Upload Week 4 lessons 1–4 to Vimeo', 'Name them like “WEEK 4 - 1. Association vs Disassociation”, then Sync with Vimeo → Save course'],
+    ['energy', 'Upload the Energy Audit video to Vimeo', 'Name it “WEEK 2 - Energy Audit”'],
+    ['links', 'Add the Settings video links', 'Start-here, hierarchy of learning, ECT, Emotional Blueprint intro + course videos'],
+    ['vimeo-embed', 'Lock down Vimeo embedding to your app’s web address'],
+    ['lawyer', 'Ask your lawyer to check the agreement + app terms'],
+    ['library', 'Build the resource library'],
+    ['reps', 'Pick a name for “Today’s reps”']
+  ];
+  var KEY = 'sav-todo-v1', st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { st = {}; }
+  st.done = st.done || {}; st.extra = st.extra || [];
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function item(it) {
+    var li = document.createElement('li'); if (st.done[it[0]]) li.className = 'done';
+    var lab = document.createElement('label'), cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!st.done[it[0]];
+    cb.addEventListener('change', function () { if (cb.checked) st.done[it[0]] = Date.now(); else delete st.done[it[0]]; li.className = cb.checked ? 'done' : ''; save(); });
+    var t = document.createElement('span'); t.textContent = it[1]; if (it[2]) { var sm = document.createElement('small'); sm.textContent = it[2]; t.appendChild(sm); }
+    lab.appendChild(cb); lab.appendChild(t); li.appendChild(lab); return li;
+  }
+  function draw() {
+    var f = document.getElementById('todo-film'), m = document.getElementById('todo-more'); f.innerHTML = ''; m.innerHTML = '';
+    FILM.forEach(function (it) { f.appendChild(item(it)); });
+    MORE.concat(st.extra).forEach(function (it) { m.appendChild(item(it)); });
+  }
+  document.getElementById('todo-add').addEventListener('submit', function (e) {
+    e.preventDefault(); var i = document.getElementById('todo-new'), v = i.value.trim(); if (!v) return;
+    st.extra.push(['x' + Date.now(), v]); save(); i.value = ''; draw();
+  });
+  draw();
 })();
 </script>
