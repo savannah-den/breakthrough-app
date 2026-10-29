@@ -2041,7 +2041,7 @@
     if (APP.state.isAdmin && !playground()) return false;
     return !needsStart() && !introDone();
   }
-  function introAllowed(route) { route = String(route || ''); return /^(Course|Setup|Intentions|ActDone|Back|Profile|NextTest)/.test(route) || INTRO.some(function (id) { return route === 'Lesson-' + id; }); }
+  function introAllowed(route) { route = String(route || ''); return /^(Course|Setup|Intentions|ActDone|Back|Profile|NextTest|RepTest)/.test(route) || INTRO.some(function (id) { return route === 'Lesson-' + id; }); }
   function StartView(root) {
     var first = tx((APP.state.profile || {}).full_name).split(' ')[0];
     // the same welcome banner as Home inside the app

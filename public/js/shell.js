@@ -251,7 +251,7 @@
     if (!allowed(name)) name = homeView();
     if (name !== 'Welcome' && window.BT_COURSE && window.BT_COURSE.needsWelcome && window.BT_COURSE.needsWelcome()) name = 'Welcome';
     else if (name !== 'Contract' && name !== 'Welcome' && window.BT_COURSE && window.BT_COURSE.needsContract && window.BT_COURSE.needsContract()) name = 'Contract';
-    else if (name !== 'Start' && name !== 'NextTest' && name !== 'Contract' && name !== 'Welcome' && window.BT_COURSE && window.BT_COURSE.needsStart && window.BT_COURSE.needsStart()) name = 'Start';
+    else if (name !== 'Start' && name !== 'NextTest' && name !== 'RepTest.dc.html' && name !== 'Contract' && name !== 'Welcome' && window.BT_COURSE && window.BT_COURSE.needsStart && window.BT_COURSE.needsStart()) name = 'Start';
     else if (window.BT_COURSE && window.BT_COURSE.introBlocked && window.BT_COURSE.introBlocked(name)) name = 'Course';
     var route = name;
     var nvo = nativeView(name);
