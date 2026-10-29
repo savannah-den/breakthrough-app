@@ -1837,8 +1837,89 @@
     }, function () {});
   }
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refreshContract(true); });
-  // save the signed agreement as a PDF (the device's print sheet: "Save as PDF")
+  // save the signed agreement as a real PDF file. (Printing doesn't work inside the home-screen app on iPhone,
+  // so we draw it to a PDF here and hand it to the phone's Share sheet: Save to Files, email, etc.)
+  function loadScript(src) { return new Promise(function (res, rej) { if (document.querySelector('script[src="' + src + '"]')) { res(); return; } var sc = document.createElement('script'); sc.src = src; sc.onload = function () { res(); }; sc.onerror = rej; document.head.appendChild(sc); }); }
   function contractPdf(ct) {
+    var C = window.BT_CONTRACT; if (!C || !ct || !ct.signed) return;
+    var nm = (ct.signed.client && (ct.signed.client.signedName || ct.signed.client.name)) || '';
+    var file = 'Breakthrough coaching agreement' + (nm ? ' - ' + nm.replace(/[^\w .-]/g, '') : '') + '.pdf';
+    var signedLine = 'Signed ' + new Date(ct.signed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + (nm ? ' by ' + nm : '');
+    var cover = h('div', { class: 'bt-pdf-wait', role: 'status' }, [h('div', { class: 'bt-party-card bt-vdone-card' }, [h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '📄' }), h('h2', { text: 'Making your PDF…' }), h('p', { text: 'This takes a few seconds.' })])]);
+    var box = h('div', { class: 'bt-pdf-ct' });
+    box.appendChild(C.render(ct.signed.terms, ct.signed.client, { signed: { client: ct.signed.client, signed_at: ct.signed_at } }).node);
+    document.body.appendChild(box); document.body.appendChild(cover);
+    var done = function () { if (box.parentNode) box.remove(); if (cover.parentNode) cover.remove(); };
+    // read the agreement as simple blocks: headings, "label: value" rows, ticked commitments, paragraphs
+    var blocks = [];
+    var tx2 = function (el) { return String(el.textContent || '').replace(/\s+/g, ' ').trim(); };
+    (function walk(el) {
+      Array.prototype.forEach.call(el.children, function (c) {
+        var tag = c.tagName, cls = c.className && c.className.baseVal == null ? String(c.className) : '';
+        if (/^(BUTTON|INPUT|SVG|IMG|SCRIPT|STYLE|SELECT|TEXTAREA)$/i.test(tag) || c.hidden || getComputedStyle(c).display === 'none') return;
+        if (/^H1$/.test(tag)) { blocks.push({ t: 'h1', s: tx2(c) }); return; }
+        if (/^H2$/.test(tag)) { blocks.push({ t: 'h2', s: tx2(c) }); return; }
+        if (/^H[3-6]$/.test(tag)) { blocks.push({ t: 'h3', s: tx2(c) }); return; }
+        if (/\b(ct-row|ct-f)\b/.test(cls) && c.children.length >= 2) { blocks.push({ t: 'kv', k: tx2(c.children[0]), v: tx2(c.children[c.children.length - 1]) }); return; }
+        if (/\bct-opt\b/.test(cls)) { var ob = c.querySelector('b'), od = ob && ob.nextElementSibling, on0 = /\bon\b/.test(cls); blocks.push({ t: 'li', s: (on0 ? '[x] ' : '[  ] ') + (ob ? tx2(ob) : '') + (on0 && od ? ': ' + tx2(od) : '') }); return; }
+        if (/\bct-note\b/.test(cls)) { blocks.push({ t: 'li', s: (/\bon\b/.test(cls) || (c.querySelector('input') || {}).checked ? '[x] ' : '[  ] ') + tx2(c).replace(/^✓\s*/, '') }); return; }
+        if (/^(P|LI|DT|DD|LABEL|BLOCKQUOTE)$/.test(tag)) { var s0 = tx2(c); if (s0) blocks.push({ t: tag === 'LI' ? 'li' : 'p', s: s0, sub: /\bct-(sub|k)\b/.test(cls) }); return; }
+        if (c.children.length) walk(c); else { var s1 = tx2(c); if (s1) blocks.push({ t: 'p', s: s1 }); }
+      });
+    })(box);
+    var base = window.BT_DEMO ? 'js/vendor/' : '/js/vendor/';
+    loadScript(base + 'pdf-lib.min.js').then(function () {
+      var L = window.PDFLib, docP = L.PDFDocument.create();
+      return docP.then(function (doc) {
+        return Promise.all([doc.embedFont(L.StandardFonts.Helvetica), doc.embedFont(L.StandardFonts.HelveticaBold), doc.embedFont(L.StandardFonts.TimesRomanBold), doc.embedFont(L.StandardFonts.HelveticaOblique)]).then(function (F) {
+          var reg = F[0], bold = F[1], serif = F[2], ital = F[3], W = 595.28, H = 841.89, M = 50, CW = W - M * 2;
+          var MAROON = L.rgb(0.306, 0.047, 0.031), RED = L.rgb(0.659, 0.137, 0.122), INK = L.rgb(0.12, 0.08, 0.07), MUTED = L.rgb(0.42, 0.35, 0.34);
+          var safe = function (t) { return String(t || '').replace(/[✓✔]\s*/g, '').replace(/[^\x20-\x7E\xA0-\xFF‘’“”–—•…€™]/g, ''); };
+          var page, y, n = 0;
+          function newPage() { page = doc.addPage([W, H]); n++; y = H - M;
+            page.drawText('Colour Me Neurospicy', { x: M, y: H - 30, size: 9, font: bold, color: RED });
+            page.drawText(safe(signedLine), { x: W - M - reg.widthOfTextAtSize(safe(signedLine), 8), y: H - 30, size: 8, font: reg, color: MUTED });
+            y = H - M - 10; }
+          function wrap(text, font, size, width) { var words = safe(text).split(' '), lines = [], cur = ''; words.forEach(function (w) { var t = cur ? cur + ' ' + w : w; if (font.widthOfTextAtSize(t, size) > width && cur) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; }
+          function write(text, o) { var size = o.size || 10, lh = size * (o.lh || 1.45), lines = wrap(text, o.font || reg, size, CW - (o.indent || 0));
+            if (o.before) y -= o.before; if (y - lh < M) newPage();
+            lines.forEach(function (ln) { if (y - lh < M) newPage(); page.drawText(ln, { x: M + (o.indent || 0), y: y - size, size: size, font: o.font || reg, color: o.color || INK }); y -= lh; });
+            if (o.after) y -= o.after; }
+          newPage();
+          blocks.forEach(function (b) {
+            if (b.t === 'h1') write(b.s, { font: serif, size: 20, color: MAROON, after: 6 });
+            else if (b.t === 'h2') write(b.s, { font: serif, size: 14, color: MAROON, before: 10, after: 2 });
+            else if (b.t === 'h3') write(b.s, { font: bold, size: 10.5, before: 6 });
+            else if (b.t === 'kv') { write(b.k + ':', { font: bold, size: 9.5, color: MUTED, before: 2 }); write(b.v, { size: 10, indent: 10 }); }
+            else if (b.t === 'li') write(b.s, { size: 10, indent: 6, before: 2 });
+            else write(b.s, { size: b.sub ? 9 : 10, font: b.sub ? ital : reg, color: b.sub ? MUTED : INK, before: 3 });
+          });
+          write(signedLine + '. Signed electronically in the Breakthrough app.', { font: bold, size: 10, color: RED, before: 14 });
+          doc.getPages().forEach(function (pg, i) { var t = 'Page ' + (i + 1) + ' of ' + n; pg.drawText(t, { x: W / 2 - reg.widthOfTextAtSize(t, 8) / 2, y: 24, size: 8, font: reg, color: MUTED }); });
+          doc.setTitle('Breakthrough coaching agreement' + (nm ? ' - ' + nm : '')); doc.setAuthor('Colour Me Neurospicy');
+          return doc.save();
+        });
+      });
+    }).then(function (bytes) {
+      done();
+      var blob = new Blob([bytes], { type: 'application/pdf' });
+      var f = null; try { f = new File([blob], file, { type: 'application/pdf' }); } catch (e) {}
+      var canShare = !!(f && navigator.canShare && navigator.canShare({ files: [f] }));
+      var url = URL.createObjectURL(blob);
+      var close = function () { var x = document.getElementById('bt-pdf-ready'); if (x) x.remove(); };
+      document.body.appendChild(h('div', { id: 'bt-pdf-ready', class: 'bt-party', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Your PDF is ready' }, [h('div', { class: 'bt-party-card bt-vdone-card' }, [
+        h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+        h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '📄' }), h('h2', { text: 'Your PDF is ready' }),
+        h('p', { text: 'Save it to your Files, email it to yourself, or keep it wherever you like. A copy also stays in your profile.' }),
+        h('div', { class: 'bt-row bt-nbn-btns' }, [
+          canShare ? h('button', { class: 'bt-btn lime', type: 'button', text: 'Save or share the PDF', onclick: function () { navigator.share({ files: [f], title: 'My coaching agreement' }).then(close, function () {}); } }) : null,
+          h('a', { class: 'bt-btn ' + (canShare ? 'ghost' : 'lime'), href: url, download: file, target: '_blank', rel: 'noopener', text: canShare ? 'Open the PDF' : 'Download the PDF', onclick: function () { setTimeout(close, 400); } })
+        ])
+      ])]));
+    }).catch(function () { done(); contractPrint(ct); });
+  }
+  // old way, kept as a fallback (computers): the device's print sheet, "Save as PDF"
+  function contractPrint(ct) {
     var C = window.BT_CONTRACT; if (!C || !ct || !ct.signed) return;
     var old = document.querySelector('.bt-print-ct'); if (old) old.remove();
     var nm = (ct.signed.client && (ct.signed.client.signedName || ct.signed.client.name)) || '';
@@ -1849,9 +1930,9 @@
     document.body.appendChild(box);
     var title = document.title; document.title = 'Breakthrough coaching agreement' + (nm ? ' - ' + nm : '');
     document.body.classList.add('bt-printing');
-    var done = function () { document.body.classList.remove('bt-printing'); document.title = title; box.remove(); window.removeEventListener('afterprint', done); };
-    window.addEventListener('afterprint', done);
-    setTimeout(function () { try { window.print(); } catch (e) { done(); } }, 60);
+    var fin = function () { document.body.classList.remove('bt-printing'); document.title = title; box.remove(); window.removeEventListener('afterprint', fin); };
+    window.addEventListener('afterprint', fin);
+    setTimeout(function () { try { window.print(); } catch (e) { fin(); } }, 60);
   }
   function pdfBtn(ct, cls) { return h('button', { class: 'bt-btn ' + (cls || '') + ' bt-ct-pdf', type: 'button', text: '⬇ Download as PDF', onclick: function () { contractPdf(ct); } }); }
   function ContractView(root) {
@@ -1930,7 +2011,7 @@
           h('div', { class: 'bt-ct-keep' }, [
             h('p', { class: 'bt-ct-keep-h', text: 'Want your own copy?' }),
             pdfBtn(S.contract),
-            h('p', { class: 'bt-sub small', text: 'Choose “Save as PDF” when the save screen opens. A copy has also been added to your profile automatically, so you can view it in the app any time you like.' })
+            h('p', { class: 'bt-sub small', text: 'It saves as a PDF you can keep in your Files or email to yourself. A copy has also been added to your profile automatically, so you can view it in the app any time you like.' })
           ])
         ]));
         window.scrollTo(0, 0);
@@ -2435,6 +2516,7 @@
     tour: function () { if (APP) appTour(); },
     runTour: function (steps, o) { if (APP) runTour(steps, o); },
     resIntro: resIntro,
+    contractPdf: function (ct, hh) { if (!h && hh) h = hh; contractPdf(ct); },
     find: function () { findSheet(); },
     toCourseNext: function (resId) { if (!APP) return; var f = lessonForRes(resId); if (f && lessonOpen(f.l.id) && !prog().done[f.l.id]) markDone(f.l.id, true); wr(RETK, null); var nx = f ? nextAfter(f.l.id) : null; try { sessionStorage.setItem('bt-scrollto', nx ? lessonHref(nx) : (f ? lessonHref(f.l) : '')); if (nx && isActivityCard(nx)) sessionStorage.setItem('bt-scrollto-act', '1'); } catch (e) {} goHref('#Course'); setTimeout(celebrate, 700); },
     hasLibrary: function () { var c = APP && APP.state.contract; return !!(c && c.status === 'signed' && ((c.signed && c.signed.terms) || c.terms || {}).inclusions && ((c.signed && c.signed.terms) || c.terms).inclusions.library); },

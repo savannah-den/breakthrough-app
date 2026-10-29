@@ -1957,3 +1957,8 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 .rp-winbox{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:18px;background:#F8FCD6;border:2px solid #1F1412;animation:btFindUp .25s ease-out}
 .rp-winbox>b{font:700 16px 'Playfair Display',Georgia,serif;color:#4E0C08}
 .rp-winbox .rp-more{align-self:flex-start}
+/* the signed agreement, drawn off to the side while it's turned into a PDF */
+.bt-pdf-ct{position:fixed;left:0;top:0;width:800px;z-index:1;background:#FFFFFF;color:#1F1412;padding:28px;box-sizing:border-box;font-size:13px}
+.bt-pdf-ct .ct-terms{max-height:none!important;overflow:visible!important;box-shadow:none}
+.bt-pdf-ct .bt-print-k{margin:0 0 10px;font-weight:600;color:#A8231F}
+.bt-pdf-wait{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:rgba(31,20,18,.85);padding:16px}

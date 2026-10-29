@@ -75,6 +75,9 @@ wr(OUT + '/js/admin.js', ad)
 for f in os.listdir('public/js'):
     if f.endswith('.js') and not os.path.exists(f'{OUT}/js/{f}'):
         wr(f'{OUT}/js/{f}', rd('public/js/' + f).replace("'/tools/", "'tools/").replace('"/tools/', '"tools/'))
+os.makedirs(OUT + '/js/vendor', exist_ok=True)
+for f in os.listdir('public/js/vendor'):
+    shutil.copy('public/js/vendor/' + f, OUT + '/js/vendor/' + f)
 wr(OUT + '/js/config.js', "// PLAYGROUND: uses the pretend database in demo-backend.js, never the live one.\nwindow.BT_CONFIG = { supabaseUrl: 'playground', supabaseAnonKey: 'playground', aiEnabled: false, coachName: 'Sav' };\n")
 shutil.copy('playground-src/demo-backend.js', OUT + '/js/demo-backend.js')
 # Launcher: the tools, in the order they come up in the program, with their logos (like the course cards)

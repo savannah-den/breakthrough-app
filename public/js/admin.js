@@ -957,6 +957,7 @@
       var holder = h('div');
       card.appendChild(h('div', { class: 'ad-ct-acts' }, [
         h('button', { class: 'bt-btn lime', type: 'button', text: 'View signed copy', onclick: function (e) { if (holder.firstChild) { holder.innerHTML = ''; e.target.textContent = 'View signed copy'; return; } holder.appendChild(C.render(ct.signed.terms, ct.signed.client, { signed: { client: ct.signed.client, signed_at: ct.signed_at } }).node); e.target.textContent = 'Hide signed copy'; } }),
+        h('button', { class: 'bt-btn ghost', type: 'button', text: '⬇ Download PDF', onclick: function () { if (window.BT_COURSE && window.BT_COURSE.contractPdf) window.BT_COURSE.contractPdf(ct, h); } }),
         h('button', { class: 'bt-btn ghost', type: 'button', text: 'Start a new agreement', onclick: function (e) {
           if (!e.target.dataset.sure) { e.target.dataset.sure = 1; e.target.textContent = 'Tap again: the signed copy is kept in their history'; return; }
           var t = Object.assign({}, ct.signed.terms); t.archive = (ct.terms.archive || []).concat([{ signed: ct.signed, signed_at: ct.signed_at }]);

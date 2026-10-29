@@ -475,3 +475,16 @@ svg.ct-shot{border:0;height:auto}
 .ad-login .ad-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ad-login .ad-row .bt-in{flex:1 1 200px;min-width:0}
 .ad-login .bt-btn.ghost{color:#1F1412;border-color:#E6C3BC}
+/* signed agreement → PDF (same pop-ups as the app) */
+.bt-party{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:rgba(31,20,18,.55)}
+.bt-party-card{position:relative;z-index:2;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px 24px;border-radius:28px;background:#FFF4EE;color:#1F1412;text-align:center;border:3px solid #F1F9A6}
+.bt-party-card h2{margin:0;font:700 22px 'Playfair Display',Georgia,serif;color:#4E0C08}
+.bt-party-card p{margin:0;font-size:14px;line-height:1.5}
+.bt-vdone-ic{font-size:40px;line-height:1}
+.bt-vdone-x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;cursor:pointer;font-size:14px}
+.bt-nbn-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px}
+.bt-nbn-btns .bt-btn.ghost{color:#1F1412;border-color:#E6C3BC}
+.bt-pdf-ct{position:fixed;left:0;top:0;width:800px;z-index:1;background:#FFFFFF;color:#1F1412;padding:28px;box-sizing:border-box;font-size:13px}
+.bt-pdf-ct .ct-terms{max-height:none!important;overflow:visible!important;box-shadow:none}
+.bt-pdf-ct .bt-print-k{margin:0 0 10px;font-weight:600;color:#A8231F}
+.bt-pdf-wait{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:rgba(31,20,18,.85);padding:16px}
