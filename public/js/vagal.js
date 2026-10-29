@@ -996,7 +996,8 @@
   var GROOVE = '<svg viewBox="0 0 320 120" role="img" aria-label="An old, deep, well-worn groove, and beside it a faint new path that gets wider each time you walk it"><path d="M10 34 C80 10 140 60 210 30 S300 20 312 30" fill="none" stroke="#C9B9B5" stroke-width="16" stroke-linecap="round"/><path d="M10 34 C80 10 140 60 210 30 S300 20 312 30" fill="none" stroke="#A89894" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"/><text x="14" y="62" font-family="Patrick Hand SC,cursive" font-size="14" fill="#8A7A77">the old, well-worn groove</text><path class="gv-new" d="M10 96 C80 74 140 116 210 90 S300 82 312 90" fill="none" stroke="#F4C2F7" stroke-linecap="round"/><path class="gv-walk" d="M10 96 C80 74 140 116 210 90 S300 82 312 90" fill="none" stroke="#A8231F" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 400"/><text x="14" y="118" font-family="Patrick Hand SC,cursive" font-size="14" fill="#A8231F">your new path: small now, wider every rep</text></svg>';
   function embodyIntro() {
     var key = 'bt-emb-w1', seen = null; try { seen = localStorage.getItem(key); } catch (e) {}
-    var d = h('details', { class: 'emb', open: seen ? null : 'open' });
+    // stays open for the whole week (7 days from when they first see it), then folds away
+    var d = h('details', { class: 'emb', open: !seen || Date.now() - Number(seen) < 7 * DAY ? 'open' : null });
     if (!seen) try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
     d.appendChild(h('summary', { class: 'emb-sum' }, [h('span', { class: 'emb-k', text: 'Week 1 · Embodiment' }), h('b', { text: 'Your next 7 days: the why and the how' }), h('span', { class: 'emb-tg', 'aria-hidden': 'true' })]));
     var b = h('div', { class: 'emb-b' }); d.appendChild(b);
@@ -1016,7 +1017,7 @@
     b.appendChild(h('section', { class: 'emb-sec' }, [h('span', { class: 'emb-h', text: 'How small it can look' }),
       h('div', { class: 'emb-how' }, HOW.map(function (x) { return h('div', { class: 'emb-hw' }, [h('span', { class: 'emb-hw-ic' }, [kit.emblem(x[0])]), h('div', null, [h('span', { class: 'emb-hw-t', text: x[1] }), h('b', { text: x[2] }), h('span', { text: x[3] })])]); })),
       h('div', { class: 'emb-bar', role: 'img', 'aria-label': 'All together, no more than 30 minutes a day' }, HOW.map(function (x) { return h('span', { class: 'emb-bar-' + x[0], style: 'flex:' + x[4], text: x[2].replace('Your ', '') }); })),
-      h('p', { class: 'emb-tot', text: 'All together, no more than 30 minutes a day.' })]));
+      h('p', { class: 'emb-tot', text: 'All together, no more than 30 minutes a day. That’s your bare-ass minimum, and we build from there.' })]));
     // where it lives + reps
     b.appendChild(h('section', { class: 'emb-sec' }, [h('span', { class: 'emb-h', text: 'Where it all lives' }),
       h('p', { text: 'All your Vagal Tone Workout stuff lives in here: everything we just built, in one place, for you to come back to whenever you want.' }),

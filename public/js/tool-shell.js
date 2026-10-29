@@ -102,7 +102,7 @@
     if (inst.componentDidMount) inst.componentDidMount();
     // the app's top navigation, so the menu is always at the top
     var nav = document.createElement('nav'); nav.className = 'bt-top'; nav.id = 'bt-top'; nav.setAttribute('aria-label', 'Main');
-    var brand = document.createElement('div'); brand.className = 'bt-brand'; brand.setAttribute('aria-hidden', 'true'); brand.innerHTML = '<span class="bt-brand-n">Colour Me Neurospicy</span><span class="bt-brand-s">Neurodivergent Breakthrough Program</span>'; nav.appendChild(brand);
+    var brand = document.createElement('div'); brand.className = 'bt-brand'; brand.setAttribute('aria-hidden', 'true'); brand.innerHTML = '<span class="bt-brand-n">Colour Me Neurospicy</span>'; nav.appendChild(brand);
     var inner = document.createElement('div'); inner.className = 'bt-top-in'; nav.appendChild(inner);
     [['Home', '/#Dashboard'], ['Course', '/#Course'], ['My Book', '/#Book'], ['Resources', '/#Resources']].forEach(function (n) {
       var a = document.createElement('a'); a.className = 'bt-top-i' + (n[0] === 'Resources' ? ' on' : ''); a.href = n[1]; a.textContent = n[0]; inner.appendChild(a);
@@ -137,7 +137,7 @@
   /* first time in a tool: little bubbles pop up as they scroll to each part */
   var TOOL_TOURS = {
     'what-if-workout': [
-      ['[data-tour="intro"]', 'Start here', 'When to come back to this, and how to chunk a big worry down into something you can actually do today.'],
+      ['[data-tour="intro"]', 'Start here', 'When to come back to this: the moments fear, anxiety or worry show up.'],
       ['[data-tour="length"]', 'Long or short?', 'There are two versions. Use the long one during the program, every time. The short one is for after the program, or for little things.'],
       ['[data-tour="step1"]', 'One step at a time', 'Work your way down the page. Your answers save as you go, so you can stop and come back.'],
       ['[data-tour="save"]', 'Keep it', 'Save it to your Becoming Book, download it as a picture, or both. This is to remind you next time you have the same thoughts.']
