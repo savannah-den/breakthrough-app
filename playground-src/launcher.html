@@ -101,6 +101,15 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
 .nf-pv{display:flex;flex-direction:column;gap:8px}
 .nf-pv h4{margin:6px 0 0;font:700 16px var(--display);color:var(--maroon)}
 .nf-pv p{margin:0;font-size:13px;color:#3A2A27}
+.sendlinks{background:var(--paper);border:1.5px solid var(--ink);border-radius:26px;padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+.sendlinks h2{margin:0;font-family:var(--display);font-size:26px;color:var(--maroon)}
+.sl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px}
+.sl-card{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:20px;border:1.5px solid var(--ink)}
+.sl-card.pink{background:var(--pink)}.sl-card.lime{background:var(--lime)}
+.sl-card b{font-size:16px}
+.sl-card code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--paper);border-radius:10px;padding:8px 10px;word-break:break-all;user-select:all;-webkit-user-select:all}
+.sl-copy{align-self:flex-start;min-height:42px;padding:8px 18px;border-radius:999px;border:0;background:var(--maroon);color:#FFF4EE;font:600 14px var(--body);cursor:pointer}
+.sl-copy:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
 .k-reps{background:#F1F9A6}.k-back{background:#F4C2F7}.k-gentle{background:#BFE3D0}.k-week{background:#F28C3B}.k-sav{background:#8FA6C9}.k-act{background:#E9E1FF}
 </style>
 
@@ -112,6 +121,14 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     <svg class="wave" viewBox="0 0 400 40" aria-hidden="true"><path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20 T 250 20 T 300 20 T 350 20 T 400 20" fill="none" stroke="#F1F9A6" stroke-width="3" stroke-linecap="round"/></svg>
   </header>
 
+  <section class="sendlinks" aria-labelledby="send-h">
+    <h2 id="send-h">Links to send clients</h2>
+    <p class="todo-sub"><b>First</b> add them in the real coach dashboard (the “Add a client” tab → their email + 1:1 or self-paced), so they land in the right version when they log in with that email.</p>
+    <div class="sl-grid">
+      <div class="sl-card pink"><b>1:1 clients</b><code>https://app.colourmeneurospicy.com.au/1to1</code><button type="button" class="sl-copy" data-copy="https://app.colourmeneurospicy.com.au/1to1">Copy link</button></div>
+      <div class="sl-card lime"><b>Self-paced clients</b><code>https://app.colourmeneurospicy.com.au/course</code><button type="button" class="sl-copy" data-copy="https://app.colourmeneurospicy.com.au/course">Copy link</button></div>
+    </div>
+  </section>
   <div class="livebar" aria-label="The real app">
     <span>The real thing <i>(opens in a new tab)</i></span>
     <a class="live-btn" href="https://app.colourmeneurospicy.com.au/" target="_blank" rel="noopener"><b>📱 Live app</b><span>What your clients use</span></a>
@@ -161,7 +178,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
       <a class="tool" href="tools/rewind.html"><b>REWIND</b><span>Respond instead of react</span></a>
       <a class="tool" href="tools/coming-home.html"><b>Coming Home</b><span>Back into your body</span></a>
       <a class="tool" href="tools/understanding-bridge.html"><b>The Understanding Bridge</b><span>Meet people where they are</span></a>
-      <a class="tool" href="app.html?door=course&amp;peek=1#Setup"><b>Set yourself up for success</b><span>Intro activity: the seven set-up steps</span></a>
+      <a class="tool" href="app.html?door=course&amp;peek=1#Setup"><b>Set yourself up for success</b><span>Mini course: 9 short lessons, each with its step</span></a>
       <a class="tool" href="app.html?door=course&amp;peek=1#Intentions"><b>Setting Intentions</b><span>Your North Star and your why</span></a>
       <a class="tool" href="app.html?door=course&amp;peek=1#Vagal"><b>Vagal Tone Workout</b><span>The embodiment series hub + daily workout card</span></a>
       <a class="tool" href="app.html?door=course&amp;peek=1#Breathe"><b>Breathe</b><span>Breathing guide, sounds and what to do for your state</span></a>
@@ -222,6 +239,16 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
   document.getElementById('close').addEventListener('click', close);
   document.querySelectorAll('a.door, a.tool, a.tour-btn').forEach(function (a) {
     a.addEventListener('click', function (e) { e.preventDefault(); open(a.getAttribute('href'), a.querySelector('b').textContent); });
+  });
+})();
+(function () {
+  // "Links to send clients": copy, with a select-the-text fallback when the clipboard is blocked
+  document.querySelectorAll('.sl-copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-copy'), done = function () { b.textContent = 'Copied ✓'; setTimeout(function () { b.textContent = 'Copy link'; }, 2000); };
+      var fallback = function () { var c = b.parentNode.querySelector('code'); try { var r = document.createRange(); r.selectNodeContents(c); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); if (document.execCommand('copy')) { done(); return; } } catch (e) {} b.textContent = 'Selected: press copy'; };
+      try { navigator.clipboard.writeText(t).then(done, fallback); } catch (e) { fallback(); }
+    });
   });
 })();
 (function () {

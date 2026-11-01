@@ -26,7 +26,7 @@
           "title": "Activity: Set yourself up for success",
           "video": "",
           "vimeo": "",
-          "desc": "Watch the set-up video, then work through the seven set-up steps one by one. Come back to it any time you’ve been avoiding the course or you’ve lapsed.",
+          "desc": "A mini course of 9 short videos. Do each step as you go: the activity is right under each video. Come back to it any time you’ve been avoiding the course or you’ve lapsed.",
           "prompts": [],
           "res": [
             "setup"
@@ -928,5 +928,86 @@
       "res": [],
       "lessons": []
     }
-  ]
+  ],
+  "mini": {
+    "setup": {
+      "title": "Set yourself up for success",
+      "intro": "As I go through each step, pause the video and actually do the thing. The activity for each step is right under its video.",
+      "lessons": [
+        {
+          "id": "su0",
+          "n": 0,
+          "title": "Intro",
+          "sub": "Why setting up matters",
+          "desc": "As I go through each step, pause the video and actually do the thing. Come back to this mini course any time you’ve been avoiding the course or you’ve lapsed.",
+          "vimeo": ""
+        },
+        {
+          "id": "su1",
+          "n": 1,
+          "title": "Step 1: Visual anchors",
+          "sub": "Put this app where your doomscroll app lives",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su2",
+          "n": 2,
+          "title": "Step 2: Time block it",
+          "sub": "Put it in your calendar",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su3",
+          "n": 3,
+          "title": "Step 3: Habit stack it",
+          "sub": "Tie it to something you already do",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su4",
+          "n": 4,
+          "title": "Step 4: Roadblocks",
+          "sub": "Get creative when you hit one",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su5",
+          "n": 5,
+          "title": "Step 5: Accountability",
+          "sub": "Ask for support",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su6",
+          "n": 6,
+          "title": "Step 6: Gold stars",
+          "sub": "Gold stars for the little things",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su7",
+          "n": 7,
+          "title": "Step 7: Be kind to yourself",
+          "sub": "Slower and deeper always wins",
+          "desc": "",
+          "vimeo": ""
+        },
+        {
+          "id": "su8",
+          "n": 8,
+          "title": "Step 8: The ripple effect",
+          "sub": "Your change ripples out",
+          "desc": "",
+          "vimeo": ""
+        }
+      ],
+      "time": "2 hours"
+    }
+  }
 }

@@ -493,3 +493,5 @@ svg.ct-shot{border:0;height:auto}
 .ad-wait-h{margin:6px 0 -4px}
 .ad-client.ad-waiting{border-style:dashed;background:#FFFDF6}
 .ad-wait-card{display:flex;flex-direction:column;gap:10px}
+
+.ad-hero-t{display:flex;align-items:center;gap:14px}.ad-logo{width:54px;height:54px;border-radius:14px;box-shadow:0 0 22px rgba(244,194,247,.35);flex:none}

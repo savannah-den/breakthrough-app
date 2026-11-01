@@ -184,7 +184,7 @@
     { re: /(tour|how (does|do) (this|the app)|show me around|how it works|confus)/, go: function () { return { t: 'Take the app tour', s: 'A walk through every page and how it all connects.', tour: true, cta: 'Start the tour →' }; } },
     { re: /(video (won'?t|not|doesn'?t)|can'?t (play|watch|hear)|no sound|buffer|black screen|loading)/, go: function () { return { t: 'Video not playing?', s: 'Check you’re online, then close the app fully and open it again. Still stuck? Try it on a laptop, or message Sav and tell her which lesson.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } },
     { re: /(lost (my|all)|disappear|gone|not sav|didn'?t save|missing|deleted)/, go: function () { return { t: 'Something missing?', s: 'Everything saves to your account. Make sure you’re logged in with the same email, then pull down to refresh. Still missing? Message Sav.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } },
-    { re: /(home ?screen|install|app icon|add to)/, go: function () { return { t: 'Add the app to your Home Screen', s: 'iPhone, in Safari: tap the three lines left of the web address, then Share, scroll down, and tap Add to Home Screen.', href: '#Setup', cta: 'Show me the steps →' }; } },
+    { re: /(home ?screen|install|app icon|add to)/, go: function () { return { t: 'Add the app to your Home Screen', s: 'iPhone, in Safari: tap the three lines left of the web address, then Share, scroll down, and tap Add to Home Screen.', href: '#Setup-1', cta: 'Show me the steps →' }; } },
     { re: /(help|stuck|talk to|contact|message sav|ask sav|question for sav)/, go: function () { return { t: 'Ask Sav', s: 'Can’t find it here? Send Sav a message.', href: 'https://wa.me/' + String((APP.viewProps('OneOnOne.dc.html') || {}).whatsappNumber || '+61 438 400 622').replace(/[^0-9]/g, ''), cta: 'Message Sav →' }; } }
   ];
   var CRISIS = /(suicid|kill myself|end it all|self[- ]?harm|hurt myself|don'?t want to (live|be here)|want to die)/;
@@ -272,7 +272,23 @@
   /* Top navigation: always at the top of every page */
   var NAV = [['Home', '#Dashboard', /^(Dashboard|Setup|Intentions)/], ['Course', '#Course', /^(Course|Lesson)/], ['My Book', '#Book', /^(Book|Journal)/], ['Resources', '#Resources', /^Resources/]];
   // a skinny branding banner above the menu, so the name shows on every screenshot and screen recording
-  function brandStrip() { return h('div', { class: 'bt-brand', 'aria-hidden': 'true' }, [h('span', { class: 'bt-brand-n', text: 'Colour Me Neurospicy' })]); }
+  // the app's logo: the North Star (also the home-screen icon). Used in the header, the footer and the log-in screen.
+  var LOGO = 'data:image/jpeg;base64,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';
+  window.BT_LOGO = LOGO;
+  function brandStrip() { return h('div', { class: 'bt-brand', 'aria-hidden': 'true' }, [h('img', { class: 'bt-brand-logo', src: LOGO, alt: '' }), h('span', { class: 'bt-brand-n', text: 'Colour Me Neurospicy' })]); }
+  // the footer on every page: logo, Instagram and email
+  function ensureFooter() {
+    if (document.getElementById('bt-foot')) return;
+    var app = document.getElementById('app'); if (!app || !app.parentNode) return;
+    var IG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>';
+    var EM = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>';
+    var f = document.createElement('footer'); f.id = 'bt-foot'; f.className = 'bt-foot';
+    f.innerHTML = '<img class="bt-foot-logo" src="' + LOGO + '" alt="Colour Me Neurospicy"><span class="bt-foot-n">Colour Me Neurospicy</span>' +
+      '<div class="bt-foot-l"><a class="bt-foot-b" href="https://www.instagram.com/colour_me_neurospicy/" target="_blank" rel="noopener">' + IG + 'Instagram</a>' +
+      '<a class="bt-foot-b" href="mailto:savannah@colourmeneurospicy.com.au">' + EM + 'Email Sav</a></div>' +
+      '<span class="bt-foot-e">savannah@colourmeneurospicy.com.au</span>';
+    app.parentNode.insertBefore(f, app.nextSibling);
+  }
   function renderTopNav(route) {
     var key = String(route || '').replace('.dc.html', '');
     var old = document.getElementById('bt-top'); if (old) old.remove();
@@ -1116,8 +1132,9 @@
         if (li.open && !dn && l.id === upId) row.setAttribute('aria-label', 'You’re up to: ' + l.title);
         row.appendChild(icon(!li.open ? 'lock' : dn ? 'tick' : 'play', 'bt-l-ic'));
         row.appendChild(h('span', { class: 'bt-l-t' }, [h('span', { text: l.title + (l.optional ? ' (optional)' : '') }),
-          !li.open ? h('span', { class: 'bt-l-why', text: li.why }) : l.mins ? h('span', { class: 'bt-l-mins', text: l.mins + ' min' }) : null,
+          !li.open ? h('span', { class: 'bt-l-why', text: li.why }) : null,
           pc > 0 && !dn ? h('span', { class: 'bt-bar sm' }, [h('span', { style: 'width:' + pc + '%' })]) : null]));
+        var tt = timeTag(l); if (tt) row.appendChild(tt);
         list.appendChild(row);
       });
       var wres = (w.res || []).filter(function (id) { return !inline[id]; }).map(resource).filter(Boolean);
@@ -1143,7 +1160,8 @@
     comehome: '<path d="M12 32L32 14l20 18v20H12z" fill="#FFD9A8" stroke="#1F1412" stroke-width="2.5" stroke-linejoin="round"/><path class="em-beat" d="M32 46c-7-5-9-8-7-11 1.6-2.4 5-2 7 1 2-3 5.4-3.4 7-1 2 3 0 6-7 11z" fill="#D3302B"/>',
     blueprint: '<rect x="10" y="12" width="44" height="40" rx="4" fill="#BFD7F2" stroke="#1F1412" stroke-width="2.5"/><path d="M10 24h44M10 36h44M24 12v40M40 12v40" stroke="#FFFFFF" stroke-width="1.4"/><path class="em-beat" d="M32 42c-7-5-9-8-7-11 1.6-2.4 5-2 7 1 2-3 5.4-3.4 7-1 2 3 0 6-7 11z" fill="#D3302B"/>',
     setup: '<rect x="14" y="10" width="36" height="46" rx="5" fill="#FFF4EE" stroke="#1F1412" stroke-width="2.5"/><path d="M21 24l3 3 6-6M21 37l3 3 6-6" stroke="#3E9B4F" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 25h10M34 38h10" stroke="#1F1412" stroke-width="2.2" stroke-linecap="round"/><path class="em-twinkle" d="M50 6c.5 4 2.5 6 6 6.5-3.5.5-5.5 2.5-6 6.5-.5-4-2.5-6-6-6.5 3.5-.5 5.5-2.5 6-6.5z" fill="#D3302B"/>',
-    intent: '<path class="em-twinkle" d="M32 6c1.5 12 9 19.5 21 21-12 1.5-19.5 9-21 21-1.5-12-9-19.5-21-21 12-1.5 19.5-9 21-21z" fill="#F1F9A6" stroke="#1F1412" stroke-width="2.2"/>',
+    intent: '<path d="M3 50q4-3 8 0t8 0t8 0t8 0t8 0" fill="none" stroke="#6E7FB0" stroke-width="1.6" stroke-linecap="round"/><path d="M13 54V20M17 54V20M29 54V20M33 54V20" stroke="#BF4630" stroke-width="2.4" stroke-linecap="round"/><path d="M12.5 23h5M12.5 31h5M28.5 23h5M28.5 31h5" stroke="#BF4630" stroke-width="1.8"/><path d="M3 41Q9 33 15 20Q23 40 31 20Q36 31 44 41" fill="none" stroke="#1F1412" stroke-width="1.8" stroke-linecap="round"/><path d="M7 41v-3M11 41v-8M19 41v-14M23 41v-8M27 41v-14M35 41v-9M39 41v-4" stroke="#1F1412" stroke-width=".9"/><path d="M3 42H47" stroke="#1F1412" stroke-width="3.2" stroke-linecap="round"/><path d="M54 42V27" stroke="#1F1412" stroke-width="2"/><rect x="41" y="12" width="22" height="15" rx="3" fill="#1F1412"/><g class="em-neon"><rect x="41" y="12" width="22" height="15" rx="3" fill="none" stroke="#FF5FCB" stroke-width="1.2" opacity=".55"/><text x="52" y="23" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="8" fill="#FFD6F4" stroke="#FF5FCB" stroke-width=".5">WHY</text></g><path class="em-twinkle" d="M58 4c.4 2.6 1.6 3.8 4 4.2-2.4.4-3.6 1.6-4 4.2-.4-2.6-1.6-3.8-4-4.2 2.4-.4 3.6-1.6 4-4.2z" fill="#F1F9A6" stroke="#1F1412" stroke-width=".8"/>',
+
     star: '<path class="em-twinkle" d="M32 8l6.5 14.5L54 24l-11.5 10.5L46 50l-14-8-14 8 3.5-15.5L10 24l15.5-1.5z" fill="#F1F9A6" stroke="#1F1412" stroke-width="2.5" stroke-linejoin="round"/>'
   };
   function emblem(id) { var e = document.createElement('span'); e.className = 'bt-emb'; e.setAttribute('aria-hidden', 'true'); handDefs(); e.innerHTML = '<svg viewBox="0 0 64 64"><g filter="url(#bt-hand-s)">' + (EMBLEM[id] || EMBLEM.intent) + '</g></svg>'; return e; }
@@ -1156,6 +1174,16 @@
     if ((l.res || []).length && /^(activity|embodiment)/i.test(l.title || '')) { var ra = resource(l.res[0]); if (ra) return resHref(ra); }
     return '#Lesson-' + l.id;
   }
+  // video length on the right of each lesson, so they know if it fits in right now (from Vimeo: Sync with Vimeo fills l.mins)
+  function lessonMins(l) {
+    if (l.mins) return { m: l.mins, sample: false };
+    if (playground() && (tx(l.vimeo) || tx(l.video) || l.n != null)) { var h2 = 0; String(l.id || '').split('').forEach(function (c) { h2 = (h2 * 31 + c.charCodeAt(0)) % 997; }); return { m: 4 + h2 % 14, sample: true }; }
+    return null;
+  }
+  function timeTag(l) {
+    var t = lessonMins(l); if (!t) return null;
+    return h('span', { class: 'bt-l-time' + (t.sample ? ' sample' : ''), title: t.sample ? 'Sample time: the real one comes from Vimeo' : 'Video length', 'aria-label': t.m + ' minute video', text: t.m + ' min' });
+  }
   function isActivityCard(l) { return (l.res || []).length && ((!tx(l.video) && !tx(l.vimeo)) || /^(activity|embodiment)/i.test(l.title)); }
   function activityCard(l, li, dn) {
     var r = resource(l.res[0]); if (!r) return null;
@@ -1163,11 +1191,12 @@
     var card = li.open ? h('a', { class: 'bt-act' + (dn ? ' done' : ''), href: lessonHref(l), style: '--cv:' + (r.cover || '#FFF4EE') }) : h('div', { class: 'bt-act lock', style: '--cv:' + (r.cover || '#FFF4EE') });
     card.appendChild(h('span', { class: 'bt-act-art' }, [emblem(r.id)]));
     card.appendChild(h('span', { class: 'bt-act-b' }, [
-      h('span', { class: 'bt-act-k', text: l.title.replace(/:.*/, '') }),
+      h('span', { class: 'bt-act-k', text: r.id === 'setup' ? 'Mini Course · ' + ((suCourse().time || '2 hours') + ' to complete lessons + videos') : l.title.replace(/:.*/, '') + (r.id === 'intent' && APP && APP.state.tier === 'private' ? ' · Must do before your first 1:1 call' : '') }),
       h('b', { text: r.title }),
       h('span', { class: 'bt-act-d', text: li.open ? (hasVid && !IN_PAGE[r.id] && lessonHref(l).indexOf('#Lesson-') === 0 ? 'Watch the video, then open ' + r.title + '.' : (r.desc || '')) : li.why }),
       li.open && !dn && skippedActs().some(function (x) { return x.l.id === l.id; }) ? h('span', { class: 'bt-act-wait', text: 'Keep coming back to this one. The doing creates the change.' }) : null
     ]));
+    if (hasVid) { var at = timeTag(l), ab = card.querySelector('.bt-act-b'); if (at && ab) { at.className += ' on-card'; ab.appendChild(at); } }
     if (r.parts && r.parts.length && li.open) { var wrapP = h('div', { class: 'bt-act-group' }); setTimeout(function () { if (card.parentNode && !card.__grouped) { card.__grouped = true; card.parentNode.insertBefore(wrapP, card); wrapP.appendChild(card); wrapP.appendChild(h('div', { class: 'bt-act-parts' }, r.parts.map(function (pid) { var pr = resource(pid); if (!pr) return null; var op = pr.week <= 1 || isOpen(pr.week); return op ? h('a', { class: 'bt-act-part', href: resHref(pr) }, [emblem(pid), h('span', { text: pr.title })]) : h('span', { class: 'bt-act-part lock' }, [emblem(pid), h('span', { text: pr.title + ' · Week ' + pr.week })]); }))); } }, 0); }
     if (li.open) {
       var tick = h('button', { class: 'bt-act-tick' + (dn ? ' on' : ''), type: 'button', 'aria-pressed': dn ? 'true' : 'false', 'aria-label': dn ? 'Done' : 'Mark as done', title: dn ? 'Done' : 'Mark as done', onclick: function (e) {
@@ -1276,7 +1305,7 @@
     var w = f.w, l = f.l, open = lessonOpen(id);
     var list = allLessons(), idx = list.map(function (x) { return x.l.id; }).indexOf(id), next = list[idx + 1], prev = list[idx - 1];
     var wrap = h('div', { class: 'bt-wrap bt-lesson' }, [back('Course', '#Course')]);
-    wrap.appendChild(h('span', { class: 'bt-les-k', text: w.week === 0 ? 'Introduction' : 'Week ' + w.week + ' · ' + w.title }));
+    var lt = lessonMins(l); wrap.appendChild(h('span', { class: 'bt-les-k', text: (w.week === 0 ? 'Introduction' : 'Week ' + w.week + ' · ' + w.title) + (lt ? ' · ' + lt.m + ' min video' : '') }));
     wrap.appendChild(h('h1', { class: 'bt-les-t', text: l.title }));
     if (!open) {
       wrap.appendChild(h('div', { class: 'bt-locked' }, [icon('lock'), h('b', { text: lessonWhy(id) }), h('span', { text: 'Go at your own pace. Each lesson unlocks as soon as you finish the one before it.' }),
@@ -1376,6 +1405,118 @@
   }
 
   /* Routes that show the home view on a particular tab or page (#Journal, #Resources, #Setup, #Intentions) */
+  /* ---------------- Mini course: Set yourself up for success ----------------
+     9 short lessons (Intro + Steps 1–8), one video each, with that step's activity under the video.
+     Built so it can also run on its own later as a free mini course: its lessons live in course().mini.setup
+     (videos set in the coach dashboard), and progress is kept in the companion data (cmn-companion .su). */
+  var SU_LESSON = 'i3'; // its card in the Breakthrough course
+  function suDef() { var D = window.BT_COURSE_DEFAULT || {}; return JSON.parse(JSON.stringify((D.mini && D.mini.setup) || { title: 'Set yourself up for success', lessons: [] })); }
+  function suCourse() {
+    var c = course(), m = c.mini && c.mini.setup, d = suDef();
+    if (!m || !(m.lessons || []).length) return d;
+    // keep the built-in titles/text, take her video links from the saved course
+    var byId = {}; m.lessons.forEach(function (l) { byId[l.id] = l; });
+    d.lessons.forEach(function (l) { var s2 = byId[l.id]; if (s2) { if (tx(s2.vimeo)) l.vimeo = s2.vimeo; if (s2.mins) l.mins = s2.mins; if (tx(s2.title)) l.title = s2.title; if (s2.desc != null && tx(s2.desc)) l.desc = s2.desc; } });
+    return d;
+  }
+  var suInst = null;
+  function suDone() { return Object.assign({}, comp().su || {}); }
+  function suStats() { var L = suCourse().lessons, d = suDone(), n = L.filter(function (l) { return d[l.n]; }).length; return { done: n, total: L.length, all: L.length > 0 && n === L.length }; }
+  function suMark(n, on) {
+    var d = suDone(); if (on) d[n] = d[n] || Date.now(); else delete d[n];
+    var patch = { su: d };
+    if (n >= 1 && n <= 5) { var old = Object.assign({}, comp().done || {}); if (on) old[n] = true; else delete old[n]; patch.done = old; }
+    if (suInst && !suInst._dead) suInst.save(patch); else { var c = comp(); Object.keys(patch).forEach(function (k) { c[k] = patch[k]; }); wr(K.comp, c); }
+    var st = suStats();
+    if (st.all && findLesson(SU_LESSON) && !prog().done[SU_LESSON]) saveProg(function (q) { q.done[SU_LESSON] = true; q.pct[SU_LESSON] = 100; q.doneAt = q.doneAt || {}; q.doneAt[SU_LESSON] = q.doneAt[SU_LESSON] || Date.now(); });
+    return st;
+  }
+  function suBar(st) {
+    return h('div', { class: 'bt-su-prog' }, [
+      h('div', { class: 'bt-su-prog-t' }, [h('span', { text: st.all ? 'Mini course complete' : 'Your progress' }), h('b', { text: st.done + ' of ' + st.total + ' done' })]),
+      h('div', { class: 'bt-su-segs', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(st.total), 'aria-valuenow': String(st.done), 'aria-label': st.done + ' of ' + st.total + ' lessons done' },
+        suCourse().lessons.map(function (l) { return h('span', { class: suDone()[l.n] ? 'on' : '' }); }))
+    ]);
+  }
+  function suIntentCard(st) {
+    var r = resource('intent') || { title: 'Setting Intentions', desc: '' };
+    return h('a', { class: 'bt-act bt-su-next' + (st.all ? ' ready' : ''), href: '#Intentions', style: '--cv:#F1F9A6' }, [
+      h('span', { class: 'bt-act-art' }, [emblem('intent')]),
+      h('span', { class: 'bt-act-b' }, [h('span', { class: 'bt-act-k', text: st.all ? 'Up next · your first activity' : 'When you’ve finished · try this next' }), h('b', { text: 'Try the Setting Intentions activity' }),
+        h('span', { class: 'bt-act-d', text: 'Anchor into why you signed up: write your North Star and your why, and turn them into your lock screen.' })]),
+      h('span', { class: 'bt-su-go', 'aria-hidden': 'true', text: '→' })
+    ]);
+  }
+  function SetupView(root, arg) {
+    if (arg !== '' && arg != null && !isNaN(+arg)) return SetupLessonView(root, +arg);
+    var M = suCourse(), st = suStats(), d = suDone(), up = M.lessons.filter(function (l) { return !d[l.n]; })[0];
+    root.appendChild(pageHead('Mini Course' + (M.time ? ' · ' + M.time + ' to complete' : ''), M.title, M.lessons.length + ' short videos · do each step as you go'));
+    var wrap = h('div', { class: 'bt-wrap bt-su' }, [back('Course', '#Course'), suBar(st)]);
+    if (st.all) wrap.appendChild(h('div', { class: 'bt-su-done' }, [h('span', { class: 'bt-su-done-ic', 'aria-hidden': 'true', text: '🎉' }), h('div', null, [h('b', { text: 'You’re set up for success!' }), h('span', { text: 'Come back to any lesson whenever you’ve been avoiding the course or you’ve lapsed.' })])]));
+    else if (up) wrap.appendChild(h('a', { class: 'bt-btn lime bt-su-cont', href: '#Setup-' + up.n, text: (st.done ? 'Keep going: ' : 'Start: ') + up.title + ' →' }));
+    wrap.appendChild(h('p', { class: 'bt-course-note', text: M.intro || 'As I go through each step, pause the video and actually do the thing. The activity for each step is right under its video.' }));
+    var box = h('section', { class: 'bt-wk bt-su-list', 'aria-label': 'Lessons' });
+    var list = h('div', { class: 'bt-ls' });
+    M.lessons.forEach(function (l) {
+      var dn = !!d[l.n], cur = up && up.n === l.n, pc = dn ? 100 : (prog().pct['su' + l.n] || 0);
+      var row = h('a', { class: 'bt-l' + (dn ? ' done' : '') + (cur ? ' cur' : ''), href: '#Setup-' + l.n });
+      if (cur) row.setAttribute('aria-label', 'You’re up to: ' + l.title);
+      row.appendChild(icon(dn ? 'tick' : 'play', 'bt-l-ic'));
+      row.appendChild(h('span', { class: 'bt-l-t' }, [h('span', { text: l.title }), h('span', { class: 'bt-l-mins', text: l.sub }),
+        pc > 0 && !dn ? h('span', { class: 'bt-bar sm' }, [h('span', { style: 'width:' + pc + '%' })]) : null]));
+      var tt = timeTag(l); if (tt) row.appendChild(tt);
+      list.appendChild(row);
+    });
+    box.appendChild(list); wrap.appendChild(box);
+    wrap.appendChild(suIntentCard(st));
+    root.appendChild(wrap); waves(root);
+    if (st.all) setTimeout(celebrate, 400);
+  }
+  function SetupLessonView(root, n) {
+    var M = suCourse(), L = M.lessons, i = L.map(function (l) { return l.n; }).indexOf(n), l = L[i];
+    if (!l) { goHref('#Setup'); return; }
+    var next = L[i + 1], prev = L[i - 1], id = 'su' + n;
+    saveProg(function (p) { p.suLast = n; });
+    var wrap = h('div', { class: 'bt-wrap bt-lesson bt-su' }, [back('All lessons', '#Setup')]);
+    var barSlot = h('div'); barSlot.appendChild(suBar(suStats())); wrap.appendChild(barSlot);
+    var slt = lessonMins(l); wrap.appendChild(h('span', { class: 'bt-les-k', text: M.title + ' · ' + (i + 1) + ' of ' + L.length + (slt ? ' · ' + slt.m + ' min video' : '') }));
+    wrap.appendChild(h('h1', { class: 'bt-les-t', text: l.title }));
+    wrap.appendChild(videoBlock(l, id));
+    if (tx(l.desc)) wrap.appendChild(h('div', { class: 'bt-desc' }, [h('p', { text: tx(l.desc) })]));
+    // this step's activity, straight from the set-up page
+    var act = h('div', { class: 'bt-su-act' }); wrap.appendChild(act);
+    var v = APP.views && APP.views['Dashboard.dc.html'], tpl = v && document.getElementById('t-' + v.slug);
+    if (v && tpl) {
+      var vroot = h('div', { id: 'v-' + v.slug, class: 'bt-su-embed' }); act.appendChild(vroot);
+      window.BT_START_VIEW = 'setup'; window.BT_START_TAB = 'home';
+      var inst = new v.cls(Object.assign({}, APP.viewProps('Dashboard.dc.html'), { embed: true, setupStep: n }));
+      inst._root = vroot; inst._tpl = Array.prototype.slice.call(tpl.content.childNodes); inst._render(); if (inst.componentDidMount) inst.componentDidMount();
+      suInst = inst;
+    }
+    var nextSlot = h('span', { class: 'bt-next-slot' });
+    var doneBtn = h('button', { class: 'bt-btn', type: 'button' });
+    var draw = function () {
+      var dn = !!suDone()[n];
+      doneBtn.textContent = dn ? '✓ Done' : (next ? 'Done, next lesson →' : 'Done, finish the mini course →'); doneBtn.className = 'bt-btn ' + (dn ? 'ghost' : 'lime');
+      nextSlot.innerHTML = '';
+      if (dn && next) nextSlot.appendChild(h('a', { class: 'bt-btn', href: '#Setup-' + next.n, text: 'Next: ' + next.title + ' →' }));
+      else if (dn && !next) nextSlot.appendChild(h('a', { class: 'bt-btn', href: '#Setup', text: 'Back to all lessons' }));
+      barSlot.innerHTML = ''; barSlot.appendChild(suBar(suStats()));
+    };
+    doneBtn.addEventListener('click', function () {
+      if (suDone()[n]) { suMark(n, false); draw(); return; }
+      var st = suMark(n, true);
+      if (st.all) { goHref('#Setup'); return; }
+      if (next) { APP.toast('Nice work. Up next: ' + next.title); goHref('#Setup-' + next.n); } else { goHref('#Setup'); }
+    });
+    draw();
+    wrap.appendChild(h('div', { class: 'bt-les-actions bt-su-actions' }, [doneBtn, nextSlot]));
+    if (!next) wrap.appendChild(suIntentCard(suStats()));
+    root.appendChild(wrap);
+  }
+  // "I am ready to change my world" inside lesson 8: that lesson's done
+  function suReady() { var st = suMark(8, true); goHref('#Setup'); return st; }
+
   function homeOn(tab, view) { return { view: 'Dashboard.dc.html', before: function () { window.BT_START_TAB = tab || null; window.BT_START_VIEW = view || null; } }; }
 
   /* ---------------- The Becoming Book ----------------
@@ -2047,8 +2188,8 @@
     // the same welcome banner as Home inside the app
     root.appendChild(h('div', { class: 'bt-hero1' }, [
       h('div', { class: 'bt-hero1-img' }, [h('img', { src: (window.BT_DEMO ? '' : '/') + 'img/sav/jump.jpg', alt: '' }), h('span', { class: 'bt-hero1-chip' }, [h('span', { 'aria-hidden': 'true', text: '✦ ' }), 'Breakthrough']), h('span', { class: 'bt-hero1-tag', text: '1:1 client' }),
-        h('div', { class: 'bt-hero1-t' }, [h('span', { class: 'bt-hero1-k', text: 'Your Breakthrough Companion' }), h('h1', { text: 'Welcome, you’re in.' })])]),
-      h('p', { class: 'bt-hero1-p', text: 'This is your companion for the Breakthrough course: everything you need to start, keep going and actually finish, at your own pace. I’m so proud of you for investing in yourself.' })
+        h('div', { class: 'bt-hero1-t' }, [h('span', { class: 'bt-hero1-k', text: 'Your Breakthrough Companion' }), h('h1', { text: first ? 'Welcome, ' + first.charAt(0).toUpperCase() + first.slice(1) + '.' : 'Welcome, you’re in.' })])]),
+      h('p', { class: 'bt-hero1-p', text: 'Life’s an experiment, so let’s f*ck around and find out who you can become when you change your thoughts, actually feel your feelings, and take action in line with your goals.' })
     ]));
     var wrap = h('div', { class: 'bt-wrap bt-start' }); root.appendChild(wrap);
     var o = rd(K.one) || {}, page = !o.homeSaved ? 'home' : !o.wa ? 'wa' : 'tests';
@@ -2470,10 +2611,12 @@
     try { sessionStorage.setItem('bt-focus-el', id || 'tests'); } catch (e) {}
     setTimeout(function () { goHref(needsStart() ? '#Start' : '#Profile'); }, 0);
   }
-  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: function (root) { bookState.tab = 'proof'; bookState.day = ''; BookView(root); }, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: homeOn('home', 'setup'), Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
+  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: function (root) { bookState.tab = 'proof'; bookState.day = ''; BookView(root); }, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
+    ensureFooter: ensureFooter,
     afterShow: function (route) {
+      ensureFooter();
       try { refreshContract(false); } catch (e) {}
       if (route !== 'Welcome' && route !== 'Start' && !(route === 'Contract' && needsContract())) document.body.classList.remove('bt-welcoming');
       document.body.classList.toggle('bt-intro', introStage());
@@ -2526,6 +2669,7 @@
     kit: function () { return { addWin: function (t) { var ab = autoBeliefs(t, 'win', []); setTimeout(function () { shareProof(t, 'win', 'Added to your proof portfolio'); }, 700); addEvidence(t, { spark: 'win', beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves }); return ab; }, winsOn: function (k) { return evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === k; }); }, winStreak: winStreak, pageHead: pageHead, back: back, waves: waves, icon: icon, emblem: emblem, party: party, sparkleBurst: sparkleBurst, dayKey: dayKey, videoBlock: videoBlock, findLesson: findLesson, lessonForRes: lessonForRes, lessonOpen: lessonOpen, isOpen: isOpen, markDone: function (id) { if (lessonOpen(id) && !prog().done[id]) { markDone(id, true); return true; } return false; }, isDone: function (id) { return !!prog().done[id]; }, resource: resource, rd: rd, wr: wr, tx: tx, playground: playground }; },
     activityDone: function (r) { return APP ? activityDone(r) : false; }, setupReady: function () { if (APP) setupReady(); }, activityBack: function (r) { return APP ? activityBack(r) : false; },
     doneLabel: function (r, d) { return APP ? doneLabel(r, d) : d; }, backLabel: function (r, d) { return APP ? backLabel(r, d) : d; }, returnKind: function (r) { return retKind(retGet(r)); },
+    suReady: suReady, suStats: suStats,
     weekOpen: function (n) { if (window.BT_DEMO && window.BT_DEMO.peek) return true; return APP ? isOpen(n) : true; },
     unlockText: function (n) { return APP ? unlockText(n) : ''; },
     journal: function (J) { return APP ? journalFor(J) : J; },

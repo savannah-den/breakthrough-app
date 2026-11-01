@@ -725,7 +725,7 @@
     root.appendChild(h('div', { class: 'ad-wrap' }, [
       h('header', { class: 'ad-hero' }, [
         h('div', { class: 'ad-hero-t' }, [
-          h('div', null, [h('p', { class: 'ad-kick', text: 'Back of house' }), h('h1', { class: 'ad-h1', text: 'Hey Sav' })]),
+          h('div', { class: 'ad-hero-t' }, [h('img', { class: 'ad-logo', src: 'icons/icon-192.png', alt: '' }), h('div', null, [h('p', { class: 'ad-kick', text: 'Back of house' }), h('h1', { class: 'ad-h1', text: 'Hey Sav' })])]),
           h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
         ]),
         h('div', { class: 'ad-stats' }, [
