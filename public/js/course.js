@@ -58,7 +58,7 @@
     return d;
   }
   function opensOn(n) { return new Date(startDate().getTime() + Math.max(0, n - 1) * 7 * DAY); }
-  function override() { var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
+  function override() { if (window.BT_DEMO && window.BT_DEMO.unlock) return 'all'; /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
   function bypass(week) { var ov = override(); return ov === 'all' || (typeof ov === 'number' && week <= ov); }
   function dripped(week) { return true; } // no drip: everything opens at her own pace, in order
   // 1:1 clients: Sav opens each week herself from the coach dashboard (Week 1 to start), so they can't run ahead of what she's built

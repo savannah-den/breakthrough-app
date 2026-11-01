@@ -144,6 +144,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     <a class="tour-btn" href="app.html?door=course&amp;tour=1"><b>▶ App tour</b><span>Self-paced</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1"><b>▶ New 1:1 client</b><span>The full first-time journey</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=welcome"><b>▶ The welcome module</b><span>Start at step 5, with steps 1–4 done</span></a>
+    <a class="tour-btn" href="app.html?door=private&amp;peek=1&amp;unlock=1"><b>🔓 Everything unlocked</b><span>1:1 view, every week open, your answers kept</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=contract"><b>📄 The agreement</b><span>What they sign at step 2</span></a>
   </div>
   <nav class="doors" aria-label="Open the app as">
@@ -209,7 +210,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     if (label) where.textContent = label;
     stage.hidden = false;
     fetch(new URL(file, ROOT).href).then(function (r) { return r.text(); }).then(function (html) {
-      var inject = '<base href="' + base + '"><script>window.BT_DEMO=' + JSON.stringify({ door: door, file: file, peek: (new URLSearchParams(query)).get('peek') === '1', viewAs: (new URLSearchParams(query)).get('viewas') || '', tour: (new URLSearchParams(query)).get('tour') === '1', fresh: (new URLSearchParams(query)).get('fresh') === '1', skip: (new URLSearchParams(query)).get('skip') || '' }) + ';' +
+      var inject = '<base href="' + base + '"><script>window.BT_DEMO=' + JSON.stringify({ door: door, file: file, peek: (new URLSearchParams(query)).get('peek') === '1', viewAs: (new URLSearchParams(query)).get('viewas') || '', tour: (new URLSearchParams(query)).get('tour') === '1', fresh: (new URLSearchParams(query)).get('fresh') === '1', skip: (new URLSearchParams(query)).get('skip') || '', unlock: (new URLSearchParams(query)).get('unlock') === '1' }) + ';' +
         (hash ? 'try{location.hash=' + JSON.stringify('#' + hash) + '}catch(e){}' : '') + '<\/script>';
       html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, function (m) { return m + inject; }) : inject + html;
       view.srcdoc = html;

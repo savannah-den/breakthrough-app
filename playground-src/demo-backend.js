@@ -62,6 +62,21 @@
         }
       } } catch (e) {} }
   }
+  // "Everything unlocked": skip every first-time step (without wiping what she's already played with)
+  if (window.BT_DEMO && window.BT_DEMO.unlock && !window.BT_DEMO.fresh) {
+    try {
+      var rj = function (k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } };
+      var pf = rj('bt-profile'); pf.onboarded = pf.onboarded || Date.now(); pf.startDone = pf.startDone || Date.now(); pf.termsAt = pf.termsAt || Date.now(); pf.tz = pf.tz || 'Australia/Brisbane'; pf.country = pf.country || 'AU'; pf.phone = pf.phone || '0400 000 000'; pf.tourDone = pf.tourDone || Date.now(); pf.nbTour = pf.nbTour || Date.now();
+      localStorage.setItem('bt-profile', JSON.stringify(pf));
+      var dd0 = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }), ob = rj('cmn-1to1-dashboard');
+      ob.homeSaved = true; ob.wa = true; ob.repDone = true; ob.repSent = true; ob.hd = ob.hd || { type: 'sent', sent: true, date: dd0 }; ob.disc = ob.disc || { type: 'sent', sent: true, date: dd0 };
+      localStorage.setItem('cmn-1to1-dashboard', JSON.stringify(ob));
+      var cp = rj('bt-course'); cp.done = cp.done || {}; ['i1', 'i2', 'i3'].forEach(function (id) { cp.done[id] = cp.done[id] || Date.now(); }); cp.pct = cp.pct || {}; localStorage.setItem('bt-course', JSON.stringify(cp));
+      var mine = (D.contracts || []).filter(function (r) { return r.user_id === ME; });
+      if (!mine.length) { D.contracts.push({ user_id: ME, status: 'sent', terms: { package: '1:1', programs: ['Breakthrough'], weeks: 8, start: iso(-3).slice(0, 10), group: { n: 2, per: 'Month' }, one: { n: 1, per: 'Week' }, inclusions: { privateChat: true, groupChats: true, modules: true, library: true }, plan: 'in4', amount: 5100, coach: 'Savannah Barber', call: { zoom: 'https://zoom.us/j/0000000000', times: 'Tuesdays at 10am (your time)', upcoming: [iso(-3), iso(-10)] } } }); mine = [D.contracts[D.contracts.length - 1]]; }
+      mine.forEach(function (c1) { if (c1.status !== 'signed') { var cl1 = { name: 'Sav (playground)', email: 'you@playground', phone: '0400 000 000', address: '12 Example St, Noosa QLD', consent: 'anon', notesAgreed: true, termsAgreed: true, signedName: 'Sav (playground)', tz: 'Australia/Brisbane' }; c1.status = 'signed'; c1.signed_at = new Date().toISOString(); c1.signed = { client: cl1, terms: c1.terms }; } });
+    } catch (e) {}
+  }
   // Which version am I looking at? ?door=private (1:1) or ?door=course (self-paced)
   var door = (window.BT_DEMO && window.BT_DEMO.door) || new URLSearchParams(location.search).get('door');
   var me = D.profiles.filter(function (p) { return p.id === ME; })[0];
