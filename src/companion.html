@@ -43,6 +43,10 @@ html,body{margin:0;background:#4E0C08}
 #v-dash .field.askin{min-height:0;padding:10px 14px}
 #v-dash .field.askta{min-height:56px}
 #v-dash .askout{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:16px;background:#FFFFFF;border:2px solid #4E0C08}
+#v-dash .askeg{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:16px;background:#FBE6FC}
+#v-dash .askeg .askscript{font-size:14px;font-style:italic}
+#v-dash .askmore{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:#F1F9A6;font-size:14px;line-height:1.6}
+#v-dash .askx{border:0;background:none;color:#A8231F;font:inherit;font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer;padding:4px}
 #v-dash .askscript{margin:0;font-size:15px;line-height:1.65;white-space:pre-wrap}
 #v-dash .sticky{position:relative;align-self:center;width:min(320px,100%);box-sizing:border-box;padding:26px 22px 22px;background:#F1F9A6;color:#1F1412;transform:rotate(-2deg);box-shadow:0 14px 26px rgba(31,20,18,.28);display:flex;flex-direction:column;gap:10px}
 #v-dash .sticky::before{content:'';position:absolute;left:50%;top:-12px;width:90px;height:24px;transform:translateX(-50%) rotate(3deg);background:rgba(244,194,247,.85)}
@@ -1185,19 +1189,32 @@ button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #F
 <div style="display: flex; align-items: flex-start; gap: 14px"><span class="{{S.s5.num}}">5</span><div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span class="hand" style="font-size: 15px; color: #A8231F">Step 5 · accountability</span><h2 style="margin: 0; font-size: 26px; line-height: 1.15">Make yourself accountable to someone</h2><p style="margin: 0; font-size: 15px; line-height: 1.6; color: #463A38">Tell someone you invested in this and you really want to follow through. Ask them to help: remind you, or gently pull you up when they see you’re not doing it.</p></div></div>
 <div style="display: flex; flex-direction: column; gap: 8px"><div class="li"><span class="d">1</span><span><strong>Your partner.</strong> When you suggest watching a movie, they can suggest the course instead, and body double you: they cook dinner while you sit in the dining room with your headphones in.</span></div><div class="li"><span class="d">2</span><span><strong>No partner?</strong> Tell a friend, your parents, someone. When they ask “how’s the course going?” and you’d forgotten all about it, it’s back in your awareness.</span></div><div class="li"><span class="d">3</span><span><strong>Got kids?</strong> Negotiate a time each day or week when someone else has them while you do the course.</span></div></div>
 <div style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #FBE6FC"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span style="font-size: 14px; line-height: 1.6">This is your daily or weekly me time, where you pour love into yourself by learning about yourself deeply.</span></div>
-<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-weight: 600; font-size: 15px">I’m telling…</span><textarea class="field" style="min-height: 64px" value="{{buddy}}" onChange="{{setBuddy}}" placeholder="My partner, and my best friend Jess"></textarea></label>
-<div class="askbox">
+<div class="askmore"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>The more people you tell, the more accountability and support you’ll get.</strong> Ask your partner, a friend, your mum: everyone who can cheer you on or take something off your plate.</span></div>
 <span class="hand" style="font-size: 16px; color: #A8231F">Need them to actually help? Ask like this</span>
-<span style="font-size: 14px; line-height: 1.6; color: #463A38">When you need more than a reminder (them doing kids’ bedtime, cooking dinner or helping around the house more), tell them what’s in it for them too. That’s what gets their buy-in. Fill in the blanks and your script writes itself.</span>
-<label class="askf"><span>Who are you asking?</span><input class="field askin" value="{{askName}}" onChange="{{setAskName}}" placeholder="Babe / Mum / Jess"></label>
-<label class="askf"><span>It will help me overcome… <em>(the things you’re struggling with)</em></span><textarea class="field askta" value="{{askStruggle}}" onChange="{{setAskStruggle}}" placeholder="overthinking everything, snapping when I’m overwhelmed and never backing myself"></textarea></label>
-<label class="askf"><span>And that would benefit you because… <em>(what do they get out of it?)</em></span><textarea class="field askta" value="{{askBenefit}}" onChange="{{setAskBenefit}}" placeholder="you’d get a calmer, happier me, less tension at home and more energy for us"></textarea></label>
-<label class="askf"><span>Help me carve out time by helping with or taking this off my plate…</span><textarea class="field askta" value="{{askHelp}}" onChange="{{setAskHelp}}" placeholder="kids’ bedtime on Tuesdays and Thursdays, and cooking dinner twice a week"></textarea></label>
-<label class="askf"><span>So we can enjoy… <em>(the result of you changing that they get to experience with you)</em></span><textarea class="field askta" value="{{askResult}}" onChange="{{setAskResult}}" placeholder="fun weekends together without me being exhausted and cranky"></textarea></label>
-<div class="askout"><span class="hand" style="font-size: 15px; color: #A8231F">Your script</span><p class="askscript">{{askScript}}</p></div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px"><button class="br" onClick="{{askSend}}">Send it</button><button class="gc" onClick="{{askCopy}}">{{askCopyLabel}}</button></div>
-<sc-if value="{{hasAskMsg}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #6A5A57">{{askMsg}}</span></sc-if>
+<span style="font-size: 14px; line-height: 1.6; color: #463A38; margin-top: -8px">When you need more than a reminder (them doing kids’ bedtime, cooking dinner or helping around the house more), tell them what’s in it for them too. That’s what gets their buy-in. Fill in the blanks and your script writes itself.</span>
+<div class="askeg"><span class="hand" style="font-size: 15px; color: #A8231F">Here’s an example</span><p class="askscript">Hey babe, I signed up for Breakthrough and I really want to finish it, because it will help me overcome overthinking everything, snapping when I’m overwhelmed and never backing myself.
+
+And that would benefit you too, because you’d get a calmer, happier me, less tension at home and more energy for us.
+
+So I would love it if you could help me stay accountable if I struggle, or help me carve out more time to do it by helping with or taking kids’ bedtime on Tuesdays and Thursdays off my plate.
+
+Then we can both enjoy fun weekends together without me being exhausted and cranky.
+
+Are you open to supporting me with this?</p></div>
+<sc-for list="{{asks}}" as="ak" hint-placeholder-count="1">
+<div class="askbox">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 700; font-size: 15px; color: #4E0C08">{{ak.head}}</span><sc-if value="{{ak.canRemove}}" hint-placeholder-val="{{ false }}"><button class="askx" onClick="{{ak.remove}}">Remove</button></sc-if></div>
+<label class="askf"><span>1. Who you’re asking <em>(the name you actually call them, like baby, babe, gurlll)</em></span><input class="field askin" value="{{ak.name}}" onChange="{{ak.setName}}" placeholder="Babe"></label>
+<label class="askf"><span>2. What this course will help you overcome</span><textarea class="field askta" value="{{ak.struggle}}" onChange="{{ak.setStruggle}}" placeholder="overthinking everything, snapping when I’m overwhelmed and never backing myself"></textarea></label>
+<label class="askf"><span>3. That would benefit them because…</span><textarea class="field askta" value="{{ak.benefit}}" onChange="{{ak.setBenefit}}" placeholder="you’d get a calmer, happier me, less tension at home and more energy for us"></textarea></label>
+<label class="askf"><span>4. What you need support with, or taken off their plate, so you have the time or mental energy to do the course</span><textarea class="field askta" value="{{ak.help}}" onChange="{{ak.setHelp}}" placeholder="kids’ bedtime on Tuesdays and Thursdays, and cooking dinner twice a week"></textarea></label>
+<label class="askf"><span>5. What you’ll both get to enjoy if you get this support</span><textarea class="field askta" value="{{ak.result}}" onChange="{{ak.setResult}}" placeholder="fun weekends together without me being exhausted and cranky"></textarea></label>
+<div class="askout"><span class="hand" style="font-size: 15px; color: #A8231F">{{ak.scriptHead}}</span><p class="askscript">{{ak.script}}</p></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><button class="br" onClick="{{ak.send}}">Send it</button><button class="gc" onClick="{{ak.copy}}">{{ak.copyLabel}}</button></div>
+<sc-if value="{{ak.hasMsg}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #6A5A57">{{ak.msg}}</span></sc-if>
 </div>
+</sc-for>
+<button class="gc" style="align-self: flex-start" onClick="{{addAsk}}">+ Ask someone else too</button>
 <button class="{{S.s5.tickCls}}" style="align-self: flex-start" onClick="{{S.s5.tick}}"><span class="bx" aria-hidden="true"></span>{{S.s5.tickLabel}}</button>
 </section>
 </sc-if>
@@ -4365,12 +4382,25 @@ class Component extends DCLogic {
     var setF = function (k) { return function (e) { var p = {}; p[k] = e && e.target ? e.target.value : ''; self.save(p); }; };
     var tog = function (k) { return function () { var p = {}; p[k] = !d[k]; self.save(p); }; };
     var tk = function (k) { return 'tk' + (d[k] ? ' on' : ''); };
-    // step 5: the "ask for support" script, built from her fill-in-the-blanks
-    var askScript = (function () { var f = function (k, ph) { var v = tx(d[k]).replace(/[.\s]+$/, ''); return v || '[' + ph + ']'; }, nm = tx(d.askName);
-      return 'Hey' + (nm ? ' ' + nm : '') + ', I signed up for Breakthrough and I really want to finish it, because it will help me overcome ' + f('askStruggle', 'the things you’re struggling with') + '.\n\n' +
-        'And that would benefit you too, because ' + f('askBenefit', 'what they get out of it') + '.\n\n' +
-        'So I would love it if you could help me stay accountable if I struggle, or help me carve out more time to do it by helping with or taking ' + f('askHelp', 'what you need off your plate') + ' off my plate.\n\n' +
-        'Then we can both enjoy ' + f('askResult', 'what you’ll get to enjoy together') + '. 💛'; })();
+    // step 5: one "ask for support" script per person she's asking
+    var askList = (Array.isArray(d.asks) && d.asks.length) ? d.asks : [{ name: d.askName || '', struggle: d.askStruggle || '', benefit: d.askBenefit || '', help: d.askHelp || '', result: d.askResult || '' }];
+    var askScriptOf = function (a) { var f = function (k, ph) { var v = tx(a[k]).replace(/[.\s]+$/, ''); return v || '[' + ph + ']'; }, nm = tx(a.name);
+      return 'Hey' + (nm ? ' ' + nm : '') + ', I signed up for Breakthrough and I really want to finish it, because it will help me overcome ' + f('struggle', 'what this course will help you overcome') + '.\n\n' +
+        'And that would benefit you too, because ' + f('benefit', 'what they get out of it') + '.\n\n' +
+        'So I would love it if you could help me stay accountable if I struggle, or help me carve out more time to do it by helping with or taking ' + f('help', 'what you need support with') + ' off my plate.\n\n' +
+        'Then we can both enjoy ' + f('result', 'what you’ll both get to enjoy') + '.\n\n' +
+        'Are you open to supporting me with this?'; };
+    var askSet = function (i, k) { return function (e) { var L = askList.map(function (x) { return Object.assign({}, x); }); L[i][k] = e && e.target ? e.target.value : ''; self.save({ asks: L }); }; };
+    var asks = askList.map(function (a, i) { var sc = askScriptOf(a), nm = tx(a.name), msg = (st.askMsg || {})[i] || '';
+      var flash = function (m) { var o = Object.assign({}, self.state.askMsg || {}); o[i] = m; self.setState({ askMsg: o }); setTimeout(function () { var o2 = Object.assign({}, self.state.askMsg || {}); delete o2[i]; self.setState({ askMsg: o2 }); }, 3000); };
+      return { head: 'Person ' + (i + 1) + (nm ? ': ' + nm : ''), scriptHead: nm ? 'Your script for ' + nm : 'Your script', canRemove: askList.length > 1,
+        remove: function () { var L = askList.filter(function (x, j) { return j !== i; }); self.save({ asks: L }); },
+        name: a.name || '', struggle: a.struggle || '', benefit: a.benefit || '', help: a.help || '', result: a.result || '',
+        setName: askSet(i, 'name'), setStruggle: askSet(i, 'struggle'), setBenefit: askSet(i, 'benefit'), setHelp: askSet(i, 'help'), setResult: askSet(i, 'result'),
+        script: sc, hasMsg: !!msg, msg: msg, copyLabel: msg === 'Copied ✓' ? 'Copied ✓' : 'Copy',
+        copy: function () { try { navigator.clipboard.writeText(sc).then(function () { flash('Copied ✓'); }, function () { flash('Couldn’t copy. Press and hold the script to copy it.'); }); } catch (e) { flash('Couldn’t copy. Press and hold the script to copy it.'); } },
+        send: function () { if (navigator.share) { navigator.share({ text: sc }).then(function () {}, function () {}); return; } try { navigator.clipboard.writeText(sc).then(function () { flash('Copied. Paste it into a text or message to them.'); }, function () {}); } catch (e) {} } }; });
+    var addAsk = function () { var L = askList.map(function (x) { return Object.assign({}, x); }); L.push({ name: '', struggle: tx((askList[0] || {}).struggle), benefit: '', help: '', result: '' }); self.save({ asks: L }); };
     var close = function () { self.setState({ view: null, tab: 'home' }); try { if (/^#(Intentions|Setup)$/.test(location.hash)) location.hash = '#Dashboard'; } catch (e) {} try { window.scrollTo({ top: 300 }); } catch (e) {} };
     return {
       hasVideo: !!vid, noVideo: !vid, videoUrl: vid || '#',
@@ -4429,10 +4459,7 @@ class Component extends DCLogic {
       stickyTickCls: tk('sticky'), toggleSticky: tog('sticky'),
       roadblock: d.roadblock || '', setRoadblock: setF('roadblock'),
       buddy: d.buddy || '', setBuddy: setF('buddy'),
-      askName: d.askName || '', setAskName: setF('askName'), askStruggle: d.askStruggle || '', setAskStruggle: setF('askStruggle'), askBenefit: d.askBenefit || '', setAskBenefit: setF('askBenefit'), askHelp: d.askHelp || '', setAskHelp: setF('askHelp'), askResult: d.askResult || '', setAskResult: setF('askResult'),
-      askScript: askScript, askCopyLabel: st.askCopied ? 'Copied ✓' : 'Copy', hasAskMsg: !!st.askMsg, askMsg: st.askMsg || '',
-      askCopy: function () { var ok = function () { self.setState({ askCopied: true, askMsg: '' }); setTimeout(function () { self.setState({ askCopied: false }); }, 2500); }; try { navigator.clipboard.writeText(askScript).then(ok, function () { self.setState({ askMsg: 'Couldn’t copy. Press and hold the script to copy it.' }); }); } catch (e) { self.setState({ askMsg: 'Couldn’t copy. Press and hold the script to copy it.' }); } },
-      askSend: function () { if (navigator.share) { navigator.share({ text: askScript }).then(function () {}, function () {}); return; } try { navigator.clipboard.writeText(askScript).then(function () { self.setState({ askMsg: 'Copied. Paste it into a text or message to them.' }); }, function () {}); } catch (e) {} }, toldCls: tk('told'), toggleTold: tog('told'),
+      asks: asks, addAsk: addAsk,
       allInCls: tk('allIn'), toggleAllIn: tog('allIn'), rookieCls: tk('rookie'), toggleRookie: tog('rookie'),
       hasIntent: hasIntent, whyShow: whyShort(d), nsShow: nsShort(d),
       intentBtn: hasIntent ? 'Open my Intentions' : 'Do the Intentions activity',
