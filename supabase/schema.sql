@@ -173,3 +173,23 @@ create table if not exists public.push_subs (
 alter table public.push_subs enable row level security;
 drop policy if exists "own push subs" on public.push_subs;
 create policy "own push subs" on public.push_subs for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+-- Agreements for clients Sav has added who haven't logged in yet (1 Nov 2026).
+-- The agreement waits on their invite; the moment they first log in it moves into public.contracts.
+alter table public.invites add column if not exists contract jsonb;
+alter table public.invites add column if not exists contract_status text;
+create or replace function public.invite_contract() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare inv public.invites%rowtype;
+begin
+  select * into inv from public.invites where lower(email) = lower(new.email);
+  if inv.contract is not null then
+    insert into public.contracts (user_id, terms, status, updated_at)
+    values (new.id, inv.contract, coalesce(inv.contract_status, 'draft'), now())
+    on conflict (user_id) do nothing;
+  end if;
+  return new;
+end; $$;
+drop trigger if exists on_profile_invite_contract on public.profiles;
+create trigger on_profile_invite_contract after insert on public.profiles
+  for each row execute function public.invite_contract();

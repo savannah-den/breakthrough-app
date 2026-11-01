@@ -488,3 +488,8 @@ svg.ct-shot{border:0;height:auto}
 .bt-pdf-ct .ct-terms{max-height:none!important;overflow:visible!important;box-shadow:none}
 .bt-pdf-ct .bt-print-k{margin:0 0 10px;font-weight:600;color:#A8231F}
 .bt-pdf-wait{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:rgba(31,20,18,.85);padding:16px}
+
+/* clients added but not logged in yet */
+.ad-wait-h{margin:6px 0 -4px}
+.ad-client.ad-waiting{border-style:dashed;background:#FFFDF6}
+.ad-wait-card{display:flex;flex-direction:column;gap:10px}

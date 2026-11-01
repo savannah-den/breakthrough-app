@@ -708,6 +708,12 @@
       S.clients = (r[0].data || []).sort(function (a, b) { return (a.is_admin ? 1 : 0) - (b.is_admin ? 1 : 0); });
       S.activity = {}; (r[1].data || []).forEach(function (row) { (S.activity[row.user_id] = S.activity[row.user_id] || []).push(row); });
       S.invites = r[2].data || [];
+      S.invites.forEach(function (i) {
+        if (!i.contract) return; var c = S.clients.filter(function (x) { return String(x.email || '').toLowerCase() === String(i.email).toLowerCase(); })[0];
+        if (!c || S.contracts[c.id]) return;
+        var row = { user_id: c.id, terms: i.contract, status: i.contract_status || 'draft', updated_at: new Date().toISOString() };
+        S.contracts[c.id] = row; sb.from('contracts').upsert(row).then(function () {}, function () {});
+      });
       S.settings = {}; (r[3].data || []).forEach(function (row) { S.settings[row.key] = row.value; });
     });
   }
@@ -731,7 +737,7 @@
         h('svg', { class: 'ad-squiggle', viewBox: '0 0 400 40', 'aria-hidden': 'true' })
       ]),
       h('nav', { class: 'ad-tabs' }, tabs.map(function (t) { return h('button', { class: 'ad-tab' + (S.tab === t[0] ? ' on' : ''), text: t[1], onclick: function () { if (S.dirty && t[0] !== 'course' && S.tab === 'course') { S.tab = t[0]; S.open = null; page(); return; } S.tab = t[0]; S.open = null; page(); } }); })),
-      S.tab === 'clients' ? (S.open ? clientView(S.open) : clientList()) : S.tab === 'finance' ? financeView() : S.tab === 'course' ? courseView() : S.tab === 'reminders' ? remindersView() : S.tab === 'invite' ? inviteView() : settingsView()
+      S.tab === 'clients' ? (S.open ? (S.open.invite ? inviteClientView(S.open) : clientView(S.open)) : clientList()) : S.tab === 'finance' ? financeView() : S.tab === 'course' ? courseView() : S.tab === 'reminders' ? remindersView() : S.tab === 'invite' ? inviteView() : settingsView()
     ]));
     var sq = root.querySelector('.ad-squiggle'); if (sq) sq.innerHTML = '<path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20 T 250 20 T 300 20 T 350 20 T 400 20" fill="none" stroke="#F1F9A6" stroke-width="3" stroke-linecap="round"/>';
   }
@@ -771,8 +777,51 @@
         al || nw ? h('div', { class: 'ad-flags' }, [al ? h('span', { class: 'ad-flag warn', text: '⚠ Next 1:1 not booked' }) : null, nw ? h('span', { class: 'ad-flag win', text: '🎉 ' + nw + ' new win' + (nw === 1 ? '' : 's') }) : null]) : null
       ])]);
     });
+    // added in "Add a client" but not logged in yet: so she can set up their agreement before they arrive
+    var joined = {}; S.clients.forEach(function (c) { joined[String(c.email || '').toLowerCase()] = 1; });
+    var waiting = (S.invites || []).filter(function (i) { return !joined[String(i.email).toLowerCase()]; }).filter(function (i) {
+      var f = S.filter === 'all' || (S.filter !== 'me' && i.tier === S.filter); return f && (!q || (i.email + ' ' + (i.full_name || '')).toLowerCase().indexOf(q) >= 0); });
+    var wcards = waiting.map(function (i) {
+      var st = i.contract ? (i.contract_status === 'sent' ? 'Agreement ready to sign' : 'Agreement draft') : (i.tier === 'private' ? 'No agreement yet' : '');
+      return h('button', { class: 'ad-client ad-waiting', onclick: function () { S.open = inviteClient(i); page(); window.scrollTo(0, 0); } }, [h('div', { class: 'ad-client-b' }, [
+        h('div', { class: 'ad-cn' }, [h('div', { class: 'ad-cn-t' }, [h('span', { class: 'ad-name', text: i.full_name || i.email }), h('span', { class: 'ad-muted', text: i.full_name ? i.email : '' })]),
+          h('span', { class: 'ad-badge ' + i.tier, text: i.tier === 'private' ? '1:1' : 'Self-paced' })]),
+        h('span', { class: 'ad-meta' }, [h('span', { class: 'ad-live' }), 'Added ' + when(i.created_at) + ' · hasn’t logged in yet']),
+        st ? h('div', { class: 'ad-flags' }, [h('span', { class: 'ad-flag' + (i.contract_status === 'sent' ? ' win' : ' warn'), text: (i.contract_status === 'sent' ? '✓ ' : '') + st })]) : null
+      ])]);
+    });
     return h('section', { class: 'ad-sec' }, [coachHome(), search, filters,
-      cards.length ? h('div', { class: 'ad-grid' }, cards) : h('p', { class: 'ad-card', text: S.clients.length ? 'No one matches that.' : 'No clients yet. Once someone logs in to the app they’ll show up here.' })]);
+      wcards.length ? h('h3', { class: 'ad-h3 ad-wait-h', text: 'Added, waiting for them to log in (' + wcards.length + ')' }) : null,
+      wcards.length ? h('div', { class: 'ad-grid' }, wcards) : null,
+      wcards.length && cards.length ? h('h3', { class: 'ad-h3 ad-wait-h', text: 'In the app' }) : null,
+      cards.length ? h('div', { class: 'ad-grid' }, cards) : wcards.length ? null : h('p', { class: 'ad-card', text: S.clients.length ? 'No one matches that.' : 'No clients yet. Once someone logs in to the app they’ll show up here.' })]);
+  }
+
+  function appOrigin() { return /^https?:/.test(location.origin) && !window.BT_DEMO ? location.origin : 'https://app.colourmeneurospicy.com.au'; }
+  function inviteClient(i) { return { id: 'invite:' + i.email, email: i.email, full_name: i.full_name || '', tier: i.tier, invite: i, created_at: i.created_at }; }
+  function inviteClientView(c) {
+    var i = c.invite, back = h('button', { class: 'bt-btn ghost', text: '← All clients', onclick: function () { S.open = null; page(); } });
+    var link = appOrigin() + (i.tier === 'private' ? '/1to1' : '/course'), msg = h('p', { class: 'ad-muted', role: 'status' });
+    var name = h('input', { class: 'bt-in', value: i.full_name || '', placeholder: 'First and last name', 'aria-label': 'Name' });
+    var tier = h('select', { class: 'bt-in', 'aria-label': 'Access' }, [['private', '1:1 client'], ['self_paced', 'Self-paced']].map(function (x) { return h('option', { value: x[0], text: x[1], selected: i.tier === x[0] ? 'selected' : null }); }));
+    var saveBtn = h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Save details', onclick: function () {
+      sb.from('invites').update({ full_name: name.value.trim(), tier: tier.value }).eq('email', i.email).then(function (r) {
+        if (r.error) { msg.textContent = 'Couldn’t save: ' + r.error.message; return; }
+        i.full_name = name.value.trim(); i.tier = tier.value; S.open = inviteClient(i); page(); toastA('Saved ✓');
+      });
+    } });
+    var copyBtn = h('button', { class: 'ad-copy', type: 'button', text: 'Copy their link', onclick: function (e) { var b = e.target; (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { b.textContent = 'Copied ✓'; }, function () { b.textContent = link; }); } });
+    var head = h('div', { class: 'ad-card ad-wait-card' }, [
+      h('h2', { class: 'ad-h2', text: i.full_name || i.email }),
+      h('p', { class: 'ad-muted', text: i.email + ' · added ' + when(i.created_at) }),
+      h('p', { class: 'ad-text', text: 'They haven’t logged in yet, so there’s no app activity to show. You can set up their details and agreement now: it’s all waiting for them the moment they first log in with this email.' }),
+      h('div', { class: 'ad-form' }, [h('label', null, ['Name', name]), h('label', null, ['Access', tier]), saveBtn]), msg,
+      h('div', { class: 'ad-linkcard ' + (i.tier === 'private' ? 'pink' : 'lime') }, [h('b', { text: 'Their link' }), h('code', { text: link }), copyBtn])
+    ]);
+    var off = !(S.invites || []).some(function (x) { return 'contract' in x; });
+    var d = { contract: i.contract ? { terms: i.contract, status: i.contract_status || 'draft' } : null, contractOff: false };
+    var ctc = off ? h('div', { class: 'ad-card ad-ct' }, [h('h3', { class: 'ad-h3', text: 'Package & agreement' }), h('p', { class: 'ad-muted', text: 'To set up an agreement before they log in, your database needs one quick update. Ask Claude for the “invite agreements” SQL to run in Supabase.' })]) : contractCard(c, d);
+    return h('section', { class: 'ad-sec' }, [back, head, ctc]);
   }
 
   function openClient(c) {
@@ -934,15 +983,19 @@
     var ct = d.contract, first = (c.full_name || 'them').replace(/^Example:\s*/, '').split(' ')[0];
     var card = h('div', { class: 'ad-card ad-ct' });
     var title = h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: 'Package & agreement' }),
-      h('span', { class: 'ad-ct-st ' + (ct ? ct.status : 'none'), text: !ct ? 'No agreement yet' : ct.status === 'signed' ? '✓ Signed ' + new Date(ct.signed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : ct.status === 'sent' ? 'Waiting for ' + first + ' to sign' : 'Draft' })]);
+      h('span', { class: 'ad-ct-st ' + (ct ? ct.status : 'none'), text: !ct ? 'No agreement yet' : ct.status === 'signed' ? '✓ Signed ' + new Date(ct.signed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : ct.status === 'sent' ? (c.invite ? 'Ready: opens when ' + first + ' first logs in' : 'Waiting for ' + first + ' to sign') : 'Draft' })]);
     card.appendChild(title);
     if (d.contractOff) { card.appendChild(h('p', { class: 'ad-muted', text: 'Agreements need one quick database update before they work. Ask Claude for the “contracts” SQL to run in Supabase.' })); return card; }
     function save(terms, status, extra) {
       var row = Object.assign({ user_id: c.id, terms: terms, status: status, updated_at: new Date().toISOString() }, extra || {});
-      return sb.from('contracts').upsert(row).then(function (r) {
+      // added but not logged in yet: the agreement waits on their invite, and moves across the moment they first log in
+      var go = c.invite ? sb.from('invites').update({ contract: terms, contract_status: status }).eq('email', c.email) : sb.from('contracts').upsert(row);
+      return go.then(function (r) {
+        if (r.error && c.invite) { toastA('Couldn’t save: your database needs one quick update first. Ask Claude for the “invite agreements” SQL.'); return; }
+        if (!r.error && c.invite) { c.invite.contract = terms; c.invite.contract_status = status; }
         if (r.error) { alert0('Couldn’t save: ' + r.error.message); toastA('Couldn’t save the agreement: ' + r.error.message); return; }
         var was = (d.contract || {}).status; d.contract = Object.assign({}, d.contract || {}, row); page();
-        toastA(status === 'sent' ? (was === 'sent' ? 'Agreement updated ✓ ' + first + ' sees the changes straight away.' : 'Sent ✓ ' + first + '’s app now opens on the agreement until they sign.') : 'Saved as a draft ✓ ' + first + ' can’t see it until you send it.');
+        toastA(c.invite ? (status === 'sent' ? 'Saved ✓ ' + first + '’s app opens on the agreement as soon as they first log in.' : 'Saved as a draft ✓ ' + first + ' won’t see it until you send it.') : status === 'sent' ? (was === 'sent' ? 'Agreement updated ✓ ' + first + ' sees the changes straight away.' : 'Sent ✓ ' + first + '’s app now opens on the agreement until they sign.') : 'Saved as a draft ✓ ' + first + ' can’t see it until you send it.');
       }, function (e) { toastA('Couldn’t save the agreement. Check your internet and try again.'); });
     }
     var msgEl = h('p', { class: 'ad-muted', role: 'status' }); function alert0(t) { msgEl.textContent = t; }
@@ -1011,7 +1064,7 @@
       status === 'sent' ? h('button', { class: 'bt-btn ghost', type: 'button', text: 'Take it back to draft', onclick: function () { save(read(), 'draft'); } }) : h('button', { class: 'bt-btn ghost', type: 'button', text: 'Save draft', onclick: function () { save(read(), 'draft'); } }),
       h('button', { class: 'bt-btn ghost', type: 'button', text: 'Preview what they’ll see', onclick: function (e) { if (prev.firstChild) { prev.innerHTML = ''; return; } prev.appendChild(C.render(read(), { name: c.full_name, email: c.email }, {}).node); } })
     ]), msgEl, prev);
-    if (status === 'sent') card.appendChild(h('p', { class: 'ad-muted', text: 'Their app opens on this agreement until they sign. Changes you save here show up for them straight away.' }));
+    if (status === 'sent') card.appendChild(h('p', { class: 'ad-muted', text: c.invite ? 'Ready and waiting: the moment they first log in, their app opens on this agreement until they sign. You can still change it.' : 'Their app opens on this agreement until they sign. Changes you save here show up for them straight away.' }));
     return card;
   }
   function fact(k, v) { return h('div', { class: 'ad-fact' }, [h('span', { class: 'ad-fk', text: k }), h('span', { text: v || '—' })]); }
@@ -1128,6 +1181,13 @@
       all.forEach(function (l) { var id = vimeoId(l.vimeo); if (id) taken[id] = 1; });
       // match each video to a lesson: by its week + lesson number ("WEEK 1 - 3. Nervous System"), or by its words
       var weekOf = {}; C.weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { weekOf[l.id] = w.week; }); });
+      var mini = (C.mini && C.mini.setup && C.mini.setup.lessons) || [];
+      mini.forEach(function (l) { var id = vimeoId(l.vimeo); if (id) taken[id] = 1; });
+      (d.videos || []).forEach(function (v) {
+        var mm = /^\s*(\d+)\s*[.)-]?\s*setting (?:yourself |your self )?up for success/i.exec(v.name || ''); if (!mm || taken[v.id]) return;
+        var ml = mini.filter(function (x) { return x.n === Number(mm[1]) && !vimeoId(x.vimeo); })[0]; if (ml) { ml.vimeo = v.link; taken[v.id] = 1; linked++; }
+      });
+      all = all.concat(mini);
       (d.videos || []).forEach(function (v) {
         if (taken[v.id]) return;
         var l = matchLesson(v.name, all.filter(function (l) { return !vimeoId(l.vimeo); }), weekOf);
@@ -1149,6 +1209,8 @@
   function courseView() {
     if (!S.course) S.course = JSON.parse(JSON.stringify(courseData()));
     var C = S.course, RES = window.BT_RESOURCES || [];
+    var DM = ((window.BT_COURSE_DEFAULT || {}).mini || {}).setup;
+    if (DM) { C.mini = C.mini || {}; var have = C.mini.setup && (C.mini.setup.lessons || []).length ? C.mini.setup : null; if (!have) C.mini.setup = JSON.parse(JSON.stringify(DM)); else DM.lessons.forEach(function (dl) { if (!have.lessons.some(function (x) { return x.id === dl.id; })) have.lessons.push(JSON.parse(JSON.stringify(dl))); }); }
     var status = h('span', { class: 'cb-status', role: 'status', text: S.dirty ? 'Unsaved changes' : (S.settings.course ? 'All saved' : 'Not saved yet: this is the starting outline') });
     var dirty = function () { S.dirty = true; status.textContent = 'Unsaved changes'; status.className = 'cb-status warn'; };
     var saveBtn = h('button', { class: 'bt-btn lime', text: 'Save course', onclick: function () {
@@ -1235,9 +1297,24 @@
     var vMsg = h('p', { class: 'ad-muted', role: 'status', text: S.vimeoMsg || 'Upload a video to Vimeo with the same name as the lesson (e.g. “Lesson 1: Welcome”) and it links itself. Lengths and transcripts (from Vimeo’s auto-captions) come across too.' });
     var vBtn = h('button', { class: 'bt-btn ghost sm', type: 'button', text: '↻ Sync with Vimeo', onclick: function () { syncVimeo(C, vBtn, vMsg, dirty, rerender); } });
     var vCard = h('div', { class: 'ad-card cb-vimeo' }, [h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: 'Vimeo' }), vBtn]), vMsg]);
+    // the "Set yourself up for success" mini course: one video per lesson (0 Intro, 1–8 steps)
+    var miniCard = !(C.mini && C.mini.setup) ? null : h('section', { class: 'cb-w' }, [
+      h('div', { class: 'cb-wh' }, [h('span', { class: 'cb-wn', text: 'Mini' }), h('b', { text: C.mini.setup.title || 'Set yourself up for success' }),
+        h('span', { class: 'ad-muted cb-drip', text: 'Opens from the “Set yourself up for success” card in the Introduction. Name the Vimeo videos “0. Setting up for success – Intro”, “1. Setting up for success – …” and Sync links them by the number.' })]),
+      h('div', { class: 'cb-ls' }, C.mini.setup.lessons.map(function (l) {
+        var vNote = h('span', { class: 'ad-muted', text: vimeoNote(l.vimeo) });
+        var vim = input(l, 'vimeo', { placeholder: 'https://vimeo.com/123456789/abcdef', type: 'url' }); vim.addEventListener('input', function () { vNote.textContent = vimeoNote(vim.value); });
+        var pick = (S.vimeoList || []).length ? (function () { var sel = h('select', { class: 'bt-in sm', 'aria-label': 'Choose a video from your Vimeo' }, [h('option', { value: '', text: 'Or choose from your Vimeo…' })].concat(S.vimeoList.map(function (v) { return h('option', { value: v.link, text: v.name + ' (' + Math.max(1, Math.round(v.duration / 60)) + ' min)' }); }))); sel.addEventListener('change', function () { if (!sel.value) return; l.vimeo = sel.value; vim.value = sel.value; vNote.textContent = vimeoNote(sel.value); dirty(); }); return sel; })() : null;
+        return h('details', { class: 'cb-l' }, [
+          h('summary', null, [h('span', { class: 'cb-ln', text: String(l.n) }), h('span', { class: 'cb-lt', text: l.title }), h('span', { class: 'cb-flags' }, [h('span', { class: 'cb-flag' + (l.vimeo ? '' : ' empty'), text: l.vimeo ? 'Vimeo' + (l.mins ? ' · ' + l.mins + ' min' : '') : 'needs video' })])]),
+          h('div', { class: 'cb-lb' }, [h('label', { class: 'ad-field' }, ['Vimeo link', vim, vNote]), pick,
+            h('label', { class: 'ad-field' }, ['Text under the video (optional)', input(l, 'desc', { rows: '3' }, true)])])
+        ]);
+      }))
+    ]);
     return h('section', { class: 'ad-sec' }, [
       h('div', { class: 'cb-bar' }, [h('div', null, [h('h2', { class: 'ad-h2', text: 'Your course' }), status]), saveBtn]),
-      vCard,
+      vCard, miniCard,
       h('p', { class: 'ad-text', text: 'Students see every week and lesson, locked until they get there. A lesson unlocks as soon as they’ve finished the one before it, so they go at their own pace. Activities never hold them up: they can move on and the activity stays un-ticked, with reminders on their home page to go back and do it. Tap a lesson to add its Vimeo link, description, Becoming Notebook questions, resources and transcript. Nothing changes for students until you tap Save course.' })
     ].concat(weeks).concat([
       h('button', { type: 'button', class: 'bt-btn ghost cb-addw', text: '+ Add a week', onclick: function () { var n = C.weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 0) + 1; C.weeks.push({ week: n, title: 'New week', res: [], lessons: [] }); dirty(); rerender(); } })
@@ -1302,8 +1379,8 @@
         h('div', { class: 'ad-form' }, [h('label', null, ['Email', email]), h('label', null, ['Name', name]), h('label', null, ['Access', tier]), add]), msg
       ]),
       h('div', { class: 'ad-linkcards' }, [
-        h('div', { class: 'ad-linkcard pink' }, [h('b', { text: '1:1 clients’ link' }), h('code', { text: location.origin + '/1to1' }), copy(location.origin + '/1to1')]),
-        h('div', { class: 'ad-linkcard lime' }, [h('b', { text: 'Self-paced link' }), h('code', { text: location.origin + '/course' }), copy(location.origin + '/course')])
+        h('div', { class: 'ad-linkcard pink' }, [h('b', { text: '1:1 clients’ link' }), h('code', { text: appOrigin() + '/1to1' }), copy(appOrigin() + '/1to1')]),
+        h('div', { class: 'ad-linkcard lime' }, [h('b', { text: 'Self-paced link' }), h('code', { text: appOrigin() + '/course' }), copy(appOrigin() + '/course')])
       ]),
       h('p', { class: 'ad-muted', text: 'Anyone who logs in without being added here gets self-paced access. You can upgrade them on their client page.' }),
       h('h3', { class: 'ad-h3', text: 'Added (' + S.invites.length + ')' }),
