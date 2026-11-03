@@ -213,3 +213,6 @@ end; $$;
 drop trigger if exists on_profile_invite_meta on public.profiles;
 create trigger on_profile_invite_meta after insert on public.profiles
   for each row execute function public.invite_meta();
+
+-- Welcome email (3 Nov 2026): when Sav sent the welcome email to someone who hasn't logged in yet.
+alter table public.invites add column if not exists welcome_sent_at timestamptz;

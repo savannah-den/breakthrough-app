@@ -3392,6 +3392,13 @@ button.mm-node.prog.more{border-style:dashed;color:#4E0C08;font-weight:600}
 <p style="margin: 0; font-size: 18px; line-height: 1.5">First of all, take a breath.</p>
 </div>
 
+<div style="background: #F1F9A6; border: 2px solid #1F1412; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px; max-width: 680px">
+<div class="hand" style="font-size: 17px; color: #A8231F">Activity · Disprove it</div>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 26px; line-height: 1.15">Write down every reason it isn’t true</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Pick one of the beliefs you just found. Then list every example you have that proves it wrong: every compliment, every thing you finished, every time you figured it out. Each one goes into your proof portfolio, crosses out the old belief, and starts your achievement timeline.</p>
+<button class="primary" style="align-self: flex-start" onClick="{{openDisprove}}">Start my Disprove It list →</button>
+</div>
+
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px">
 <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.65">
 <p style="margin: 0">If you’ve just worked your way through this resource, there’s a good chance you’ve had a few <strong>“Holy shit.”</strong> moments.</p>
@@ -7652,7 +7659,7 @@ class Component extends DCLogic {
         }
       }
     } catch (e) {}
-      if (openTab === 'portfolio') { this.setState({ tab: 'portfolio' }); try { window.scrollTo(0, 0); } catch (e) {} }
+      if (openTab === 'portfolio') { if (window.BT_COURSE && window.BT_COURSE.openProofPortfolio) { window.BT_COURSE.openProofPortfolio(); return; } this.setState({ tab: 'portfolio' }); try { window.scrollTo(0, 0); } catch (e) {} }
   }
 
   componentDidUpdate() {
@@ -7704,6 +7711,8 @@ class Component extends DCLogic {
   }
 
   go(tab) {
+    // the proof portfolio is its own page now (connected to this resource and My Book)
+    if (tab === 'portfolio' && window.BT_COURSE && window.BT_COURSE.openProofPortfolio) { window.BT_COURSE.openProofPortfolio(); return; }
     this.setState({ tab: tab, justAdded: '' });
     try {
       if (this.rootEl && PD_IN_APP) this.rootEl.scrollTop = 0;
@@ -8203,6 +8212,7 @@ class Component extends DCLogic {
       goMap: function () { self.go('map'); },
       goNow: function () { self.go('now'); },
       goPortfolio: function () { self.go('portfolio'); },
+      openDisprove: function () { if (window.BT_COURSE && window.BT_COURSE.openProofPortfolio) window.BT_COURSE.openProofPortfolio('pp-disprove'); else self.go('portfolio'); },
       tickSummary: total ? total + (total === 1 ? ' belief ticked' : ' beliefs ticked') + (proofTotal ? ' · ' + proofTotal + (proofTotal === 1 ? ' piece of proof' : ' pieces of proof') : '') : '',
       cats: cats, game: game,
       f5Pills: f5Pills,

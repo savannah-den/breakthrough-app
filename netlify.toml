@@ -16,3 +16,6 @@
 
 [functions."push-reminders"]
   schedule = "@hourly"
+
+[functions."call-reminders"]
+  schedule = "*/5 * * * *"

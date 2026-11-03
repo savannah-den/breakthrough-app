@@ -210,6 +210,7 @@
       var q = tx(input.value).toLowerCase().replace(/[’‘]/g, "'"); out.innerHTML = '';
       if (!q) { chips(); return; }
       if (CRISIS.test(q)) { out.appendChild(h('div', { class: 'bt-find-care' }, [h('b', { text: 'You don’t have to hold this on your own.' }), h('span', { text: 'If you’re in danger right now, call 000. You can talk to someone any time at Lifeline on 13 11 14, or Beyond Blue on 1300 22 4636. Then let Sav know how you’re going.' }), h('a', { class: 'bt-btn lime', href: 'tel:131114', text: 'Call Lifeline 13 11 14' })])); return; }
+      try { var pfm = proofForFeeling(q); if (pfm) out.appendChild(pfm); } catch (e) {}
       var quick = FIND_INTENTS.filter(function (x) { return x.re.test(q); }).slice(0, 2).map(function (x) { var r = x.go(); r.big = true; return r; });
       group('Here you go', quick);
       // feelings + problems: what helps (tools, lessons, a tip)
@@ -438,6 +439,7 @@
   function fillHomeTop(slot) {
     slot.innerHTML = '';
     var wa = waButton(); if (wa) slot.appendChild(wa);
+    try { var pc = pushCard(); if (pc) slot.appendChild(pc); } catch (e) {}
     // once the 1:1 setup is done it's tucked away (the tests and agreement live in the profile)
     if (APP.state.tier === 'private' && !oneSetupDone()) oneStart(slot);
     var c = continueCard(), r = reminderList();
@@ -475,10 +477,7 @@
     if (ch) wr(PD, d);
   }
   function proofOpen() { try { return isOpen(2); } catch (e) { return false; } }
-  function openProof() {
-    if (proofOpen()) { try { localStorage.setItem('cmn-open-tab', 'portfolio'); } catch (e) {} APP.go('BreakingOut.dc.html'); }
-    else { bookState.tab = 'proof'; bookState.day = ''; if (location.hash === '#Book') APP.reload(); else location.hash = '#Book'; }
-  }
+  function openProof() { if (location.hash === '#Proof') APP.reload(); else goHref('#Proof'); }
   var T = window.BT_TIME || { key: function (t) { var d = new Date(t == null ? Date.now() : t); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }, wallKey: function (d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }, now: Date.now, today: function () { var d = new Date(); d.setHours(0, 0, 0, 0); return d; } };
   function dayKey(t) { return T.key(t); }
   function wallKey(d) { return T.wallKey(d); }
@@ -532,8 +531,13 @@
     'I have to get it right the first time':'rightfirst','Mistakes are dangerous':'mistake',"If I make a mistake, I'll be rejected":'mistake',"Failure means I'm not good enough":'notgood','I need certainty before I act':'certainty','I must avoid looking stupid':'mistake','I should already know how to do this':'rightfirst',"I can't let people see me struggle":'strong',"If I try and fail, it'll prove something is wrong with me":'messup',"If I don't do it perfectly, there's no point doing it":'rightfirst',
     "If I'm seen, I'll be judged":'seen','Being successful will make people reject me':'seen',"It's safer to stay small":'seen','Standing out is dangerous':'different','Attention is unsafe':'seen','People are always judging me':'seen',"I shouldn't take up space":'toomuch','I need to shrink myself to be accepted':'toomuch',"My opinions don't matter":'opinions','Other people are more qualified than me':'notgood',
     "The world isn't safe":'unsafe',"People can't be trusted":'onlytrust','I need to stay in control':'slowdown','If I let go, everything will fall apart':'slowdown','I have to stay prepared':'relaxing','I need to expect the worst':'worst','Relaxing is dangerous':'relaxing',"I can't let my guard down":'relaxing','Being vulnerable is risky':'strong','If I stop worrying, something bad will happen':'relaxing'};
+  BELIEF_PID["I'm not smart"] = 'smart'; BELIEF_PID["I'm stupid"] = 'smart'; BELIEF_PID["I'm dumb"] = 'smart'; BELIEF_PID["I'm not worthy"] = 'worth';
   var BELIEF_KEYS = {notgood:['good enough','compliment','proud','praise','nailed','did well','win','pb','personal best','best','first place','won'],notenough:['enough','compliment','proud','achieved','progress','win','pb','personal best','finished'],toomuch:['excited','passion','loud','laughed','enthusias','too much','myself'],lazy:['finished','completed','got through','started','ticked off','done','ran','run','gym','workout','walk','trained','pb'],rest:['rest','relax','nap','day off','slept','slow','break'],relaxing:['relax','calm','peace','still','switched off'],slowdown:['slow','delegat','let go','day off','break',"didn't check"],worth:['day off','just because','enjoyed','rest','without achieving'],workhard:['easy','easily','effortless','flowed'],needs:['asked for','needed','support','help'],strong:['help','asked','cried','vulnerable','support','struggl'],everything:['delegat','asked','help','someone else','handed'],onlytrust:['trusted','relied','someone else','delegat','help'],disappoint:['said no','boundar','no to','cancel','disappoint'],keephappy:['said no','boundar','upset','my needs','for me'],responsible:['their feelings',"didn't fix",'let them','boundar'],conflict:['conflict','argument','disagree','hard conversation','told them'],speakup:['spoke up','speak up','shared my','told','voice','opinion'],opinions:['opinion','idea','shared my','listened','agreed'],seen:['posted','post','visible','video','live','seen','presented','shared'],mistake:['mistake','wrong','messed up','error','forgot'],rightfirst:['first try','tried','attempt','practi','beginner','messy','learn'],certainty:['decided','decision','took the step','before i was ready','leap'],canttrust:['trusted myself','gut','instinct','backed myself','decided','figured'],messup:['fixed','solved','sorted','went well','worked','figured','pb','personal best','nailed'],broken:['understood','handled','coped','proud'],realme:['real me','authentic','opened up','vulnerable','myself'],different:['different','weird','special interest','unmasked','interest'],dontbelong:['belong','friend','connected','community','invited','group','team'],love:['loved','love','hug','cared','kind message','partner','mum','husband','friend'],prove:["didn't explain",'just because','no proof'],potential:['progress','grew','learned','achieved','step','pb','personal best','goal'],capable:['figured','handled','learned','managed','did it','capable','pb','personal best','ran','finished'],cope:['coped','handled','got through','managed','calm'],leave:['stayed','checked in','reached out','still here','friend'],unsafe:['new','tried','went out','left the house','travel','change','somewhere'],worst:['went well','good news','turned out','better than','fine']};
+  BELIEF_KEYS.smart = ['learned', 'figured out', 'figured it out', 'worked out', 'solved', 'understood', 'smart', 'clever', 'idea', 'studied', 'passed', 'exam', 'degree', 'fixed', 'taught', 'explained', 'research', 'qualification', 'certificate'];
+  BELIEF_KEYS.worth = BELIEF_KEYS.worth.concat(['deserve', 'treated myself', 'boundar', 'said no', 'looked after myself', 'chose me', 'worthy']);
+  BELIEF_KEYS.notgood = BELIEF_KEYS.notgood.concat(['feedback', 'great job', 'well done', 'thanked', 'recognised', 'promoted', 'chosen']);
   var TRUTHS = [
+    ['I am smart', ['smart']],
     ['I am good enough', ['notgood']], ['I am enough', ['notenough']], ['I am loved', ['love', 'leave']], ['I am capable', ['capable', 'cope', 'potential']],
     ['I can trust myself', ['canttrust', 'messup']], ['I belong', ['dontbelong', 'different']], ['I am safe to be seen', ['seen']], ['My needs matter', ['needs', 'keephappy', 'responsible']],
     ['I am worthy as I am', ['worth', 'prove', 'broken']], ['Rest is safe', ['rest', 'relaxing', 'slowdown']], ['I show up for myself', ['lazy']], ['Mistakes help me grow', ['mistake', 'rightfirst', 'certainty']],
@@ -717,10 +721,11 @@
         var truths = proofType === 'proof' ? Object.keys(proofSel).filter(function (k) { return proofSel[k]; }) : [];
         if (proofType === 'proof' && !truths.length) truths = proofSuggest(v, pdData().customProves || []).slice(0, 3);
         var ab = autoBeliefs(v, proofType, truths);
-        addEvidence(v, { spark: proofType, beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, photo: proofPhoto || null }); var vPhoto = proofPhoto; proofPhoto = '';
+        var newE = addEvidence(v, { spark: proofType, beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, photo: proofPhoto || null }); var vPhoto = proofPhoto; proofPhoto = '';
+        var flipped = matchesMine(newE); aiMatch(newE, function () { if (location.hash === '#Proof') APP.reload(); });
         try { var pf = lessonForRes('proof'); if (pf && lessonOpen(pf.l.id) && !prog().done[pf.l.id]) markDone(pf.l.id, true); } catch (e) {}
         proofSel = {}; proofDraft = ''; sparkleBurst(box);
-        var vText = v, vType = proofType, shareNow = function () { shareProof(vText, vType, (ab.beliefs.length ?  'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : ''), vPhoto); }; if (!cheerProof(shareNow)) setTimeout(shareNow, 500); else if (0) APP.toast(ab.beliefs.length ? 'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : 'Added to your proof portfolio. Look at you!');
+        var vText = v, vType = proofType, shareNow = function () { shareProof(vText, vType, (ab.beliefs.length ?  'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : ''), vPhoto); }; if (flipped.length) { flipMoment(flipped, function () { if (location.hash === '#Proof') APP.reload(); setTimeout(shareNow, 300); }); } else if (!cheerProof(shareNow)) setTimeout(shareNow, 500); else if (0) APP.toast(ab.beliefs.length ? 'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : 'Added to your proof portfolio. Look at you!');
         setTimeout(draw, 650);
       };
       inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') add(); });
@@ -772,6 +777,192 @@
       ]));
     }
     draw();
+    return box;
+  }
+
+  var PD_TEXT = {"self":["I'm not good enough","I'm too much","I'm not enough","I'm broken","Something is wrong with me","I'm lazy","I'm a failure","I'm behind everyone else","I always get it wrong","I can't trust myself","I don't belong","I don't fit in","I'm different in a bad way","I'm difficult","I'm a burden","I'm hard to love","I ruin everything","I'll never reach my potential","I'm not capable","I can't cope"],"rel":["If people knew the real me, they wouldn't like me","If I disappoint people, they'll leave me","Love has to be earned","I have to keep everyone happy","I'm responsible for other people's feelings","Conflict is dangerous","My needs are too much","I need to be useful to be loved","I have to prove my worth","People always leave","I can't rely on anyone","I can only trust myself","I have to do everything myself","Asking for help is weakness","I'll be rejected if I speak up","If I set boundaries people won't like me"],"ach":["If I rest, I'm lazy","My worth comes from what I achieve","I have to work hard to succeed","I must be productive to be worthy","I have to earn rest","I have to prove myself","If I'm not exceptional, I'm worthless","If I'm not improving, I'm failing","If I slow down, everything will fall apart","Success must be difficult","Easy means I'm cheating","I can never do enough","I should be further ahead","Other people are doing better than me"],"perf":["I have to get it right the first time","Mistakes are dangerous","If I make a mistake, I'll be rejected","Failure means I'm not good enough","I need certainty before I act","I must avoid looking stupid","I should already know how to do this","I can't let people see me struggle","If I try and fail, it'll prove something is wrong with me","If I don't do it perfectly, there's no point doing it"],"vis":["If I'm seen, I'll be judged","Being successful will make people reject me","It's safer to stay small","Standing out is dangerous","Attention is unsafe","People are always judging me","I shouldn't take up space","I need to shrink myself to be accepted","My opinions don't matter","Other people are more qualified than me"],"safe":["The world isn't safe","People can't be trusted","I need to stay in control","If I let go, everything will fall apart","I have to stay prepared","I need to expect the worst","Relaxing is dangerous","I can't let my guard down","Being vulnerable is risky","If I stop worrying, something bad will happen"]}; // Breaking Out of Your Box belief list (same order as its audit), so ticked keys map to words
+  /* ---------------- Proof Portfolio: its own page, connected to My Book and Breaking Out of Your Box ----------------
+     Every piece of proof is checked against her old beliefs. When it disproves one, the belief gets crossed out
+     and the new truth written over it. The search (magnifying glass) brings that proof back when she feels it. */
+  var EXTRA_BELIEFS = ["I'm not smart", "I'm not worthy", "I'm not good enough", "I'm not enough", "I'm not capable", "I'm a failure"];
+  var FEEL_PID = [[/(dumb|stupid|idiot|not smart|thick|clueless|slow learner)/, 'smart', 'dumb'], [/(not good enough|useless|rubbish|hopeless|crap at|suck at|not good at)/, 'notgood', 'not good enough'],
+    [/(worthless|not worthy|unworthy|don'?t deserve)/, 'worth', 'not worthy'], [/(failure|failed|fail at|messed up|stuffed up|screwed up)/, 'messup', 'like a failure'], [/(lazy|unmotivated|can'?t get started)/, 'lazy', 'lazy'],
+    [/(too much|annoying|too loud|too intense)/, 'toomuch', 'too much'], [/(don'?t belong|left out|don'?t fit|outsider)/, 'dontbelong', 'like you don’t belong'], [/(not enough|behind everyone|behind)/, 'notenough', 'not enough'],
+    [/(incapable|can'?t do (it|anything)|not capable)/, 'capable', 'not capable'], [/(can'?t trust myself|bad decision)/, 'canttrust', 'like you can’t trust yourself'], [/(unlovable|hard to love|nobody loves)/, 'love', 'unlovable']];
+  function pidForText(b) {
+    var p = BELIEF_PID[b]; if (p) return p;
+    var low = String(b || '').toLowerCase().replace(/[’‘]/g, "'");
+    for (var i = 0; i < FEEL_PID.length; i++) if (FEEL_PID[i][0].test(low)) return FEEL_PID[i][1];
+    return null;
+  }
+  function truthFor(b) {
+    var own = (pdData().ownBeliefs || []).filter(function (x) { return x.b === b; })[0]; if (own && own.t) return own.t;
+    var pid = pidForText(b), t = pid && TRUTHS.filter(function (x) { return x[1].indexOf(pid) >= 0; })[0]; if (t) return t[0];
+    var low = String(b || '').replace(/[’‘]/g, "'"), m;
+    if ((m = /^i'?m not (.+)$|^i am not (.+)$/i.exec(low))) return 'I am ' + (m[1] || m[2]);
+    if ((m = /^i can'?t (.+)$/i.exec(low))) return 'I can ' + m[1];
+    if ((m = /^i don'?t (.+)$/i.exec(low))) return 'I do ' + m[1];
+    if ((m = /^i'?m (?:a |an )?(.+)$/i.exec(low))) return 'I’m not ' + m[1] + '. That was an old story.';
+    return 'That’s not the whole truth';
+  }
+  // her beliefs: the ones she said are true (all the time / sometimes) in Breaking Out of Your Box, plus her own
+  function myBeliefs() {
+    var d = pdData(), t = d.ticked || {}, f = d.freq || {}, out = [];
+    Object.keys(PD_TEXT).forEach(function (cid) { PD_TEXT[cid].forEach(function (b, i) { var k = cid + '-' + i; if ((t[k] || f[k] === 'all' || f[k] === 'some') && f[k] !== 'never' && out.indexOf(b) < 0) out.push(b); }); });
+    (d.ownBeliefs || []).forEach(function (x) { if (out.indexOf(x.b) < 0) out.push(x.b); });
+    return out;
+  }
+  // what a piece of proof really speaks to: the words she used, the truths she picked, the beliefs she linked it to
+  function evPids(e) {
+    var p = {}, low = ' ' + String(e.text || '').toLowerCase() + ' ';
+    Object.keys(BELIEF_KEYS).forEach(function (k) { if (BELIEF_KEYS[k].some(function (w) { return low.indexOf(w) >= 0; })) p[k] = 1; });
+    if (e.spark === 'proof' || e.disprove) Object.assign(p, pidsOf(e.proves || []));
+    (e.mine || []).forEach(function (b) { var x = pidForText(b); if (x) p[x] = 1; });
+    var x2 = pidForText(e.text); if (x2) p[x2] = 1;
+    return p;
+  }
+  function proofFor(b) { var pid = pidForText(b); return evidence().filter(function (e) { return (e.mine || []).indexOf(b) >= 0 || (pid && evPids(e)[pid]); }); }
+  function matchesMine(e) { var pids = evPids(e); return myBeliefs().filter(function (b) { var pid = pidForText(b); return (e.mine || []).indexOf(b) >= 0 || (pid && pids[pid]); }); }
+  // smarter matching on the live app: ask the AI which of her beliefs this proof disproves
+  function aiMatch(e, done) {
+    var mine = myBeliefs(); if (!mine.length || !window.claude || !APP.live) return;
+    window.claude.use('sample').then(function (ai) {
+      if (!ai) return;
+      return ai.json('A coaching client wrote this as proof against her old limiting beliefs: "' + e.text + '". Her limiting beliefs: ' + JSON.stringify(mine) + '. Which of these beliefs does this genuinely disprove or chip away at? Reply only with JSON: {"beliefs": [exact belief strings from the list]}', {}).then(function (r) {
+        var got = ((r || {}).beliefs || []).filter(function (b) { return mine.indexOf(b) >= 0; }); if (!got.length) return;
+        var d = pdData(); (d.evidence || []).forEach(function (x) { if (String(x.id) === String(e.id)) x.mine = Array.from(new Set((x.mine || []).concat(got))); }); wr(PD, d);
+        if (done) done(got);
+      });
+    }).catch(function () {});
+  }
+  function flipEl(b, big) {
+    var w = h('div', { class: 'bt-flip' + (big ? ' big' : '') }, [h('span', { class: 'bt-flip-old' }, [h('s', { text: b })]), h('span', { class: 'bt-flip-new', text: truthFor(b) })]);
+    return w;
+  }
+  // the moment proof lands: old belief crossed out, the truth written over it
+  function flipMoment(list, after) {
+    var close = function () { m.remove(); if (after) after(); };
+    var m = h('div', { class: 'bt-flipm', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Your proof just tipped the scales' }, [h('div', { class: 'bt-flipm-c' }, [
+      h('span', { class: 'bt-wel-k', text: 'Your proof just tipped the scales' }),
+      h('div', { class: 'bt-flipm-l' }, list.slice(0, 3).map(function (b, i) { var f = flipEl(b, true); f.style.animationDelay = (i * 0.35) + 's'; return f; })),
+      h('p', { class: 'bt-sub', text: 'Every piece of proof is a vote for the new truth. Your brain is keeping count.' }),
+      h('button', { class: 'bt-btn lime', type: 'button', text: 'Hell yes', onclick: close })])]);
+    document.body.appendChild(m);
+  }
+  function whenLabel(w) { if (!w) return ''; var m = /^(\d{4})-(\d{2})$/.exec(w); return m ? new Date(+m[1], +m[2] - 1, 1).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' }) : String(w); }
+  function whenSort(e) { var w = e.when; if (w) { var m = /^(\d{4})(?:-(\d{2}))?/.exec(w); if (m) return Date.UTC(+m[1], m[2] ? +m[2] - 1 : 0, 1); } return evAt(e) || 0; }
+
+  function ProofView(root) {
+    root.appendChild(pageHead('Resource · Week 2', 'Your proof portfolio', 'Training your brain to find the good, on purpose.'));
+    var wrap = h('div', { class: 'bt-wrap bt-pp' }, [back('Home', '#Dashboard')]);
+    root.appendChild(wrap);
+    var seen = rd('bt-pp-seen');
+    // why
+    var why = h('details', { class: 'bt-card2 bt-pp-why', open: seen ? null : 'open' }, [h('summary', null, [h('h2', { text: 'Why we collect proof' })]),
+      h('p', { text: 'Your brain has a negativity bias. It’s wired to notice what went wrong, because back in the day, missing a threat could kill you. Missing a win never did. So the bad stuff sticks like velcro and the good stuff slides off like teflon.' }),
+      h('p', { text: 'Then there’s confirmation bias. Once you believe something, like “I’m not good enough”, your brain goes looking for evidence that it’s true. And it always finds some, because it’s ignoring everything that says otherwise.' }),
+      h('p', { text: 'That’s where your reticular activating system (your RAS) comes in. It’s the filter that decides what you notice out of the millions of things happening around you. Right now it’s been trained to find proof for your old beliefs.' }),
+      h('p', null, [h('b', { text: 'This portfolio retrains it. ' }), 'Every time you write down a win, a compliment, a thing you nailed, you’re teaching your RAS to look for the good stuff instead. And every piece is evidence that the old belief is outdated and simply not true. Enough proof, and the scales tip.']),
+      h('p', { class: 'bt-sub', text: 'Tiny counts. One a day is plenty.' })]);
+    why.addEventListener('toggle', function () { wr('bt-pp-seen', 1); });
+    wrap.appendChild(why);
+    if (proofLocked()) { var f0 = findLesson(PROOF_LESSON); wrap.appendChild(h('div', { class: 'bt-card2' }, [h('p', { text: 'Your proof portfolio opens after the Proof Portfolio lesson.' }), f0 ? h('a', { class: 'bt-btn lime', href: lessonHref(f0.l), text: 'Go to the lesson →' }) : null])); return; }
+    wr('bt-pp-seen', 1);
+    wrap.appendChild(proofHome(true, true));
+
+    var flips = h('section', { class: 'bt-card2 bt-pp-flips', id: 'pp-flips' }), dis = h('section', { class: 'bt-card2 bt-pp-dis', id: 'pp-disprove' }), tl = h('section', { class: 'bt-card2 bt-pp-tl', id: 'pp-timeline' });
+    wrap.appendChild(flips); wrap.appendChild(dis); wrap.appendChild(tl);
+    wrap.appendChild(h('div', { class: 'bt-row bt-pp-links' }, [h('a', { class: 'bt-btn ghost', href: '#Book', text: 'My Becoming Book' }), h('a', { class: 'bt-btn ghost', href: '#BreakingOut', onclick: function (e) { e.preventDefault(); APP.go('BreakingOut.dc.html'); }, text: 'Breaking Out of Your Box' })]));
+
+    var openB = {}, disB = null, rows = [{ t: '', w: '' }, { t: '', w: '' }, { t: '', w: '' }];
+    function drawFlips() {
+      flips.innerHTML = '';
+      var mine = myBeliefs();
+      flips.appendChild(h('h2', { text: 'Your old beliefs, flipped' }));
+      if (!mine.length) flips.appendChild(h('p', { class: 'bt-sub', text: 'When you do Breaking Out of Your Box (after the Beliefs video), the beliefs you find show up here. Every piece of proof you add gets matched to them automatically. You can also add one now.' }));
+      else flips.appendChild(h('p', { class: 'bt-sub', text: 'The more proof against a belief, the more it tips. Tap one to see your proof.' }));
+      var list = h('div', { class: 'bt-pp-fl' });
+      mine.forEach(function (b) {
+        var pr = proofFor(b), n = pr.length, tilt = Math.min(n, 10);
+        var card = h('div', { class: 'bt-pp-b' + (n ? ' has' : '') + (openB[b] ? ' open' : ''), style: '--tilt:' + tilt });
+        card.appendChild(h('button', { class: 'bt-pp-bh', type: 'button', 'aria-expanded': openB[b] ? 'true' : 'false', onclick: function () { openB[b] = !openB[b]; drawFlips(); } }, [
+          n ? flipEl(b) : h('div', { class: 'bt-flip none' }, [h('span', { class: 'bt-flip-old', text: b }), h('span', { class: 'bt-flip-wait', text: 'No proof against this yet' })]),
+          h('span', { class: 'bt-pp-n' }, [h('b', { text: String(n) }), n === 1 ? ' piece of proof' : ' pieces of proof'])]));
+        if (openB[b]) {
+          card.appendChild(n ? winList(pr.slice(0, 20)) : h('p', { class: 'bt-sub', text: 'Start with the Disprove It list below.' }));
+          card.appendChild(h('button', { class: 'bt-wins-link', type: 'button', text: 'Disprove this one →', onclick: function () { disB = b; drawDis(); dis.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }));
+        }
+        list.appendChild(card);
+      });
+      flips.appendChild(list);
+      var ownIn = h('input', { class: 'bt-in sm', placeholder: 'Another belief, e.g. I’m not smart', 'aria-label': 'Add a belief of your own' });
+      var addOwn = function () { var v = tx(ownIn.value); if (!v) return; var d = pdData(); d.ownBeliefs = (d.ownBeliefs || []).filter(function (x) { return x.b !== v; }).concat([{ b: v, t: '' }]); wr(PD, d); ownIn.value = ''; drawFlips(); drawDis(); };
+      ownIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addOwn(); });
+      flips.appendChild(h('div', { class: 'bt-wins-row' }, [ownIn, h('button', { class: 'bt-btn ghost', type: 'button', text: '+ Add', onclick: addOwn })]));
+    }
+    function drawDis() {
+      dis.innerHTML = '';
+      var mine = myBeliefs(), opts = mine.length ? mine : EXTRA_BELIEFS;
+      if (!disB || opts.indexOf(disB) < 0) disB = opts[0];
+      dis.appendChild(h('span', { class: 'bt-wins-k', text: 'Activity · Disprove it' }));
+      dis.appendChild(h('h2', { text: 'Every reason it isn’t true' }));
+      dis.appendChild(h('p', { class: 'bt-sub', text: 'Pick a belief. Then write down every example you have that proves it wrong. Every compliment, every thing you finished, every time you figured it out. Go back as far as you like: school, work, friendships, motherhood. Get them all out of your head.' }));
+      dis.appendChild(h('div', { class: 'bt-truths-l', role: 'radiogroup', 'aria-label': 'Which belief?' }, opts.map(function (b) { return h('button', { class: 'bt-truth' + (b === disB ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': b === disB ? 'true' : 'false', text: b, onclick: function () { disB = b; drawDis(); } }); })));
+      dis.appendChild(flipEl(disB, true));
+      var listEl = h('div', { class: 'bt-pp-rows' });
+      rows.forEach(function (r, i) {
+        var t = h('input', { class: 'bt-in', value: r.t, placeholder: i === 0 ? 'e.g. My boss said my project was the best she’d seen' : 'Another one…', 'aria-label': 'Proof ' + (i + 1) });
+        var w = h('input', { class: 'bt-in sm bt-pp-when', value: r.w, placeholder: 'When? e.g. 2019', 'aria-label': 'When was this? (optional)' });
+        t.addEventListener('input', function () { r.t = t.value; }); w.addEventListener('input', function () { r.w = w.value; });
+        listEl.appendChild(h('div', { class: 'bt-pp-row' }, [h('span', { class: 'bt-pp-i', text: String(i + 1) }), t, w]));
+      });
+      dis.appendChild(listEl);
+      dis.appendChild(h('div', { class: 'bt-row' }, [
+        h('button', { class: 'bt-btn ghost', type: 'button', text: '+ Another', onclick: function () { rows.push({ t: '', w: '' }); drawDis(); var ins = dis.querySelectorAll('.bt-pp-row .bt-in:not(.bt-pp-when)'); if (ins.length) ins[ins.length - 1].focus(); } }),
+        h('button', { class: 'bt-btn lime', type: 'button', text: 'Add these to my proof', onclick: function () {
+          var good = rows.filter(function (r) { return tx(r.t); }); if (!good.length) return;
+          var truth = truthFor(disB), base = Date.now();
+          good.forEach(function (r, i) {
+            var yr = /^\s*(\d{4})\s*$/.exec(r.w), when = yr ? yr[1] : tx(r.w) || null;
+            var ab = autoBeliefs(r.t, 'proof', [truth]);
+            var d = pdData(), id = String(base - i);
+            d.evidence = [{ id: id, date: new Date(base).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }), text: tx(r.t), photo: null, win: true, spark: when ? 'ach' : 'proof', beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, mine: [disB], when: when, disprove: disB }].concat(d.evidence || []);
+            wr(PD, d);
+          });
+          try { var pf = lessonForRes('proof'); if (pf && lessonOpen(pf.l.id) && !prog().done[pf.l.id]) markDone(pf.l.id, true); } catch (e) {}
+          var b = disB; rows = [{ t: '', w: '' }, { t: '', w: '' }, { t: '', w: '' }];
+          openB[b] = true; drawFlips(); drawDis(); drawTl();
+          flipMoment([b], function () { flips.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        } })]));
+    }
+    function drawTl() {
+      tl.innerHTML = '';
+      var items = evidence().filter(function (e) { return e.spark === 'ach' || e.when; }).sort(function (a, b) { return whenSort(a) - whenSort(b); });
+      tl.appendChild(h('span', { class: 'bt-wins-k', text: 'Your achievement timeline' }));
+      tl.appendChild(h('h2', { text: 'Look how far you’ve come' }));
+      tl.appendChild(h('p', { class: 'bt-sub', text: 'Every achievement in your portfolio, in order. Add to it any time, big or small, recent or years ago.' }));
+      var t = h('input', { class: 'bt-in', placeholder: 'I achieved…', 'aria-label': 'An achievement' }), w = h('input', { class: 'bt-in sm bt-pp-when', placeholder: 'When? e.g. 2021', 'aria-label': 'When (optional)' });
+      var add = function () { var v = tx(t.value); if (!v) return; var yr = /^\s*(\d{4})\s*$/.exec(w.value), ab = autoBeliefs(v, 'ach', []); var e = addEvidence(v, { spark: 'ach', beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, when: yr ? yr[1] : tx(w.value) || null }); drawTl(); drawFlips(); var mm = matchesMine(e); if (mm.length) flipMoment(mm); aiMatch(e, function () { drawFlips(); }); };
+      t.addEventListener('keydown', function (e) { if (e.key === 'Enter') add(); });
+      tl.appendChild(h('div', { class: 'bt-pp-row add' }, [t, w, h('button', { class: 'bt-btn lime', type: 'button', text: 'Add', onclick: add })]));
+      if (!items.length) { tl.appendChild(h('p', { class: 'bt-sub', text: 'Nothing here yet. Your first achievement goes here.' })); return; }
+      tl.appendChild(h('ol', { class: 'bt-tl' }, items.map(function (e) {
+        var a = evAt(e), lab = e.when ? whenLabel(e.when) : a ? new Date(a).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' }) : '';
+        return h('li', { class: 'bt-tl-i' }, [h('span', { class: 'bt-tl-d', text: lab }), h('span', { class: 'bt-tl-dot', 'aria-hidden': 'true', text: '★' }), h('div', { class: 'bt-tl-b' }, [h('p', { text: e.text }), (e.mine || []).length ? h('span', { class: 'bt-tl-p', text: 'Proof: ' + truthFor(e.mine[0]) }) : null])]);
+      })));
+    }
+    drawFlips(); drawDis(); drawTl();
+    try { var fe = sessionStorage.getItem('bt-pp-focus'); if (fe) { sessionStorage.removeItem('bt-pp-focus'); setTimeout(function () { var el = document.getElementById(fe); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 400); } } catch (e) {}
+  }
+  // the magnifying glass: "I feel dumb" -> your proof that you're smart
+  function proofForFeeling(q) {
+    var hit = null; FEEL_PID.forEach(function (f) { if (!hit && f[0].test(q)) hit = f; }); if (!hit) return null;
+    var pid = hit[1], truth = (TRUTHS.filter(function (t) { return t[1].indexOf(pid) >= 0; })[0] || ['That’s not the whole truth'])[0];
+    var pr = evidence().filter(function (e) { return evPids(e)[pid]; }).slice(0, 4);
+    var box = h('div', { class: 'bt-find-proof' }, [h('span', { class: 'bt-find-h', text: 'Feeling ' + hit[2] + '? Your proof says otherwise' }),
+      h('div', { class: 'bt-flip big' }, [h('span', { class: 'bt-flip-old' }, [h('s', { text: 'I’m ' + hit[2].replace(/^like /, '') })]), h('span', { class: 'bt-flip-new', text: truth })])]);
+    if (pr.length) box.appendChild(winList(pr)); else box.appendChild(h('p', { class: 'bt-sub', text: 'No proof saved for this one yet. Let’s find some: think of one time it wasn’t true.' }));
+    box.appendChild(h('a', { class: 'bt-btn lime sm', href: '#Proof', text: pr.length ? 'See all my proof →' : 'Add proof →', onclick: function () { var m = document.getElementById('bt-find'); if (m) m.remove(); document.body.classList.remove('bt-finding'); } }));
     return box;
   }
 
@@ -2271,6 +2462,31 @@
     bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
     document.body.appendChild(bg);
   }
+  /* ---------------- notifications on by default ----------------
+     Phones only allow notifications after a tap on "Allow", so: the welcome step has them switched on, and its last
+     button asks. If this phone can't do them yet (iPhone in Safari, not the home-screen app), a card on Home asks
+     again once she opens the app from her home screen. Already allowed? It switches on quietly. */
+  function pushAutoOn(fromTap) {
+    var P = window.BT_PUSH; if (!P || !APP.live || APP.state.viewAs || APP.state.trial) return Promise.resolve(false);
+    if (!P.supported()) return Promise.resolve(false);
+    var hr = profileData().remindHour; hr = hr === undefined ? 19 : hr;
+    return P.status().then(function (st) {
+      if (st && st.on) return true;
+      var perm = window.Notification ? Notification.permission : 'default';
+      if (perm === 'denied') return false;
+      if (perm !== 'granted' && !fromTap) return false;
+      return P.on(APP.state.isAdmin ? null : (hr === null ? null : String(hr))).then(function () { return true; }, function () { return false; });
+    }).catch(function () { return false; });
+  }
+  function pushCard() {
+    var pd = profileData(), P = window.BT_PUSH;
+    if (pd.pushWanted === false || pd.pushAsked || !P || !P.supported() || !APP.live || APP.state.viewAs) return null;
+    var card = h('div', { class: 'bt-pushask' }, [h('span', { class: 'bt-pushask-i', 'aria-hidden': 'true', text: '🔔' }), h('div', { class: 'bt-pushask-t' }, [h('b', { text: 'Switch on your notifications' }), h('span', { text: APP.state.tier === 'private' ? 'So you get your call reminders and Zoom link. Tap, then Allow.' : 'Your kind daily nudge. Tap, then Allow.' })]),
+      h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Turn on', onclick: function () { pushAutoOn(true).then(function (ok) { var d = profileData(); d.pushAsked = Date.now(); wr(K.prof, d); card.remove(); APP.toast(ok ? 'Notifications are on ✓' : 'No worries. You can switch them on any time in your profile.'); }); } }),
+      h('button', { class: 'bt-pushask-x', type: 'button', 'aria-label': 'Not now', text: '✕', onclick: function () { var d = profileData(); d.pushAsked = Date.now(); wr(K.prof, d); card.remove(); } })]);
+    window.BT_PUSH.status().then(function (st) { if (st && st.on) card.remove(); else pushAutoOn(false).then(function (ok) { if (ok) card.remove(); }); });
+    return card;
+  }
   function WelcomeView(root) {
     document.body.classList.add('bt-welcoming');
     var S = APP.state, prof = S.profile || {}, pd = profileData(), sb = APP.sb();
@@ -2387,7 +2603,18 @@
           h('li', { text: 'Your calendar, streaks and reminders all run on your time.' }),
           h('li', { text: 'Change any of this later in your profile.' })
         ]));
-        body.appendChild(nav(function () { save({ onboarded: Date.now() }); wState = { step: 0 }; document.body.classList.remove('bt-welcoming'); goHref('#Dashboard'); }, 'Take me in →'));
+        // notifications: on by default (she can switch them off here or any time in her profile)
+        if (wState.push == null) wState.push = true;
+        var pushT = h('button', { class: 'bt-wel-push' + (wState.push ? ' on' : ''), type: 'button', role: 'switch', 'aria-checked': wState.push ? 'true' : 'false', onclick: function () { wState.push = !wState.push; draw(); } }, [
+          h('span', { class: 'bt-wel-push-t' }, [h('b', { text: '🔔 Notifications' }), h('span', { text: APP.state.tier === 'private' ? 'Call reminders, a kind daily nudge and the odd cheer. Your phone will ask, tap Allow.' : 'A kind daily nudge and the odd cheer. Your phone will ask, tap Allow.' })]),
+          h('span', { class: 'bt-wel-sw', 'aria-hidden': 'true' }, [h('i')])]);
+        body.appendChild(pushT);
+        body.appendChild(nav(function () {
+          var want = !!wState.push;
+          save({ onboarded: Date.now(), pushWanted: want, remindHour: profileData().remindHour === undefined ? 19 : profileData().remindHour });
+          if (want) pushAutoOn(true);
+          wState = { step: 0 }; document.body.classList.remove('bt-welcoming'); goHref('#Dashboard');
+        }, 'Take me in →'));
       }
       try { window.scrollTo(0, 0); } catch (e) {}
     }
@@ -2527,6 +2754,7 @@
         if (!BT_PUSH.supported()) { body.appendChild(h('p', { class: 'bt-sub', text: 'This browser can’t do notifications. On an iPhone, add the app to your home screen first (Share → Add to Home Screen), then open it from there.' })); return; }
         if (!BT_PUSH.standalone() && /iPhone|iPad/.test(navigator.userAgent)) body.appendChild(h('p', { class: 'bt-sub small', text: 'On iPhone this only works from the app on your home screen, not in Safari.' }));
         body.appendChild(h('p', { class: 'bt-sub', text: coachMode ? 'A ping when a client adds a win, signs their agreement, or is waiting for you to send it.' : 'One kind reminder a day at most, at the time you pick: your Today’s reps, or a gentle nudge back to your course if it’s been a while. Nothing spammy, and nothing on days you’ve already done your reps.' }));
+        if (!coachMode && S.tier === 'private') body.appendChild(h('p', { class: 'bt-sub small', text: '📅 Plus reminders for your calls with Savannah: the day before, 2 hours before and 15 minutes before. Tap one to jump straight into Zoom. You’ll get an email with your Zoom link at the same times.' }));
         if (!coachMode) body.appendChild(h('label', { class: 'bt-f' }, [h('span', { text: 'When' }), hourSel]));
         var on = st && st.on;
         body.appendChild(h('div', { class: 'bt-row' }, [
@@ -2579,8 +2807,9 @@
         var order = Object.keys(t).sort(function (a, b) { return t[b] - t[a]; });
         kids.push(h('div', { class: 'bt-test' }, [h('b', { text: 'Representational system' }), h('span', { class: 'bt-sub', text: 'You lead with ' + SYS[order[0]][0] }),
           h('div', { class: 'bt-repbars' }, order.map(function (k) { return h('div', { class: 'bt-rb' }, [h('span', { text: SYS[k][0] }), h('span', { class: 'bt-rb-tr' }, [h('span', { style: 'width:' + (5 * t[k]) + '%;background:' + SYS[k][1] })]), h('b', { text: t[k] + '/20' })]); })),
-          h('a', { class: 'bt-link2', href: '#RepTest', text: 'See full results →' })]));
+          h('a', { class: 'bt-link2', href: '#RepTest', text: 'See full results or retake it →' })]));
       } else kids.push(h('div', { class: 'bt-test off' }, [h('b', { text: 'Representational system' }), h('span', { class: 'bt-sub', text: 'Not done yet' }), h('a', { class: 'bt-btn lime', href: '#RepTest', text: 'Take the test' })]));
+      var TLINK = { hd: ['https://www.myhumandesign.com/', 'Get my chart', 'Open My Human Design'], disc: ['https://www.123test.com/disc-personality-test/', 'Take the DISC test', 'Open the DISC test'] };
       [['hd', 'Human Design chart'], ['disc', 'DISC profile']].forEach(function (tdef) {
         var rec = one[tdef[0]], mm = h('p', { class: 'bt-msg', role: 'status' });
         var inp = h('input', { type: 'file', accept: 'image/*,application/pdf', class: 'bt-file', id: 'up-' + tdef[0], onchange: function (e) {
@@ -2595,9 +2824,12 @@
           h('span', { class: 'bt-sub', text: has ? 'Saved ' + (rec.date || '') : rec && rec.type === 'skip' ? 'No birth time yet' : rec ? 'Marked done, no copy saved' : 'Not uploaded yet' }),
           has && rec.type !== 'pdf' ? h('img', { class: 'bt-test-img', src: rec.data, alt: tdef[1] }) : null,
           has && rec.type === 'pdf' ? h('span', { class: 'bt-sub', text: 'PDF: ' + (rec.name || 'your file') }) : null,
-          h('label', { class: 'bt-btn ' + (has ? 'ghost' : 'lime'), for: 'up-' + tdef[0] }, [has ? 'Replace' : 'Upload', inp]), mm]));
+          h('div', { class: 'bt-row' }, [h('a', { class: 'bt-btn ' + (has ? 'ghost' : 'lime'), href: TLINK[tdef[0]][0], target: '_blank', rel: 'noopener', text: (has ? TLINK[tdef[0]][2] : TLINK[tdef[0]][1]) + ' ↗' }),
+            h('label', { class: 'bt-btn ghost', for: 'up-' + tdef[0] }, [has ? 'Replace' : 'Upload it here', inp])]), mm]));
       });
-      wrap.appendChild(card('Your tests', [h('p', { class: 'bt-sub', text: 'Saved to your profile, so Savannah can see them too.' }), h('div', { class: 'bt-tests' }, kids)]));
+      var todo = !((rep && rep.ranks) || one.repDone || one.repImg) || !one.hd || one.hd.type === 'skip' || !one.disc;
+      var tCard = card(todo ? 'To be completed' : 'Your tests', [h('p', { class: 'bt-sub', text: todo ? 'Your tests, ready whenever you are. The links stay here, so you can come back any time. Results save to your profile, so Savannah can see them too.' : 'Saved to your profile, so Savannah can see them too. The links stay here if you ever want to look again.' }), h('div', { class: 'bt-tests' }, kids)], todo ? 'bt-todo' : '');
+      if (todo) wrap.insertBefore(tCard, wrap.children[1] || null); else wrap.appendChild(tCard);
     }
 
     wrap.appendChild(h('div', { class: 'bt-row' }, [
@@ -2613,7 +2845,7 @@
     try { sessionStorage.setItem('bt-focus-el', id || 'tests'); } catch (e) {}
     setTimeout(function () { goHref(needsStart() ? '#Start' : '#Profile'); }, 0);
   }
-  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: function (root) { bookState.tab = 'proof'; bookState.day = ''; BookView(root); }, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
+  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
     ensureFooter: ensureFooter,
@@ -2677,6 +2909,7 @@
     unlockText: function (n) { return APP ? unlockText(n) : ''; },
     journal: function (J) { return APP ? journalFor(J) : J; },
     search: function (q) { return APP ? search(q) : []; },
+    openProofPortfolio: function (focus) { try { if (focus) sessionStorage.setItem('bt-pp-focus', focus); } catch (e) {} goHref('#Proof'); },
     emblem: emblem, proofScale: proofScaleSvg, charSvg: charSvg, chars: CHARS, avatarHtml: function () { var p = profileData(); return p.photo ? '<img src="' + p.photo + '" alt="">' : p.char ? charSvg(p.char) : ''; }
   };
 })();

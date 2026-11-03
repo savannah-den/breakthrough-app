@@ -117,7 +117,7 @@
     depth = depth || 0;
     if (isEmpty(v)) return null;
     if (v === true) return h('span', { class: 'ad-tick', text: '✓ Done' });
-    if (typeof v === 'number') return h('span', { class: 'ad-num', text: String(v) });
+    if (typeof v === 'number') return v > 1e12 && v < 3e12 ? h('span', { class: 'ad-pill', text: '✓ ' + new Date(v).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) }) : h('span', { class: 'ad-num', text: String(v) });
     if (typeof v === 'string') {
       var f = fileLink(v, label); if (f) return f;
       if (/^\s*<svg[\s>]/i.test(v)) return h('a', { class: 'ad-thumb', href: '#', onclick: function (e) { e.preventDefault(); } }, [h('img', { src: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(v), alt: label || 'Image they made' })]);
@@ -866,6 +866,44 @@
       cards.length ? h('div', { class: 'ad-grid' }, cards) : wcards.length ? null : h('p', { class: 'ad-card', text: S.clients.length ? 'No one matches that.' : 'No clients yet. Once someone logs in to the app they’ll show up here.' })]);
   }
 
+  function isPlay() { return !!window.BT_DEMO || (window.BT_CONFIG || {}).supabaseUrl === 'playground'; }
+  // ---- Welcome email (1:1 or self-paced) + social media consent, shown at the top of each client ----
+  function welcomeSentAt(c) { return c.invite ? c.invite.welcome_sent_at : coach(c).welcomeSent; }
+  function welcomeBar(c) {
+    if (c.is_admin) return null;
+    var sent = welcomeSentAt(c), armed = false, first = String(c.full_name || '').split(' ')[0] || 'them';
+    var msg = h('span', { class: 'ad-muted', role: 'status', text: sent ? '✓ Welcome email sent ' + when(sent) : 'Welcome email not sent yet' });
+    function go(test, btn) {
+      var was = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…';
+      var done = function (d) {
+        btn.disabled = false; btn.textContent = was; armed = false; main.textContent = sent ? '✉️ Send welcome email again' : '✉️ Send welcome email';
+        if (!d || !d.ok) { msg.textContent = (d && d.error) || 'Couldn’t send just now. Try again in a minute.'; return; }
+        if (test) { toastA('Test sent to ' + d.to + ' ✓ Check your inbox.'); msg.textContent = 'Test sent to you ' + when(d.at); return; }
+        sent = d.at; toastA('Welcome email sent to ' + first + ' ✓');
+        if (c.invite) { c.invite.welcome_sent_at = d.at; if (!isPlay()) sb.from('invites').update({ welcome_sent_at: d.at }).eq('email', c.email).then(function (r) { if (r.error) console.warn('welcome_sent_at', r.error); }); page(); }
+        else saveCoach(c, { welcomeSent: d.at });
+      };
+      if (isPlay()) { setTimeout(function () { done({ ok: true, to: test ? 'you' : c.email, at: new Date().toISOString() }); }, 500); return; }
+      sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+        return fetch('/.netlify/functions/send-welcome', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ email: c.email, name: c.full_name || '', tier: c.tier, test: !!test }) }); })
+        .then(function (r) { return r.json(); }).then(done, function () { done(null); });
+    }
+    var main = h('button', { class: 'bt-btn lime sm', type: 'button', text: sent ? '✉️ Send welcome email again' : '✉️ Send welcome email', onclick: function (e) {
+      if (!armed) { armed = true; e.target.textContent = 'Tap again to send to ' + c.email; setTimeout(function () { if (armed) { armed = false; e.target.textContent = sent ? '✉️ Send welcome email again' : '✉️ Send welcome email'; } }, 6000); return; }
+      go(false, e.target);
+    } });
+    var test = h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Send me a test', onclick: function (e) { go(true, e.target); } });
+    var prev = h('a', { class: 'ad-link', href: 'email-preview.html?n=' + encodeURIComponent(first) + (c.tier === 'self_paced' ? '&k=self' : ''), target: '_blank', rel: 'noopener', text: 'Preview it' });
+    return h('div', { class: 'ad-welcome' + (sent ? ' sent' : '') }, [h('div', { class: 'ad-ct-acts' }, [main, test, prev]), msg]);
+  }
+  function consentChip(c) {
+    if (c.is_admin) return null;
+    var d = S.data[c.id], ct = d && d.contract, k = ct && ct.status === 'signed' && ct.signed ? ((ct.signed.client || {}).consent || 'none') : null;
+    if (!d && !c.invite) return null;
+    var t = { public: ['yes', 'Social media: YES, can be publicly identified'], anon: ['anon', 'Social media: yes, but keep identity confidential'], none: ['no', 'Social media: NO consent'] }[k] || ['wait', 'Social media: not answered yet (agreement not signed)'];
+    return h('span', { class: 'ad-consent ' + t[0], title: 'From their signed agreement', text: '📣 ' + t[1] });
+  }
+
   function appOrigin() { return /^https?:/.test(location.origin) && !window.BT_DEMO ? location.origin : 'https://app.colourmeneurospicy.com.au'; }
   function inviteClient(i) { return { id: 'invite:' + i.email, email: i.email, full_name: i.full_name || '', tier: i.tier, invite: i, created_at: i.created_at, status: i.status, tags: i.tags }; }
   function inviteClientView(c) {
@@ -885,7 +923,8 @@
       h('p', { class: 'ad-muted', text: i.email + ' · added ' + when(i.created_at) }),
       h('p', { class: 'ad-text', text: 'They haven’t logged in yet, so there’s no app activity to show. You can set up their details and agreement now: it’s all waiting for them the moment they first log in with this email.' }),
       h('div', { class: 'ad-form' }, [h('label', null, ['Name', name]), h('label', null, ['Access', tier]), saveBtn]), msg,
-      h('div', { class: 'ad-linkcard ' + (i.tier === 'private' ? 'pink' : 'lime') }, [h('b', { text: 'Their link' }), h('code', { text: link }), copyBtn])
+      h('div', { class: 'ad-linkcard ' + (i.tier === 'private' ? 'pink' : 'lime') }, [h('b', { text: 'Their link' }), h('code', { text: link }), copyBtn]),
+      welcomeBar(c)
     ]);
     var off = !(S.invites || []).some(function (x) { return 'contract' in x; });
     var d = { contract: i.contract ? { terms: i.contract, status: i.contract_status || 'draft' } : null, contractOff: false };
@@ -902,6 +941,231 @@
     ]).then(function (r) { S.data[c.id] = { rows: r[0].data || [], notes: r[1].data || [], contract: (r[2] && !r[2].error && r[2].data) || null, contractOff: !!(r[2] && r[2].error) }; if (S.open === c) page(); });
   }
 
+  /* ---------- Their journey: one place for progress, every answer, coach notes and search ---------- */
+  // which saved data belongs to which activity card in the course
+  var RES_KEYS = { setup: ['cmn-companion#setup'], intent: ['cmn-companion#intent'], whatif: ['what-if-workout-v1'], vagal: ['bt-vwork'], breathe: ['bt-breath'], dose: ['bt-dose'], pause: ['bt-pause'], move: ['bt-move'],
+    proof: ['bt-wins'], box: ['program-decoder-v1'], ub: ['understanding-bridge-v1'], rewind: ['rewind-v1'], comehome: ['coming-home-v3'], blueprint: ['emotional-blueprint-v1'], star: ['north-star-home-v1', 'star-goal-activity-v1', 'star-plan-v1'] };
+  var INTENT_F = ['anchor', 'anchorStar', 'nsToward', 'nsAway', 'intention', 'want', 'feel', 'wantHave', 'wantBe', 'doneBeing', 'doneFeeling'];
+  var SEARCH_CHIPS = [['Limiting beliefs', ['belief', 'not good enough', 'i can’t', 'i can\'t', 'not enough', 'i always', 'i never', 'i should', 'i’m not', 'i\'m not', 'i am not', 'story', 'program']], ['Dopamine', ['dopamine', 'dose', 'reward', 'motivation']], ['Anger', ['anger', 'angry', 'rage', 'frustrat', 'irritat', 'snap']],
+    ['Fear', ['fear', 'scared', 'afraid', 'anxious', 'anxiety', 'worry']], ['Shame', ['shame', 'ashamed', 'embarrass', 'guilt']], ['Money', ['money', 'income', 'debt', 'pay', 'financ']], ['Relationships', ['partner', 'husband', 'wife', 'boyfriend', 'girlfriend', 'mum', 'mom', 'dad', 'friend']]];
+  var APP_LOGO = (window.BT_DEMO ? '' : '/') + 'icons/icon-192.png';
+  function resInfo(id) { return (window.BT_RESOURCES || []).filter(function (r) { return r.id === id; })[0] || { id: id, title: human(id) }; }
+  function splitComp(v, part) {
+    v = v || {}; var o = {};
+    Object.keys(v).forEach(function (k) {
+      if (k === 'j' || UI_KEY.test(k) || (part === 'setup' && k === 'done')) return;
+      if (k === 'su' && part === 'setup') { o['Mini course steps finished'] = Object.keys(v.su || {}).sort(function (a, b) { return a - b; }).map(function (n) { return (n === '0' ? 'Intro' : 'Step ' + n) + ' · ' + new Date(v.su[n]).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }); return; }
+      var isInt = INTENT_F.indexOf(k) >= 0 || /^ns|^anchor|^intent|^want|^feel/.test(k);
+      if ((part === 'intent') === isInt) o[k] = v[k];
+    });
+    return o;
+  }
+  function dataFor(key, all) { var m = /^(.*)#(.*)$/.exec(key); return m ? splitComp(all[m[1]], m[2]) : all[key]; }
+  // every answer as { q, a } so it can be searched and shown in the feed
+  function flat(v, path, out) {
+    out = out || []; if (isEmpty(v)) return out;
+    if (typeof v === 'string') { if (/^data:|^\s*<svg/i.test(v) || /^\d{4}-\d{2}-\d{2}/.test(v) || v.trim().length < 2) return out; out.push({ q: path || 'Answer', a: v.trim() }); return out; }
+    if (typeof v !== 'object') return out;
+    if (Array.isArray(v)) { v.forEach(function (x, i) { flat(x, path, out); }); return out; }
+    Object.keys(v).forEach(function (k) { if (UI_KEY.test(k) || /^(id|at|ts|t|date|created|updated|color|colour|img|image|photo|icon)$/i.test(k)) return; flat(v[k], /^\d+$/.test(k) ? path : human(k), out); });
+    return out;
+  }
+  function notebookQA(lessonId, comp, l) {
+    var j = (comp || {}).j || {}, out = [];
+    Object.keys(j).forEach(function (k) {
+      var m = /^(.*)_(\d+|n)$/.exec(k); if (!m || m[1] !== lessonId || !String(j[k] || '').trim()) return;
+      var q = m[2] === 'n' ? 'Their notes' : l && l.prompts && l.prompts[+m[2]] ? l.prompts[+m[2]][0] : 'Question ' + (+m[2] + 1);
+      out.push({ i: m[2] === 'n' ? 99 : +m[2], q: q, a: String(j[k]).trim() });
+    });
+    return out.sort(function (a, b) { return a.i - b.i; });
+  }
+  // the client's whole journey as sections: lessons + activity cards in course order, then anything else they've used
+  function journeySections(c, all, rowBy) {
+    var prog = all['bt-course'] || {}, done = prog.done || {}, doneAt = prog.doneAt || {}, open = weeksOpenFor(c), comp = all['cmn-companion'] || {};
+    var secs = [], seenRes = {}, usedKeys = {}, actHome = {};
+    courseData().weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { if (/^(activity|embodiment)/i.test(l.title)) (l.res || []).forEach(function (rid) { if (!actHome[rid]) actHome[rid] = l.id; }); }); });
+    function addAct(rid, w, l, qa, at) {
+      if (seenRes[rid]) return; seenRes[rid] = 1;
+      var keys = RES_KEYS[rid] || [], data = keys.map(function (k) { usedKeys[k.split('#')[0]] = 1; return { key: k, v: dataFor(k, all) }; }).filter(function (x) { return !isEmpty(x.v); });
+      var upd = keys.map(function (k) { var r = rowBy[k.split('#')[0]]; return r ? Date.parse(r.updated_at) : 0; }).reduce(function (x, y) { return Math.max(x, y); }, 0);
+      var qa2 = (qa || []).slice(); data.forEach(function (x) { qa2 = qa2.concat(flat(x.v)); });
+      secs.push({ id: 'r:' + rid, kind: 'act', w: w, l: l, res: rid, title: l && /^(activity|embodiment)/i.test(l.title) ? l.title.replace(/^(Activity|Embodiment):\s*/i, '') : resInfo(rid).title, done: (l && !!done[l.id]) || data.length > 0, at: upd || at, locked: w.week > open, data: data, qa: qa2 });
+    }
+    courseData().weeks.forEach(function (w) {
+      (w.lessons || []).forEach(function (l) {
+        var at = typeof done[l.id] === 'number' ? done[l.id] : doneAt[l.id] || null;
+        var qa = notebookQA(l.id, comp, l), isAct = /^(activity|embodiment)/i.test(l.title) && (l.res || []).length;
+        if (!isAct) secs.push({ id: 'l:' + l.id, kind: 'lesson', w: w, l: l, title: l.title, done: !!done[l.id], at: at, locked: w.week > open, qa: qa });
+        (l.res || []).forEach(function (rid) { if (!isAct && actHome[rid] && actHome[rid] !== l.id) return; addAct(rid, w, l, isAct ? qa : [], at); });
+      });
+      (w.res || []).forEach(function (rid) { addAct(rid, w, null, [], null); });
+    });
+    usedKeys['bt-course'] = usedKeys['cmn-companion'] = usedKeys['cmn-1to1-dashboard'] = usedKeys['cmn-rep-results'] = 1;
+    Object.keys(all).forEach(function (k) {
+      if (usedKeys[k] || HIDDEN_KEYS[k] || isEmpty(all[k]) || /^bt-(tz|call-log|return)$/.test(k)) return;
+      var t = TOOL_BY_KEY[k] || { name: human(k) };
+      secs.push({ id: 'x:' + k, kind: 'act', extra: true, title: t.name, done: true, at: rowBy[k] ? Date.parse(rowBy[k].updated_at) : 0, data: [{ key: k, v: all[k] }], qa: flat(all[k]) });
+    });
+    return secs;
+  }
+  function hiTerms(q) {
+    var s = String(q || '').trim().toLowerCase(); if (!s) return [];
+    var chip = SEARCH_CHIPS.filter(function (x) { return x[0].toLowerCase() === s; })[0];
+    return chip ? chip[1] : [s];
+  }
+  function markText(text, terms) {
+    var el = h('span'); if (!terms.length) { el.textContent = text; return el; }
+    var re = new RegExp('(^|[^a-z0-9])(' + terms.map(function (t) { return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'ig'), last = 0, m, s = String(text);
+    while ((m = re.exec(s))) { var st0 = m.index + m[1].length; if (st0 > last) el.appendChild(document.createTextNode(s.slice(last, st0))); el.appendChild(h('mark', { text: m[2] })); last = st0 + m[2].length; if (!m[0].length) re.lastIndex++; }
+    if (last < s.length) el.appendChild(document.createTextNode(s.slice(last)));
+    return el;
+  }
+  function cnotes(c, id) { return ((coach(c).cnotes || {})[id]) || []; }
+  function coachNoteBox(c, id, label) {
+    var list = h('div', { class: 'jh-notes' }), ta = h('textarea', { class: 'bt-in jh-ta', rows: '2', placeholder: 'Your coach note on ' + (label || 'this') + ' (only you see this)', 'aria-label': 'Coach note' });
+    function draw() {
+      list.innerHTML = '';
+      cnotes(c, id).forEach(function (n, i) {
+        list.appendChild(h('div', { class: 'jh-note' }, [h('span', { class: 'jh-note-d', text: new Date(n.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) }), h('p', { text: n.t }),
+          h('button', { class: 'jh-note-x', type: 'button', 'aria-label': 'Delete this note', text: '✕', onclick: function () { var all2 = Object.assign({}, coach(c).cnotes || {}), arr = (all2[id] || []).slice(); arr.splice(i, 1); all2[id] = arr; saveCoach(c, { cnotes: all2 }, false); draw(); } })]));
+      });
+    }
+    draw();
+    return h('div', { class: 'jh-coach' }, [h('span', { class: 'jh-coach-k', text: '✎ Coach notes' }), list, h('div', { class: 'jh-coach-row' }, [ta,
+      h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add note', onclick: function () { var t = ta.value.trim(); if (!t) return; var all2 = Object.assign({}, coach(c).cnotes || {}); all2[id] = (all2[id] || []).concat([{ t: t, at: Date.now() }]); saveCoach(c, { cnotes: all2 }, false); ta.value = ''; draw(); toastA('Note saved ✓'); } })])]);
+  }
+  function qaList(qa, terms) {
+    return h('div', { class: 'jh-qa' }, qa.map(function (x) { return h('div', { class: 'jr-qa' }, [h('span', { class: 'jr-q', text: x.q }), h('blockquote', { class: 'ad-quote' }, [markText(x.a, terms)])]); }));
+  }
+  // the full detail of one lesson or activity
+  function sectionBody(c, s, terms) {
+    var kids = [];
+    if (s.kind === 'lesson') {
+      kids.push(h('p', { class: 'ad-muted', text: s.done ? '✓ Finished' + (s.at ? ' ' + new Date(s.at).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) : '') : s.locked ? '🔒 Not open for them yet' : 'Not finished yet' }));
+      kids.push(s.qa.length ? h('div', null, [h('p', { class: 'ad-bk', text: 'Their reflections (Becoming Notebook)' }), qaList(s.qa, terms)]) : h('p', { class: 'ad-muted', text: 'No reflections written for this lesson yet.' }));
+    } else {
+      if (!s.data || !s.data.length) kids.push(h('p', { class: 'ad-muted', text: s.locked ? '🔒 Not open for them yet' : 'Nothing saved in this activity yet.' }));
+      (s.data || []).forEach(function (x) {
+        var k = x.key.split('#')[0], body = k === 'cmn-rep-results' ? repView(x.v) : k === 'bt-course' ? null : value(x.v);
+        if ((s.data || []).length > 1) kids.push(h('p', { class: 'ad-bk', text: (TOOL_BY_KEY[k] || {}).name || human(k) }));
+        if (terms.length) { var hits = flat(x.v).filter(function (q) { return matchQA(q, terms); }); if (hits.length) kids.push(h('div', { class: 'jh-hits' }, [h('p', { class: 'ad-bk', text: 'Matches' }), qaList(hits, terms)])); }
+        if (body) kids.push(body);
+      });
+    }
+    kids.push(coachNoteBox(c, s.id, s.title));
+    return h('div', { class: 'jh-body' }, kids);
+  }
+  function termRe(terms) { return new RegExp('(^|[^a-z0-9])(' + terms.map(function (t) { return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'i'); }
+  function matchQA(x, terms) { return termRe(terms).test(x.q + ' ' + x.a); }
+  // each activity wears its own logo (the same one as in the app); lessons get a play button
+  function actIcon(s) {
+    if (s.kind !== 'act') return h('span', { class: 'jh-play', 'aria-hidden': 'true', text: '▶' });
+    var rid = s.res || ((TOOL_BY_KEY[(s.data && s.data[0] && s.data[0].key || '').split('#')[0]] || {}).res);
+    try { if (rid && window.BT_COURSE && window.BT_COURSE.emblem) { var e = window.BT_COURSE.emblem(rid); e.classList.add('jh-emb'); return e; } } catch (er) {}
+    return h('img', { class: 'jh-logo', src: APP_LOGO, alt: '' });
+  }
+  function sectionRow(c, s, opts) {
+    opts = opts || {};
+    var st = s.done ? 'done' : s.locked ? 'locked' : 'todo', n = s.qa.length + cnotes(c, s.id).length;
+    var ic = actIcon(s);
+    var wrap = h('div', { class: 'jh-sec ' + s.kind + ' ' + st + (opts.next ? ' next' : '') + (opts.open ? ' open' : ''), id: 'jh-' + s.id.replace(/[^a-z0-9]+/gi, '-') });
+    var body = null;
+    var btn = h('button', { class: 'jh-row', type: 'button', 'aria-expanded': opts.open ? 'true' : 'false', onclick: function () {
+      var on = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (on && !body) { body = sectionBody(c, s, opts.terms || []); wrap.appendChild(body); } else if (body) body.hidden = !on;
+    } }, [h('span', { class: 'jh-ic' }, [ic]), h('span', { class: 'jh-t' }, [h('b', { text: s.title }), h('span', { class: 'jh-s', text: (s.kind === 'act' ? 'Activity' : 'Lesson') + (s.w && opts.showWeek ? ' · ' + weekLabel(s.w) : '') + (n ? ' · ' + s.qa.length + ' answer' + (s.qa.length === 1 ? '' : 's') : '') + (cnotes(c, s.id).length ? ' · ✎ ' + cnotes(c, s.id).length : '') })]),
+      h('span', { class: 'jh-st', text: opts.next ? 'Up next' : st === 'done' ? '✓' + (s.at ? ' ' + new Date(s.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '') : st === 'locked' ? '🔒' : 'Not yet' }), h('span', { class: 'jh-chev', 'aria-hidden': 'true', text: '⌄' })]);
+    wrap.appendChild(btn);
+    if (opts.open) { body = sectionBody(c, s, opts.terms || []); wrap.appendChild(body); }
+    return wrap;
+  }
+  function intentionsHome(c, all) {
+    var v = all['cmn-companion'] || {}, star = v.anchorStar || v.anchor;
+    var rows = [['I’m becoming', v.nsToward], ['I’m done being', v.nsAway], ['My why', v.intention], ['I want to feel', v.feel || v.want]].filter(function (r) { return r[1] && String(r[1]).trim(); });
+    if (!star && !rows.length) return h('div', { class: 'jh-home empty' }, [h('b', { text: 'Their home screen' }), h('p', { class: 'ad-muted', text: 'They haven’t set their intentions yet.' })]);
+    return h('div', { class: 'jh-home' }, [
+      h('div', { class: 'jh-home-top' }, [h('img', { src: APP_LOGO, alt: '', class: 'jh-home-star' }), h('div', null, [h('span', { class: 'jh-home-k', text: 'Their home screen · North Star' }), h('b', { class: 'jh-home-w', text: star ? String(star) : '—' })])]),
+      h('div', { class: 'jh-home-rows' }, rows.map(function (r) { return h('div', { class: 'jh-home-r' }, [h('span', { text: r[0] }), h('p', { text: String(r[1]) })]); })),
+      coachNoteBox(c, 'home', 'their intentions')
+    ]);
+  }
+  function journeyHub(c, all, rowBy) {
+    S.jh = S.jh || {}; var st = S.jh[c.id] = S.jh[c.id] || { mode: 'lesson', q: '' };
+    var secs = journeySections(c, all, rowBy), first = (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0];
+    var root = h('div', { class: 'jh' }), out = h('div', { class: 'jh-out' });
+    var lessons = secs.filter(function (s) { return s.kind === 'lesson'; }), acts = secs.filter(function (s) { return s.kind === 'act' && !s.extra; });
+    var lDone = lessons.filter(function (s) { return s.done; }).length, aDone = acts.filter(function (s) { return s.done; }).length;
+    var nextS = secs.filter(function (s) { return !s.done && !s.locked && !s.extra; })[0];
+    var lastS = secs.filter(function (s) { return s.at; }).sort(function (a, b) { return b.at - a.at; })[0];
+    // up to now (course progress look)
+    var bar = function (n, t, cls) { return h('div', { class: 'jh-bar ' + cls }, [h('div', { class: 'jh-bar-f', style: 'width:' + (t ? Math.round(100 * n / t) : 0) + '%' }), h('span', { text: n + ' of ' + t + (cls === 'l' ? ' lessons' : ' activities') })]); };
+    root.appendChild(h('div', { class: 'jh-now' }, [
+      h('p', { class: 'ad-jl-w', text: 'Up to now' }),
+      bar(lDone, lessons.length, 'l'), bar(aDone, acts.length, 'a'),
+      h('div', { class: 'jh-now-row' }, [
+        lastS ? h('button', { class: 'jh-chip', type: 'button', onclick: function () { jump(lastS.id); } }, ['Last: ', h('b', { text: lastS.title }), ' · ' + when(new Date(lastS.at).toISOString())]) : null,
+        nextS ? h('button', { class: 'jh-chip next', type: 'button', onclick: function () { jump(nextS.id); } }, ['Up next: ', h('b', { text: nextS.title })]) : h('span', { class: 'jh-chip', text: 'Everything open so far is done 🎉' }),
+        nextS ? h('button', { class: 'ad-jl-nudge', type: 'button', title: 'Copy a reminder message', text: '💬', onclick: function (e) { copyText('Hey ' + first + '! Little nudge from me: have you had a chance to do “' + nextS.title.replace(/^(Lesson \d+|Activity|Bonus):\s*/i, '') + '” yet? 💛', e.target); } }) : null])
+    ]));
+    root.appendChild(intentionsHome(c, all));
+    // view + search
+    var q = h('input', { class: 'bt-in jh-q', type: 'search', placeholder: 'Search everything they’ve written… e.g. anger, dopamine, “not good enough”', value: st.q, 'aria-label': 'Search their answers' });
+    var tabs = h('div', { class: 'jh-tabs', role: 'tablist' }, [['lesson', 'By lesson'], ['module', 'By module'], ['feed', 'Everything (feed)']].map(function (m) {
+      return h('button', { class: 'jh-tab' + (st.mode === m[0] ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': st.mode === m[0] ? 'true' : 'false', text: m[1], onclick: function () { st.mode = m[0]; st.q = q.value; tabs.querySelectorAll('.jh-tab').forEach(function (b) { b.classList.toggle('on', b === this); b.setAttribute('aria-selected', b === this ? 'true' : 'false'); }, this); draw(); } });
+    }));
+    var chips = h('div', { class: 'jh-chips' }, SEARCH_CHIPS.map(function (x) { return h('button', { class: 'jh-sc', type: 'button', text: x[0], onclick: function () { q.value = x[0]; st.q = x[0]; draw(); } }); }));
+    var t0; q.addEventListener('input', function () { clearTimeout(t0); t0 = setTimeout(function () { st.q = q.value; draw(); }, 250); });
+    root.appendChild(h('div', { class: 'jh-tools' }, [tabs, h('div', { class: 'jh-search' }, [h('span', { 'aria-hidden': 'true', text: '🔍' }), q]), chips]));
+    root.appendChild(out);
+    function jump(id) { st.q = ''; q.value = ''; st.mode = 'lesson'; st.open = id; draw(); var el = document.getElementById('jh-' + id.replace(/[^a-z0-9]+/gi, '-')); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    function draw() {
+      out.innerHTML = '';
+      tabs.querySelectorAll('.jh-tab').forEach(function (b, i) { var on = ['lesson', 'module', 'feed'][i] === st.mode; b.classList.toggle('on', on); });
+      var terms = hiTerms(st.q);
+      if (terms.length) { // search results across everything, coach notes included
+        var hits = [];
+        secs.forEach(function (s) {
+          var qa = s.qa.filter(function (x) { return matchQA(x, terms); });
+          var ns = cnotes(c, s.id).filter(function (n) { return matchQA({ q: '', a: n.t }, terms); });
+          if (qa.length || ns.length || matchQA({ q: '', a: s.title }, terms)) hits.push({ s: s, qa: qa, ns: ns });
+        });
+        cnotes(c, 'home').forEach(function () {});
+        out.appendChild(h('p', { class: 'jh-count', text: hits.length ? hits.reduce(function (n, x) { return n + x.qa.length; }, 0) + ' answers in ' + hits.length + ' places for “' + st.q + '”' : 'Nothing found for “' + st.q + '”. Try a shorter word.' }));
+        hits.forEach(function (x) {
+          out.appendChild(h('div', { class: 'jh-hit ' + x.s.kind }, [
+            h('button', { class: 'jh-hit-h', type: 'button', onclick: function () { jump(x.s.id); } }, [actIcon(x.s), h('b', { text: x.s.title }), x.s.w ? h('span', { class: 'jh-s', text: weekLabel(x.s.w) }) : null, h('span', { class: 'jh-open', text: 'Open →' })]),
+            x.qa.length ? qaList(x.qa.slice(0, 12), terms) : null,
+            x.ns.length ? h('div', { class: 'jh-notes' }, x.ns.map(function (n) { return h('div', { class: 'jh-note' }, [h('span', { class: 'jh-note-d', text: 'Your note' }), h('p', null, [markText(n.t, terms)])]); })) : null
+          ]));
+        });
+        return;
+      }
+      if (st.mode === 'feed') {
+        var withAns = secs.filter(function (s) { return s.qa.length || cnotes(c, s.id).length; }).sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+        if (!withAns.length) out.appendChild(h('p', { class: 'ad-muted', text: 'Nothing written yet. Their answers show here as soon as they start.' }));
+        withAns.forEach(function (s) {
+          out.appendChild(h('div', { class: 'jh-feed ' + s.kind }, [h('div', { class: 'jh-feed-h' }, [actIcon(s), h('b', { text: s.title }),
+            h('span', { class: 'jh-s', text: (s.w ? weekLabel(s.w) + ' · ' : '') + (s.at ? new Date(s.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '') })]), sectionBody(c, s, [])]));
+        });
+        return;
+      }
+      var groups = [], cur = null;
+      secs.forEach(function (s) { var key = s.w ? 'w' + s.w.week : 'other'; if (!cur || cur.key !== key) { cur = { key: key, w: s.w, list: [] }; groups.push(cur); } cur.list.push(s); });
+      groups.forEach(function (g) {
+        var dn = g.list.filter(function (s) { return s.done; }).length, locked = g.list.every(function (s) { return s.locked; });
+        var openWk = st.mode === 'module' || g.list.some(function (s) { return s.id === st.open || (!s.done && !s.locked); }) || g === groups[0];
+        var det = h('details', { class: 'jh-wk' + (locked ? ' lock' : ''), open: openWk && !locked ? 'open' : null }, [h('summary', null, [h('span', { class: 'ad-jl-wt', text: g.w ? weekLabel(g.w) : 'Other tools they’ve used' }), h('span', { class: 'ad-jl-wc', text: locked ? '🔒 not open yet' : dn + '/' + g.list.length })])]);
+        var inner = h('div', { class: 'jh-wk-b' });
+        g.list.forEach(function (s) { inner.appendChild(sectionRow(c, s, { next: nextS && s.id === nextS.id, open: st.mode === 'module' ? (s.qa.length > 0 || (s.data || []).length > 0) : s.id === st.open, terms: [] })); });
+        if (st.mode === 'module' && g.w) inner.appendChild(h('div', { class: 'jh-wk-note' }, [coachNoteBox(c, 'w:' + g.w.week, weekLabel(g.w))]));
+        det.appendChild(inner); out.appendChild(det);
+      });
+      st.open = null;
+    }
+    draw();
+    return root;
+  }
+
   function clientView(c) {
     var d = S.data[c.id];
     var back = h('button', { class: 'bt-btn ghost', text: '← All clients', onclick: function () { S.open = null; page(); } });
@@ -913,7 +1177,8 @@
         h('p', { class: 'ad-muted', text: c.email + ' · joined ' + when(c.created_at) + ' · last in ' + when(c.last_seen_at) }),
         tzOf(c) ? h('p', { class: 'ad-loc big' }, [h('span', { text: '📍 ' + placeOf(c) + ' · ' }), liveClock(tzOf(c)), h('span', { class: 'ad-muted', text: ' · ' + diffLabel(tzOf(c)) })]) : null,
         h('div', { class: 'ad-ct-acts' }, [h('span', { class: 'ad-badge ' + (c.is_admin ? 'me' : c.tier), text: c.is_admin ? 'You (test login)' : c.tier === 'private' ? '1:1 client' : 'Self-paced' }),
-          h('a', { class: 'bt-btn lime sm', href: viewHref, target: window.BT_DEMO ? null : '_blank', rel: 'noopener', text: '👀 View her app (read-only)' })])])
+          h('a', { class: 'bt-btn lime sm', href: viewHref, target: window.BT_DEMO ? null : '_blank', rel: 'noopener', text: '👀 View her app (read-only)' })]),
+        consentChip(c), welcomeBar(c)])
     ]);
     if (!d) return h('section', { class: 'ad-sec' }, [back, head, h('p', { class: 'ad-card ad-loading', text: 'Loading their answers…' })]);
 
@@ -953,12 +1218,11 @@
         c.is_admin ? null : tagsCard(c),
         sessionsCard(c),
         h('h3', { class: 'ad-h3', text: 'Their journey' }),
-        h('div', { class: 'ad-card' }, [journeyList(c, all)]),
+        h('div', { class: 'ad-card' }, [journeyHub(c, all, rowBy)]),
         c.tier === 'private' || c.is_admin ? profilesCard(c, all) : null,
         contractCard(c, d),
         paymentsCard(c),
-        h('h3', { class: 'ad-h3', text: 'Their answers' }),
-        h('div', { class: 'ad-tools' }, sections)
+        h('details', { class: 'ad-raw' }, [h('summary', { text: 'All saved data, tool by tool (the old view)' }), h('div', { class: 'ad-tools' }, sections)])
       ]),
       h('aside', { class: 'ad-side' }, [timeCard(c), notesCard(c, d), detailsCard(c)])
     ])]);
@@ -1482,6 +1746,57 @@
     } });
     return h('div', { class: 'ad-card' }, [h('h3', { class: 'ad-h3', text: 'Phone notifications setup' }), h('p', { class: 'ad-muted', text: 'One-time setup. Tap the button, then copy the two keys into Netlify.' }), btn, out]);
   }
+  // call reminders: who gets reminded for which call, plus "send me a test" buttons
+  function remindersCard() {
+    var box = h('div', { class: 'ad-rem-list' }, [h('p', { class: 'ad-muted', text: 'Checking your calendar…' })]), msg = h('p', { class: 'ad-muted', role: 'status' });
+    function call(method, body) {
+      if (isPlay()) return Promise.resolve(method === 'GET' ? { ok: true, env: { calendar: true, server: true, push: true, email: false }, calls: [
+        { start: new Date(Date.now() + 26 * 3600e3).toISOString(), title: 'Karen 1:1 Breakthrough', kind: '1:1', zoom: true, who: [{ name: 'Karen Chu', push: true }] },
+        { start: new Date(Date.now() + 3 * 864e5).toISOString(), title: 'Breakthrough Group Call', kind: 'Group', zoom: true, who: [{ name: 'Anna Mikkelsen', push: false }, { name: 'Rachel Nguyen', push: true }] }] } : { ok: true, to: 'you' });
+      return sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+        return fetch('/.netlify/functions/call-reminder-test', { method: method, headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }); })
+        .then(function (r) { return r.json(); });
+    }
+    function load() {
+      call('GET').then(function (d) {
+        box.innerHTML = '';
+        var env = d.env || {}, miss = [];
+        if (!env.calendar) miss.push('GCAL_ICS_URL (your Google Calendar’s secret address)');
+        if (!env.server) miss.push('SUPABASE_SERVICE_ROLE_KEY');
+        if (!env.push) miss.push('the two VAPID keys (phone notifications)');
+        if (!env.email) miss.push('RESEND_API_KEY + EMAIL_FROM (emails)');
+        if (miss.length) box.appendChild(h('p', { class: 'ad-rem-warn', text: 'Still to switch on in Netlify: ' + miss.join(', ') + '.' }));
+        if (d.error) { box.appendChild(h('p', { class: 'ad-muted', text: d.error })); return; }
+        var calls = d.calls || [];
+        if (!calls.length) { box.appendChild(h('p', { class: 'ad-muted', text: 'No client calls in the next 7 days. A call shows here when the client’s email is on the calendar invite.' })); return; }
+        calls.forEach(function (c) {
+          var t = new Date(c.start);
+          box.appendChild(h('div', { class: 'ad-rem' }, [
+            h('div', { class: 'ad-rem-when' }, [h('b', { text: t.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) }), h('span', { text: t.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }) })]),
+            h('div', { class: 'ad-rem-t' }, [h('b', { text: c.title }), h('span', { class: 'ad-muted', text: c.kind + ' call · ' + (c.zoom ? 'Zoom link found ✓' : 'No Zoom link in the invite') }),
+              h('div', { class: 'ad-rem-who' }, c.who.map(function (p) { return h('span', { class: 'ad-rem-p' + (p.push ? ' on' : ''), title: p.push ? 'Notifications on' : 'No phone notifications: email only', text: (p.push ? '🔔 ' : '✉️ ') + p.name }); }))])
+          ]));
+        });
+        box.appendChild(h('p', { class: 'ad-muted', text: '🔔 = phone notification + email · ✉️ = email only (they haven’t switched notifications on).' }));
+      }, function () { box.innerHTML = ''; box.appendChild(h('p', { class: 'ad-muted', text: 'Couldn’t check just now. This works on the live and preview sites.' })); });
+    }
+    function test(what, lead, btn) {
+      var was = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…';
+      call('POST', { what: what, lead: lead }).then(function (d) {
+        btn.disabled = false; btn.textContent = was;
+        msg.textContent = d.ok ? (what === 'email' ? 'Test email sent to ' + d.to + ' ✓' : 'Sent ✓ Check your phone (it can take up to a minute).') : (d.error || 'Didn’t send.');
+      }, function () { btn.disabled = false; btn.textContent = was; msg.textContent = 'Couldn’t reach the server.'; });
+    }
+    load();
+    return h('div', { class: 'ad-card' }, [h('h3', { class: 'ad-h3', text: 'Call reminders' }),
+      h('p', { class: 'ad-muted', text: 'Clients on a calendar invite get a phone notification 24 hours, 2 hours and 15 minutes before, plus an email with their Zoom link at each of those times too. Here’s who’s getting reminded this week.' }),
+      box,
+      h('div', { class: 'ad-ct-acts' }, [
+        h('button', { class: 'bt-btn lime sm', type: 'button', text: '🔔 Send a test notification to my phone', onclick: function (e) { test('push', '15m', e.target); } }),
+        h('button', { class: 'bt-btn ghost sm', type: 'button', text: '✉️ Email me a test reminder', onclick: function (e) { test('email', '24h', e.target); } }),
+        h('a', { class: 'ad-link', href: 'email-preview.html?k=r24', target: '_blank', rel: 'noopener', text: 'Preview the emails' })]),
+      msg]);
+  }
   function settingsView() {
     var props = JSON.parse(JSON.stringify((S.settings.props) || {}));
     var groups = SETTINGS.map(function (g) {
@@ -1492,6 +1807,7 @@
     });
     var msg = h('p', { class: 'ad-muted', role: 'status' });
     return h('section', { class: 'ad-sec' }, [
+      remindersCard(),
       vapidCard(),
       h('p', { class: 'ad-text', text: 'Paste YouTube, Vimeo, Bunny or Loom links and they play inside the app. Changes show for everyone next time they open it.' }),
       h('div', { class: 'ad-grid' }, groups),

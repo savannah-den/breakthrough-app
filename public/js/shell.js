@@ -486,7 +486,10 @@
       state.profile = p; state.tier = p.tier; state.isAdmin = !!p.is_admin;
       (r[1].data || []).forEach(function (row) { state.settings[row.key] = row.value; });
       sb.rpc('touch_last_seen').then(function () {}, function () {});
-      return hydrate();
+      return hydrate().then(function () {
+        // remember their timezone, so call reminder emails show the time where they are
+        try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone; if (tz && LS.getItem('bt-tz') !== tz && !VIEWAS) LS.setItem('bt-tz', tz); } catch (e) {}
+      });
     }).then(boot, function (e) { console.error(e); boot(); });
   }
 

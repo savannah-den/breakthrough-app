@@ -13,11 +13,13 @@ self.addEventListener('fetch', function (e) {
 // Phone notifications: show them, and open the app at the right place when tapped
 self.addEventListener('push', function (e) {
   var d = {}; try { d = e.data ? e.data.json() : {}; } catch (x) { d = { title: 'Breakthrough', body: e.data ? e.data.text() : '' }; }
-  e.waitUntil(self.registration.showNotification(d.title || 'Breakthrough', { body: d.body || '', icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', data: { url: d.url || '/' } }));
+  e.waitUntil(self.registration.showNotification(d.title || 'Breakthrough', { body: d.body || '', icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', data: { url: d.url || '/' }, tag: d.tag || undefined }));
 });
 self.addEventListener('notificationclick', function (e) {
   e.notification.close();
   var url = (e.notification.data && e.notification.data.url) || '/';
+  // a Zoom link (or any other site) opens on its own, so the app stays put
+  if (/^https?:/.test(url) && url.indexOf(self.location.origin) !== 0) { e.waitUntil(self.clients.openWindow(url)); return; }
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
     for (var i = 0; i < list.length; i++) { if ('focus' in list[i]) { list[i].navigate(url).catch(function () {}); return list[i].focus(); } }
     return self.clients.openWindow(url);
