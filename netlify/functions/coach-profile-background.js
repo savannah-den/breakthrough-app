@@ -1,7 +1,7 @@
 // Coach-only, runs in the background (can take a minute): reads a client's Human Design chart, DISC result and
 // Rep System scores and writes Sav a coaching profile: each one broken down, plus how to coach them.
 // The result is saved on the client's coach record (coach_clients.data.insight); the dashboard checks for it.
-// Body: { clientId, name, hd: dataURL|null, disc: dataURL|null, hdNotes, discNotes, rep: { V, A, K, Ad } | null, north }
+// Body: { clientId }. Their charts, Rep System scores, North Star and Sav's notes are read from the database here.
 // Needs ANTHROPIC_API_KEY (optional ANTHROPIC_MODEL).
 const { SB_URL, SB_ANON, requireAdmin } = require('../lib/admin');
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
@@ -37,12 +37,33 @@ async function save(w, clientId, patch) {
     body: JSON.stringify({ client_id: clientId, data, updated_at: new Date().toISOString() }) });
 }
 
+const REP_QS = [['K', 'A', 'V', 'Ad'], ['A', 'V', 'Ad', 'K'], ['V', 'K', 'Ad', 'A'], ['A', 'Ad', 'K', 'V'], ['A', 'Ad', 'K', 'V']];
+function repScores(ranks) { const t = { V: 0, A: 0, K: 0, Ad: 0 }; REP_QS.forEach((o, qi) => o.forEach((sys, oi) => { t[sys] += (ranks[qi] && ranks[qi][oi]) || 0; })); return t; }
+const isFile = (u) => /^data:(image\/(png|jpeg|gif|webp)|application\/pdf);base64,/.test(String(u || ''));
+
+// Everything is read here, on the server (a background function only accepts a small request).
+async function gather(w, id) {
+  const h = { Authorization: w.auth, apikey: SB_ANON };
+  const get = (q) => fetch(`${SB_URL}/rest/v1/${q}`, { headers: h }).then(r => r.ok ? r.json() : []).catch(() => []);
+  const [prof, rows, co] = await Promise.all([
+    get(`profiles?id=eq.${id}&select=full_name,email`),
+    get(`client_data?user_id=eq.${id}&key=in.(cmn-1to1-dashboard,cmn-rep-results,cmn-companion)&select=key,value`),
+    get(`coach_clients?client_id=eq.${id}&select=data`)
+  ]);
+  const val = {}; (rows || []).forEach(r => { try { val[r.key] = JSON.parse(r.value); } catch (e) {} });
+  const one = val['cmn-1to1-dashboard'] || {}, mine = (co[0] && co[0].data) || {}, v = val['cmn-companion'] || {}, rep = val['cmn-rep-results'];
+  const pick = (k) => { const m = (mine[k] || {}).img, r = (one[k] || {}).data; return isFile(m) ? m : isFile(r) ? r : null; };
+  return { name: (prof[0] && prof[0].full_name) || '', hd: pick('hd'), disc: pick('disc'), hdNotes: (mine.hd || {}).notes || '', discNotes: (mine.disc || {}).notes || '',
+    rep: rep && rep.ranks ? repScores(rep.ranks) : null, north: [v.nsToward && 'Becoming: ' + v.nsToward, v.nsAway && 'Done being: ' + v.nsAway, v.intention && 'Why: ' + v.intention].filter(Boolean).join('\n') };
+}
+
 exports.handler = async (event) => {
   const w = await requireAdmin(event); if (w.error) return w.error;
-  let b = {}; try { b = JSON.parse(event.body || '{}'); } catch (e) { return; }
-  const id = String(b.clientId || ''); if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+  let q = {}; try { q = JSON.parse(event.body || '{}'); } catch (e) { return; }
+  const id = String(q.clientId || ''); if (!/^[0-9a-f-]{36}$/i.test(id)) return;
   const started = new Date().toISOString();
   try {
+    const b = await gather(w, id);
     const content = [];
     const hd = block(b.hd), disc = block(b.disc);
     if (hd) content.push({ type: 'text', text: 'Human Design chart:' }, hd);

@@ -590,8 +590,9 @@
       if (isPlay()) { page(); setTimeout(function () { S.insWorking[c.id] = false; saveCoach(c, { insight: Object.assign({}, window.BT_TYLER_INSIGHT, { made: new Date().toISOString() }), insightJob: { state: 'done', at: new Date().toISOString() } }); toastA('Coaching profile ready ✨ (playground: shows the example)'); }, 2500); return; }
       var t0 = new Date(Date.now() - 5000).toISOString();
       sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
-        return fetch('/.netlify/functions/coach-profile-background', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify(inp) }); })
-        .then(function (r) { if (r.status !== 202 && !r.ok) throw new Error(r.status); page(); poll(t0, 0); }, function () { S.insWorking[c.id] = false; msg.textContent = 'Couldn’t start it just now. Try again in a minute.'; });
+        return fetch('/.netlify/functions/coach-profile-background', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ clientId: c.id }) }); })
+        .then(function (r) { if (r.status !== 202 && !r.ok) throw new Error(r.status); page(); poll(t0, 0); })
+        .catch(function () { S.insWorking[c.id] = false; page(); toastA('Couldn’t start the coaching profile just now. Try again in a minute.'); });
     }
     var btn = h('button', { class: 'bt-btn ' + (ins ? 'ghost' : 'lime') + ' sm', type: 'button', disabled: working ? 'disabled' : null, text: working ? 'Reading their charts…' : ins ? '↻ Update from their latest charts' : '✨ Make sense of their charts', onclick: make });
     var head = h('div', { class: 'ins-head' }, [h('div', null, [h('h3', { class: 'ad-h3', text: 'Coaching profile' }),
