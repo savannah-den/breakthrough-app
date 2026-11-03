@@ -312,7 +312,7 @@
     if (c.is_admin || c.tier !== 'private' || !S.cal || S.cal.loading || S.cal.error || S.cal.setup) return '';
     var p = sessionPlan(c); if (!p.total || p.left <= 0 || p.fut.length) return '';
     var first = (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0];
-    if (!p.past.length) return first + ' hasn’t got her first 1:1 booked yet.';
+    if (!p.past.length) return first + ' hasn’t got their first 1:1 booked yet.';
     var last = p.past[p.past.length - 1], days = Math.floor((Date.now() - new Date(last.start)) / 86400000);
     return days >= 3 ? 'No next 1:1 booked for ' + first + '. Her last session was ' + days + ' days ago (' + p.left + ' left).' : '';
   }
@@ -355,7 +355,7 @@
   function timeCard(c) {
     var tz = tzOf(c), me = myTz(), first = (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0];
     var card = h('div', { class: 'ad-card ad-tz' }, [h('h3', { class: 'ad-h3', text: 'Time zones' })]);
-    if (!tz) { card.appendChild(h('p', { class: 'ad-muted', text: first + ' hasn’t set her country and timezone yet. It’s part of the welcome steps in her app.' })); return card; }
+    if (!tz) { card.appendChild(h('p', { class: 'ad-muted', text: first + ' hasn’t set their country and timezone yet. It’s part of the welcome steps in their app.' })); return card; }
     card.appendChild(h('div', { class: 'ad-tz-now' }, [h('div', null, [h('span', { class: 'ad-fk', text: first + ' · ' + placeOf(c) }), liveClock(tz, 'big'), h('span', { class: 'ad-muted', text: offLabel(tz) + ' · ' + diffLabel(tz) })]), h('div', null, [h('span', { class: 'ad-fk', text: 'You · ' + me.split('/').pop().replace(/_/g, ' ') }), liveClock(me, 'big'), h('span', { class: 'ad-muted', text: offLabel(me) })])]));
     // converter
     var dirMe = true, dt = h('input', { class: 'bt-in', type: 'datetime-local', 'aria-label': 'Pick a time' }), out = h('div', { class: 'ad-tz-out', 'aria-live': 'polite' });
@@ -394,7 +394,7 @@
       x.st = st; return x;
     });
     var allBtn = h('button', { class: 'bt-btn ghost sm ad-jl-all', type: 'button', text: 'Expand all', onclick: function () { var opening = allBtn.textContent === 'Expand all'; box.querySelectorAll('details.ad-jl-wk').forEach(function (d) { d.open = opening; }); allBtn.textContent = opening ? 'Collapse all' : 'Expand all'; } });
-    var box = h('div', { class: 'ad-jl' }, [h('div', { class: 'ad-jl-sum' }, [h('span', { class: 'ad-ct-st signed', text: rows.filter(function (x) { return x.st === 'done'; }).length + ' done' }), missed ? h('span', { class: 'ad-ct-st miss', text: missed + ' missed' }) : null, h('span', { class: 'ad-muted', text: 'In the order she should do them' }), allBtn])]);
+    var box = h('div', { class: 'ad-jl' }, [h('div', { class: 'ad-jl-sum' }, [h('span', { class: 'ad-ct-st signed', text: rows.filter(function (x) { return x.st === 'done'; }).length + ' done' }), missed ? h('span', { class: 'ad-ct-st miss', text: missed + ' missed' }) : null, h('span', { class: 'ad-muted', text: 'In the order to do them' }), allBtn])]);
     var nowList = h('ol', { class: 'ad-jl-list ad-jl-now' });
     box.appendChild(h('p', { class: 'ad-jl-w', text: 'Up to now' })); box.appendChild(nowList);
     var curW = null, list, wkDone = {}, wkMiss = {};
@@ -459,7 +459,7 @@
     card.appendChild(h('div', { class: 'ad-sess-call' }, [h('b', { text: 'In ' + first + '’s profile' }), h('span', { class: 'ad-muted', text: 'Booked dates copy across from your calendar by themselves.' }),
       h('label', { class: 'ad-field' }, ['Zoom link', zIn]), h('label', { class: 'ad-field' }, ['Call times', tIn2]),
       h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Save', onclick: function (e) { saveCall({ zoom: zIn.value.trim(), times: tIn2.value.trim() }); } })]));
-    card.appendChild(h('details', { class: 'ad-sess-set' }, [h('summary', { text: 'Matching + number of sessions' }), h('p', { class: 'ad-muted', text: 'Sessions are found in your calendar by ' + first + '’s email in the invite or her name in the title. If yours are named differently, type what to look for.' }),
+    card.appendChild(h('details', { class: 'ad-sess-set' }, [h('summary', { text: 'Matching + number of sessions' }), h('p', { class: 'ad-muted', text: 'Sessions are found in your calendar by ' + first + '’s email in the invite or their name in the title. If yours are named differently, type what to look for.' }),
       h('div', { class: 'ad-ct-inline' }, [mInp, tInp, h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Save', onclick: function () { saveCoach(c, { cal: { match: mInp.value.trim() }, sessionsTotal: Number(tInp.value) || 0 }); } })])]));
     var list = h('ol', { class: 'ad-sess-list' });
     p.slots.forEach(function (s) {
@@ -494,7 +494,7 @@
       var nt = h('textarea', { class: 'bt-in ad-ta sm', placeholder: key === 'hd' ? 'Type, strategy, authority, profile…' : 'Style, e.g. High I, S…', 'aria-label': label + ' notes' }); nt.value = mine.notes || '';
       nt.addEventListener('change', function () { var o = {}; o[key] = Object.assign({}, coach(c)[key] || {}, { notes: nt.value }); saveCoach(c, o, false); });
       return h('div', { class: 'ad-prof' }, [h('b', { text: label }),
-        h('span', { class: 'ad-muted', text: rec ? (rec.type === 'sent' ? 'She sent it on WhatsApp' + (rec.date ? ' · ' + rec.date : '') : rec.type === 'skip' ? 'She skipped this' : 'She uploaded it' + (rec.date ? ' · ' + rec.date : '')) : 'Not done yet' }),
+        h('span', { class: 'ad-muted', text: rec ? (rec.type === 'sent' ? 'Sent on WhatsApp' + (rec.date ? ' · ' + rec.date : '') : rec.type === 'skip' ? 'Skipped' : 'Uploaded' + (rec.date ? ' · ' + rec.date : '')) : 'Not done yet' }),
         img ? h('a', { class: 'ad-prof-img', href: img, target: '_blank', rel: 'noopener' }, [h('img', { src: img, alt: label + ' screenshot' })]) : null,
         h('label', { class: 'bt-btn ghost sm', for: 'cp-' + key + '-' + c.id }, [img ? 'Replace screenshot' : 'Add a screenshot', file]), nt]);
     }
@@ -509,6 +509,113 @@
       h('div', { class: 'ad-prof rep wide' }, [rep ? repView(rep) : h('span', { class: 'ad-muted', text: 'Rep system not done yet' })]),
       h('div', { class: 'ad-profs-g two' }, [prof('hd', 'Human Design', one.hd), prof('disc', 'DISC', one.disc)])]);
     return det;
+  }
+
+  // Coaching profile: Human Design, DISC and Rep System made sense of, plus how to coach them (written by AI, Sav can add her own take)
+  var INS_TABS = [['coach', 'How to coach them'], ['hd', 'Human Design'], ['disc', 'DISC'], ['rep', 'Rep system']];
+  function insightInputs(c, all) {
+    var one = all['cmn-1to1-dashboard'] || {}, co = coach(c), rep = all['cmn-rep-results'], v = all['cmn-companion'] || {};
+    var pick = function (k) { var mine = co[k] || {}, rec = one[k] || {}; return mine.img || (/^data:(image|application\/pdf)/.test(rec.data || '') ? rec.data : null); };
+    return { clientId: c.id, name: c.full_name || '', hd: pick('hd'), disc: pick('disc'), hdNotes: (co.hd || {}).notes || '', discNotes: (co.disc || {}).notes || '',
+      rep: rep && rep.ranks ? repScores(rep.ranks).t : null, north: [v.nsToward && 'Becoming: ' + v.nsToward, v.nsAway && 'Done being: ' + v.nsAway, v.intention && 'Why: ' + v.intention].filter(Boolean).join('\n') };
+  }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function sv(tag, a, kids) { var e = document.createElementNS(SVGNS, tag); Object.keys(a || {}).forEach(function (k) { e.setAttribute(k, a[k]); }); (kids || []).forEach(function (k) { if (k) e.appendChild(typeof k === 'string' ? document.createTextNode(k) : k); }); return e; }
+  // a simple bodygraph: the nine centres, coloured when defined
+  function miniBodygraph(cen) {
+    cen = cen || {};
+    var col = { head: '#F1F9A6', ajna: '#B9C6F2', throat: '#C9A6E8', g: '#F7D774', heart: '#F4A6B8', spleen: '#C9A27A', sacral: '#E8735A', sp: '#E8A27A', root: '#C98A5A' };
+    var shapes = {
+      head: 'M100,8 L122,42 L78,42 Z', ajna: 'M78,52 L122,52 L100,86 Z', throat: 'M82,96 h36 v32 h-36 Z', g: 'M100,140 L122,162 L100,184 L78,162 Z',
+      heart: 'M128,168 L150,160 L146,184 Z', spleen: 'M26,186 L54,206 L26,226 Z', sacral: 'M82,196 h36 v34 h-36 Z', sp: 'M174,186 L146,206 L174,226 Z', root: 'M82,240 h36 v30 h-36 Z' };
+    var lines = [[100, 42, 100, 52], [100, 86, 100, 96], [100, 128, 100, 140], [100, 184, 100, 196], [100, 230, 100, 240], [118, 120, 136, 166], [122, 162, 136, 172], [82, 120, 40, 196], [118, 120, 160, 196], [82, 212, 54, 206], [118, 212, 146, 206], [82, 252, 40, 220], [118, 252, 160, 220], [78, 162, 40, 200], [146, 180, 158, 200]];
+    var g = sv('svg', { viewBox: '0 0 200 280', class: 'gl-bg', role: 'img', 'aria-label': 'Bodygraph: ' + Object.keys(shapes).filter(function (k) { return cen[k]; }).join(', ') + ' defined' });
+    lines.forEach(function (l) { g.appendChild(sv('line', { x1: l[0], y1: l[1], x2: l[2], y2: l[3], stroke: '#D9C3BE', 'stroke-width': 3, 'stroke-linecap': 'round' })); });
+    Object.keys(shapes).forEach(function (k) { g.appendChild(sv('path', { d: shapes[k], fill: cen[k] ? col[k] : '#FFFFFF', stroke: '#1F1412', 'stroke-width': 2.5, 'stroke-linejoin': 'round' })); });
+    return g;
+  }
+  function discDonut(sc) {
+    var cols = { D: '#D9534F', I: '#F0C541', S: '#4CAF50', C: '#3B8FD9' }, tot = ['D', 'I', 'S', 'C'].reduce(function (a, k) { return a + (Number(sc[k]) || 0); }, 0) || 1, a0 = -Math.PI / 2;
+    var g = sv('svg', { viewBox: '0 0 120 120', class: 'gl-donut', role: 'img', 'aria-label': 'DISC: ' + ['D', 'I', 'S', 'C'].map(function (k) { return k + ' ' + (sc[k] || 0) + '%'; }).join(', ') });
+    ['D', 'I', 'S', 'C'].forEach(function (k) {
+      var f = (Number(sc[k]) || 0) / tot; if (!f) return; var a1 = a0 + f * 2 * Math.PI, large = f > 0.5 ? 1 : 0;
+      var p = function (a, r) { return (60 + r * Math.cos(a)).toFixed(2) + ',' + (60 + r * Math.sin(a)).toFixed(2); };
+      g.appendChild(sv('path', { d: 'M' + p(a0, 54) + ' A54,54 0 ' + large + ' 1 ' + p(a1, 54) + ' L' + p(a1, 32) + ' A32,32 0 ' + large + ' 0 ' + p(a0, 32) + ' Z', fill: cols[k], stroke: '#FFF4EE', 'stroke-width': 2 }));
+      a0 = a1;
+    });
+    return g;
+  }
+  function glanceTiles(ins, inp) {
+    var gl = ins.glance || {}, sc = (ins.disc || {}).scores || {}, r = inp.rep;
+    var hd = h('div', { class: 'gl-tile hd' }, [h('span', { class: 'gl-k', text: 'Human Design' }), miniBodygraph(gl.centres),
+      h('b', { class: 'gl-big', text: gl.type || '—' }), h('span', { class: 'gl-sub', text: [gl.profile, gl.authority && gl.authority + ' authority', gl.strategy && 'Strategy: ' + gl.strategy].filter(Boolean).join(' · ') })]);
+    var ds = h('div', { class: 'gl-tile disc' }, [h('span', { class: 'gl-k', text: 'DISC' }), h('div', { class: 'gl-donut-w' }, [sc.D != null ? discDonut(sc) : null, h('b', { class: 'gl-mid', text: gl.discTop || '' })]),
+      h('div', { class: 'gl-leg' }, ['D', 'I', 'S', 'C'].map(function (k) { return h('span', { class: 'gl-l ' + k, text: k + ' ' + (sc[k] != null ? sc[k] + '%' : '–') }); }))]);
+    var rp = h('div', { class: 'gl-tile rep' }, [h('span', { class: 'gl-k', text: 'Rep system' }),
+      r ? h('div', { class: 'gl-bars' }, ['V', 'A', 'K', 'Ad'].map(function (k) { return h('div', { class: 'gl-bar' }, [h('div', { class: 'gl-col' }, [h('div', { class: 'gl-fill', style: 'height:' + Math.round(100 * r[k] / 20) + '%;background:' + SYS[k].color })]), h('b', { text: String(r[k]) }), h('span', { text: SYS[k].name.replace('Auditory digital', 'Aud. digital') })]); })) : h('p', { class: 'ad-muted', text: 'Not done yet' }),
+      r ? h('span', { class: 'gl-sub', text: 'Leads with ' + ['V', 'A', 'K', 'Ad'].slice().sort(function (a, b) { return r[b] - r[a]; }).map(function (k) { return SYS[k].name; })[0] }) : null]);
+    return h('div', { class: 'gl-tiles' }, [hd, ds, rp]);
+  }
+  function dialsView(dials) {
+    if (!dials || !dials.length) return null;
+    return h('div', { class: 'gl-dials' }, [h('b', { class: 'gl-h', text: 'Where they sit' })].concat(dials.map(function (d) {
+      return h('div', { class: 'gl-dial', title: d.why || '' }, [h('div', { class: 'gl-ends' }, [h('span', { text: d.l }), h('span', { text: d.r })]),
+        h('div', { class: 'gl-track' }, [h('span', { class: 'gl-dot', style: 'left:' + Math.max(3, Math.min(97, Number(d.v) || 50)) + '%' })]), d.why ? h('span', { class: 'gl-why', text: d.why }) : null]);
+    })));
+  }
+  function flowView(f) {
+    if (!f) return null;
+    var col = function (k, title, cls) { return h('div', { class: 'gl-step ' + cls }, [h('b', { text: title }), h('ul', null, (f[k] || []).map(function (x) { return h('li', { text: x }); }))]); };
+    return h('div', { class: 'gl-flow' }, [h('b', { class: 'gl-h', text: 'A session with them' }), h('div', { class: 'gl-steps' }, [col('before', 'Before', 'b'), h('span', { class: 'gl-arrow', text: '→' }), col('during', 'During', 'd'), h('span', { class: 'gl-arrow', text: '→' }), col('after', 'After', 'a')])]);
+  }
+  function insightCard(c, all) {
+    var co = coach(c), ins = co.insight, job = co.insightJob || {}, inp = insightInputs(c, all), first = String(c.full_name || '').split(' ')[0] || 'them';
+    S.insTab = S.insTab || {}; var tab = S.insTab[c.id] || 'coach';
+    var have = [inp.hd || inp.hdNotes ? 'Human Design' : null, inp.disc || inp.discNotes ? 'DISC' : null, inp.rep ? 'Rep system' : null].filter(Boolean);
+    var working = S.insWorking && S.insWorking[c.id];
+    var msg = h('p', { class: 'ad-muted', role: 'status', text: working ? 'Reading their charts… this takes about a minute. You can keep working, it’ll appear here.' : job.state === 'error' && (!ins || job.at > ins.made) ? 'That didn’t work last time. Try again in a minute.' : '' });
+    function poll(t0, n) {
+      if (n > 40) { S.insWorking[c.id] = false; msg.textContent = 'Still going. Refresh the page in a minute to see it.'; return; }
+      setTimeout(function () {
+        sb.from('coach_clients').select('data').eq('client_id', c.id).maybeSingle().then(function (r) {
+          var d = r.data && r.data.data, j = d && d.insightJob;
+          if (j && j.at && j.at >= t0) { S.coach[c.id] = d; S.insWorking[c.id] = false; if (j.state === 'done') toastA('Coaching profile for ' + first + ' is ready ✨'); page(); return; }
+          poll(t0, n + 1);
+        });
+      }, 6000);
+    }
+    function make() {
+      if (!have.length) { msg.textContent = 'Add their Human Design or DISC screenshot first (above), or wait for their Rep System test.'; return; }
+      S.insWorking = S.insWorking || {}; S.insWorking[c.id] = true;
+      if (isPlay()) { page(); setTimeout(function () { S.insWorking[c.id] = false; saveCoach(c, { insight: Object.assign({}, window.BT_TYLER_INSIGHT, { made: new Date().toISOString() }), insightJob: { state: 'done', at: new Date().toISOString() } }); toastA('Coaching profile ready ✨ (playground: shows the example)'); }, 2500); return; }
+      var t0 = new Date(Date.now() - 5000).toISOString();
+      sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+        return fetch('/.netlify/functions/coach-profile-background', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify(inp) }); })
+        .then(function (r) { if (r.status !== 202 && !r.ok) throw new Error(r.status); page(); poll(t0, 0); }, function () { S.insWorking[c.id] = false; msg.textContent = 'Couldn’t start it just now. Try again in a minute.'; });
+    }
+    var btn = h('button', { class: 'bt-btn ' + (ins ? 'ghost' : 'lime') + ' sm', type: 'button', disabled: working ? 'disabled' : null, text: working ? 'Reading their charts…' : ins ? '↻ Update from their latest charts' : '✨ Make sense of their charts', onclick: make });
+    var head = h('div', { class: 'ins-head' }, [h('div', null, [h('h3', { class: 'ad-h3', text: 'Coaching profile' }),
+      h('p', { class: 'ad-muted', text: ins ? 'From ' + (have.join(', ') || 'their results') + ' · ' + when(ins.made) : 'Breaks down their Human Design, DISC and Rep System, then pulls them together into how to coach ' + first + '. Only you see this.' })]), btn]);
+    if (!ins) return h('section', { class: 'ad-card ins' }, [head, h('div', { class: 'ins-have' }, [['Human Design', inp.hd || inp.hdNotes], ['DISC', inp.disc || inp.discNotes], ['Rep system', inp.rep]].map(function (x) { return h('span', { class: 'ins-chip' + (x[1] ? ' on' : ''), text: (x[1] ? '✓ ' : '○ ') + x[0] }); })), msg]);
+    var pts = function (arr) { return h('div', { class: 'ins-pts' }, (arr || []).map(function (p) { return h('details', { class: 'ins-pt' + (p.i ? ' ic' : ''), open: 'open' }, [h('summary', null, [p.i ? h('span', { class: 'ins-i', text: p.i }) : null, p.t]), h('p', { class: 'ins-b', text: p.b }), p.c ? h('p', { class: 'ins-c' }, [h('b', { text: 'Coaching: ' }), p.c]) : null]); })); };
+    var list = function (title, arr, cls) { return arr && arr.length ? h('div', { class: 'ins-list ' + (cls || '') }, [h('b', { text: title }), h('ul', null, arr.map(function (x) { return h('li', { text: x }); }))]) : null; };
+    var body;
+    if (tab === 'coach') { var k = ins.coach || {}; body = h('div', null, [k.headline ? h('p', { class: 'ins-hl', text: k.headline }) : null, pts(k.themes),
+      h('div', { class: 'ins-grid' }, [list('Set up sessions like this', k.setup, 'set'), list('Questions to ask', k.questions, 'qs'), list('Language that lands', k.use, 'use'), list('Avoid', k.avoid, 'avoid'), list('Watch for (they’re struggling)', k.watch, 'watch')])]); }
+    else if (tab === 'disc') { var dd = ins.disc || {}, sc = dd.scores || {}; var DC = { D: '#D9534F', I: '#F0C541', S: '#4CAF50', C: '#3B8FD9' };
+      body = h('div', null, [dd.headline ? h('p', { class: 'ins-hl', text: dd.headline }) : null,
+        sc.D != null ? h('div', { class: 'ins-disc' }, ['D', 'I', 'S', 'C'].map(function (x) { return h('div', { class: 'ins-dbar' }, [h('b', { text: x }), h('div', { class: 'ins-dtrack' }, [h('div', { class: 'ins-dfill', style: 'width:' + Math.min(100, (sc[x] || 0) * 2) + '%;background:' + DC[x] })]), h('span', { text: (sc[x] || 0) + '%' })]); })) : null, pts(dd.points)]); }
+    else { var sec = ins[tab] || {}; body = h('div', null, [sec.headline ? h('p', { class: 'ins-hl', text: sec.headline }) : null, (sec.points || []).length ? pts(sec.points) : h('p', { class: 'ad-muted', text: 'Nothing for this one yet. Add their result above, then update.' })]); }
+    var notes = (co.insightNotes || {})[tab] || '', ta = h('textarea', { class: 'bt-in ad-ta sm', placeholder: 'Your own take: what you notice in sessions, what’s landed, what hasn’t', 'aria-label': 'My notes on ' + tab });
+    ta.value = notes; ta.addEventListener('change', function () { var nn = Object.assign({}, coach(c).insightNotes || {}); nn[tab] = ta.value; saveCoach(c, { insightNotes: nn }, false); });
+    return h('section', { class: 'ad-card ins' }, [head, msg,
+      h('p', { class: 'ins-snap', text: ins.snapshot || '' }),
+      h('div', { class: 'ins-chips' }, (ins.chips || []).map(function (x) { return h('span', { class: 'ins-chip on', text: x }); })),
+      glanceTiles(ins, inp), dialsView(ins.dials), flowView(ins.flow),
+      h('div', { class: 'ins-tabs', role: 'tablist' }, INS_TABS.map(function (t) { return h('button', { type: 'button', role: 'tab', 'aria-selected': String(t[0] === tab), class: 'ins-tab' + (t[0] === tab ? ' on' : ''), text: t[1], onclick: function () { S.insTab[c.id] = t[0]; page(); } }); })),
+      body,
+      h('div', { class: 'ins-mine' }, [h('b', { text: '✎ Your take' }), ta]),
+      h('p', { class: 'ad-muted ins-note', text: 'Human Design, DISC and rep systems are lenses to get curious with, not labels. Check it against what you see in sessions.' })]);
   }
 
   /* ====================== finance: payment schedule from agreements + what's come in ====================== */
@@ -1177,7 +1284,7 @@
         h('p', { class: 'ad-muted', text: c.email + ' · joined ' + when(c.created_at) + ' · last in ' + when(c.last_seen_at) }),
         tzOf(c) ? h('p', { class: 'ad-loc big' }, [h('span', { text: '📍 ' + placeOf(c) + ' · ' }), liveClock(tzOf(c)), h('span', { class: 'ad-muted', text: ' · ' + diffLabel(tzOf(c)) })]) : null,
         h('div', { class: 'ad-ct-acts' }, [h('span', { class: 'ad-badge ' + (c.is_admin ? 'me' : c.tier), text: c.is_admin ? 'You (test login)' : c.tier === 'private' ? '1:1 client' : 'Self-paced' }),
-          h('a', { class: 'bt-btn lime sm', href: viewHref, target: window.BT_DEMO ? null : '_blank', rel: 'noopener', text: '👀 View her app (read-only)' })]),
+          h('a', { class: 'bt-btn lime sm', href: viewHref, target: window.BT_DEMO ? null : '_blank', rel: 'noopener', text: '👀 View their app (read-only)' })]),
         consentChip(c), welcomeBar(c)])
     ]);
     if (!d) return h('section', { class: 'ad-sec' }, [back, head, h('p', { class: 'ad-card ad-loading', text: 'Loading their answers…' })]);
@@ -1220,6 +1327,7 @@
         h('h3', { class: 'ad-h3', text: 'Their journey' }),
         h('div', { class: 'ad-card' }, [journeyHub(c, all, rowBy)]),
         c.tier === 'private' || c.is_admin ? profilesCard(c, all) : null,
+        c.tier === 'private' || c.is_admin ? insightCard(c, all) : null,
         contractCard(c, d),
         paymentsCard(c),
         h('details', { class: 'ad-raw' }, [h('summary', { text: 'All saved data, tool by tool (the old view)' }), h('div', { class: 'ad-tools' }, sections)])
@@ -1244,7 +1352,7 @@
     } });
     var wk = c.program_start ? Math.floor((Date.now() - new Date(c.program_start)) / (7 * 86400000)) + 1 : null;
     var unl = (S.settings.unlocks || {})[c.id], maxW = courseData().weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 1);
-    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal (unlocks as she finishes each lesson)', selected: unl == null ? 'selected' : null })]
+    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal (unlocks as they finish each lesson)', selected: unl == null ? 'selected' : null })]
       .concat(Array.from({ length: Math.max(0, maxW - 1) }, function (_, i) { var n = i + 2; return h('option', { value: String(n), text: 'Open up to Week ' + n + ' now', selected: unl === n ? 'selected' : null }); }))
       .concat([h('option', { value: 'all', text: 'Open every week now', selected: unl === 'all' ? 'selected' : null })]));
     var dripMsg = h('span', { class: 'ad-muted', role: 'status' });

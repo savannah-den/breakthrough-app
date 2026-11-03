@@ -575,3 +575,68 @@ svg.ct-shot{border:0;height:auto}
 .jh-sec.next .jh-chev{order:4}
 .jh-sec.act,.jh-hit.act,.jh-feed.act{background:#FBE6FC}
 .jh-sec.act.next{background:#F1F9A6}
+
+/* ---- Coaching profile (Human Design + DISC + Rep System, how to coach them) ---- */
+.ins-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.ins-head .ad-h3{margin:0 0 4px}
+.ins-have,.ins-chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.ins-chip{font-size:13px;padding:4px 10px;border-radius:999px;border:1.5px dashed #C9B6B2;color:#7A6A67;background:#fff}
+.ins-chip.on{border:1.5px solid #1F1412;color:#1F1412;background:#FBE6FC}
+.ins-snap{font-family:'Playfair Display',Georgia,serif;font-size:19px;line-height:1.5;color:#2A0806;margin:14px 0 4px;background:#FFF4EE;border-left:5px solid #F1F9A6;padding:14px 16px;border-radius:12px}
+.ins-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 10px;border-bottom:2px solid #EADBD7;padding-bottom:10px}
+.ins-tab{font:inherit;font-weight:600;font-size:14px;padding:8px 14px;border-radius:999px;border:1.5px solid #1F1412;background:#fff;color:#1F1412;cursor:pointer}
+.ins-tab.on{background:#4E0C08;color:#F1F9A6;border-color:#4E0C08}
+.ins-hl{font-weight:700;font-size:16px;color:#4E0C08;margin:6px 0 12px}
+.ins-pts{display:grid;gap:8px}
+.ins-pt{border:1.5px solid #EADBD7;border-radius:14px;padding:10px 14px;background:#fff}
+.ins-pt summary{font-weight:700;cursor:pointer;color:#1F1412}
+.ins-b{margin:8px 0 6px;line-height:1.6;color:#3A2A28}
+.ins-c{margin:0;padding:8px 12px;border-radius:10px;background:#F7FBD9;line-height:1.6;color:#1F1412}
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:14px}
+.ins-list{border-radius:14px;padding:12px 14px;background:#FFF4EE;border:1.5px solid #EADBD7}
+.ins-list b{display:block;margin-bottom:6px}
+.ins-list ul{margin:0;padding-left:18px;line-height:1.55}
+.ins-list.use{background:#F7FBD9}.ins-list.avoid{background:#FDECEA}.ins-list.watch{background:#FBE6FC}
+.ins-disc{display:grid;gap:6px;margin:4px 0 14px}
+.ins-dbar{display:grid;grid-template-columns:22px 1fr 44px;align-items:center;gap:8px}
+.ins-dtrack{height:12px;border-radius:999px;background:#F2E8E5;overflow:hidden}
+.ins-dfill{height:100%;border-radius:999px}
+.ins-mine{margin-top:14px}
+.ins-mine b{display:block;margin-bottom:6px}
+.ins-note{font-size:12.5px;margin-top:10px}
+/* coaching profile: at a glance */
+.gl-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+@media(max-width:700px){.gl-tiles{grid-template-columns:1fr}}
+.gl-tile{border:2px solid #1F1412;border-radius:18px;padding:12px 12px 14px;background:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;box-shadow:4px 4px 0 #2A0806}
+.gl-tile.hd{background:#FFF4EE}.gl-tile.disc{background:#F7FBD9}.gl-tile.rep{background:#FBE6FC}
+.gl-k{font-family:'Patrick Hand SC','Trebuchet MS',sans-serif;letter-spacing:1.5px;color:#B5281E;font-size:16px}
+.gl-bg{width:130px;height:182px}
+.gl-big{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:#2A0806}
+.gl-sub{font-size:12.5px;color:#5A4A47;line-height:1.4}
+.gl-donut-w{position:relative;width:130px;height:130px}
+.gl-donut{width:130px;height:130px}
+.gl-mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',Georgia,serif;font-size:20px;color:#1F1412}
+.gl-leg{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.gl-l{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff}
+.gl-l.D{background:#D9534F}.gl-l.I{background:#E0B21F;color:#1F1412}.gl-l.S{background:#4CAF50}.gl-l.C{background:#3B8FD9}
+.gl-bars{display:flex;gap:10px;align-items:flex-end;height:150px;padding-top:4px}
+.gl-bar{display:flex;flex-direction:column;align-items:center;gap:3px;width:44px}
+.gl-col{height:100px;width:26px;border-radius:999px;background:#fff;border:2px solid #1F1412;display:flex;align-items:flex-end;overflow:hidden}
+.gl-fill{width:100%;border-radius:999px 999px 0 0}
+.gl-bar b{font-size:14px}.gl-bar span{font-size:10.5px;line-height:1.15;color:#5A4A47}
+.gl-h{display:block;font-family:'Patrick Hand SC','Trebuchet MS',sans-serif;letter-spacing:1.5px;color:#B5281E;font-size:17px;margin:4px 0 8px}
+.gl-dials{border:1.5px solid #EADBD7;border-radius:18px;padding:12px 16px 6px;margin:6px 0 12px;background:#fff}
+.gl-dial{margin:0 0 12px}
+.gl-ends{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:#1F1412}
+.gl-track{position:relative;height:10px;border-radius:999px;margin:6px 0 4px;background:linear-gradient(90deg,#F4C2F7,#FFF4EE 50%,#F1F9A6)}
+.gl-dot{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:#4E0C08;border:3px solid #F1F9A6;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.gl-why{font-size:12px;color:#7A6A67}
+.gl-flow{margin:4px 0 14px}
+.gl-steps{display:flex;align-items:stretch;gap:6px}
+@media(max-width:700px){.gl-steps{flex-direction:column}.gl-arrow{transform:rotate(90deg);align-self:center}}
+.gl-step{flex:1;border-radius:16px;padding:12px 14px;border:2px solid #1F1412}
+.gl-step.b{background:#FBE6FC}.gl-step.d{background:#F1F9A6}.gl-step.a{background:#FFF4EE}
+.gl-step ul{margin:6px 0 0;padding-left:18px;line-height:1.5;font-size:14px}
+.gl-arrow{align-self:center;font-size:22px;font-weight:800;color:#4E0C08}
+.ins-pt.ic summary{display:flex;gap:8px;align-items:center}
+.ins-i{font-size:20px}
