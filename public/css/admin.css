@@ -640,3 +640,4 @@ svg.ct-shot{border:0;height:auto}
 .gl-arrow{align-self:center;font-size:22px;font-weight:800;color:#4E0C08}
 .ins-pt.ic summary{display:flex;gap:8px;align-items:center}
 .ins-i{font-size:20px}
+.ad-main,.ad-side{min-width:0}
