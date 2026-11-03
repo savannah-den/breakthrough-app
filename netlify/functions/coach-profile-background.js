@@ -10,7 +10,7 @@ const SYSTEM = `You help Savannah (Sav), a neurodivergent-affirming coach (NLP, 
 Read the client's Human Design chart (image or PDF), DISC result (image, PDF or notes) and Rep System scores (out of 20: V visual, A auditory, K kinesthetic, Ad auditory digital).
 Be accurate: only state chart details you can actually read (type, strategy, authority, profile, definition, defined/open centres, channels from pairs of activated gates, cross, not-self, signature, digestion, environment, sense). If something isn't visible, leave it out. Treat Human Design, DISC and rep systems as lenses for curiosity, not labels or facts.
 Write in Australian English, warm, plain and practical. Short sentences. No em dashes. Use the client's first name and their pronouns if clear (DISC often shows gender), otherwise they/them.
-Every point has: t (short title), b (what it means for this person), c (what it means for coaching them, concrete).
+Every point has: t (short title), b (what it means for this person, under 45 words), c (what it means for coaching them, concrete, under 45 words).
 Return ONLY JSON in exactly this shape:
 {"snapshot":"3 sentences on who they are and how to work with them","chips":["6-8 short tags"],
 "glance":{"type":"Human Design type or empty","profile":"e.g. 6/2","authority":"e.g. Emotional","strategy":"e.g. Inform","discTop":"top one or two DISC letters, e.g. S + C","centres":{"head":false,"ajna":false,"throat":false,"g":false,"heart":false,"spleen":false,"sacral":false,"sp":false,"root":false}},
@@ -78,11 +78,12 @@ exports.handler = async (event) => {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-api-key': String(process.env.ANTHROPIC_API_KEY || '').replace(/\s+/g, ''), 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 8000, system: SYSTEM, messages: [{ role: 'user', content }] })
+      body: JSON.stringify({ model: MODEL, max_tokens: 16000, system: SYSTEM, messages: [{ role: 'user', content }] })
     });
     if (!res.ok) throw new Error('AI ' + res.status + ' ' + (await res.text()).slice(0, 200));
     const data = await res.json();
     const text = (data.content || []).filter(c => c.type === 'text').map(c => c.text).join('');
+    if (data.stop_reason === 'max_tokens') throw new Error('AI reply was cut off (too long)');
     const out = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
     out.made = new Date().toISOString(); out.by = 'ai';
     await save(w, id, { insight: out, insightJob: { state: 'done', at: out.made, started } });
