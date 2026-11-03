@@ -12,8 +12,8 @@
       seq: 10,
       profiles: [
         { id: ME, email: 'you@playground', full_name: 'Sav (playground)', tier: 'private', is_admin: true, created_at: iso(30), last_seen_at: iso(0), program_start: iso(14).slice(0, 10) },
-        { id: 'u-ex1', email: 'example.anna@sample.test', full_name: 'Example: Anna', tier: 'private', is_admin: false, created_at: iso(12), last_seen_at: iso(1), program_start: iso(16).slice(0, 10) },
-        { id: 'u-ex2', email: 'example.bec@sample.test', full_name: 'Example: Bec', tier: 'self_paced', is_admin: false, created_at: iso(40), last_seen_at: iso(9) }
+        { id: 'u-ex1', email: 'example.anna@sample.test', full_name: 'Example: Anna', tier: 'private', is_admin: false, status: 'current', tags: [{ t: 'Founding Member', on: false }, { t: '1:1', on: true }, { t: 'Group', on: false }], created_at: iso(12), last_seen_at: iso(1), program_start: iso(16).slice(0, 10) },
+        { id: 'u-ex2', email: 'example.bec@sample.test', full_name: 'Example: Bec', tier: 'self_paced', is_admin: false, status: 'past', tags: [{ t: 'Founding Member', on: false }, { t: 'Kylie ECT', on: false }], created_at: iso(40), last_seen_at: iso(9) }
       ],
       client_data: [
         { user_id: 'u-ex1', key: 'cmn-rep-results', value: JSON.stringify({ ranks: [{ 0: 4, 1: 2, 2: 3, 3: 1 }, { 0: 1, 1: 4, 2: 2, 3: 3 }, { 0: 4, 1: 3, 2: 1, 3: 2 }, { 0: 1, 1: 2, 2: 4, 3: 3 }, { 0: 2, 1: 1, 2: 4, 3: 3 }], name: 'Anna', date: 'Example' }), updated_at: iso(3) },
@@ -22,7 +22,7 @@
         { user_id: 'u-ex2', key: 'cmn-companion', value: JSON.stringify({ checks: { watched: true, joined: true } }), updated_at: iso(9) }
       ],
       coach_notes: [{ id: 1, client_id: 'u-ex1', body: 'Example note: big shift in session 2 around her money story.', created_at: iso(2) }],
-      invites: [{ email: 'example.anna@sample.test', tier: 'private', full_name: 'Example: Anna', created_at: iso(12), contract: null, contract_status: null }, { email: 'example.jess@sample.test', tier: 'private', full_name: 'Example: Jess (not logged in yet)', created_at: iso(1), contract: null, contract_status: null }],
+      invites: [{ email: 'example.anna@sample.test', tier: 'private', full_name: 'Example: Anna', created_at: iso(12), contract: null, contract_status: null }, { email: 'example.jess@sample.test', tier: 'private', full_name: 'Example: Jess (not logged in yet)', created_at: iso(1), contract: null, contract_status: null, status: 'current', tags: [{ t: 'Founding Member', on: true }] }],
       app_settings: [],
       contracts: [{ user_id: 'u-ex1', status: 'signed', terms: { package: '1:1', programs: ['Breakthrough'], weeks: 8, start: iso(16).slice(0, 10), group: { n: 2, per: 'Month' }, one: { n: 1, per: 'Week' }, inclusions: { privateChat: true, groupChats: true, modules: true, library: false }, plan: 'in4', amount: 5100, coach: 'Savannah Barber' }, signed_at: iso(15), signed: { client: { name: 'Example: Anna', signedName: 'Example: Anna', email: 'example.anna@sample.test', phone: '0400 000 000', address: '1 Example St, Brisbane QLD', consent: 'anon', tz: 'Australia/Brisbane' }, terms: { package: '1:1', programs: ['Breakthrough'], weeks: 8, start: iso(16).slice(0, 10), group: { n: 2, per: 'Month' }, one: { n: 1, per: 'Week' }, inclusions: { privateChat: true, groupChats: true, modules: true, library: false }, plan: 'in4', amount: 5100, coach: 'Savannah Barber' } } }]
     };

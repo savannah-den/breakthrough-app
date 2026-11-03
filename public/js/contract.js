@@ -37,7 +37,7 @@
       var b = t.bespoke || {}, bits = [];
       if (b.per) bits.push(money(b.per) + (b.freq ? ' per ' + b.freq : ' per payment'));
       if (b.count) bits.push(b.count + ' payment' + (b.count == 1 ? '' : 's'));
-      return { line: 'Bespoke: ' + (bits.join(', ') || 'as agreed'), desc: (b.notes ? b.notes + ' ' : '') + 'Total: ' + money(t.amount) + '.' };
+      return { line: 'Bespoke: ' + (bits.join(', ') || 'as agreed'), desc: (b.notes ? b.notes + ' ' : '') + (t.ongoing ? 'Ongoing until either party ends the coaching relationship in writing.' : 'Total: ' + money(t.amount) + '.') };
     }
     var desc = p.desc; if (Number(t.amount) && Number(t.amount) !== p.total) desc += ' Investment as agreed: ' + money(t.amount) + '.';
     return { line: p.line, desc: desc };
@@ -119,7 +119,7 @@
   var CONSENT_LABEL = { none: 'Nothing about you is shared', anon: 'Your story, never your name. Face is always blurred and voice obscured', pub: 'You can be named, seen and heard' };
   var CONSENT_OUTRO = 'Colour Me Neurospicy agrees that no sensitive personal information will be shared, content will not be taken out of context or misrepresented, and consent may be withdrawn at any time in writing, applying to future content only. For group sessions, each identifiable participant must consent separately. A blank selection means no marketing consent.';
   function artEl(k) { var key = k === 'public' ? 'pub' : k, f = el('figure', { class: 'ct-art' }); f.innerHTML = CONSENT_ART[key] || ''; f.appendChild(el('figcaption', { text: CONSENT_LABEL[key] || '' })); return f; }
-  function agreeLine(t) { return 'I agree to all pages and the full amount of my selected payment plan, including payments due after week ' + (t.weeks || 8) + '. My marketing consent is limited to my selection on the final page.'; }
+  function agreeLine(t) { return t.ongoing ? 'I agree to all pages and to my ongoing payments as set out in my payment plan, until either party ends the coaching relationship in writing. My marketing consent is limited to my selection on the final page.' : 'I agree to all pages and the full amount of my selected payment plan, including payments due after week ' + (t.weeks || 8) + '. My marketing consent is limited to my selection on the final page.'; }
 
   /* render(terms, client, opts)
      opts.form = true  -> client fields + consent are inputs (returns {node, read()})
@@ -132,23 +132,23 @@
       var i = el('input', { class: 'bt-in', id: 'ct-' + key, type: type || 'text', value: val || '', autocomplete: auto || null });
       inputs[key] = i; return el('label', { class: 'ct-f in', for: 'ct-' + key }, [el('span', { text: label }), i]);
     }
-    var pl = planLines(t), wk = t.weeks || 8;
+    var pl = planLines(t), wk = t.weeks || 8, forLen = t.ongoing ? ', ongoing' : ' for ' + wk + ' weeks';
     var doc = el('article', { class: 'ct-doc' });
-    doc.appendChild(el('header', { class: 'ct-head' }, [el('p', { class: 'ct-k', text: 'Colour Me Neurospicy' }), el('h1', { class: 'ct-h', text: 'Breakthrough + 1:1 Coaching Agreement' })]));
+    doc.appendChild(el('header', { class: 'ct-head' }, [el('p', { class: 'ct-k', text: 'Colour Me Neurospicy' }), el('h1', { class: 'ct-h', text: t.one && Number(t.one.n) ? 'Breakthrough + 1:1 Coaching Agreement' : 'Breakthrough Group Coaching Agreement' })]));
     doc.appendChild(el('section', { class: 'ct-s' }, [el('h2', { text: '1. Definitions' }),
       el('div', { class: 'ct-grid' }, [field('name', 'Your name', client.name, 'text', 'name'), field('coach', 'Coach', t.coach || 'Savannah Barber'), field('phone', 'Phone', client.phone, 'tel', 'tel'), field('email', 'Your email address', client.email, 'email', 'email'), field('address', 'Your address', client.address, 'text', 'street-address')]),
       el('div', { class: 'ct-pay' }, [el('span', { class: 'ct-l', text: 'Payment structure' }), el('p', { class: 'ct-plan' }, [el('span', { class: 'ct-tick', 'aria-hidden': 'true', text: '✓' }), el('b', { text: pl.line })]), el('p', { class: 'ct-sub', text: pl.desc })]),
-      el('p', { text: 'Program duration: ' + wk + ' weeks, starting ' + fmtDate(t.start) + ', with no fixed end date. The selected payment plan may continue beyond the program end date if both coach and participant agree to continue the coaching and client relationship or a new agreement is made.' })
+      el('p', { text: t.ongoing ? 'Program duration: ongoing coaching, starting ' + fmtDate(t.start) + ', continuing month to month until either party ends the coaching relationship in writing.' : 'Program duration: ' + wk + ' weeks, starting ' + fmtDate(t.start) + ', with no fixed end date. The selected payment plan may continue beyond the program end date if both coach and participant agree to continue the coaching and client relationship or a new agreement is made.' })
     ]));
     var incl = INCL.filter(function (x) { return (t.inclusions || {})[x[0]]; }).map(function (x) {
-      var dur = x[0] === 'modules' ? 'Lifetime access' : x[0] === 'library' ? 'Included' : wk + ' weeks';
+      var dur = x[0] === 'modules' ? 'Lifetime access' : x[0] === 'library' ? 'Included' : t.ongoing ? 'the length of your coaching' : wk + ' weeks';
       return el('div', { class: 'ct-row' }, [el('span', { text: x[2] }), el('b', { text: x[0] === 'modules' ? 'Lifetime access' : (x[0] === 'privateChat' ? 'Included for ' : x[0] === 'library' ? '' : 'Access included for ') + dur })]);
     });
     doc.appendChild(el('section', { class: 'ct-s' }, [el('h2', { text: '2. Brief' }),
-      el('p', { text: wk + ' week ' + programName(t) + ' program (' + (t.package || '1:1') + '), group and 1:1 coaching' + ((t.inclusions || {}).modules ? ', plus lifetime access to program modules.' : '.') }),
+      el('p', { text: (t.ongoing ? 'Ongoing ' : wk + ' week ') + programName(t) + ' program (' + (t.package || '1:1') + '), ' + (t.one && Number(t.one.n) ? 'group and 1:1 coaching' : 'group coaching') + ((t.inclusions || {}).modules ? ', plus lifetime access to program modules.' : '.') }),
       el('div', { class: 'ct-rows' }, [
-        t.group && Number(t.group.n) ? el('div', { class: 'ct-row' }, [el('span', { text: 'Group 1 hour session(s)' }), el('b', { text: t.group.n + ' per ' + String(t.group.per).toLowerCase() + ' for ' + wk + ' weeks' })]) : null,
-        t.one && Number(t.one.n) ? el('div', { class: 'ct-row' }, [el('span', { text: 'Individual 1 hour session(s)' }), el('b', { text: t.one.n + ' per ' + String(t.one.per).toLowerCase() + ' for ' + wk + ' weeks' })]) : null
+        t.group && Number(t.group.n) ? el('div', { class: 'ct-row' }, [el('span', { text: 'Group 1 hour session(s)' }), el('b', { text: t.group.n + ' per ' + String(t.group.per).toLowerCase() + forLen })]) : null,
+        t.one && Number(t.one.n) ? el('div', { class: 'ct-row' }, [el('span', { text: 'Individual 1 hour session(s)' }), el('b', { text: t.one.n + ' per ' + String(t.one.per).toLowerCase() + forLen })]) : null
       ].concat(incl)),
       el('p', { class: 'ct-sub', text: 'Schedule: Sessions will take place on consistent days/times where practicable, subject to coach availability. It is the client’s responsibility to pre-book individual sessions.' })
     ]));

@@ -243,9 +243,11 @@
     var over = (state.settings.props || {})[name] || {};
     Object.keys(over).forEach(function (k) { if (over[k] !== '' && over[k] != null) p[k] = over[k]; });
     if ('clientName' in p && state.profile && state.profile.full_name) p.clientName = state.profile.full_name.split(' ')[0];
-    p.tierLabel = state.tier === 'private' ? '1:1 client' : 'Self-paced';
+    p.tierLabel = tierLabel();
     return p;
   }
+  // what the little badge on their home banner says: Founding Member beats 1:1 / Self-paced
+  function tierLabel() { var t = (state.profile && state.profile.tags) || []; if (Array.isArray(t) && t.some(function (x) { return /founding/i.test(x && x.t || ''); })) return 'Founding Member'; return state.tier === 'private' ? '1:1 client' : 'Self-paced'; }
   var current = null;
   function show(name) {
     if (!allowed(name)) name = homeView();
@@ -458,7 +460,7 @@
     state: state, h: h, toast: toast, go: function (n) { go(n); }, sb: function () { return sb; }, live: LIVE, flush: function () { return flush(); },
     home: function () { go(homeView()); }, logout: function () { logout(); }, exportData: function () { exportData(); },
     embedUrl: function (u) { return embedUrl(u); }, reload: function () { show(fromHash()); },
-    viewProps: function (n) { return viewProps(n); }, views: VIEWS
+    viewProps: function (n) { return viewProps(n); }, views: VIEWS, tierLabel: function () { return tierLabel(); }
   };
   function boot() {
     if (window.BT_COURSE) window.BT_COURSE.init(window.BT_APP);

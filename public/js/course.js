@@ -58,13 +58,15 @@
     return d;
   }
   function opensOn(n) { return new Date(startDate().getTime() + Math.max(0, n - 1) * 7 * DAY); }
-  function override() { if (window.BT_DEMO && window.BT_DEMO.unlock) return 'all'; /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
+  // Sav's own admin login (not 'view as' or the new-client trial): everything open
+  function peek() { return !!(window.BT_DEMO && window.BT_DEMO.peek) || !!(APP && APP.state && APP.state.isAdmin); }
+  function override() { if ((window.BT_DEMO && window.BT_DEMO.unlock) || (APP && APP.state && APP.state.isAdmin)) return 'all'; /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
   function bypass(week) { var ov = override(); return ov === 'all' || (typeof ov === 'number' && week <= ov); }
   function dripped(week) { return true; } // no drip: everything opens at her own pace, in order
   // 1:1 clients: Sav opens each week herself from the coach dashboard (Week 1 to start), so they can't run ahead of what she's built
   function oneCap() {
     if (!APP || APP.state.tier !== 'private') return null;
-    if (window.BT_DEMO && window.BT_DEMO.peek) return null;
+    if (peek()) return null;
     var ov = override(); return ov === 'all' ? null : typeof ov === 'number' ? ov : 1;
   }
   function locks() {
@@ -76,7 +78,7 @@
       info.weeks[w.week] = { open: wOpen, why: held ? 'Sav opens Week ' + w.week + ' for you when you’re ready' : !dr ? 'Opens ' + fmt(opensOn(w.week)) : !wOpen ? (after && blocked.w !== w ? 'Unlocks when you finish ' + after : 'Unlocks when you finish “' + blocked.l.title + '”') : '' };
       if (ls.length) prevW = w;
       ls.forEach(function (l) {
-        var open = dr && !held && ((cap == null && bypass(w.week)) || !blocked);
+        var open = dr && !held && ((cap == null && bypass(w.week)) || !blocked || ((l.res || [])[0] === 'intent' && w.week === 0)); // Setting Intentions is never locked
         info.lessons[l.id] = { open: open, why: held ? 'Sav opens Week ' + w.week + ' for you when you’re ready' : !dr ? 'Opens ' + fmt(opensOn(w.week)) : !open ? 'Finish “' + blocked.l.title + '” first' : '' };
         if (!blocked && !p.done[l.id] && !l.optional && !isActivityCard(l) && !/^embodiment/i.test(l.title || '')) blocked = { w: w, l: l }; // activities never block
       });
@@ -680,7 +682,7 @@
     proofImage(text, spark, photo).then(function (r) { img.src = r.url; try { file = new File([r.blob], 'my-proof.jpg', { type: 'image/jpeg' }); } catch (e) { file = r.blob; } });
   }
   var proofPhoto = '';
-  function proofLocked() { return !(prog().done[PROOF_LESSON] || (window.BT_DEMO && window.BT_DEMO.peek)); }
+  function proofLocked() { return !(prog().done[PROOF_LESSON] || peek()); }
   function proofHome(full, force) {
     if (!force && proofLocked()) {
       var f = findLesson(PROOF_LESSON), lk = h('section', { class: 'bt-proof simple locked', 'aria-label': 'Proof portfolio, locked' });
@@ -2187,7 +2189,7 @@
     var first = tx((APP.state.profile || {}).full_name).split(' ')[0];
     // the same welcome banner as Home inside the app
     root.appendChild(h('div', { class: 'bt-hero1' }, [
-      h('div', { class: 'bt-hero1-img' }, [h('img', { src: (window.BT_DEMO ? '' : '/') + 'img/sav/jump.jpg', alt: '' }), h('span', { class: 'bt-hero1-chip' }, [h('span', { 'aria-hidden': 'true', text: '✦ ' }), 'Breakthrough']), h('span', { class: 'bt-hero1-tag', text: '1:1 client' }),
+      h('div', { class: 'bt-hero1-img' }, [h('img', { src: (window.BT_DEMO ? '' : '/') + 'img/sav/jump.jpg', alt: '' }), h('span', { class: 'bt-hero1-chip' }, [h('span', { 'aria-hidden': 'true', text: '✦ ' }), 'Breakthrough']), h('span', { class: 'bt-hero1-tag', text: APP.tierLabel ? APP.tierLabel() : '1:1 client' }),
         h('div', { class: 'bt-hero1-t' }, [h('span', { class: 'bt-hero1-k', text: 'Your Breakthrough Companion' }), h('h1', { text: first ? 'Welcome, ' + first.charAt(0).toUpperCase() + first.slice(1) + '.' : 'Welcome, you’re in.' })])]),
       h('p', { class: 'bt-hero1-p', text: 'Life’s an experiment, so let’s f*ck around and find out who you can become when you change your thoughts, actually feel your feelings, and take action in line with your goals.' })
     ]));
@@ -2670,7 +2672,8 @@
     activityDone: function (r) { return APP ? activityDone(r) : false; }, setupReady: function () { if (APP) setupReady(); }, activityBack: function (r) { return APP ? activityBack(r) : false; },
     doneLabel: function (r, d) { return APP ? doneLabel(r, d) : d; }, backLabel: function (r, d) { return APP ? backLabel(r, d) : d; }, returnKind: function (r) { return retKind(retGet(r)); },
     suReady: suReady, suStats: suStats,
-    weekOpen: function (n) { if (window.BT_DEMO && window.BT_DEMO.peek) return true; return APP ? isOpen(n) : true; },
+    allOpen: function () { return peek(); },
+    weekOpen: function (n) { if (peek()) return true; return APP ? isOpen(n) : true; },
     unlockText: function (n) { return APP ? unlockText(n) : ''; },
     journal: function (J) { return APP ? journalFor(J) : J; },
     search: function (q) { return APP ? search(q) : []; },

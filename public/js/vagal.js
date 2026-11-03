@@ -1062,7 +1062,7 @@
       var bp = blockPrompt(draw); if (bp) page.appendChild(bp);
       page.appendChild(h('h2', { class: 'vg-h vg-series-h', text: 'Everything in the series' }));
       page.appendChild(h('div', { class: 'vg-parts' }, PARTS.map(function (p) {
-        var r = kit.resource(p[0]) || { week: 1 }, op = r.week <= 1 || kit.isOpen(r.week) || !!(window.BT_DEMO && window.BT_DEMO.peek), href = r.href || '#' + p[1];
+        var r = kit.resource(p[0]) || { week: 1 }, op = r.week <= 1 || kit.isOpen(r.week) || !!(window.BT_COURSE && window.BT_COURSE.allOpen && window.BT_COURSE.allOpen()), href = r.href || '#' + p[1];
         var inner = [h('span', { class: 'vg-part-art' }, [kit.emblem(p[0])]), h('span', { class: 'vg-part-b' }, [h('b', { text: p[1] }), h('span', { text: op ? p[2] : 'Opens in Week ' + r.week })]), op ? h('span', { class: 'vg-part-go', 'aria-hidden': 'true', text: '→' }) : null];
         return op ? h('a', { class: 'vg-part', href: href, style: '--cv:' + (r.cover || '#FFF4EE') }, inner) : h('div', { class: 'vg-part lock', style: '--cv:' + (r.cover || '#FFF4EE') }, inner.concat([kit.icon('lock', 'vg-lock')]));
       })));
@@ -1088,7 +1088,7 @@
   // each part of Today's reps switches on as they do its activity in Week 1; everything is on once Week 1 is done
   var PART_LOCK = { dose: 'Switches on with Activity: Your daily DOSE', breathe: 'Switches on with Activity: Breathwork', pause: 'Switches on with Activity: Pause', move: 'Switches on with Activity: Move', water: 'Switches on when Week 1 is done', win: 'Switches on when Week 1 is done' };
   function partsOn() {
-    var C = window.BT_COURSE, all = (C && C.weekComplete && C.weekComplete(1)) || !!(window.BT_DEMO && window.BT_DEMO.peek) || !!vw().repsUnlocked;
+    var C = window.BT_COURSE, all = (C && C.weekComplete && C.weekComplete(1)) || !!(window.BT_COURSE && window.BT_COURSE.allOpen && window.BT_COURSE.allOpen()) || !!vw().repsUnlocked;
     if (all) return { all: true, win: 1, dose: 1, breathe: 1, pause: 1, move: 1, water: 1 };
     function done(res) { try { var f = kit.lessonForRes(res); return !!(f && kit.isDone(f.l.id)); } catch (e) { return false; } }
     return { dose: doseData().plan.length > 0 || done('dose'), breathe: done('breathe'), pause: done('pause'), move: done('move'), water: false, win: false };

@@ -745,17 +745,84 @@
     return h('div', { class: 'ad-stat' }, [h('span', { class: 'ad-stat-n', style: 'color:' + color, text: String(n) }), h('span', { class: 'ad-stat-l', text: label })]);
   }
 
+
+  /* ---------- Status (current / past) + program tags ----------
+     Stored on the client's profile (or on their invite until they first log in): status 'current' | 'past',
+     tags [{ t: 'Founding Member', on: true }]. A tag that's "on" is a program they're in now (full colour);
+     off = they've done it (faded). "Retire" sets them to past and fades every tag. */
+  var TAG_LIST = [['Founding Member', '#F2B632'], ['1:1', '#F4C2F7'], ['Group', '#BFE3A0'], ['ECT', '#BFD7F2'], ['Kylie ECT', '#D9C8F5'], ['PRAC', '#FFC9A3']];
+  function tagColor(t) { var m = TAG_LIST.filter(function (x) { return x[0].toLowerCase() === String(t).toLowerCase(); })[0]; return m ? m[1] : '#F1F9A6'; }
+  function metaOf(c) { var o = c.invite || c; return { status: o.status || 'current', tags: Array.isArray(o.tags) ? o.tags : [] }; }
+  function metaReady() { return S.clients.some(function (c) { return 'tags' in c; }) || (S.invites || []).some(function (i) { return 'tags' in i; }); }
+  function tagPills(c, small) {
+    var m = metaOf(c); if (!m.tags.length && m.status === 'current') return null;
+    return h('div', { class: 'ad-tags' + (small ? ' sm' : '') }, (m.status === 'past' ? [h('span', { class: 'ad-tag past-st', text: 'Past client' })] : []).concat(m.tags.map(function (x) {
+      return h('span', { class: 'ad-tag' + (x.on ? '' : ' off'), style: '--tg:' + tagColor(x.t), title: x.on ? x.t + ': in it now' : x.t + ': done' }, [x.t]);
+    })));
+  }
+  function saveMeta(c, patch, msg) {
+    var o = c.invite || c;
+    var go = c.invite ? sb.from('invites').update(patch).eq('email', c.email) : sb.from('profiles').update(patch).eq('id', c.id);
+    return go.then(function (r) {
+      if (r.error) { toastA(/column/i.test(r.error.message) ? 'Your database needs one quick update first. Ask Claude for the “client tags” SQL.' : 'Couldn’t save: ' + r.error.message); return; }
+      Object.keys(patch).forEach(function (k) { o[k] = patch[k]; }); if (c.invite) Object.keys(patch).forEach(function (k) { c[k] = patch[k]; });
+      page(); if (msg) toastA(msg);
+    }, function () { toastA('Couldn’t save. Check your internet and try again.'); });
+  }
+  function tagsCard(c) {
+    var m = metaOf(c), first = (c.full_name || c.email).split(' ')[0];
+    var tags = m.tags.map(function (x) { return { t: x.t, on: !!x.on }; });
+    var names = TAG_LIST.map(function (x) { return x[0]; }); tags.forEach(function (x) { if (names.indexOf(x.t) < 0) names.push(x.t); });
+    var setTags = function (nt) { saveMeta(c, { tags: nt }); };
+    var chips = names.map(function (n) {
+      var cur = tags.filter(function (x) { return x.t === n; })[0], st = !cur ? 'none' : cur.on ? 'on' : 'off';
+      return h('button', { type: 'button', class: 'ad-tag ad-tagbtn ' + st, style: '--tg:' + tagColor(n), title: st === 'none' ? 'Tap to add' : st === 'on' ? 'In it now: tap to mark as done' : 'Done: tap to remove', onclick: function () {
+        var nt = tags.filter(function (x) { return x.t !== n; });
+        if (st === 'none') nt.push({ t: n, on: true }); else if (st === 'on') nt.push({ t: n, on: false });
+        nt.sort(function (a, b) { return names.indexOf(a.t) - names.indexOf(b.t); }); setTags(nt);
+      } }, [st === 'none' ? '+ ' + n : (st === 'on' ? '● ' : '○ ') + n]);
+    });
+    var own = h('input', { class: 'bt-in sm', placeholder: 'Add another tag…', 'aria-label': 'New tag', maxlength: '30' });
+    var addOwn = h('button', { type: 'button', class: 'ad-copy', text: 'Add', onclick: function () { var v = own.value.trim(); if (!v || tags.some(function (x) { return x.t.toLowerCase() === v.toLowerCase(); })) return; setTags(tags.concat([{ t: v, on: true }])); } });
+    var past = m.status === 'past';
+    var retire = h('button', { type: 'button', class: 'bt-btn ' + (past ? 'lime' : 'ghost'), text: past ? 'Make them a current client again' : 'Retire ' + first, onclick: function (e) {
+      if (past) { saveMeta(c, { status: 'current' }, first + ' is a current client again ✓'); return; }
+      if (!e.target.dataset.sure) { e.target.dataset.sure = 1; e.target.textContent = 'Tap again: ' + first + ' becomes a past client and every tag fades'; return; }
+      saveMeta(c, { status: 'past', tags: tags.map(function (x) { return { t: x.t, on: false }; }) }, first + ' is now a past client ✓');
+    } });
+    return h('div', { class: 'ad-card ad-tagcard' }, [
+      h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: 'Status & programs' }), h('span', { class: 'ad-ct-st ' + (past ? 'none' : 'signed'), text: past ? 'Past client' : 'Current client' })]),
+      metaReady() ? null : h('p', { class: 'ad-muted', text: 'Your database needs one quick update before tags save. Ask Claude for the “client tags” SQL.' }),
+      h('p', { class: 'ad-muted', text: 'Tap a program to add it (● in it now, full colour). Tap again when they finish (○ done, faded). Tap once more to remove it.' }),
+      h('div', { class: 'ad-tags big' }, chips),
+      h('div', { class: 'ad-ct-inline' }, [own, addOwn]),
+      h('div', { class: 'ad-ct-acts' }, [retire])
+    ]);
+  }
+
   function clientList() {
     var q = S.q.toLowerCase();
+    S.stf = S.stf || 'current';
+    var passMeta = function (c) { var m = metaOf(c); if (S.stf !== 'all' && m.status !== S.stf) return false; if (S.tagf && !m.tags.some(function (x) { return x.t === S.tagf; })) return false; return true; };
     var list = S.clients.filter(function (c) {
       var f = S.filter === 'all' || (S.filter === 'me' ? c.is_admin : !c.is_admin && c.tier === S.filter);
-      return f && (!q || (c.email + ' ' + (c.full_name || '')).toLowerCase().indexOf(q) >= 0);
+      return f && (c.is_admin || passMeta(c)) && (!q || (c.email + ' ' + (c.full_name || '')).toLowerCase().indexOf(q) >= 0);
     });
     var search = h('input', { class: 'bt-in ad-search', type: 'search', placeholder: 'Search name or email', value: S.q, 'aria-label': 'Search clients', oninput: function (e) { S.q = e.target.value; var pos = e.target.selectionStart; page(); var n = root.querySelector('input[type=search]'); n.focus(); n.setSelectionRange(pos, pos); } });
     var count = function (f) { return S.clients.filter(function (c) { return f === 'all' || (f === 'me' ? c.is_admin : !c.is_admin && c.tier === f); }).length; };
     var filters = h('div', { class: 'ad-chips' }, [['all', 'Everyone'], ['private', '1:1 clients'], ['self_paced', 'Self-paced'], ['me', 'My test logins']].map(function (f) {
       return h('button', { class: 'ad-fchip' + (S.filter === f[0] ? ' on' : ''), text: f[1] + ' · ' + count(f[0]), onclick: function () { S.filter = f[0]; page(); } });
     }));
+    var everyone = S.clients.filter(function (c) { return !c.is_admin; }).concat((S.invites || []).filter(function (i) { return !S.clients.some(function (c) { return String(c.email || '').toLowerCase() === String(i.email).toLowerCase(); }); }).map(inviteClient));
+    var scount = function (v) { return everyone.filter(function (c) { return v === 'all' || metaOf(c).status === v; }).length; };
+    var stchips = h('div', { class: 'ad-chips' }, [['current', 'Current'], ['past', 'Past'], ['all', 'Current + past']].map(function (f) {
+      return h('button', { class: 'ad-fchip' + (S.stf === f[0] ? ' on' : ''), text: f[1] + ' · ' + scount(f[0]), onclick: function () { S.stf = f[0]; page(); } });
+    }));
+    var allTags = []; everyone.forEach(function (c) { metaOf(c).tags.forEach(function (x) { if (allTags.indexOf(x.t) < 0) allTags.push(x.t); }); });
+    var tagchips = allTags.length ? h('div', { class: 'ad-tags filt' }, allTags.map(function (t) {
+      return h('button', { type: 'button', class: 'ad-tag ad-tagbtn ' + (S.tagf === t ? 'on' : 'none'), style: '--tg:' + tagColor(t), text: t + ' · ' + everyone.filter(function (c) { return metaOf(c).tags.some(function (x) { return x.t === t; }); }).length, onclick: function () { S.tagf = S.tagf === t ? '' : t; page(); } });
+    })) : null;
+    filters = h('div', { class: 'ad-filtwrap' }, [filters, stchips, tagchips]);
     var cards = list.map(function (c) {
       var act = S.activity[c.id] || [], avail = toolsFor(c);
       var used = avail.filter(function (t) { return act.some(function (a) { return a.key === t.key; }); });
@@ -774,20 +841,22 @@
         h('div', { class: 'ad-dots', 'aria-hidden': 'true' }, avail.map(function (t) { return h('span', { class: 'ad-tdot' + (used.indexOf(t) >= 0 ? ' on' : ''), style: used.indexOf(t) >= 0 ? 'background:' + t.color : '', title: t.name }); })),
         tz ? h('span', { class: 'ad-loc' }, [h('span', { text: '📍 ' + placeOf(c) + ' · ' }), liveClock(tz)]) : h('span', { class: 'ad-loc muted', text: '📍 Timezone not set yet' }),
         h('span', { class: 'ad-meta' }, [h('span', { class: 'ad-live' + (fresh ? ' on' : '') }), 'Last in ' + when(c.last_seen_at) + (last ? ' · last saved ' + when(last) : '')]),
-        al || nw ? h('div', { class: 'ad-flags' }, [al ? h('span', { class: 'ad-flag warn', text: '⚠ Next 1:1 not booked' }) : null, nw ? h('span', { class: 'ad-flag win', text: '🎉 ' + nw + ' new win' + (nw === 1 ? '' : 's') }) : null]) : null
+        al || nw ? h('div', { class: 'ad-flags' }, [al ? h('span', { class: 'ad-flag warn', text: '⚠ Next 1:1 not booked' }) : null, nw ? h('span', { class: 'ad-flag win', text: '🎉 ' + nw + ' new win' + (nw === 1 ? '' : 's') }) : null]) : null,
+        tagPills(c, true)
       ])]);
     });
     // added in "Add a client" but not logged in yet: so she can set up their agreement before they arrive
     var joined = {}; S.clients.forEach(function (c) { joined[String(c.email || '').toLowerCase()] = 1; });
     var waiting = (S.invites || []).filter(function (i) { return !joined[String(i.email).toLowerCase()]; }).filter(function (i) {
-      var f = S.filter === 'all' || (S.filter !== 'me' && i.tier === S.filter); return f && (!q || (i.email + ' ' + (i.full_name || '')).toLowerCase().indexOf(q) >= 0); });
+      var f = S.filter === 'all' || (S.filter !== 'me' && i.tier === S.filter); return f && passMeta(inviteClient(i)) && (!q || (i.email + ' ' + (i.full_name || '')).toLowerCase().indexOf(q) >= 0); });
     var wcards = waiting.map(function (i) {
       var st = i.contract ? (i.contract_status === 'sent' ? 'Agreement ready to sign' : 'Agreement draft') : (i.tier === 'private' ? 'No agreement yet' : '');
       return h('button', { class: 'ad-client ad-waiting', onclick: function () { S.open = inviteClient(i); page(); window.scrollTo(0, 0); } }, [h('div', { class: 'ad-client-b' }, [
         h('div', { class: 'ad-cn' }, [h('div', { class: 'ad-cn-t' }, [h('span', { class: 'ad-name', text: i.full_name || i.email }), h('span', { class: 'ad-muted', text: i.full_name ? i.email : '' })]),
           h('span', { class: 'ad-badge ' + i.tier, text: i.tier === 'private' ? '1:1' : 'Self-paced' })]),
         h('span', { class: 'ad-meta' }, [h('span', { class: 'ad-live' }), 'Added ' + when(i.created_at) + ' · hasn’t logged in yet']),
-        st ? h('div', { class: 'ad-flags' }, [h('span', { class: 'ad-flag' + (i.contract_status === 'sent' ? ' win' : ' warn'), text: (i.contract_status === 'sent' ? '✓ ' : '') + st })]) : null
+        st ? h('div', { class: 'ad-flags' }, [h('span', { class: 'ad-flag' + (i.contract_status === 'sent' ? ' win' : ' warn'), text: (i.contract_status === 'sent' ? '✓ ' : '') + st })]) : null,
+        tagPills(inviteClient(i), true)
       ])]);
     });
     return h('section', { class: 'ad-sec' }, [coachHome(), search, filters,
@@ -798,7 +867,7 @@
   }
 
   function appOrigin() { return /^https?:/.test(location.origin) && !window.BT_DEMO ? location.origin : 'https://app.colourmeneurospicy.com.au'; }
-  function inviteClient(i) { return { id: 'invite:' + i.email, email: i.email, full_name: i.full_name || '', tier: i.tier, invite: i, created_at: i.created_at }; }
+  function inviteClient(i) { return { id: 'invite:' + i.email, email: i.email, full_name: i.full_name || '', tier: i.tier, invite: i, created_at: i.created_at, status: i.status, tags: i.tags }; }
   function inviteClientView(c) {
     var i = c.invite, back = h('button', { class: 'bt-btn ghost', text: '← All clients', onclick: function () { S.open = null; page(); } });
     var link = appOrigin() + (i.tier === 'private' ? '/1to1' : '/course'), msg = h('p', { class: 'ad-muted', role: 'status' });
@@ -821,7 +890,7 @@
     var off = !(S.invites || []).some(function (x) { return 'contract' in x; });
     var d = { contract: i.contract ? { terms: i.contract, status: i.contract_status || 'draft' } : null, contractOff: false };
     var ctc = off ? h('div', { class: 'ad-card ad-ct' }, [h('h3', { class: 'ad-h3', text: 'Package & agreement' }), h('p', { class: 'ad-muted', text: 'To set up an agreement before they log in, your database needs one quick update. Ask Claude for the “invite agreements” SQL to run in Supabase.' })]) : contractCard(c, d);
-    return h('section', { class: 'ad-sec' }, [back, head, ctc]);
+    return h('section', { class: 'ad-sec' }, [back, head, tagsCard(c), ctc]);
   }
 
   function openClient(c) {
@@ -881,6 +950,7 @@
     return h('section', { class: 'ad-sec' }, [back, h('div', { class: 'ad-cols' }, [
       h('div', { class: 'ad-main' }, [
         h('div', { class: 'ad-card' }, [head]),
+        c.is_admin ? null : tagsCard(c),
         sessionsCard(c),
         h('h3', { class: 'ad-h3', text: 'Their journey' }),
         h('div', { class: 'ad-card' }, [journeyList(c, all)]),
@@ -1002,7 +1072,7 @@
     if (ct && ct.status === 'signed' && ct.signed) {
       var sv = ct.signed.terms || {}, pl = C.planLines(sv);
       card.appendChild(h('div', { class: 'ad-facts' }, [
-        fact('Package', (sv.package || '1:1') + ' · ' + (sv.programs || []).join(' + ')), fact('Length', (sv.weeks || 8) + ' weeks from ' + C.fmtDate(sv.start)),
+        fact('Package', (sv.package || '1:1') + ' · ' + (sv.programs || []).join(' + ')), fact('Length', (sv.ongoing ? 'Ongoing' : (sv.weeks || 8) + ' weeks') + ' from ' + C.fmtDate(sv.start)),
         fact('Investment', C.money(sv.amount)), fact('Payment plan', pl.line),
         fact('Marketing consent', ({ none: 'No consent', anon: 'Yes, identity confidential', public: 'Yes, publicly identified' })[(ct.signed.client || {}).consent] || 'No consent (left blank)'),
         fact('Signed as', (ct.signed.client || {}).signedName || '')
@@ -1023,13 +1093,14 @@
     // edit form
     var t = Object.assign(C.defaults(c.program_start || undefined), ct ? ct.terms : {});
     t.inclusions = Object.assign({}, C.defaults().inclusions, t.inclusions || {}); t.bespoke = Object.assign({ per: '', freq: '', count: '', notes: '' }, t.bespoke || {});
-    var pkg = h('select', { class: 'bt-in', 'aria-label': 'Package' }, ['1:1', 'Self-paced'].map(function (x) { return h('option', { value: x, text: x, selected: t.package === x ? 'selected' : null }); }));
+    var pkg = h('select', { class: 'bt-in', 'aria-label': 'Package' }, ['1:1', 'Group', 'Self-paced'].map(function (x) { return h('option', { value: x, text: x, selected: t.package === x ? 'selected' : null }); }));
     var progs = h('div', { class: 'ad-ct-chk' }, C.PROGRAMS.concat((t.programs || []).filter(function (x) { return C.PROGRAMS.indexOf(x) < 0; })).map(function (pn) { var cb = h('input', { type: 'checkbox', value: pn }); cb.checked = (t.programs || []).indexOf(pn) >= 0; return h('label', { class: 'cb-check' }, [cb, pn]); }));
     var incl = h('div', { class: 'ad-ct-chk col' }, C.INCL.map(function (x) { var cb = h('input', { type: 'checkbox', value: x[0] }); cb.checked = !!t.inclusions[x[0]]; return h('label', { class: 'cb-check' }, [cb, h('span', null, [x[1], x[0] === 'library' ? h('span', { class: 'ad-ct-note', text: ' Opens the resource library in their app. The library isn’t built yet: Claude will remind you.' }) : null])]); }));
     var PER = ['Week', 'Fortnight', 'Month'];
     function perSel(v) { return h('select', { class: 'bt-in sm' }, PER.map(function (x) { return h('option', { value: x, text: 'per ' + x.toLowerCase(), selected: v === x ? 'selected' : null }); })); }
     var gN = h('input', { class: 'bt-in sm', type: 'number', min: '0', value: t.group.n }), gP = perSel(t.group.per), oN = h('input', { class: 'bt-in sm', type: 'number', min: '0', value: t.one.n }), oP = perSel(t.one.per);
     var weeks = h('input', { class: 'bt-in', type: 'number', min: '1', value: t.weeks }), start = h('input', { class: 'bt-in', type: 'date', value: t.start || '' });
+    var ongoing = h('input', { type: 'checkbox' }); ongoing.checked = !!t.ongoing;
     var amount = h('input', { class: 'bt-in', type: 'number', min: '0', step: '1', value: t.amount });
     var bPer = h('input', { class: 'bt-in sm', type: 'number', min: '0', placeholder: 'Amount', value: t.bespoke.per }), bFreq = h('select', { class: 'bt-in sm' }, ['week', 'fortnight', 'month', 'payment'].map(function (x) { return h('option', { value: x, text: 'per ' + x, selected: t.bespoke.freq === x ? 'selected' : null }); })), bCount = h('input', { class: 'bt-in sm', type: 'number', min: '1', placeholder: 'How many', value: t.bespoke.count }), bNotes = h('input', { class: 'bt-in', placeholder: 'Notes (e.g. first payment due on…)', value: t.bespoke.notes });
     var bespokeBox = h('div', { class: 'ad-ct-bes', hidden: t.plan !== 'bespoke' }, [h('div', { class: 'ad-ct-inline' }, [bPer, bFreq, bCount]), bNotes]);
@@ -1042,7 +1113,7 @@
     function read() {
       return Object.assign({}, ct ? ct.terms : {}, { package: pkg.value, programs: Array.prototype.filter.call(progs.querySelectorAll('input'), function (x) { return x.checked; }).map(function (x) { return x.value; }),
         inclusions: Array.prototype.reduce.call(incl.querySelectorAll('input'), function (o, x) { o[x.value] = x.checked; return o; }, {}),
-        group: { n: Number(gN.value) || 0, per: gP.value }, one: { n: Number(oN.value) || 0, per: oP.value }, weeks: Number(weeks.value) || 8, start: start.value,
+        group: { n: Number(gN.value) || 0, per: gP.value }, one: { n: Number(oN.value) || 0, per: oP.value }, weeks: Number(weeks.value) || 8, ongoing: ongoing.checked, start: start.value,
         plan: t.plan, amount: Number(amount.value) || 0, bespoke: { per: bPer.value, freq: bFreq.value, count: bCount.value, notes: bNotes.value.trim() }, coach: 'Savannah Barber' });
     }
     var prev = h('div');
@@ -1052,7 +1123,7 @@
       h('div', { class: 'ad-field wide' }, [h('span', { text: 'Inclusions' }), incl]),
       h('div', { class: 'ad-field' }, [h('span', { text: 'Group 1 hour sessions' }), h('div', { class: 'ad-ct-inline' }, [gN, gP])]),
       h('div', { class: 'ad-field' }, [h('span', { text: 'Individual 1 hour sessions' }), h('div', { class: 'ad-ct-inline' }, [oN, oP])]),
-      h('label', { class: 'ad-field' }, ['How long (weeks)', weeks]),
+      h('div', { class: 'ad-field' }, [h('span', { text: 'How long (weeks)' }), weeks, h('label', { class: 'cb-check' }, [ongoing, 'Ongoing (month to month, no set length)'])]),
       h('label', { class: 'ad-field' }, [h('span', null, ['Start date ', h('span', { class: 'ad-muted', text: '(no fixed end date, in case they extend)' })]), start]),
       h('div', { class: 'ad-field wide' }, [h('span', { text: 'Payment plan' }), planBox, bespokeBox]),
       h('label', { class: 'ad-field' }, ['Investment (AUD, total)', amount])
@@ -1184,7 +1255,8 @@
       var mini = (C.mini && C.mini.setup && C.mini.setup.lessons) || [];
       mini.forEach(function (l) { var id = vimeoId(l.vimeo); if (id) taken[id] = 1; });
       (d.videos || []).forEach(function (v) {
-        var mm = /^\s*(\d+)\s*[.)-]?\s*setting (?:yourself |your self )?up for success/i.exec(v.name || ''); if (!mm || taken[v.id]) return;
+        var mm = /setting (?:yourself |your self )?up for success\s*[-–:]\s*(\d+)\b/i.exec(v.name || '') || /^\s*(\d+)\s*[.)-]?\s*setting (?:yourself |your self )?up for success/i.exec(v.name || ''); if (!mm || taken[v.id]) return;
+        if (Number(mm[1]) === 9) { var il = all.filter(function (x) { return x.id === 'i2'; })[0]; if (il && vimeoId(il.vimeo) !== v.id) { il.vimeo = v.link; taken[v.id] = 1; linked++; } return; }
         var ml = mini.filter(function (x) { return x.n === Number(mm[1]) && !vimeoId(x.vimeo); })[0]; if (ml) { ml.vimeo = v.link; taken[v.id] = 1; linked++; }
       });
       all = all.concat(mini);

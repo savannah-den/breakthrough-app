@@ -193,3 +193,23 @@ end; $$;
 drop trigger if exists on_profile_invite_contract on public.profiles;
 create trigger on_profile_invite_contract after insert on public.profiles
   for each row execute function public.invite_contract();
+
+-- Client status (current / past) + program tags (1 Nov 2026).
+-- tags: [{"t":"Founding Member","on":true}, ...]  on = in it now, off = done. Copied from the invite on first log-in.
+alter table public.profiles add column if not exists status text not null default 'current';
+alter table public.profiles add column if not exists tags jsonb not null default '[]'::jsonb;
+alter table public.invites add column if not exists status text not null default 'current';
+alter table public.invites add column if not exists tags jsonb not null default '[]'::jsonb;
+create or replace function public.invite_meta() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare inv public.invites%rowtype;
+begin
+  select * into inv from public.invites where lower(email) = lower(new.email);
+  if found then
+    update public.profiles set status = coalesce(inv.status, 'current'), tags = coalesce(inv.tags, '[]'::jsonb) where id = new.id;
+  end if;
+  return new;
+end; $$;
+drop trigger if exists on_profile_invite_meta on public.profiles;
+create trigger on_profile_invite_meta after insert on public.profiles
+  for each row execute function public.invite_meta();

@@ -495,3 +495,16 @@ svg.ct-shot{border:0;height:auto}
 .ad-wait-card{display:flex;flex-direction:column;gap:10px}
 
 .ad-hero-t{display:flex;align-items:center;gap:14px}.ad-logo{width:54px;height:54px;border-radius:14px;box-shadow:0 0 22px rgba(244,194,247,.35);flex:none}
+
+/* status + program tags */
+.ad-filtwrap{display:flex;flex-direction:column;gap:8px}
+.ad-tags{display:flex;flex-wrap:wrap;gap:6px}
+.ad-tags.sm{margin-top:2px}
+.ad-tag{--tg:#F1F9A6;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--tg);border:1.5px solid #1F1412;color:#1F1412;font:600 12px Poppins,sans-serif;white-space:nowrap}
+.ad-tag.off{background:transparent;border-color:var(--tg);color:#6A5A57;opacity:.75}
+.ad-tag.past-st{background:#EDE3DF;border-color:#B9ADAA;color:#6A5A57}
+.ad-tags.big .ad-tag,.ad-tags.filt .ad-tag{font-size:13.5px;padding:7px 14px}
+.ad-tagbtn{cursor:pointer}
+.ad-tagbtn.none{background:#FFFFFF;border:1.5px dashed #B9ADAA;color:#6A5A57}
+.ad-tagbtn:focus-visible{outline:3px solid #F28C3B;outline-offset:2px}
+.ad-tagcard{display:flex;flex-direction:column;gap:12px}
