@@ -23,7 +23,22 @@ function hourIn(tz, t) { try { return Number(new Intl.DateTimeFormat('en-AU', { 
 function dowIn(tz, t) { try { return new Intl.DateTimeFormat('en-AU', { timeZone: tz, weekday: 'short' }).format(new Date(t)); } catch (e) { return ''; } }
 function dayIn(tz, t) { try { return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t)); } catch (e) { return new Date(t).toISOString().slice(0, 10); } }
 async function setting(key) { const r = await push.svc('app_settings?select=value&key=eq.' + key).then(j); return r && r[0] ? r[0].value : null; }
-async function saveSetting(key, value) { return push.svc('app_settings?on_conflict=key', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates' }, body: JSON.stringify([{ key, value, updated_at: new Date().toISOString() }]) }); }
+// private bookkeeping lives on Sav's own coach_clients row (coach-only), never in app_settings (which every logged-in client can read)
+let SYS = null;
+async function sysLoad() {
+  const admins = await push.svc('profiles?select=id,email&is_admin=eq.true').then(j);
+  const me = (admins || []).find(a => /colourmeneurospicy|savannahdenny/i.test(a.email || '')) || (admins || [])[0];
+  if (!me) return (SYS = { id: null, data: {} });
+  const row = ((await push.svc('coach_clients?select=data&client_id=eq.' + me.id).then(j)) || [])[0];
+  return (SYS = { id: me.id, data: (row && row.data) || {} });
+}
+async function sysGet(key) { if (!SYS) await sysLoad(); return ((SYS.data.sys || {})[key]) || null; }
+async function sysSet(key, value) {
+  if (!SYS) await sysLoad(); if (!SYS.id) return;
+  const row = ((await push.svc('coach_clients?select=data&client_id=eq.' + SYS.id).then(j)) || [])[0], data = Object.assign({}, (row && row.data) || {});
+  data.sys = Object.assign({}, data.sys || {}); data.sys[key] = value; SYS.data = data;
+  return push.svc('coach_clients?on_conflict=client_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates' }, body: JSON.stringify([{ client_id: SYS.id, data, updated_at: new Date().toISOString() }]) });
+}
 async function sendMail(to, m) {
   if (!process.env.RESEND_API_KEY) return false;
   const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' },
@@ -57,7 +72,8 @@ function clip(t, n) { t = String(t || '').replace(/\s+/g, ' ').trim(); return t.
 async function run(opts) {
   opts = opts || {};
   const now = opts.now || Date.now(), dry = !!opts.dry;
-  const baseline = !(await setting('mailBaseline'));
+  SYS = null;
+  const baseline = !(await sysGet('mailBaseline'));
   const course = await setting('course');
   const L = lessonsOf(course), total = L.length || 1;
   const sent = [];
@@ -65,18 +81,18 @@ async function run(opts) {
   // ---- 4: still waiting (added, welcome sent, never logged in) ----
   const [invites, profs] = await Promise.all([push.svc('invites?select=*').then(j), push.svc('profiles?select=id,email,full_name,tier,status,is_admin,program_start,created_at,last_seen_at').then(j)]);
   const haveProfile = {}; (profs || []).forEach(p => { if (p.email) haveProfile[p.email.toLowerCase()] = 1; });
-  const invLog = (await setting('mailLogInvites')) || {};
+  const invLog = (await sysGet('mailLogInvites')) || {};
   for (const i of invites || []) {
     const em = String(i.email || '').toLowerCase(); if (!em || haveProfile[em] || invLog[em] || !i.welcome_sent_at) continue;
     if (now - Date.parse(i.welcome_sent_at) < 2 * DAY) continue;
     if (!baseline) { const m = E.notOpenedEmail({ first: first(i.full_name), tier: i.tier === 'self_paced' ? 'self' : '', site: E.SITE }); if (!dry && await sendMail(em, m)) sent.push({ to: em, what: 'app still waiting' }); else if (dry) sent.push({ to: em, what: 'app still waiting (dry run)' }); }
     invLog[em] = now;
   }
-  if (!dry) await saveSetting('mailLogInvites', invLog);
+  if (!dry) await sysSet('mailLogInvites', invLog);
 
   // ---- everyone who's logged in ----
   const people = (profs || []).filter(p => !p.is_admin && p.status !== 'past' && p.email);
-  if (!people.length) { if (baseline && !dry) await saveSetting('mailBaseline', now); return { baseline, sent }; }
+  if (!people.length) { if (baseline && !dry) await sysSet('mailBaseline', now); return { baseline, sent }; }
   const ids = people.map(p => p.id);
   const [rows, contracts] = await Promise.all([
     push.svc('client_data?select=user_id,key,value&user_id=in.(' + ids.join(',') + ')&key=in.(bt-mail-log,bt-course,program-decoder-v1,bt-vwork,cmn-companion,cmn-1to1-dashboard,cmn-rep-results,bt-profile,bt-tz)').then(j),
@@ -161,7 +177,7 @@ async function run(opts) {
     }
     if (changed && !dry) await push.svc('client_data?on_conflict=user_id,key', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates' }, body: JSON.stringify([{ user_id: p.id, key: 'bt-mail-log', value: JSON.stringify(log), updated_at: new Date().toISOString() }]) });
   }
-  if (baseline && !dry) await saveSetting('mailBaseline', now);
+  if (baseline && !dry) await sysSet('mailBaseline', now);
   return { baseline, sent };
 }
 module.exports = { run, lessonsOf };
