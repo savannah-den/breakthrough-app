@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breakthrough Client Emails</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: a running timeline of the client's journey; each email is a card with its rule on the left and the real email on the right. */
+:root {
+  --bg: #FBF4F1; --surface: #FFFFFF; --ink: #24130F; --muted: #6E5B57; --line: #E7D3CD;
+  --maroon: #4A1210; --lime: #F1F9A6; --pink: #F4C2F7; --red: #A8231F; --green: #2D6A22; --greenbg: #E2F2DC; --amber: #8A5A00; --amberbg: #FCEFC9;
+  --display: 'Playfair Display', Georgia, 'Times New Roman', serif; --body: 'Poppins', Arial, Helvetica, sans-serif; --hand: 'Patrick Hand SC', 'Trebuchet MS', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1D0B09; --surface: #2B110E; --ink: #FCEFEA; --muted: #CDB2AC; --line: #4A2621; --maroon: #5A1A16; --lime: #E7F08F; --pink: #E7AEEA; --red: #F08A80; --green: #9AD58C; --greenbg: #1E3519; --amber: #F2C766; --amberbg: #3B2C0A; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #1D0B09; --surface: #2B110E; --ink: #FCEFEA; --muted: #CDB2AC; --line: #4A2621; --maroon: #5A1A16; --lime: #E7F08F; --pink: #E7AEEA; --red: #F08A80; --green: #9AD58C; --greenbg: #1E3519; --amber: #F2C766; --amberbg: #3B2C0A; color-scheme: dark }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6 }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 28px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0 }
+.top { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; align-items: start }
+.kick { font-family: var(--hand); letter-spacing: .08em; font-size: 18px; color: var(--red) }
+.top h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.05; margin: 4px 0 12px }
+.top p { margin: 0 0 10px; max-width: 62ch; color: var(--muted) }
+.rules { background: var(--maroon); color: #FCEFEA; border-radius: 22px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px }
+.rules h2 { font-size: 22px; color: #F1F9A6 }
+.rules ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px }
+.rules b { color: #F1F9A6 }
+.legend { display: flex; flex-wrap: wrap; gap: 8px }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 11px; font-size: 12.5px; font-weight: 600; border: 1.5px solid transparent; white-space: nowrap }
+.pill.ready, .pill.built { background: var(--greenbg); color: var(--green) }
+.pill.new { background: var(--lime); color: #24130F; border-color: #24130F }
+.pill.question { background: var(--amberbg); color: var(--amber) }
+.pill.approved { background: var(--greenbg); color: var(--green); border-color: var(--green) }
+.pill.draft { background: var(--amberbg); color: var(--amber); border-style: dashed; border-color: var(--amber) }
+.pill.later { background: transparent; color: var(--muted); border-color: var(--line); border-style: dashed }
+.month { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px }
+.month h2 { font-size: 22px }
+.month p { margin: 0; color: var(--muted); font-size: 14px }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px }
+.day { border: 1px solid var(--line); border-radius: 12px; min-height: 76px; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; line-height: 1.25; min-width: 0 }
+.day .d { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums }
+.day .e { border-radius: 6px; padding: 2px 5px; background: var(--lime); color: #24130F; overflow-wrap: anywhere }
+.day .e.call { background: var(--pink) }
+.day .e.ess { background: var(--greenbg); color: var(--green) }
+.day .e.skip { background: transparent; color: var(--muted); font-style: italic; padding: 0 }
+.stage { display: flex; flex-direction: column; gap: 14px }
+.stage > h2 { font-size: 28px; display: flex; align-items: baseline; gap: 12px }
+.stage > h2 small { font-family: var(--hand); font-size: 17px; color: var(--red); letter-spacing: .06em }
+.card { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); overflow: hidden }
+.card.new { border-color: var(--ink) }
+.info { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.num { font-family: var(--display); font-weight: 800; font-size: 15px; width: 34px; height: 34px; border-radius: 50%; background: var(--maroon); color: #F1F9A6; display: grid; place-items: center; flex: none }
+.ttl { display: flex; gap: 12px; align-items: center }
+.ttl h3 { font-size: 22px; line-height: 1.15 }
+dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: 14px }
+dt { color: var(--muted); font-weight: 500 }
+dd { margin: 0 }
+.subj { font-size: 14px; background: var(--bg); border-radius: 12px; padding: 8px 12px; overflow-wrap: anywhere }
+.subj span { color: var(--muted); font-size: 12px; display: block }
+.why { margin: 0; font-size: 14px; color: var(--muted) }
+.prev { background: #3A0E0C; display: flex; flex-direction: column; min-width: 0 }
+.prev-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; color: #F1F9A6; font-family: var(--hand); letter-spacing: .06em; font-size: 15px }
+.prev-bar button { font: 600 12.5px var(--body); background: #F1F9A6; color: #24130F; border: 1.5px solid #24130F; border-radius: 999px; padding: 4px 12px; cursor: pointer }
+.prev-bar button:focus-visible { outline: 3px solid #F4C2F7; outline-offset: 2px }
+iframe { border: 0; width: 100%; height: 560px; display: block; background: #3A0E0C }
+.card.tall iframe { height: 1100px }
+.foot { text-align: center; color: var(--muted); font-size: 14px }
+@media (max-width: 820px) { .top, .card { grid-template-columns: minmax(0, 1fr) } iframe { height: 520px } .days { gap: 3px } .day { min-height: 60px; font-size: 10px; padding: 4px } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto } }
+.backlink{color:var(--red);font-weight:600;text-decoration:none}
+</style>
+
+</head><body>
+<div class="wrap"><a class="backlink" href="index.html">← Back to the playground</a>
+  <header class="top">
+    <div>
+      <div class="kick">Colour Me Neurospicy · client journey</div>
+      <h1>Every email your clients get</h1>
+      <p>Seventeen emails from first login to the finish line, in the order a 1:1 client meets them. Each card shows when it sends, who gets it and the real email, filled in for an example client, Bec.</p>
+      <p>Tell me which numbers you approve (or what to change) and I’ll send you a test of each one.</p>
+      <div class="legend" aria-label="Status key">
+        <span class="pill approved">✓ Approved by you</span><span class="pill built">Built</span><span class="pill new">New: needs your OK</span><span class="pill draft">Draft</span><span class="pill question">My suggestion</span><span class="pill later">Comes with a later feature</span>
+      </div>
+    </div>
+    <aside class="rules" aria-labelledby="rules-h">
+      <h2 id="rules-h">How often: my recommendation</h2>
+      <ul>
+        <li><b>Essentials always send:</b> login code, welcome, agreement, call reminders, session recaps.</li>
+        <li><b>Everything else:</b> at most 1 a day and 3 a week, never on a day they have a call.</li>
+        <li><b>Only between 9am and 7pm their time</b> (call reminders excepted).</li>
+        <li><b>Gone quiet?</b> Two check-ins max (day 7 and 14), then email stops and the app’s gentle notifications carry on.</li>
+        <li><b>Their choice:</b> a switch in Profile to turn off check-ins and nudges, plus an unsubscribe link in those emails. Essentials stay on.</li>
+        <li><b>Every subject line</b> starts with their name and ends with “Savannah - Colour Me Neurospicy”, so they can always find you in their inbox.</li>
+        <li><b>Call reminders:</b> email + phone notification the day before and 2 hours before; 15 minutes before is a phone notification only. Times show <b>their time in bold</b>, with yours underneath.</li>
+        <li><b>Phone vs email:</b> daily nudges stay as phone notifications only. Email is for things worth keeping.</li>
+      </ul>
+    </aside>
+  </header>
+
+  <section class="month" aria-labelledby="m-h">
+    <h2 id="m-h">Bec’s first three weeks, as emails</h2>
+    <p>A 1:1 client who starts on a Monday, has calls on day 5 and day 19, goes quiet for a week in the middle, then finishes Week 1.</p>
+    <div class="days" id="days"></div>
+    <div class="legend"><span class="pill built" style="background:var(--greenbg)">Essential</span><span class="pill" style="background:var(--pink);color:#24130F">Call reminder</span><span class="pill new">Check-in or nudge</span></div>
+  </section>
+
+  <div id="stages"></div>
+  <p class="foot">Previews use example data. The real emails fill in each client’s name, times in their timezone, progress, wins and why.</p>
+</div>
+
+<script src="js/emails.js"></script>
+<script>
+var EMAILS = [{"stage": "Getting started", "n": 1, "name": "Your login code", "when": "Every time they log in", "who": "Everyone", "status": "approved", "statusText": "✓ Approved · needs pasting into Supabase", "why": "Right now this is Supabase’s plain grey default. This branded version replaces it so their very first email from you already looks like you.", "make": "loginCodeEmail", "args": {"code": "482913", "noName": true}}, {"stage": "Getting started", "n": 2, "name": "Welcome (1:1)", "when": "When you tap “Send welcome email” on their page", "who": "New 1:1 clients", "status": "approved", "statusText": "✓ Approved by you", "why": "Gets them into the app and through the four things to do before your first call.", "make": "welcomeEmail", "args": {}}, {"stage": "Getting started", "n": 3, "name": "Welcome (self-paced)", "when": "When you add a self-paced client (or they buy)", "who": "Self-paced clients", "status": "approved", "statusText": "✓ Approved by you", "why": "Same warm start, minus the 1:1 bits. Points them at the mini course and intentions first.", "make": "welcomeSelfEmail", "args": {"tier": "self"}}, {"stage": "Getting started", "n": 4, "name": "Your app’s still waiting", "when": "2 days after the welcome, only if they haven’t logged in", "who": "Everyone", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "Catches the people who opened the welcome, meant to, and forgot. One email only.", "make": "notOpenedEmail", "args": {}}, {"stage": "Getting started", "n": 5, "name": "Your agreement is ready", "when": "When you send their agreement, plus one reminder 3 days later if it’s unsigned", "who": "1:1 and group clients", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "They can’t go further in the app until it’s signed, so this stops anyone getting stuck.", "make": "agreementEmail", "args": {}}, {"stage": "Getting started", "n": 6, "name": "Two sleeps until our first call", "when": "2 days before the first 1:1, only if their set-up isn’t finished", "who": "New 1:1 clients", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "Shows them exactly what’s done and what’s left, ticked off from the app, so they walk in prepared.", "make": "firstCallPrepEmail", "args": {"call": 1}}, {"stage": "Calls", "n": 7, "name": "Call reminder: the day before", "when": "24 hours before every call they’re invited to (plus a phone notification)", "who": "1:1 and group clients", "status": "approved", "statusText": "✓ Their time bold, your time underneath", "why": "The day, the time in their timezone, and a big Join on Zoom button.", "make": "reminderEmail", "args": {"kind": "1:1", "lead": "24h", "call": 26}}, {"stage": "Calls", "n": 8, "name": "Call reminder: 2 hours before", "when": "2 hours before every call (plus a phone notification)", "who": "1:1 and group clients", "status": "approved", "statusText": "✓ Email + phone notification", "why": "Three emails per call adds up fast (about 12 a month on 1:1 + group). The phone notification still goes out at 2 hours.", "make": "reminderEmail", "args": {"kind": "1:1", "lead": "2h", "call": 2}}, {"stage": "Calls", "n": 9, "name": "Call reminder: 15 minutes before", "when": "15 minutes before every call: phone notification only", "who": "1:1 and group clients", "status": "approved", "statusText": "✓ Approved · phone notification only", "why": "The one that actually gets people into the room on time.", "make": "reminderEmail", "args": {"kind": "1:1", "lead": "15m", "call": 0.25}}, {"stage": "Calls", "n": 10, "name": "CMS group call reminders", "when": "Day before, 2 hours and 15 minutes before every “CMS group” call in your calendar", "who": "Everyone in a Group or 1:1 program (or whose agreement includes group calls)", "status": "draft", "statusText": "Draft: waiting until the group calls are sorted", "why": "Its own design for group calls, always using your group Zoom room. Asks them to bring a win and a question.", "make": "reminderEmail", "args": {"kind": "Group", "lead": "2h", "call": 2}}, {"stage": "Calls", "n": 11, "name": "Your session recap", "when": "When you tap “✉️ Email their recap” on a session in their page (you check every line first)", "who": "1:1 clients", "status": "approved", "statusText": "✓ Approved · you tap “Email their recap” on the session", "why": "Big takeaways and what to do before the next call, so the work keeps going between sessions. Now with “Your coach will…”: your own action items from the summary, so they know what you’re doing too.", "make": "recapEmail", "args": {"first": "Tyler", "n": 1, "points": ["You joined to feel more at ease around people and build real connection. That’s the why we’ll keep coming back to.", "You think in logic and steps. That’s a strength: give your brain the “why” and a clear system, and it gets moving.", "Perfectionism and overthinking slow you down at home, where life is messier than the systems at work. Good, better, best gets you started.", "Link everything to your toward driver: learning to cook is a step towards the connection you want."], "todo": ["Finish the Week 1 videos and activities before our next call.", "Practise “good, better, best” whenever perfectionism or decision-making resistance kicks in.", "Use your toward driver to get yourself cooking.", "Forward me the reminder emails you got, so I can check the timing.", "Bring any questions or reflections from the course to our next call."], "coach": ["Fix the link between DOSE and the next activity in the app.", "Make call times show your time and mine clearly, so there’s no time-zone confusion.", "Add a notes section at the end of each lesson and in your Becoming Book."]}}, {"stage": "The program", "n": 12, "name": "Week unlocked", "when": "When you tap “Unlock Week…” for them", "who": "1:1 clients", "status": "approved", "statusText": "✓ Approved · sends when you unlock a week", "why": "Replaces the old plain version with the branded one, plus what’s inside the week.", "make": "weekUnlockedEmail", "args": {}}, {"stage": "The program", "n": 13, "name": "Your week in Breakthrough", "when": "Sundays at 6pm their time, if they’ve been in the app that week", "who": "Everyone mid-course", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "Where they’re up to, their week as pictures (play buttons, ticks, stars), one of their own wins and what’s next. Pride, not pressure.", "make": "weeklyEmail", "args": {}}, {"stage": "The program", "n": 14, "name": "Week complete: big celebration", "when": "Every time they finish a module (all the lessons and activities in a week)", "who": "Everyone", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "Their week in pictures (play buttons, ticks, stars), a quote from their notebook, their wins, everything they’ve completed so far, and a nudge to add it to their proof portfolio.", "make": "moduleCompleteEmail", "args": {}}, {"stage": "The program", "n": 15, "name": "You’re halfway", "when": "When they finish half the lessons", "who": "Everyone", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "A milestone moment with their proof and the beliefs they’ve flipped, right when motivation usually dips.", "make": "milestoneEmail", "args": {}}, {"stage": "The program", "n": 16, "name": "Just checking in on you", "when": "7 days with no activity; a softer one at 14 days; then emails stop", "who": "Everyone mid-course", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "Uses their own why from their intentions. Two emails max, then the app’s gentle notifications take over.", "make": "missYouEmail", "args": {}}, {"stage": "Wrapping up", "n": 17, "name": "You finished Breakthrough", "when": "When they finish the last lesson (or you mark them complete)", "who": "Everyone", "status": "approved", "statusText": "✓ Approved · sends by itself", "why": "A proper party: then vs now in their own words, the beliefs they flipped, their whole journey in pictures, a heartfelt testimonial invite, and what’s next (ECT, ongoing 1:1, group calls).", "make": "completeEmail", "args": {}}];
+var IMGS = {"logo":"icons/icon-192.png","sav-face":"img/email/sav-face.jpg","sav-welcome":"img/email/sav-welcome.jpg","welcome/home":"img/email/welcome/home.jpg","welcome/steps":"img/email/welcome/steps.jpg","welcome/mini":"img/email/welcome/mini.jpg","welcome/intentions":"img/email/welcome/intentions.jpg","sav-zoom":"img/email/sav-zoom.jpg","sav-dog":"img/email/sav-dog.jpg","icons/blueprint":"img/email/icons/blueprint.png","icons/box":"img/email/icons/box.png","icons/breathe":"img/email/icons/breathe.png","icons/comehome":"img/email/icons/comehome.png","icons/dose":"img/email/icons/dose.png","icons/flame":"img/email/icons/flame.png","icons/heart":"img/email/icons/heart.png","icons/intent":"img/email/icons/intent.png","icons/move":"img/email/icons/move.png","icons/pause":"img/email/icons/pause.png","icons/play":"img/email/icons/play.png","icons/proof":"img/email/icons/proof.png","icons/rewind":"img/email/icons/rewind.png","icons/setup":"img/email/icons/setup.png","icons/sparkle":"img/email/icons/sparkle.png","icons/star":"img/email/icons/star.png","icons/tick":"img/email/icons/tick.png","icons/ub":"img/email/icons/ub.png","icons/vagal":"img/email/icons/vagal.png","icons/whatif":"img/email/icons/whatif.png"};
+(function () {
+  function el(t, c, txt) { var e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; }
+  // built live from the real email code (js/emails.js), so this always matches what clients get
+  var IMGF = function (k) { return k === 'logo' ? 'icons/icon-192.png' : 'img/email/' + k + (/^icons\//.test(k) ? '.png' : '.jpg'); };
+  function made(i) {
+    var e = EMAILS[i], a = JSON.parse(JSON.stringify(e.args || {}));
+    if (a.call != null) { var t = new Date(Date.now() + a.call * 3600e3); t.setMinutes(a.call < 1 ? t.getMinutes() : 0, 0, 0); a.start = t.toISOString(); delete a.call; }
+    a.tz = a.tz || 'Australia/Sydney'; a.country = a.country || 'AU'; a.first = a.first || 'Bec'; a.img = IMGF; a.site = 'https://app.colourmeneurospicy.com.au'; a.zoom = a.zoom || 'https://us06web.zoom.us/j/81234567890?pwd=example';
+    try { return BT_EMAILS[e.make](a); } catch (x) { return { subject: '(couldn’t build this one: ' + x.message + ')', html: '' }; }
+  }
+  function html(i) { return made(i).html; }
+  // the month strip
+  var plan = { 1: [['ess', '2 Welcome']], 2: [['ess', '1 Login code'], ['ess', '5 Agreement']], 3: [['ess', '6 Two sleeps to go']], 4: [['call', '7 Call tomorrow']], 5: [['call', '9 Starting in 15 (phone)']], 6: [['ess', '11 Session recap']], 7: [['', '13 Your week']], 14: [['skip', 'No weekly email: they weren’t in the app']], 15: [['', '16 Checking in']], 18: [['call', '7 Call tomorrow']], 19: [['call', '9 Starting in 15 (phone)']], 10: [['call', '10 Group call tomorrow']], 11: [['call', '10 Group in 15 min']], 17: [['', '14 Week 1 done! 🎉']], 20: [['ess', '11 Session recap']], 21: [['', '13 Your week']] };
+  var names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], days = document.getElementById('days');
+  for (var d = 1; d <= 21; d++) {
+    var c = el('div', 'day'); c.appendChild(el('span', 'd', names[(d - 1) % 7] + ' ' + d));
+    (plan[d] || []).forEach(function (x) { c.appendChild(el('span', 'e ' + x[0], x[1])); });
+    if (d >= 8 && d <= 13) { var q = el('span', 'd', 'quiet week'); q.style.fontWeight = '400'; c.appendChild(q); }
+    days.appendChild(c);
+  }
+  // the cards
+  var root = document.getElementById('stages'), cur = null, wrapS = null;
+  EMAILS.forEach(function (e, i) {
+    if (e.stage !== cur) {
+      cur = e.stage; wrapS = el('section', 'stage'); var h = el('h2'); h.appendChild(document.createTextNode(e.stage + ' '));
+      var cnt = EMAILS.filter(function (x) { return x.stage === e.stage; }).length; h.appendChild(el('small', null, cnt + ' email' + (cnt === 1 ? '' : 's'))); wrapS.appendChild(h); root.appendChild(wrapS);
+    }
+    var card = el('article', 'card' + (e.status === 'new' ? ' new' : '')); card.id = 'email-' + e.n;
+    var info = el('div', 'info'), t = el('div', 'ttl'); t.appendChild(el('span', 'num', String(e.n))); t.appendChild(el('h3', null, e.name)); info.appendChild(t);
+    info.appendChild(el('span', 'pill ' + e.status, e.statusText));
+    var dl = el('dl'); [['Sends', e.when], ['Goes to', e.who]].forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); }); info.appendChild(dl);
+    var s = el('div', 'subj'); s.appendChild(el('span', null, 'Subject line')); s.appendChild(document.createTextNode(made(i).subject)); info.appendChild(s);
+    info.appendChild(el('p', 'why', e.why));
+    var pv = el('div', 'prev'), bar = el('div', 'prev-bar'); bar.appendChild(el('span', null, 'The email'));
+    var f = el('iframe'); f.title = 'Preview of email ' + e.n + ': ' + e.name; f.setAttribute('loading', 'lazy'); f.srcdoc = html(i);
+    var b = el('button', null, 'Show it all'); b.type = 'button'; b.addEventListener('click', function () { var on = card.classList.toggle('tall'); b.textContent = on ? 'Show less' : 'Show it all'; });
+    bar.appendChild(b); pv.appendChild(bar); pv.appendChild(f);
+    card.appendChild(info); card.appendChild(pv); wrapS.appendChild(card);
+  });
+})();
+</script>
+
+</body></html>

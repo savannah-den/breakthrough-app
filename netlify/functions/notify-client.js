@@ -3,7 +3,7 @@
 // Email needs RESEND_API_KEY (and EMAIL_FROM, e.g. "Sav <hello@colourmeneurospicy.com.au>") in Netlify's environment variables.
 const { requireAdmin, json } = require('../lib/admin');
 const push = require('../lib/push');
-const SITE = 'https://app.colourmeneurospicy.com.au';
+const { weekUnlockedEmail, SITE } = require('../lib/emails');
 function esc(s) { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function weekEmail(first, week, title) {
   return '<div style="background:#4E0C08;padding:32px 16px;font-family:Helvetica,Arial,sans-serif">'
@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   }
   if (process.env.RESEND_API_KEY && prof.email) {
     const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({ from: process.env.EMAIL_FROM || 'Sav <hello@colourmeneurospicy.com.au>', to: [prof.email], subject: 'Week ' + week + ' is open for you ✨', html: weekEmail(first, week, title) }) });
+      body: JSON.stringify((function () { const m = weekUnlockedEmail({ first, week, title, lessons: (Array.isArray(b.lessons) ? b.lessons : []).map(String).slice(0, 10), site: SITE }); return { from: process.env.EMAIL_FROM || 'Savannah <hello@colourmeneurospicy.com.au>', to: [prof.email], reply_to: 'savannah@colourmeneurospicy.com.au', subject: m.subject, html: m.html }; })()) });
     out.email = r.ok; if (!r.ok) out.emailError = (await r.text()).slice(0, 200);
   } else out.emailSetup = !process.env.RESEND_API_KEY;
   return json(out);

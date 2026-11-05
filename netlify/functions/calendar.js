@@ -3,6 +3,7 @@
 // Netlify → Site configuration → Environment variables as GCAL_ICS_URL. (Never paste it anywhere else.)
 // Only logged-in admins can call this.
 const PUB = require('./supabase-public.json');
+const { findZoom } = require('../lib/ics');
 const SB_URL = process.env.SUPABASE_URL || PUB.url;
 const SB_ANON = process.env.SUPABASE_ANON_KEY || PUB.anonKey;
 
@@ -54,7 +55,8 @@ exports.handler = async (event) => {
     const val = l => l ? unesc(l.slice(l.indexOf(':') + 1)) : '';
     const recId = get('RECURRENCE-ID');
     out.push({ id: val(get('UID')) + (recId ? '_' + val(recId) : ''), start: new Date(st.ms).toISOString(), end: en ? new Date(en.ms).toISOString() : null, allDay: !!st.allDay,
-      title: val(get('SUMMARY')).slice(0, 200), attendees: att, location: val(get('LOCATION')).slice(0, 200), desc: val(get('DESCRIPTION')).slice(0, 400), recurring: !!get('RRULE') });
+      title: val(get('SUMMARY')).slice(0, 200), attendees: att, location: val(get('LOCATION')).slice(0, 200), desc: val(get('DESCRIPTION')).slice(0, 400), recurring: !!get('RRULE'),
+      zoom: findZoom(val(get('LOCATION')), lines.filter(l => /^(CONFERENCE|X-GOOGLE-CONFERENCE)/.test(l)).map(val).join(' '), val(get('DESCRIPTION'))) || '' });
   });
   out.sort((a, b) => a.start.localeCompare(b.start));
   return { statusCode: 200, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify({ events: out }) };

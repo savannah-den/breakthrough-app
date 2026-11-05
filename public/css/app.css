@@ -2053,4 +2053,99 @@ body:has(.bt-party) .bt-tourask,body.bt-touring .bt-tourask{display:none}
 .bt-wel-push.on .bt-wel-sw{background:#4E0C08}.bt-wel-push.on .bt-wel-sw i{left:21px;background:#F1F9A6}
 .bt-pushask{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:#F1F9A6;border:2px solid #1F1412;position:relative}
 .bt-pushask-i{font-size:24px}.bt-pushask-t{flex:1;display:flex;flex-direction:column;gap:2px}.bt-pushask-t span{font-size:13.5px;color:#463A38}
+.bt-pushask-t b{color:#1F1412}
 .bt-pushask-x{position:absolute;top:6px;right:8px;border:0;background:none;cursor:pointer;color:#6A5A57;font-size:13px}
+
+/* 1:1: next call with Sav on Home, Zoom button on every booked call */
+.bt-nextcall{background:#F1F9A6;border:2px solid #1F1412;border-radius:22px;padding:14px 16px;margin:0 0 14px;box-shadow:4px 4px 0 #4E0C08;color:#1F1412}
+.bt-nextcall.live{background:#F4C2F7;animation:btNcPulse 2s ease-in-out infinite}
+@keyframes btNcPulse{0%,100%{box-shadow:4px 4px 0 #4E0C08}50%{box-shadow:4px 4px 0 #4E0C08,0 0 0 6px rgba(232,51,138,.25)}}
+.bt-nextcall-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:4px}
+.bt-nextcall-d{display:block;font-family:'Playfair Display',Georgia,serif;font-size:22px;line-height:1.15;color:#4E0C08}
+.bt-nextcall-t{font-size:15px;font-weight:600}
+.bt-calls-list li{align-items:center}
+.bt-calls-list li>div{display:flex;flex-direction:column}
+.bt-zoom{text-decoration:none;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.bt-nextcall.live{animation:none}}
+
+/* Vagal Tone Workout: parts she hasn't reached in the course yet */
+.vg-tab.lock{opacity:.55}
+.vg-partlock{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 20px}
+.vg-partlock-ic{font-size:40px;line-height:1}
+.vg-partlock-t{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:#4E0C08}
+.vg-partlock .vg-sub{max-width:440px}
+.vg-pr-go.lock{opacity:.7;font-size:13px;white-space:nowrap}
+
+/* My notes: sticky notes on lessons, Home and in the Becoming Book */
+.bt-notes{background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:22px;padding:18px;margin:18px 0;color:#1F1412}
+.bt-notes.home{margin:0 0 14px}
+.bt-notes h2{font-family:'Playfair Display',Georgia,serif;font-size:22px;margin:2px 0 4px;color:#4E0C08}
+.bt-note-form{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.bt-note-ti{font-weight:600}
+.bt-note-ta{min-height:84px;resize:vertical}
+.bt-note-open{margin-top:6px}
+.bt-sticky-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px}
+.bt-sticky-wall:empty{display:none}
+.bt-sticky{position:relative;background:var(--nc,#F1F9A6);border:1.5px solid #1F1412;border-radius:4px 4px 16px 4px;padding:18px 14px 12px;box-shadow:3px 4px 0 rgba(31,20,18,.85);transform:rotate(var(--rot,0deg));display:flex;flex-direction:column;gap:6px;min-width:0;color:#1F1412}
+.bt-sticky.editing{transform:none}
+.bt-sticky.new{animation:btStick .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes btStick{from{opacity:0;transform:translateY(-14px) rotate(-6deg) scale(.9)}to{opacity:1}}
+.bt-sticky-pin{position:absolute;top:-8px;left:50%;width:46px;height:16px;margin-left:-23px;background:rgba(255,255,255,.65);border:1px solid rgba(31,20,18,.25);transform:rotate(-3deg)}
+.bt-sticky-d{font-size:12px;font-weight:600;color:#6A4A45;letter-spacing:.3px}
+.bt-sticky-t{font-family:'Playfair Display',Georgia,serif;font-size:18px;line-height:1.2;color:#4E0C08}
+.bt-sticky-x{margin:0;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.bt-sticky-w{font-size:12.5px;color:#A8231F;font-weight:600}
+.bt-sticky-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.bt-sticky-b{border:0;background:rgba(255,255,255,.6);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:#1F1412}
+.bt-sticky-b.rm{background:none;color:#7A6A67}
+.bt-sticky-b:focus-visible{outline:3px solid #E8338A;outline-offset:2px}
+.bt-sticky-more{align-self:center;font-weight:600;color:#4E0C08}
+.bk-e.note{display:flex;gap:14px;align-items:flex-start}
+.bk-e.note .bt-sticky{flex:1;transform:none}
+@media(prefers-reduced-motion:reduce){.bt-sticky{transform:none}.bt-sticky.new{animation:none}}
+
+/* DOSE: a clear Done at the bottom, and links back to it from lessons */
+.ds-end{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;margin:18px 0 6px;padding:18px;border-top:2px dashed #E6C3BC}
+.ds-end-done{min-width:220px;font-size:17px}
+.ds-end-s{font-size:13.5px;color:#F2D9D2;max-width:420px}
+.bt-dose-ln{display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid #1F1412;border-radius:18px;background:#FFF4EE;color:#1F1412;text-decoration:none;box-shadow:3px 3px 0 #4E0C08}
+.bt-dose-ln .bt-emb{width:44px;height:44px;flex:none}
+.bt-dose-ln>span:nth-child(2){display:flex;flex-direction:column;flex:1}.bt-dose-ln b{font-size:16px}.bt-dose-ln span span{font-size:13.5px;color:#6A5A57}
+/* Home: the sticky-note picture next to "Jot something down" */
+.bt-notes-h.has-art{display:grid;grid-template-columns:76px 1fr;column-gap:14px;align-items:center}
+.bt-notes-h.has-art>*:not(.bt-notes-art){grid-column:2}
+.bt-notes-art{grid-row:1 / span 3;width:76px;height:76px}
+.bt-notes-art svg{width:100%;height:100%;overflow:visible}
+.nt-pad{transform-origin:46px 50px;animation:ntBob 3.6s ease-in-out infinite}
+.nt-pen{transform-origin:76px 34px;animation:ntPen 1.8s ease-in-out infinite}
+.nt-l1,.nt-l2,.nt-l3{stroke-dasharray:40;stroke-dashoffset:40;animation:ntWrite 5.4s ease-in-out infinite}
+.nt-l2{animation-delay:.6s}.nt-l3{animation-delay:1.2s}
+@keyframes ntBob{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(2deg) translateY(-3px)}}
+@keyframes ntPen{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-4px,3px) rotate(-6deg)}}
+@keyframes ntWrite{0%{stroke-dashoffset:40}30%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:40}}
+@media(prefers-reduced-motion:reduce){.nt-pad,.nt-pen{animation:none}.nt-l1,.nt-l2,.nt-l3{animation:none;stroke-dashoffset:0}}
+
+/* My notes: a page torn out of a notebook, writing sits on the lines */
+.bt-sticky{--lh:28px;background-color:#FFFDF7;background-image:linear-gradient(90deg,transparent 30px,rgba(232,51,138,.45) 30px,rgba(232,51,138,.45) 32px,transparent 32px),repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--lh) - 1px),#C9DCF2 calc(var(--lh) - 1px),#C9DCF2 var(--lh));background-position:0 0,0 14px;border:0;border-radius:2px;padding:20px 14px 14px 44px;gap:0;box-shadow:0 2px 0 rgba(31,20,18,.08),3px 5px 12px rgba(31,20,18,.18);line-height:var(--lh);
+  -webkit-mask:radial-gradient(circle at 8px 0,transparent 5px,#000 5.5px) 0 0/16px 100% repeat-x;mask:radial-gradient(circle at 8px 0,transparent 5px,#000 5.5px) 0 0/16px 100% repeat-x}
+.bt-sticky::before{content:"";position:absolute;left:12px;top:44px;width:10px;height:10px;border-radius:50%;background:#EDE3DF;box-shadow:0 84px 0 #EDE3DF,inset 1px 1px 2px rgba(0,0,0,.18)}
+.bt-sticky-pin{display:none}
+.bt-sticky-d,.bt-sticky-t,.bt-sticky-x,.bt-sticky-w{line-height:var(--lh);margin:0}
+.bt-sticky-d{font-size:12px;color:#7A6A67}
+.bt-sticky-t{font-family:'Patrick Hand SC','Playfair Display',cursive;font-size:21px;letter-spacing:.5px;color:#4E0C08}
+.bt-sticky-x{font-size:15.5px;color:#2A1A18}
+.bt-sticky-acts{margin-top:var(--lh);line-height:normal}
+.bt-sticky-b{background:#F4EFEA}
+.bt-sticky.editing{padding-left:14px;background-image:none}
+.bt-sticky.editing .bt-note-ti,.bt-sticky.editing .bt-note-ta{line-height:1.5}
+
+/* torn top edge */
+.bt-sticky{-webkit-mask:none;mask:none;clip-path:polygon(0.00% 2px, 2.78% 6px, 5.56% 6px, 8.33% 2px, 11.11% 5px, 13.89% 6px, 16.67% 3px, 19.44% 1px, 22.22% 6px, 25.00% 0px, 27.78% 6px, 30.56% 0px, 33.33% 4px, 36.11% 3px, 38.89% 5px, 41.67% 6px, 44.44% 2px, 47.22% 2px, 50.00% 1px, 52.78% 3px, 55.56% 6px, 58.33% 4px, 61.11% 6px, 63.89% 3px, 66.67% 3px, 69.44% 1px, 72.22% 4px, 75.00% 2px, 77.78% 2px, 80.56% 1px, 83.33% 2px, 86.11% 4px, 88.89% 6px, 91.67% 3px, 94.44% 1px, 97.22% 0px, 100.00% 1px, 100% 100%, 0 100%);padding-top:24px;background-position:0 0,0 18px}
+.bt-sticky.editing{clip-path:none}
+
+.bt-sticky{clip-path:polygon(0.00% 4px, 3.33% 1px, 6.67% 2px, 10.00% 0px, 13.33% 10px, 16.67% 9px, 20.00% 0px, 23.33% 7px, 26.67% 3px, 30.00% 1px, 33.33% 10px, 36.67% 9px, 40.00% 6px, 43.33% 2px, 46.67% 3px, 50.00% 9px, 53.33% 0px, 56.67% 9px, 60.00% 6px, 63.33% 4px, 66.67% 7px, 70.00% 6px, 73.33% 7px, 76.67% 3px, 80.00% 7px, 83.33% 10px, 86.67% 7px, 90.00% 7px, 93.33% 0px, 96.67% 0px, 100.00% 9px, 100% 100%, 0 100%);padding-top:28px;background-position:0 0,0 22px}
+.bt-sticky.editing{clip-path:none}
+.bt-sticky-wall,.bk-e.note{filter:drop-shadow(2px 4px 5px rgba(31,20,18,.25))}
+.bt-sticky-w{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;margin:4px 0 0;padding:0 12px;line-height:26px;border-radius:999px;background:#F1F9A6;border:1.5px solid #1F1412;color:#1F1412!important;text-decoration:none;font-size:13px;font-weight:600}
+.bt-sticky-wi{font-size:11px;color:#E8338A}
+.bt-sticky-w{line-height:1.35;padding:5px 12px;margin:2px 0 4px;border-radius:14px}

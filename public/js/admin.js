@@ -314,7 +314,7 @@
     var first = (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0];
     if (!p.past.length) return first + ' hasn’t got their first 1:1 booked yet.';
     var last = p.past[p.past.length - 1], days = Math.floor((Date.now() - new Date(last.start)) / 86400000);
-    return days >= 3 ? 'No next 1:1 booked for ' + first + '. Her last session was ' + days + ' days ago (' + p.left + ' left).' : '';
+    return days >= 3 ? 'No next 1:1 booked for ' + first + '. Their last session was ' + days + ' days ago (' + p.left + ' left).' : '';
   }
 
   // wins across clients
@@ -437,6 +437,171 @@
     var t = z.loading ? 'Checking Zoom for summaries and recordings…' : z.setup ? 'Connect Zoom and each session’s AI summary, transcript and recording drop in here by themselves (ask Claude for the steps).' : z.error ? 'Zoom: ' + z.error : z.done ? (z.n ? '✓ Brought in Zoom notes for ' + z.n + ' session' + (z.n === 1 ? '' : 's') + '.' : 'Zoom: nothing new to bring in.') : '';
     return t ? h('div', { class: 'ad-conns' }, [h('span', { class: 'ad-conn ' + (z.error ? 'err' : z.setup ? 'off' : 'on'), text: t }), z.loading ? null : btn]) : null;
   }
+
+  /* ---------- Zoom AI summaries: easy to read, key points pulled out, and Sav's action items ---------- */
+  // Zoom's summary: an overview paragraph, then "Heading: text" sections, then "Next steps:" bullets ("• Name: do this")
+  function readSummary(txt) {
+    var t = String(txt || '').replace(/\r/g, ''), steps = [], secs = [], overview = '';
+    var ns = t.search(/\n\s*(next steps|action items)\s*:?\s*\n/i), body = ns >= 0 ? t.slice(0, ns) : t, tail = ns >= 0 ? t.slice(ns) : '';
+    tail.split('\n').forEach(function (l) { var m = /^\s*[•\-*·]\s*(?:([^:]{2,40}):\s*)?(.+)$/.exec(l); if (m) steps.push({ who: (m[1] || '').trim(), text: m[2].trim() }); });
+    body.split(/\n\s*\n/).forEach(function (para, i) {
+      para = para.trim(); if (!para) return;
+      var m = /^([A-Z][^:\n]{3,70}):\s+([\s\S]+)$/.exec(para);
+      if (m && i > 0) secs.push({ h: m[1].trim(), t: m[2].trim() }); else if (!overview) overview = para; else secs.push({ h: '', t: para });
+    });
+    return { overview: overview, secs: secs, steps: steps };
+  }
+  function isCoachName(w) { return /^(savannah|sav|coach|the coach)\b/i.test(String(w || '').trim()); }
+  function firstSentence(t) { var m = /^(.{20,220}?[.!?])(\s|$)/.exec(String(t || '')); return m ? m[1] : String(t || '').slice(0, 200); }
+  function summaryView(c, key, rec, onEdit) {
+    var R = readSummary(rec.summary), first = (c.full_name || 'them').replace(/^Example:\s*/i, '').split(' ')[0];
+    var mine = R.steps.filter(function (x) { return isCoachName(x.who); }), theirs = R.steps.filter(function (x) { return !isCoachName(x.who); });
+    var box = h('div', { class: 'ad-sum' });
+    box.appendChild(h('div', { class: 'ad-sum-top' }, [h('b', { text: 'Session summary' }), rec.zoom ? h('span', { class: 'ad-conn on', text: '✓ From Zoom' }) : null, h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Edit ✎', onclick: onEdit })]));
+    if (R.secs.length || R.steps.length) {
+      var kp = h('div', { class: 'ad-sum-kp' }, [h('p', { class: 'ad-bk', text: 'Key points' })]);
+      kp.appendChild(h('ul', null, R.secs.filter(function (x) { return x.h; }).slice(0, 8).map(function (x) { return h('li', null, [h('b', { text: x.h + ': ' }), firstSentence(x.t)]); })));
+      box.appendChild(kp);
+    }
+    if (mine.length) box.appendChild(h('div', { class: 'ad-sum-acts mine' }, [h('p', { class: 'ad-bk', text: '🔁 Your actions (on your close-the-loop list)' }), h('ul', null, mine.map(function (x) { return h('li', { text: x.text }); }))]));
+    if (theirs.length) box.appendChild(h('div', { class: 'ad-sum-acts' }, [h('p', { class: 'ad-bk', text: first + '’s next steps' }), h('ul', null, theirs.map(function (x) { return h('li', { text: x.text }); }))]));
+    // email them their recap (design #11): Sav checks every line before it goes
+    if (!c.is_admin) {
+      var rb = h('div', { class: 'ad-recap' });
+      var sentAt = rec.recapAt;
+      var openR = function () {
+        rb.innerHTML = '';
+        var mk = function (label, lines, ph) { var t = h('textarea', { class: 'bt-in ad-ta', rows: String(Math.max(4, lines.length * 2 + 1)), placeholder: ph, 'aria-label': label }); t.value = lines.join('\n'); return [h('label', { class: 'ad-field' }, [label + ' (one per line)', t]), t]; };
+        var P = mk('Your big takeaways', R.secs.filter(function (x) { return x.h; }).slice(0, 4).map(function (x) { return firstSentence(x.t); }), 'What you want them to hold on to');
+        var T = mk('Before our next call', theirs.map(function (x) { return x.text; }), 'Their next steps');
+        var K = mk('Your coach will…', mine.map(function (x) { return x.text; }), 'What you’re doing for them');
+        var msg = h('p', { class: 'ad-muted', role: 'status' });
+        var lines = function (t) { return t.value.split('\n').map(function (x) { return x.replace(/^\s*[•\-*]\s*/, '').trim(); }).filter(Boolean); };
+        var send = function (test) {
+          msg.textContent = test ? 'Sending you a test…' : 'Sending to ' + first + '…';
+          if (isPlay()) { msg.textContent = 'Playground: nothing actually sends. On the live app this emails ' + (test ? 'you' : first) + ' the recap.'; if (!test) { var all0 = Object.assign({}, coach(c).sessions || {}); all0[key] = Object.assign({}, all0[key] || {}, { recapAt: Date.now() }); saveCoach(c, { sessions: all0 }, false); } return; }
+          sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+            return fetch('/.netlify/functions/send-recap', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ to: c.id, n: rec._n || 1, points: lines(P[1]), todo: lines(T[1]), coach: lines(K[1]), test: !!test }) }); })
+            .then(function (x) { return x.json(); }).then(function (d) {
+              if (!d.ok) { msg.textContent = d.error || 'Couldn’t send it.'; return; }
+              msg.textContent = test ? '✓ Test sent to ' + d.to : '✓ Sent to ' + first + ' (' + d.to + ')';
+              if (!test) { var all = Object.assign({}, coach(c).sessions || {}); all[key] = Object.assign({}, all[key] || {}, { recapAt: Date.now() }); saveCoach(c, { sessions: all }, false); }
+            }).catch(function () { msg.textContent = 'Couldn’t reach the email service just now.'; });
+        };
+        // the summary talks about them ("Tyler shared…"); ask AI to turn it into "you" takeaways, if it's switched on
+        if (!isPlay() && (window.BT_CONFIG || {}).aiEnabled !== false) {
+          var was = [P[1].value, T[1].value, K[1].value]; [P, T, K].forEach(function (x) { x[1].disabled = true; }); P[1].value = 'Writing it in your voice…';
+          sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+            return fetch('/.netlify/functions/ai', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ json: true, prompt: 'This is the Zoom AI summary of a 1:1 coaching call between Savannah (the coach) and her client ' + first + '. Write 3 or 4 short takeaways for the session recap email Savannah will send ' + first + '. Write to them directly ("you"), in Savannah\'s warm, direct, Australian voice. Each under 30 words. Only coaching insights from the call: leave out anything about health, diagnoses, therapy, sex, family or trauma. Also rewrite their next steps (to do, written to them as "you") and Savannah\'s own actions (what she\'ll do, written to them, e.g. "Send you…", "Fix…"), keeping the meaning, short and plain. Reply as JSON: {"points": [], "todo": [], "coach": []}.\n\nTHEIR NEXT STEPS:\n' + was[1] + '\n\nSAVANNAH\'S ACTIONS:\n' + was[2] + '\n\nSUMMARY:\n' + String(rec.summary || '').slice(0, 12000) }) }); })
+            .then(function (x) { return x.json(); }).then(function (d) { var J = (d && d.json) || {}; [[P, J.points, 0], [T, J.todo, 1], [K, J.coach, 2]].forEach(function (z) { z[0][1].disabled = false; z[0][1].value = Array.isArray(z[1]) && z[1].length ? z[1].join('\n') : was[z[2]]; }); })
+            .catch(function () { [P, T, K].forEach(function (x, i) { x[1].disabled = false; x[1].value = was[i]; }); });
+        }
+        rb.appendChild(h('div', { class: 'ad-recap-ed' }, [h('b', { text: '✉️ Recap email for ' + first }), h('p', { class: 'ad-muted', text: 'Check every line: this goes to ' + first + ' as written. Their next steps and your actions come straight from the summary.' }), P[0], T[0], K[0],
+          h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Send to ' + first, onclick: function () { send(false); } }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Send me a test', onclick: function () { send(true); } }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Close', onclick: drawR })]), msg]));
+      };
+      var drawR = function () { rb.innerHTML = ''; rb.appendChild(h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn sm', type: 'button', text: '✉️ Email ' + first + ' their recap', onclick: openR }), sentAt ? h('span', { class: 'ad-conn on', text: '✓ Recap sent ' + new Date(sentAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) }) : null])); };
+      drawR(); box.appendChild(rb);
+    }
+    var full = h('details', { class: 'ad-sum-full' }, [h('summary', { text: 'Read the whole summary' })]);
+    if (R.overview) full.appendChild(h('p', { text: R.overview }));
+    R.secs.forEach(function (x) { if (x.h) full.appendChild(h('h4', { text: x.h })); full.appendChild(h('p', { text: x.t })); });
+    box.appendChild(full);
+    return box;
+  }
+
+  /* ---------- Close the loop: Sav's to-dos for each client, from session summaries (or added by hand) ---------- */
+  function loopYmd(t) { var d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function loopUrgent(text) { return /\b(fix|broken|urgent|asap|today|error|not working|wrong|bug|missing)\b/i.test(text); }
+  // things the dashboard can see for itself, so they tick off on their own
+  var SHIPPED = [
+    { re: /(journal|note).{0,40}(section|lesson|becoming|book)|free.?range journal/i, why: 'Notes section added to every lesson, Home and the Becoming Book (5 Nov)' },
+    { re: /time ?zone|time difference/i, why: 'Call times and reminder emails now show their time and yours (5 Nov)' }
+  ];
+  function loopDoneBy(c, l) {
+    var t = l.text, unl = (S.settings.unlocks || {})[c.id], m = /unlock\s+week\s*(\d+)/i.exec(t);
+    if (m) return (unl === 'all' || Number(unl) >= Number(m[1])) ? 'Week ' + m[1] + ' is unlocked for them' : '';
+    if (/(agreement|contract)/i.test(t) && /send|sign|set ?up/i.test(t)) { var k = (S.contracts || {})[c.id]; return k && (k.status === 'sent' || k.status === 'signed') ? 'Their agreement has been ' + k.status : ''; }
+    if (/welcome email/i.test(t)) return welcomeSentAt(c) ? 'Welcome email sent' : '';
+    if (/\bbook\b.{0,30}(session|call)|schedule.{0,20}(session|call)/i.test(t)) return sessionPlan(c).fut.length ? 'Their next call is booked' : '';
+    for (var i = 0; i < SHIPPED.length; i++) if (SHIPPED[i].re.test(t)) return SHIPPED[i].why;
+    return '';
+  }
+  function loopsOf(c) { return (coach(c).loops || []).slice(); }
+  // bring Sav's action items in from every session summary (once per session, so deleting one keeps it deleted)
+  function syncLoops(c) {
+    var co = coach(c), seen = Object.assign({}, co.loopSrc || {}), loops = loopsOf(c), ses = co.sessions || {}, ch = false, plan = sessionPlan(c), nxt = plan.fut[0];
+    Object.keys(ses).forEach(function (k) {
+      var rec = ses[k]; if (!rec || !rec.summary || seen[k]) return;
+      var at = rec.at ? new Date(rec.at).getTime() : Date.now();
+      readSummary(rec.summary).steps.filter(function (x) { return isCoachName(x.who); }).forEach(function (x, i) {
+        var due = nxt ? loopYmd(new Date(nxt.start).getTime() - 864e5) : loopYmd(Math.max(Date.now(), at) + 3 * 864e5);
+        loops.push({ id: k.slice(0, 12) + '-' + i, text: x.text, src: k, at: at, due: due, urg: loopUrgent(x.text) ? 'high' : 'normal' });
+      });
+      seen[k] = Date.now(); ch = true;
+    });
+    loops.forEach(function (l) { if (!l.done) { var why = loopDoneBy(c, l); if (why) { l.done = Date.now(); l.auto = why; ch = true; } } });
+    if (ch) { co.loops = loops; co.loopSrc = seen; saveCoach(c, { loops: loops, loopSrc: seen }, false); }
+    return loops;
+  }
+  function loopRank(l) { var today = loopYmd(Date.now()); return (l.done ? 3 : l.due && l.due < today ? 0 : l.urg === 'high' ? 1 : 2) * 1e13 + (l.due ? new Date(l.due).getTime() : 9e12); }
+  function loopRow(l, onSave, onDel, who) {
+    var today = loopYmd(Date.now()), late = !l.done && l.due && l.due < today, soon = !l.done && l.due && !late && (new Date(l.due) - new Date(today)) / 864e5 <= 2;
+    var tick = h('input', { type: 'checkbox', 'aria-label': 'Done: ' + l.text, checked: l.done ? 'checked' : null, onchange: function () { l.done = tick.checked ? Date.now() : null; if (!tick.checked) l.auto = ''; onSave(); } });
+    var due = h('input', { class: 'bt-in sm ad-loop-due', type: 'date', value: l.due || '', 'aria-label': 'Due date', onchange: function () { l.due = due.value; onSave(); } });
+    var urg = h('select', { class: 'bt-in sm ad-loop-urg', 'aria-label': 'Urgency', onchange: function () { l.urg = urg.value; onSave(); } }, [['high', '🔥 Urgent'], ['normal', 'Normal'], ['low', 'Whenever']].map(function (o) { return h('option', { value: o[0], text: o[1], selected: (l.urg || 'normal') === o[0] ? 'selected' : null }); }));
+    var del = h('button', { class: 'ad-loop-x', type: 'button', 'aria-label': 'Remove', text: '✕', onclick: function () { if (!del.dataset.sure) { del.dataset.sure = 1; del.textContent = 'Remove?'; return; } onDel(); } });
+    return h('li', { class: 'ad-loop' + (l.done ? ' done' : '') + (late ? ' late' : soon ? ' soon' : '') + (l.urg === 'high' ? ' hot' : '') }, [
+      h('label', { class: 'ad-loop-t' }, [tick, h('span', null, [who ? h('b', { class: 'ad-loop-who', text: who + ' · ' }) : null, l.text])]),
+      h('div', { class: 'ad-loop-m' }, l.done ? [h('span', { class: 'ad-loop-ok', text: '✓ Done ' + new Date(l.done).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + (l.auto ? ' · ticked for you: ' + l.auto : '') })]
+        : [late ? h('span', { class: 'ad-loop-flag late', text: 'Overdue' }) : soon ? h('span', { class: 'ad-loop-flag soon', text: 'Due soon' }) : null, due, urg, l.src ? h('span', { class: 'ad-muted', text: 'from a session · ' + new Date(l.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) }) : null]),
+      del
+    ]);
+  }
+  function loopsCard(c) {
+    var loops = syncLoops(c).sort(function (a, b) { return loopRank(a) - loopRank(b); }), first = (c.full_name || 'them').replace(/^Example:\s*/i, '').split(' ')[0];
+    var save = function () { saveCoach(c, { loops: loops }); };
+    var open = loops.filter(function (l) { return !l.done; }).length;
+    var add = h('input', { class: 'bt-in sm', placeholder: 'Add something you need to do for ' + first + '…', 'aria-label': 'New to-do' });
+    var addDue = h('input', { class: 'bt-in sm ad-loop-due', type: 'date', 'aria-label': 'Due date' });
+    var go = function () { var v = add.value.trim(); if (!v) return; loops.push({ id: String(Date.now()), text: v, at: Date.now(), due: addDue.value || '', urg: loopUrgent(v) ? 'high' : 'normal' }); save(); };
+    add.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    return h('div', { class: 'ad-card ad-loops' }, [
+      h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: '🔁 Close the loop' }), h('span', { class: 'ad-ct-st ' + (open ? 'draft' : 'signed'), text: open ? open + ' to do' : 'All done ✓' })]),
+      h('p', { class: 'ad-muted', text: 'Your action items from their session summaries land here, with a date before your next call. Things the dashboard can see (a week unlocked, an agreement sent, an app fix) tick off by themselves.' }),
+      loops.length ? h('ul', { class: 'ad-loop-l' }, loops.map(function (l) { return loopRow(l, save, function () { loops = loops.filter(function (x) { return x !== l; }); save(); }); })) : h('p', { class: 'ad-muted', text: 'Nothing to close yet.' }),
+      h('div', { class: 'ad-loop-add' }, [add, addDue, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: go })])
+    ]);
+  }
+  // every client's open loops in one list, plus Sav's own to-dos (app_settings 'coachTodos')
+  // Sav's own to-dos to start with (asked for 5 Nov 2026); once she changes the list it's saved and these are just history
+  var COACH_TODOS_START = [
+    { id: 'ect-page', text: 'Finish the ECT landing page (before Tyler and Shannon reach Week 4)', at: 1793836800000, due: '2026-11-20', urg: 'high' },
+    { id: 'lp-1to1-group', text: 'Make landing pages for 1:1 and group, and link them to the ECT page', at: 1793836800000, due: '2026-11-27', urg: 'normal' },
+    { id: 'group-calls', text: 'Sort out the group calls, then approve the group call reminder emails (draft #10)', at: 1793836800000, due: '', urg: 'normal' }
+  ];
+  function openLoopCount() { var n = 0; (S.clients || []).forEach(function (c) { if (!c.is_admin) n += (coach(c).loops || []).filter(function (l) { return !l.done; }).length; }); return n + ((S.settings && S.settings.coachTodos) || COACH_TODOS_START).filter(function (l) { return !l.done; }).length; }
+  function allLoopsCard() {
+    var rows = [], todos = JSON.parse(JSON.stringify(S.settings.coachTodos || COACH_TODOS_START));
+    (S.clients || []).forEach(function (c) { if (c.is_admin) return; syncLoops(c).forEach(function (l) { rows.push({ c: c, l: l }); }); });
+    var saveT = function () { sb.from('app_settings').upsert({ key: 'coachTodos', value: todos, updated_at: new Date().toISOString() }).then(function (r) { if (!r.error) S.settings.coachTodos = todos; page(); }); };
+    todos.forEach(function (l) { rows.push({ c: null, l: l }); });
+    rows.sort(function (a, b) { return loopRank(a.l) - loopRank(b.l); });
+    var openN = rows.filter(function (r) { return !r.l.done; }).length;
+    var add = h('input', { class: 'bt-in sm', placeholder: 'Add a to-do for yourself…', 'aria-label': 'New to-do' }), addDue = h('input', { class: 'bt-in sm ad-loop-due', type: 'date', 'aria-label': 'Due date' });
+    var go = function () { var v = add.value.trim(); if (!v) return; todos.push({ id: String(Date.now()), text: v, at: Date.now(), due: addDue.value || '', urg: loopUrgent(v) ? 'high' : 'normal' }); saveT(); };
+    var shown = rows.filter(function (r) { return !r.l.done || Date.now() - r.l.done < 14 * 864e5; });
+    return h('div', { class: 'ad-card ad-loops all' }, [
+      h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: '🔁 Your close-the-loop list' }), h('span', { class: 'ad-ct-st ' + (openN ? 'draft' : 'signed'), text: openN ? openN + ' to do' : 'All done ✓' })]),
+      h('p', { class: 'ad-muted', text: 'Everything you said you’d do, for every client, most urgent first. Tap a name to open their page.' }),
+      shown.length ? h('ul', { class: 'ad-loop-l' }, shown.map(function (r) {
+        var c = r.c, l = r.l;
+        var row = loopRow(l, c ? function () { saveCoach(c, { loops: coach(c).loops }); } : saveT, c ? function () { saveCoach(c, { loops: (coach(c).loops || []).filter(function (x) { return x !== l; }) }); } : function () { todos = todos.filter(function (x) { return x !== l; }); saveT(); }, c ? (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0] : 'You');
+        if (c) { var w = row.querySelector('.ad-loop-who'); w.classList.add('lnk'); w.addEventListener('click', function (e) { e.preventDefault(); S.tab = 'clients'; openClient(c); }); }
+        return row;
+      })) : h('p', { class: 'ad-muted', text: 'Nothing open. Beautiful.' }),
+      h('div', { class: 'ad-loop-add' }, [add, addDue, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: go })])
+    ]);
+  }
   // 1:1 sessions: slots filled from the calendar, with Zoom summary / transcript / Drive link / notes
   function sessionsCard(c) {
     var p = sessionPlan(c), notes = coach(c).sessions || {}, first = (c.full_name || c.email).replace(/^Example:\s*/i, '').split(' ')[0];
@@ -454,8 +619,12 @@
       var row = { user_id: c.id, terms: t, status: k.status || 'draft', updated_at: new Date().toISOString() };
       return sb.from('contracts').upsert(row).then(function (r) { if (r.error) return; S.contracts[c.id] = Object.assign({}, k, row); if (!quiet) page(); });
     }
-    var upISO = p.fut.map(function (e) { return e.start; });
-    if (S.cal && !S.cal.loading && !S.cal.error && !S.cal.setup && JSON.stringify(upISO) !== JSON.stringify(call0.upcoming || [])) saveCall({ upcoming: upISO }, true);
+    // booked dates + each one's own Zoom link (from the calendar invite) copy across to their app
+    var upISO = p.fut.map(function (e) { return e.start; }), upS = p.fut.map(function (e) { return { start: e.start, end: e.end || null, zoom: e.zoom || '' }; });
+    if (S.cal && !S.cal.loading && !S.cal.error && !S.cal.setup && (JSON.stringify(upISO) !== JSON.stringify(call0.upcoming || []) || JSON.stringify(upS) !== JSON.stringify(call0.sessions || []))) {
+      var lastZ = upS.filter(function (x) { return x.zoom; })[0];
+      saveCall(Object.assign({ upcoming: upISO, sessions: upS }, !call0.zoom && lastZ ? { zoom: lastZ.zoom } : {}), true);
+    }
     card.appendChild(h('div', { class: 'ad-sess-call' }, [h('b', { text: 'In ' + first + '’s profile' }), h('span', { class: 'ad-muted', text: 'Booked dates copy across from your calendar by themselves.' }),
       h('label', { class: 'ad-field' }, ['Zoom link', zIn]), h('label', { class: 'ad-field' }, ['Call times', tIn2]),
       h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Save', onclick: function (e) { saveCall({ zoom: zIn.value.trim(), times: tIn2.value.trim() }); } })]));
@@ -471,8 +640,8 @@
         var f = function (k, label, ph, big) { var i = big ? h('textarea', { class: 'bt-in ad-ta', placeholder: ph, 'aria-label': label }) : h('input', { class: 'bt-in', placeholder: ph, 'aria-label': label }); i.value = rec[k] || ''; i.addEventListener('change', function () { var all = Object.assign({}, coach(c).sessions || {}); all[key] = Object.assign({}, all[key] || {}, (function () { var o = {}; o[k] = i.value; o.at = s.ev.start; return o; })()); saveCoach(c, { sessions: all }, false); }); return h('label', { class: 'ad-field' }, [label, i]); };
         row.appendChild(h('div', { class: 'ad-sess-b' }, [
           h('p', { class: 'ad-muted', text: s.ev.title + (s.ev.location ? ' · ' + s.ev.location : '') }),
-          f('summary', 'Zoom AI summary', 'Paste the Zoom AI meeting summary', true),
-          rec.zoom ? h('span', { class: 'ad-conn on', text: '✓ From Zoom' }) : null,
+          rec.summary ? (function () { var holder = h('div'); var show = function () { holder.innerHTML = ''; holder.appendChild(summaryView(c, key, Object.assign({ _n: s.n }, rec), function () { holder.innerHTML = ''; var ed = f('summary', 'Zoom AI summary', 'Paste the Zoom AI meeting summary', true); ed.querySelector('textarea').rows = 18; holder.appendChild(ed); holder.appendChild(h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Done editing', onclick: function () { rec = (coach(c).sessions || {})[key] || rec; page(); } })); })); }; show(); return holder; })()
+            : f('summary', 'Zoom AI summary', 'Paste the Zoom AI meeting summary', true),
           rec.video ? h('a', { class: 'bt-btn ghost sm', href: rec.video, target: '_blank', rel: 'noopener', text: '▶ Open the recording' }) : null,
           f('video', 'Recording link (Zoom or Google Drive)', 'https://zoom.us/rec/… or https://drive.google.com/…'),
           h('details', { class: 'ad-sess-tr' }, [h('summary', { text: 'Transcript' + (rec.transcript ? ' ✓' : '') }), f('transcript', 'Transcript', 'Paste the transcript', true)]),
@@ -829,7 +998,7 @@
   function page() {
     root.innerHTML = '';
     var real = S.clients.filter(function (c) { return !c.is_admin; });
-    var tabs = [['clients', 'Clients'], ['finance', 'Finance'], ['course', 'Course'], ['reminders', 'Open loops'], ['invite', 'Add a client'], ['settings', 'App settings']];
+    var tabs = [['clients', 'Clients'], ['leads', 'Leads'], ['finance', 'Finance'], ['course', 'Course'], ['reminders', 'Open loops' + (openLoopCount() ? ' · ' + openLoopCount() : '')], ['invite', 'Add a client'], ['settings', 'App settings']];
     root.appendChild(h('div', { class: 'ad-wrap' }, [
       h('header', { class: 'ad-hero' }, [
         h('div', { class: 'ad-hero-t' }, [
@@ -845,7 +1014,7 @@
         h('svg', { class: 'ad-squiggle', viewBox: '0 0 400 40', 'aria-hidden': 'true' })
       ]),
       h('nav', { class: 'ad-tabs' }, tabs.map(function (t) { return h('button', { class: 'ad-tab' + (S.tab === t[0] ? ' on' : ''), text: t[1], onclick: function () { if (S.dirty && t[0] !== 'course' && S.tab === 'course') { S.tab = t[0]; S.open = null; page(); return; } S.tab = t[0]; S.open = null; page(); } }); })),
-      S.tab === 'clients' ? (S.open ? (S.open.invite ? inviteClientView(S.open) : clientView(S.open)) : clientList()) : S.tab === 'finance' ? financeView() : S.tab === 'course' ? courseView() : S.tab === 'reminders' ? remindersView() : S.tab === 'invite' ? inviteView() : settingsView()
+      S.tab === 'clients' ? (S.open ? (S.open.invite ? inviteClientView(S.open) : clientView(S.open)) : clientList()) : S.tab === 'leads' ? leadsView() : S.tab === 'finance' ? financeView() : S.tab === 'course' ? courseView() : S.tab === 'reminders' ? remindersView() : S.tab === 'invite' ? inviteView() : settingsView()
     ]));
     var sq = root.querySelector('.ad-squiggle'); if (sq) sq.innerHTML = '<path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20 T 250 20 T 300 20 T 350 20 T 400 20" fill="none" stroke="#F1F9A6" stroke-width="3" stroke-linecap="round"/>';
   }
@@ -905,6 +1074,121 @@
       h('div', { class: 'ad-tags big' }, chips),
       h('div', { class: 'ad-ct-inline' }, [own, addOwn]),
       h('div', { class: 'ad-ct-acts' }, [retire])
+    ]);
+  }
+
+  /* ---------- Leads: waitlist sign-ups + Breakthrough applications ----------
+     Rows come from the public waitlist page and /apply.html (via the "lead" function). Heat is worked out from
+     their answers (lead-score.js), and Sav can override it. Program tags (community / group / 1:1) are added
+     automatically once that email becomes a client. */
+  var LEAD_TAGS = [['waitlist', '#F1F9A6'], ['group enquiry', '#BFE3A0'], ['1:1 enquiry', '#F4C2F7'], ['community', '#FFE08A'], ['group', '#7FCB6A'], ['1:1', '#E58BEA']];
+  var HEATS = [['fire', '🔥 On fire', '#E8338A'], ['hot', 'Hot', '#F28C3B'], ['warm', 'Warm', '#F2D23B'], ['cold', 'Cold', '#9CC7E8']];
+  function leadTagColor(t) { var m = LEAD_TAGS.filter(function (x) { return x[0] === t; })[0]; return m ? m[1] : '#FBE6FC'; }
+  function heatOf(l) { return l.heat_override || l.heat || 'cold'; }
+  function heatPill(l) { var k = heatOf(l), x = HEATS.filter(function (y) { return y[0] === k; })[0] || HEATS[3]; return h('span', { class: 'ld-heat', style: '--hc:' + x[2], title: l.heat_override ? 'Your call (worked out: ' + (l.heat || 'cold') + ')' : 'Worked out from their answers' }, [x[1] + (l.heat_override ? ' ✎' : '')]); }
+  function clientTagsFor(l) {
+    var e = String(l.email || '').toLowerCase(), out = [];
+    var c = S.clients.filter(function (x) { return String(x.email || '').toLowerCase() === e && !x.is_admin; })[0] || (S.invites || []).filter(function (x) { return String(x.email || '').toLowerCase() === e; })[0];
+    if (!c) return out;
+    if (c.tier === 'private') out.push('1:1'); else if (c.tier === 'self_paced') out.push('community');
+    (Array.isArray(c.tags) ? c.tags : []).forEach(function (t) { var n = String(t.t || '').toLowerCase(); if (n === 'group') out.push('group'); if (n === '1:1') out.push('1:1'); });
+    return out.filter(function (x, i) { return out.indexOf(x) === i; });
+  }
+  function loadLeads() {
+    S.leads = S.leads || { loading: true, rows: [] };
+    return sb.from('leads').select('*').order('created_at', { ascending: false }).then(function (r) {
+      if (r.error) { S.leads = { error: /relation|does not exist|schema cache/i.test(r.error.message) ? 'setup' : r.error.message, rows: [] }; page(); return; }
+      var rows = r.data || [];
+      rows.forEach(function (l) { // they've joined a program: give them that tag
+        var add = clientTagsFor(l).filter(function (t) { return (l.tags || []).indexOf(t) < 0; });
+        if (add.length) { l.tags = (l.tags || []).concat(add); sb.from('leads').update({ tags: l.tags }).eq('id', l.id).then(function () {}, function () {}); }
+      });
+      S.leads = { rows: rows }; page();
+    }, function () { S.leads = { error: 'Couldn’t load your leads. Check your internet.', rows: [] }; page(); });
+  }
+  function saveLead(l, patch, msg) {
+    return sb.from('leads').update(Object.assign({ updated_at: new Date().toISOString() }, patch)).eq('id', l.id).then(function (r) {
+      if (r.error) { toastA('Couldn’t save: ' + r.error.message); return; }
+      Object.assign(l, patch); page(); if (msg) toastA(msg);
+    });
+  }
+  var LQ = [['interests', 'Interested in'], ['age', 'Age'], ['location', 'Location'], ['work', 'What they do'], ['diagnosis', 'Diagnosis'], ['otherDiagnosis', 'Other diagnosis'], ['pronouns', 'Pronouns'], ['instagram', 'Instagram'],
+    ['kids', 'Kids'], ['partner', 'Partner (and are they ND?)'], ['partnerWork', 'Partner’s work'], ['challenges', 'Biggest challenges right now'], ['tried', 'What they’ve tried'], ['wand', 'Magic wand: one thing to master'],
+    ['future', 'How their future self feels'], ['worth', 'What becoming that person is worth'], ['commitment', 'How committed they are']];
+  function leadDetail(l) {
+    var a = l.application || {}, sc = window.BT_LEADSCORE ? window.BT_LEADSCORE.score(l) : { why: [] }, first = l.first_name || l.email;
+    var heatSel = h('select', { class: 'bt-in sm', 'aria-label': 'Heat' }, [h('option', { value: '', text: 'Worked out: ' + (HEATS.filter(function (x) { return x[0] === (l.heat || 'cold'); })[0] || HEATS[3])[1] })].concat(HEATS.map(function (x) { return h('option', { value: x[0], text: 'My call: ' + x[1], selected: l.heat_override === x[0] ? 'selected' : null }); })));
+    heatSel.addEventListener('change', function () { saveLead(l, { heat_override: heatSel.value || null }, 'Heat saved ✓'); });
+    var names = LEAD_TAGS.map(function (x) { return x[0]; }); (l.tags || []).forEach(function (t) { if (names.indexOf(t) < 0) names.push(t); });
+    var chips = names.map(function (n) { var on = (l.tags || []).indexOf(n) >= 0; return h('button', { type: 'button', class: 'ad-tag ad-tagbtn ' + (on ? 'on' : 'none'), style: '--tg:' + leadTagColor(n), text: (on ? '● ' : '+ ') + n, onclick: function () { var t = (l.tags || []).filter(function (x) { return x !== n; }); if (!on) t.push(n); saveLead(l, { tags: t }); } }); });
+    var own = h('input', { class: 'bt-in sm', placeholder: 'Add a tag…', 'aria-label': 'New tag', maxlength: '30' });
+    var notes = h('textarea', { class: 'bt-in ad-ta sm', placeholder: 'Your notes: call booked, follow up Tuesday…', 'aria-label': 'Notes on ' + first }); notes.value = l.notes || '';
+    notes.addEventListener('change', function () { saveLead(l, { notes: notes.value }, 'Notes saved ✓'); });
+    var ans = LQ.map(function (q) { var v = q[0] === 'interests' ? (l.interests || []).join(', ') : a[q[0]]; return v ? h('div', { class: 'ld-a' }, [h('b', { text: q[1] }), h('p', { text: String(v) })]) : null; }).filter(Boolean);
+    return h('div', { class: 'ld-detail' }, [
+      h('div', { class: 'ld-dh' }, [h('div', null, [h('h3', { class: 'ld-dn', text: [l.first_name, l.last_name].filter(Boolean).join(' ') || l.email }),
+        h('p', { class: 'ad-muted', text: [l.email, l.phone, l.country].filter(Boolean).join(' · ') })]),
+        h('div', { class: 'ld-acts' }, [h('a', { class: 'bt-btn lime sm', href: 'mailto:' + l.email + '?subject=' + encodeURIComponent('Your Breakthrough application'), text: 'Email ' + (l.first_name || 'them') }), l.phone ? h('a', { class: 'bt-btn ghost sm', href: 'sms:' + l.phone.replace(/[^\d+]/g, ''), text: 'Text' }) : null,
+          h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Close', onclick: function () { S.leadOpen = null; page(); } })])]),
+      h('div', { class: 'ld-grid' }, [
+        h('div', null, [h('p', { class: 'ld-k', text: 'How warm' }), heatPill(l), h('span', { class: 'ld-score', text: ' ' + (l.score || 0) + '/100' }), heatSel,
+          sc.why.length ? h('ul', { class: 'ld-why' }, sc.why.map(function (w) { return h('li', { text: w }); })) : h('p', { class: 'ad-muted', text: 'Waitlist only so far. They haven’t filled in the application.' }),
+          h('p', { class: 'ld-k', text: 'Tags' }), h('div', { class: 'ad-tags big' }, chips),
+          h('div', { class: 'ad-ct-inline' }, [own, h('button', { type: 'button', class: 'ad-copy', text: 'Add', onclick: function () { var v = own.value.trim(); if (!v || (l.tags || []).indexOf(v) >= 0) return; saveLead(l, { tags: (l.tags || []).concat([v]) }); } })]),
+          h('p', { class: 'ld-k', text: 'Notes' }), notes,
+          h('p', { class: 'ad-muted', text: 'Joined ' + new Date(l.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) + (l.applied_at ? ' · applied ' + new Date(l.applied_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '') + (l.welcomed_at ? ' · waitlist email sent' : '') + ' · from ' + (l.source || 'waitlist') })]),
+        h('div', null, [h('p', { class: 'ld-k', text: 'Their application' })].concat(ans.length ? ans : [h('p', { class: 'ad-muted', text: 'No application yet. Their apply link: ' + new URL('apply.html?l=' + l.id, location.href).href })]))
+      ])
+    ]);
+  }
+  function leadsCsv(rows) {
+    var cols = ['first_name', 'last_name', 'email', 'phone', 'country', 'heat', 'score', 'tags', 'interests', 'created_at', 'applied_at'].concat(LQ.slice(1).map(function (q) { return q[0]; }));
+    var cell = function (v) { v = Array.isArray(v) ? v.join('; ') : v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var lines = [cols.join(',')].concat(rows.map(function (l) { var a = l.application || {}; return cols.map(function (c) { return cell(c === 'heat' ? heatOf(l) : c in l ? l[c] : a[c]); }).join(','); }));
+    var url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' })), link = document.createElement('a');
+    link.href = url; link.download = 'breakthrough-leads.csv'; document.body.appendChild(link); link.click(); link.remove();
+  }
+  function leadsView() {
+    if (!S.leads) { loadLeads(); return h('div', { class: 'ad-card' }, [h('p', { class: 'ad-muted', text: 'Loading your leads…' })]); }
+    if (S.leads.loading) return h('div', { class: 'ad-card' }, [h('p', { class: 'ad-muted', text: 'Loading your leads…' })]);
+    if (S.leads.error === 'setup') return h('div', { class: 'ad-card' }, [h('h2', { class: 'ad-h2', text: 'One quick database update first' }), h('p', { class: 'ad-muted', text: 'Your leads list needs its table in Supabase. Ask Claude to run the “leads” SQL.' })]);
+    if (S.leads.error) return h('div', { class: 'ad-card' }, [h('p', { class: 'ad-muted', text: S.leads.error })]);
+    var rows = S.leads.rows, q = (S.lq || '').toLowerCase(), hf = S.lheat || 'all', tf = S.ltag || '';
+    var hay = function (l) { return [l.first_name, l.last_name, l.email, l.phone, l.country, (l.tags || []).join(' '), (l.interests || []).join(' '), l.notes, JSON.stringify(l.application || {})].join(' ').toLowerCase(); };
+    var list = rows.filter(function (l) { return (hf === 'all' || heatOf(l) === hf) && (!tf || (l.tags || []).indexOf(tf) >= 0) && (!q || hay(l).indexOf(q) >= 0); });
+    var order = { fire: 0, hot: 1, warm: 2, cold: 3 };
+    if (S.lsort === 'hot') list.sort(function (a, b) { return order[heatOf(a)] - order[heatOf(b)] || (b.score || 0) - (a.score || 0); });
+    var search = h('input', { class: 'bt-in ad-search', type: 'search', placeholder: 'Search name, email, country, answers…', value: S.lq || '', 'aria-label': 'Search leads', oninput: function (e) { S.lq = e.target.value; var pos = e.target.selectionStart; page(); var n = root.querySelector('input[type=search]'); n.focus(); n.setSelectionRange(pos, pos); } });
+    var heatChips = h('div', { class: 'ad-chips' }, [['all', 'Everyone']].concat(HEATS).map(function (x) {
+      var n = x[0] === 'all' ? rows.length : rows.filter(function (l) { return heatOf(l) === x[0]; }).length;
+      return h('button', { class: 'ad-fchip' + (hf === x[0] ? ' on' : ''), text: x[1] + ' · ' + n, onclick: function () { S.lheat = x[0]; page(); } });
+    }));
+    var allTags = []; LEAD_TAGS.forEach(function (x) { allTags.push(x[0]); }); rows.forEach(function (l) { (l.tags || []).forEach(function (t) { if (allTags.indexOf(t) < 0) allTags.push(t); }); });
+    var tagChips = h('div', { class: 'ad-tags filt' }, allTags.map(function (t) {
+      var n = rows.filter(function (l) { return (l.tags || []).indexOf(t) >= 0; }).length;
+      return h('button', { type: 'button', class: 'ad-tag ad-tagbtn ' + (tf === t ? 'on' : 'none'), style: '--tg:' + leadTagColor(t), text: t + ' · ' + n, onclick: function () { S.ltag = tf === t ? '' : t; page(); } });
+    }));
+    var sortSel = h('select', { class: 'bt-in sm ld-sort', 'aria-label': 'Sort' }, [['new', 'Newest first'], ['hot', 'Hottest first']].map(function (x) { return h('option', { value: x[0], text: x[1], selected: (S.lsort || 'new') === x[0] ? 'selected' : null }); }));
+    sortSel.addEventListener('change', function () { S.lsort = sortSel.value; page(); });
+    var applied = rows.filter(function (l) { return l.applied_at; }).length;
+    var head = h('tr', null, ['Name', 'Heat', 'Interested in / tags', 'Phone', 'Country', 'Applied', 'Joined'].map(function (t) { return h('th', { scope: 'col', text: t }); }));
+    var trs = []; list.forEach(function (l) {
+      var open = S.leadOpen === l.id;
+      trs.push(h('tr', { class: 'ld-row' + (open ? ' open' : ''), tabindex: '0', role: 'button', 'aria-expanded': String(open), onclick: function () { S.leadOpen = open ? null : l.id; page(); }, onkeydown: function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); S.leadOpen = open ? null : l.id; page(); } } }, [
+        h('td', null, [h('b', { text: [l.first_name, l.last_name].filter(Boolean).join(' ') || '(no name)' }), h('span', { class: 'ld-em', text: l.email })]),
+        h('td', null, [heatPill(l)]),
+        h('td', null, [h('div', { class: 'ad-tags sm' }, (l.tags || []).map(function (t) { return h('span', { class: 'ad-tag', style: '--tg:' + leadTagColor(t), text: t }); }))]),
+        h('td', { text: l.phone || '' }), h('td', { text: l.country || '' }),
+        h('td', { text: l.applied_at ? '✓ ' + new Date(l.applied_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '–' }),
+        h('td', { text: new Date(l.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) })
+      ]));
+      if (open) trs.push(h('tr', { class: 'ld-open' }, [h('td', { colspan: '7' }, [leadDetail(l)])]));
+    });
+    return h('div', { class: 'ad-card ld-card' }, [
+      h('div', { class: 'ld-top' }, [h('div', null, [h('h2', { class: 'ad-h2', text: 'Leads' }), h('p', { class: 'ad-muted', text: rows.length + ' people · ' + applied + ' applied · ' + rows.filter(function (l) { return /fire|hot/.test(heatOf(l)); }).length + ' hot or on fire' })]),
+        h('div', { class: 'ld-acts' }, [h('a', { class: 'bt-btn ghost sm', href: 'apply.html', target: '_blank', rel: 'noopener', text: 'See the application' }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: '⬇ Download CSV', onclick: function () { leadsCsv(list); } }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: '↻ Refresh', onclick: function () { S.leads = null; page(); } })])]),
+      search, h('div', { class: 'ad-filtwrap' }, [heatChips, tagChips]), h('div', { class: 'ld-bar' }, [h('span', { class: 'ad-muted', text: 'Showing ' + list.length }), sortSel]),
+      list.length ? h('div', { class: 'ld-scroll' }, [h('table', { class: 'ld-table' }, [h('thead', null, [head]), h('tbody', null, trs)])]) : h('p', { class: 'ad-muted', text: rows.length ? 'Nobody matches that search.' : 'No leads yet. They’ll appear here as soon as someone joins the waitlist.' })
     ]);
   }
 
@@ -1146,6 +1430,11 @@
     return h('div', { class: 'jh-qa' }, qa.map(function (x) { return h('div', { class: 'jr-qa' }, [h('span', { class: 'jr-q', text: x.q }), h('blockquote', { class: 'ad-quote' }, [markText(x.a, terms)])]); }));
   }
   // the full detail of one lesson or activity
+  function clientNotes(c) {
+    var row = ((S.data[c.id] || {}).rows || []).filter(function (r) { return r.key === 'bt-notes'; })[0];
+    var v = row ? (typeof row.value === 'string' ? parse(row.value) : row.value) : null;
+    return (v && Array.isArray(v.list) ? v.list : []).slice().sort(function (a, b) { return b.at - a.at; });
+  }
   function sectionBody(c, s, terms) {
     var kids = [];
     if (s.kind === 'lesson') {
@@ -1160,6 +1449,10 @@
         if (body) kids.push(body);
       });
     }
+    // their own sticky notes on this lesson (from the app's "My notes")
+    var myNotes = clientNotes(c).filter(function (n) { return n.lesson === s.id; });
+    if (myNotes.length) kids.push(h('div', { class: 'ad-cnotes' }, [h('p', { class: 'ad-bk', text: 'Their notes (' + myNotes.length + ')' })].concat(myNotes.map(function (n) {
+      return h('div', { class: 'ad-cnote' }, [h('span', { class: 'ad-muted', text: new Date(n.at).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) + (n.edited ? ' · edited' : '') }), n.title ? h('b', { text: n.title }) : null, h('p', { text: n.text })]); }))));
     kids.push(coachNoteBox(c, s.id, s.title));
     return h('div', { class: 'jh-body' }, kids);
   }
@@ -1324,6 +1617,7 @@
       h('div', { class: 'ad-main' }, [
         h('div', { class: 'ad-card' }, [head]),
         c.is_admin ? null : tagsCard(c),
+        c.is_admin ? null : loopsCard(c),
         sessionsCard(c),
         h('h3', { class: 'ad-h3', text: 'Their journey' }),
         h('div', { class: 'ad-card' }, [journeyHub(c, all, rowBy)]),
@@ -1353,7 +1647,7 @@
     } });
     var wk = c.program_start ? Math.floor((Date.now() - new Date(c.program_start)) / (7 * 86400000)) + 1 : null;
     var unl = (S.settings.unlocks || {})[c.id], maxW = courseData().weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 1);
-    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal (unlocks as they finish each lesson)', selected: unl == null ? 'selected' : null })]
+    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal: a week at a time, up to Week ' + spCap() + ' for now', selected: unl == null ? 'selected' : null })]
       .concat(Array.from({ length: Math.max(0, maxW - 1) }, function (_, i) { var n = i + 2; return h('option', { value: String(n), text: 'Open up to Week ' + n + ' now', selected: unl === n ? 'selected' : null }); }))
       .concat([h('option', { value: 'all', text: 'Open every week now', selected: unl === 'all' ? 'selected' : null })]));
     var dripMsg = h('span', { class: 'ad-muted', role: 'status' });
@@ -1373,12 +1667,22 @@
           if (r.error) { dripMsg.textContent = 'Couldn’t save'; return; } S.settings.unlocks = u; page();
           // tell them: a phone notification + an email that their next week is open
           var wn = v === 'all' ? null : Number(v);
+          if (wn && wn > cur && isPlay() && wn > spCap()) { S.settings.spCap = wn; sb.from('app_settings').upsert({ key: 'spCap', value: wn, updated_at: new Date().toISOString() }); setTimeout(function () { toastA('Week ' + wn + ' is now open for self-paced clients too (playground: no emails sent).'); }, 600); return; }
           if (wn && wn > cur && !(c.email || '').match(/sample\.test$/)) {
             var wObj = courseData().weeks.filter(function (x) { return x.week === wn; })[0];
             sb.auth.getSession().then(function (ss) { var tok = ss.data && ss.data.session && ss.data.session.access_token; if (!tok) return;
-              return fetch('/.netlify/functions/notify-client', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ to: c.id, type: 'week', week: wn, title: wObj ? wObj.title : '' }) }).then(function (x) { return x.json(); }).then(function (o) {
+              var tell = fetch('/.netlify/functions/notify-client', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ to: c.id, type: 'week', week: wn, title: wObj ? wObj.title : '', lessons: wObj ? (wObj.lessons || []).filter(function (l) { return !l.optional; }).map(function (l) { return String(l.title || '').replace(/^Activity:\s*/, ''); }).slice(0, 8) : [] }) }).then(function (x) { return x.json(); }).then(function (o) {
                 toastA('Week ' + wn + ' is open for ' + first + '. ' + (o.push ? 'Phone notification sent. ' : 'No phone notifications on for them. ') + (o.email ? 'Email sent.' : o.emailSetup ? 'Email isn’t set up yet.' : 'Email didn’t send.'));
               });
+              // self-paced clients follow the furthest week you've opened for a 1:1 client
+              if (wn > spCap()) {
+                S.settings.spCap = wn;
+                fetch('/.netlify/functions/week-unlocks-now', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ week: wn }) }).then(function (x) { return x.json(); }).then(function (o) {
+                  var n = (o.told || []).length;
+                  setTimeout(function () { toastA('Week ' + wn + ' is now open for self-paced clients too' + (n ? '. Told ' + n + ' of them (the rest get it when their week comes round).' : '. Each of them gets it when their week comes round.')); }, 2500);
+                }).catch(function () {});
+              }
+              return tell;
             }).catch(function () {});
           }
         });
@@ -1396,7 +1700,7 @@
       h('h3', { class: 'ad-h3', text: 'Their details' }),
       wk && wk > 0 ? h('p', { class: 'ad-week' }, [h('b', { text: 'Week ' + wk }), ' since they started']) : null,
       h('label', { class: 'ad-field' }, ['Name', name]), h('label', { class: 'ad-field' }, ['Access', tier]), h('label', { class: 'ad-field' }, ['Program start (week 1 opens this day)', start]), save,
-      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), dripMsg,
+      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), c.tier === 'private' ? null : h('p', { class: 'ad-muted', text: 'Self-paced clients only go as far as your 1:1 clients: up to Week ' + spCap() + ' for now (and never more than one new week every 7 days from their start). When you unlock the next week for a 1:1 client it opens for them too, with a notification and an email.' }), dripMsg,
       loginHelp(c)
     ]);
   }
@@ -1537,10 +1841,12 @@
   function weeksOpenFor(c) {
     var u = (S.settings.unlocks || {})[c.id]; if (u === 'all') return 99;
     if (c.tier === 'private') return typeof u === 'number' ? u : 1;
-    var st = c.program_start ? new Date(c.program_start + 'T00:00:00') : new Date();
-    var w = 1 + Math.floor((Date.now() - st.getTime()) / (7 * 86400000));
+    var st = c.program_start ? new Date(c.program_start + 'T00:00:00') : c.created_at ? new Date(c.created_at) : new Date();
+    var w = Math.min(1 + Math.floor((Date.now() - st.getTime()) / (7 * 86400000)), spCap());
     return Math.max(1, typeof u === 'number' ? Math.max(u, w) : w);
   }
+  // self-paced clients can open up to this week (moves up when Sav opens a new week for a 1:1 client)
+  function spCap() { var v = Number(S.settings && S.settings.spCap); return v >= 1 ? v : 1; }
 
   /* their course progress, week by week */
   function courseProgressView(v, c) {
@@ -1787,6 +2093,7 @@
     };
     draw();
     return h('section', { class: 'ad-sec' }, [
+      allLoopsCard(),
       h('div', { class: 'ad-card' }, [h('h2', { class: 'ad-h2', text: 'Open loops on the home page' }),
         h('p', { class: 'ad-text', text: 'The app already nudges students automatically when:' }),
         h('div', { class: 'ad-chips' }, ['a new week opens', 'they haven’t been in for 3+ days', 'Becoming Notebook entries are waiting from lessons they’ve watched', 'intentions aren’t set', '1:1 set-up steps are unfinished'].map(function (t) { return h('span', { class: 'ad-chip on', text: t }); })),

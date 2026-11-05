@@ -109,9 +109,19 @@ function whenText(start, tz) {
   } catch (e) { day = d.toUTCString(); time = ''; }
   return { day, time, zone };
 }
+// "Australia/Sydney" + "AU" -> "Sydney, Australia"
+function placeOf(tz, country) {
+  let city = String(tz || '').split('/').pop().replace(/_/g, ' '), land = '';
+  if (country) { try { land = new Intl.DisplayNames(['en'], { type: 'region' }).of(String(country).toUpperCase()) || ''; } catch (e) { land = ''; } }
+  if (!land && /^Australia\//.test(tz || '')) land = 'Australia';
+  return [city, land].filter(Boolean).join(', ');
+}
+// Sav's own time, shown small under the client's time
+const COACH_TZ = 'Australia/Brisbane', COACH_PLACE = 'Queensland, Australia';
 function reminderEmail(o) {
   o = o || {}; const site = o.site || SITE, img = o.img || defImg(site), first = esc(o.first || '');
   const group = o.kind === 'Group', what = group ? 'group call' : '1:1 call', w = whenText(o.start, o.tz), now = o.lead === '15m', soon = o.lead === '2h' || now;
+  const cw = whenText(o.start, COACH_TZ), same = cw.time === w.time && cw.day === w.day, place = o.place || placeOf(o.tz || COACH_TZ, o.country);
   const head = group ? (now ? 'Group call starts in 15 minutes' : soon ? 'Group call in 2 hours' : 'Group coaching call tomorrow') : now ? 'We’re starting in 15 minutes' : soon ? 'Our ' + what + ' is in 2 hours' : 'Our ' + what + ' is tomorrow';
   const zoom = o.zoom || site + '/#Profile';
   const tips = group ? (now ? ['Grab a water and find your comfy spot.', 'Camera on if you can. It’s just us.', 'Tap the button and come say hi.'] : ['Bring one win from the last fortnight, big or tiny.', 'Bring one question or something you’re stuck on.', 'Camera on if you can. Nobody cares about your messy bun, I promise.'])
@@ -123,11 +133,13 @@ function reminderEmail(o) {
     + '<p style="margin:0 0 10px;font-family:' + HAND + ';font-size:21px;letter-spacing:2px;color:' + C.pink + '">' + (group ? 'CMS group coaching 💬' : 'Hiya' + (first ? ' ' + first : '') + '!') + '</p>'
     + '<h1 class="h1" style="margin:0 0 20px;font-family:' + SERIF + ';font-weight:800;font-size:38px;line-height:1.1;color:' + C.cream + '">' + head + '</h1>'
     + '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#6A1E1A;border-radius:18px"><tr>'
-    + '<td width="80" valign="middle" style="padding:18px 0 18px 18px"><img src="' + img('sav-zoom') + '" width="64" height="64" alt="Savannah" style="width:64px;height:64px;border-radius:32px;border:3px solid ' + C.lime + '"></td>'
+    + '<td width="80" valign="middle" style="padding:18px 0 18px 18px"><img src="' + img('sav-call') + '" width="64" height="64" alt="Savannah" style="width:64px;height:64px;border-radius:32px;border:3px solid ' + C.lime + '"></td>'
     + '<td valign="middle" style="padding:18px 20px">'
     + '<div style="font-family:' + HAND + ';font-size:16px;letter-spacing:1.5px;color:' + C.lime + '">' + (group ? 'CMS group call with Savannah' : '1:1 with Savannah') + '</div>'
-    + '<div style="font-family:' + SERIF + ';font-weight:700;font-size:22px;line-height:1.3;color:' + C.cream + '">' + esc(w.day) + '</div>'
-    + '<div style="font-size:17px;font-weight:600;color:' + C.soft + '">' + esc(w.time) + (w.zone ? ' <span style="font-weight:400;font-size:14px">(' + esc(w.zone) + ', your time)</span>' : '') + '</div>'
+    + '<div style="font-family:' + SERIF + ';font-weight:800;font-size:26px;line-height:1.2;color:' + C.cream + '">' + esc(w.time) + ' for you</div>'
+    + '<div style="font-size:17px;font-weight:700;line-height:1.4;color:' + C.cream + '">' + esc(w.day) + '</div>'
+    + '<div style="font-size:14px;font-weight:600;line-height:1.4;color:' + C.lime + '">' + esc([place, w.zone].filter(Boolean).join(' · ')) + ' · your time</div>'
+    + (same ? '' : '<div style="margin-top:8px;font-size:12.5px;line-height:1.4;color:#D9B9B2">That’s ' + esc(cw.time) + (cw.day !== w.day ? ' on ' + esc(cw.day) : '') + ' for Sav (' + esc(COACH_PLACE) + (cw.zone ? ' · ' + esc(cw.zone) : '') + ')</div>')
     + '</td></tr></table></td></tr>'
     + '<tr><td align="center" style="padding:26px 36px 8px">' + button(zoom, '🎥&nbsp; Join on Zoom', true)
     + '<p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#D9B9B2">One tap and you’re in. Save this email so the link’s handy.' + (o.zoom ? '<br><a href="' + esc(o.zoom) + '" style="color:#D9B9B2;word-break:break-all">' + esc(o.zoom) + '</a>' : '') + '</p></td></tr>'
@@ -135,9 +147,9 @@ function reminderEmail(o) {
     + '<div style="font-family:' + HAND + ';font-size:18px;letter-spacing:1.5px;color:' + C.red + ';margin-bottom:8px">' + (now ? 'Right now' : soon ? 'Before we start' : 'To get ready') + '</div>'
     + tips.map(t => '<div style="font-size:15px;line-height:1.6;color:#3A2A28;margin:0 0 6px">&#10022;&nbsp; ' + t + '</div>').join('')
     + '</td></tr></table></td></tr>'
-    + (group ? '<tr><td class="pad" style="padding:20px 36px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:' + C.cream + ';border-radius:20px;padding:18px 20px">' + note(img, 'sav-laptop', 'Why group calls are magic', 'Hearing someone else say the thing you thought only you felt? That’s where the shift happens. You’re not doing this alone.') + '</td></tr></table></td></tr>' : '')
+    + (group ? '<tr><td class="pad" style="padding:20px 36px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:' + C.cream + ';border-radius:20px;padding:18px 20px">' + note(img, 'sav-sparkle', 'Why group calls are magic', 'Hearing someone else say the thing you thought only you felt? That’s where the shift happens. You’re not doing this alone.') + '</td></tr></table></td></tr>' : '')
     + signoff(img, now ? 'See you in a minute!' : soon ? 'See you very soon!' : group ? 'Can’t wait to see all your faces.' : 'Can’t wait to see you tomorrow.');
-  const subject = group ? (now ? 'the CMS group call starts in 15 minutes 🎥 Your Zoom link' : soon ? 'CMS group call in 2 hours at ' + (w.time || '') + ' 💬' : 'CMS group coaching call tomorrow at ' + (w.time || '') + ' 💬') : now ? 'Starting in 15 minutes: our ' + what + ' 🎥 Your Zoom link' : (soon ? 'In 2 hours: ' : 'Tomorrow: ') + 'our ' + what + ' at ' + (w.time || '') + ' 🎥';
+  const subject = group ? (now ? 'the CMS group call starts in 15 minutes 🎥 Your Zoom link' : soon ? 'CMS group call in 2 hours at ' + (w.time || '') + ' your time 💬' : 'CMS group coaching call tomorrow at ' + (w.time || '') + ' your time 💬') : now ? 'Starting in 15 minutes: our ' + what + ' 🎥 Your Zoom link' : (soon ? 'In 2 hours: ' : 'Tomorrow: ') + 'our ' + what + ' at ' + (w.time || '') + ' your time 🎥';
   return { subject, html: shell({ title: head, pre: (now ? 'We start in 15 minutes. ' : soon ? 'Starting in 2 hours. ' : 'See you tomorrow. ') + 'Your Zoom link is inside, one tap and you’re in.', pill: group ? 'Group call' : '1:1 client', img, body }) };
 }
 
@@ -269,13 +281,32 @@ function welcomeSelfEmail(o) {
     + creamClose + signoff(x.img, 'So proud of you for investing in yourself.');
   return { subject: 'Welcome to Breakthrough, ' + x.first + ' ✨ Start here', html: shell({ title: 'Welcome to Breakthrough', pre: 'Your course app is ready. Here’s where to start.', pill: 'Self-paced', img: x.img, body: body }) };
 }
+/* Waitlist welcome (sent the moment someone joins the waitlist): the win-win nudge to fill in the application */
+function waitlistEmail(o) {
+  const x = J(o), link = (o && o.applyLink) || (x.site + '/apply.html');
+  const go = function (want) { return link + (link.indexOf('?') >= 0 ? '&' : '?') + 'want=' + want; };
+  const perk = function (icon, t, sub) { return box('<span style="font-size:22px;vertical-align:middle">' + icon + '</span>&nbsp; <strong>' + t + '</strong><br><span style="font-size:13.5px;color:#6A5A57">' + sub + '</span>'); };
+  const body = hero('You’re on the list, ' + x.first + ' 🎉', 'Doors are closed. But you’re in the front row.', 'You’ll be the first to know the minute Breakthrough opens again. Spaces are limited, so here’s how to make sure one of them is yours.')
+    + creamOpen('5 minutes now = first dibs later', 'Tell me about you, and skip the queue')
+    + para('Fill in your Breakthrough application and you get:')
+    + perk('🔑', 'Early access', 'Doors open for you before they open to everyone else.')
+    + perk('🎟️', 'First pick of the spaces', 'The group program is small on purpose. Applicants get offered spots first.')
+    + perk('💌', 'A personal reply from me', 'I read every single one. If group or 1:1 is right for you, I’ll invite you to a call.')
+    + perk('🧠', 'A program built around you', 'Your answers shape what we cover, so it fits your brain, not someone else’s.')
+    + para('Tick what you’re keen on inside the form: the community program, the intimate group program, or 1:1 with me. Not sure yet? Tick them all.')
+    + creamClose
+    + '<tr><td align="center" style="padding:30px 36px 6px">' + button(go('group'), 'Apply for group or 1:1 &rarr;', true) + '</td></tr>'
+    + '<tr><td align="center" style="padding:12px 36px 30px">' + button(go('community'), 'Get early community access &rarr;') + '<p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#D9B9B2">Same quick form. Takes about 5 minutes (or one dopamine hit).</p></td></tr>'
+    + signoff(x.img, 'If nothing changes, nothing changes. So proud of you for raising your hand.');
+  return { subject: 'You’re on the Breakthrough waitlist 🎉 (+ how to get in first)', html: shell({ title: 'You’re on the waitlist', pre: 'Doors are closed, but here’s how to get early access and first pick of the spaces.', pill: 'Waitlist', img: x.img, body: body }) };
+}
 /* 3. Haven't opened the app yet (2 days after the welcome, only if they haven't logged in) */
 function notOpenedEmail(o) {
   const x = J(o);
   const body = hero('Hey ' + x.first + ' 👋', 'Your app’s still waiting for you', 'Totally normal for life to get in the way. It takes about 5 minutes to get in and save it to your phone, and then you’re set.')
     + cta(x.app, 'Open my app &rarr;', 'Log in with this email. You’ll get a 6-digit code, no password needed.')
     + bigPhoto(x.img, 'sav-phone', 'Savannah holding up her phone showing the Breakthrough app login screen')
-    + creamOpen('', '') + note(x.img, 'sav-dog', 'Stuck?', 'If something isn’t working, just reply to this email and tell me what you see. I’ll sort it, promise.') + creamClose
+    + creamOpen('', '') + note(x.img, 'sav-sparkle', 'Stuck?', 'If something isn’t working, just reply to this email and tell me what you see. I’ll sort it, promise.') + creamClose
     + signoff(x.img, 'Can’t wait to see you in there.');
   return { subject: x.first + ', your Breakthrough app is ready when you are', html: shell({ title: 'Your app is waiting', pre: 'Five minutes and you’re set up.', pill: '1:1 client', img: x.img, body: body }) };
 }
@@ -296,7 +327,7 @@ function firstCallPrepEmail(o) {
   const body = hero('Two sleeps to go ✨', 'Our first call is ' + esc(w.day), 'At ' + esc(w.time) + (w.zone ? ' (' + esc(w.zone) + ', your time)' : '') + '. Here’s where you’re up to. ' + (left ? 'Just ' + left + ' thing' + (left === 1 ? '' : 's') + ' left, and you’ll walk in ready.' : 'You’re all done. Legend.'))
     + creamOpen('Before our first call', 'Your checklist')
     + checks([[s.home, 'Saved the app'], [s.agree, 'Signed your agreement'], [s.wa, 'Joined WhatsApp'], [s.tests, 'Your 3 tests', 'Rep System, Human Design and DISC'], [s.mini, 'Set yourself up for success', 'The mini course'], [s.intent, 'Setting Intentions', 'The one I really want done before we meet']])
-    + note(x.img, 'sav-laptop', 'See you on Zoom', 'Grab a cuppa, find a quiet spot and bring yourself exactly as you are. Laptop is best, but your phone works too.')
+    + note(x.img, 'sav-sparkle', 'See you on Zoom', 'Grab a cuppa, find a quiet spot and bring yourself exactly as you are. Laptop is best, but your phone works too.')
     + creamClose + cta(x.app, 'Finish my set-up &rarr;') + signoff(x.img, 'So excited for this one.');
   return { subject: 'Two sleeps until our first call ✨ Here’s your checklist', html: shell({ title: 'Before our first call', pre: 'Where you’re up to, and what’s left before we meet.', pill: '1:1 client', img: x.img, body: body }) };
 }
@@ -305,57 +336,60 @@ function recapEmail(o) {
   const x = J(o), n = (o && o.n) || 2;
   const pts = (o && o.points) || ['You noticed the “I have to earn rest” program running at work, not just at home.', 'The anger that shows up when the house gets loud is your nervous system asking for a pause, not you being a bad mum.', 'You already have proof you can say no: you did it twice this week.'];
   const todo = (o && o.todo) || ['Do the Pause activity once a day, even for 30 seconds.', 'Add 3 pieces of proof against “I’m not good enough”.', 'Watch Week 2, Lessons 1 and 2.'];
+  const coach = (o && o.coach) || ['Send you the Pause and Rewind worksheet tonight.', 'Unlock Week 2 for you once you’ve finished Week 1.'];
   const body = hero('Session ' + n + ' recap', 'What we covered today', 'Here’s the summary so you can come back to it any time. It’s saved in your app too.')
     + creamOpen('Your big takeaways', '') + note(x.img, 'sav-laugh', 'From today', 'You showed up and did the real work. Here’s what I want you to hold on to.') + pts.map(function (p) { return box('✦&nbsp; ' + esc(p)); }).join('')
     + '<h2 style="margin:22px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Before our next call</h2>'
-    + checks(todo.map(function (t) { return [false, esc(t)]; })) + creamClose
+    + checks(todo.map(function (t) { return [false, esc(t)]; }))
+    + (coach.length ? '<h2 style="margin:22px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Your coach will…</h2>' + coach.map(function (t) { return box('💛&nbsp; ' + esc(t), '#FBE6FC'); }).join('') : '')
+    + creamClose
     + cta(x.app + '#Book', 'Open my notes &rarr;') + signoff(x.img, 'So proud of the work you did today.');
   return { subject: 'Your session ' + n + ' recap + what’s next 💛', html: shell({ title: 'Session recap', pre: 'What we covered, and your next steps before our next call.', pill: '1:1 client', img: x.img, body: body }) };
 }
 /* 10. Week unlocked (1:1, when Sav taps Unlock) */
 function weekUnlockedEmail(o) {
-  const x = J(o), wk = (o && o.week) || 2, title = (o && o.title) || 'The Reality Framework', lessons = (o && o.lessons) || ['Your Experience of the World', 'Your Memories + RAS Filter', 'Proof Portfolio', 'Beliefs', 'Programs'];
-  const body = hero('🔓 Unlocked', 'Week ' + wk + ' is open: ' + esc(title), 'Go at your own pace, one small step at a time. I’m so proud of the work you’re putting in.')
-    + creamOpen('What’s inside', '') + lessons.map(function (l, i) { return box('<strong>' + (i + 1) + '.</strong>&nbsp; ' + esc(l)); }).join('') + creamClose
+  const x = J(o), wk = (o && o.week) || 2, title = o && o.title != null ? o.title : 'The Reality Framework', lessons = (o && o.lessons) || ['Your Experience of the World', 'Your Memories + RAS Filter', 'Proof Portfolio', 'Beliefs', 'Programs'];
+  const body = hero('🔓 Unlocked', 'Week ' + wk + ' is open' + (title ? ': ' + esc(title) : ''), 'Go at your own pace, one small step at a time. I’m so proud of the work you’re putting in.')
+    + (lessons.length ? creamOpen('What’s inside', '') + lessons.map(function (l, i) { return box('<strong>' + (i + 1) + '.</strong>&nbsp; ' + esc(l)); }).join('') + creamClose : '')
     + cta(x.app + '#Course', 'Start Week ' + wk + ' &rarr;') + signoff(x.img, 'Let’s go!');
-  return { subject: '🔓 Week ' + wk + ' is open for you, ' + x.first, html: shell({ title: 'Week ' + wk + ' is open', pre: 'Your next week is ready. One small step at a time.', pill: '1:1 client', img: x.img, body: body }) };
+  return { subject: '🔓 Week ' + wk + ' is open for you, ' + x.first, html: shell({ title: 'Week ' + wk + ' is open', pre: 'Your next week is ready. One small step at a time.', pill: (o && o.tier === 'self') ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 11. Weekly check-in: where you're up to (Sunday 6pm their time, only if they've started) */
 function weeklyEmail(o) {
-  const x = J(o), d = Object.assign({ done: 12, total: 49, week: 'Week 1 · The Foundations', next: 'Lesson 6: Fight or Flight', thisWeek: 4, reps: 9, proof: 5, win: 'I said no to extra work without explaining myself.' }, (o && o.data) || {});
+  const x = J(o), d = Object.assign(o && o.real ? { done: 0, total: 1, week: '', next: '', thisWeek: 0, reps: 0, proof: 0, win: '' } : { done: 12, total: 49, week: 'Week 1 · The Foundations', next: 'Lesson 6: Fight or Flight', thisWeek: 4, reps: 9, proof: 5, win: 'I said no to extra work without explaining myself.' }, (o && o.data) || {});
   const body = hero('Your week in Breakthrough', x.first + ', look what you did this week', 'A little Sunday snapshot of your progress. Every tick is your brain rewiring.')
     + creamOpen('Where you’re up to', esc(d.week)) + bar(100 * d.done / d.total, d.done + ' of ' + d.total + ' lessons done')
     + '<p style="margin:0 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">This week you…</p>'
     + visualStats(x.img, { lessons: d.thisWeek, reps: d.reps, proof: d.proof })
     + (d.win ? '<p style="margin:0 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Your win this week</p>' + quote(esc(d.win)) : '')
-    + box('<span style="font-family:' + HAND + ';font-size:16px;letter-spacing:1px;color:' + C.red + '">Up next</span><br><strong style="font-size:17px">' + esc(d.next) + '</strong>', C.lime)
-    + note(x.img, 'sav-journal', 'A note from me', 'Every tick, every lesson, every bit of proof is your brain learning a new way. I see you doing the work. Keep going, gorgeous.')
+    + (d.next ? box('<span style="font-family:' + HAND + ';font-size:16px;letter-spacing:1px;color:' + C.red + '">Up next</span><br><strong style="font-size:17px">' + esc(d.next) + '</strong>', C.lime) : '')
+    + note(x.img, 'sav-sparkle', 'A note from me', 'Every tick, every lesson, every bit of proof is your brain learning a new way. I see you doing the work. Keep going, gorgeous.')
     + creamClose + cta(x.app + '#Course', 'Keep going &rarr;') + signoff(x.img, 'Slower and deeper always wins.');
-  return { subject: 'Your Breakthrough week: ' + d.thisWeek + ' lessons, ' + d.proof + ' pieces of proof ✨', html: shell({ title: 'Your week', pre: 'Where you’re up to, your win this week, and what’s next.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
+  return { subject: (d.thisWeek || d.proof ? 'Your Breakthrough week: ' + (d.thisWeek ? d.thisWeek + ' lesson' + (d.thisWeek === 1 ? '' : 's') : '') + (d.thisWeek && d.proof ? ', ' : '') + (d.proof ? d.proof + ' piece' + (d.proof === 1 ? '' : 's') + ' of proof' : '') : 'Your week in Breakthrough') + ' ✨', html: shell({ title: 'Your week', pre: 'Where you’re up to, your win this week, and what’s next.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 12. Milestone: halfway (and the same shape for other big moments) */
 function milestoneEmail(o) {
-  const x = J(o), d = Object.assign({ done: 25, total: 49, flips: [['I’m not good enough', 'I am good enough'], ['I have to earn rest', 'Rest is safe']], proof: 18 }, (o && o.data) || {});
+  const x = J(o), d = Object.assign(o && o.real ? { done: 0, total: 1, flips: [], proof: 0 } : { done: 25, total: 49, flips: [['I’m not good enough', 'I am good enough'], ['I have to earn rest', 'Rest is safe']], proof: 18 }, (o && o.data) || {});
   const body = hero('🎉 Halfway!', 'You’re halfway through Breakthrough', 'Most people never get this far with anything they start. You did. Take a second and actually let that land.')
     + bigPhoto(x.img, 'sav-welcome', 'Savannah celebrating with her arms in the air')
     + creamOpen('Look how far you’ve come', '') + visualStats(x.img, { lessons: d.done, proof: d.proof })
-    + '<p style="margin:0 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Old stories you’ve been rewriting</p>' + d.flips.map(function (f) { return flip(esc(f[0]), esc(f[1])); }).join('')
+    + (d.flips.length ? '<p style="margin:0 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Old stories you’ve been rewriting</p>' + d.flips.map(function (f) { return flip(esc(f[0]), esc(f[1])); }).join('') : '')
     + creamClose + cta(x.app + '#Proof', 'See my proof portfolio &rarr;') + signoff(x.img, 'I’m so bloody proud of you.');
   return { subject: '🎉 ' + x.first + ', you’re halfway through Breakthrough', html: shell({ title: 'Halfway', pre: 'Look how far you’ve come.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 13. We miss you (7 days quiet; a softer one at 14; then emails stop and only the app nudges carry on) */
 function missYouEmail(o) {
-  const x = J(o), second = o && o.second, why = (o && o.why) || 'I want to stop living in survival mode and actually enjoy my kids';
+  const x = J(o), second = o && o.second, why = (o && o.why) || (o && o.real ? '' : 'I want to stop living in survival mode and actually enjoy my kids');
   const body = hero(second ? 'No catching up needed 🌿' : 'Hey ' + x.first + ' 💛', second ? 'Whenever you’re ready, I’m here' : 'Just checking in on you', second ? 'Life gets full. That’s not failing, that’s being human. Your course is right where you left it, and so is your why.' : 'It’s been a week since you were last in. No guilt, no pressure. I just wanted to remind you why you started.')
-    + creamOpen('Your why', '') + quote(esc(why), 'You wrote this in your intentions')
-    + note(x.img, 'sav-laugh', 'From me', second ? 'I’m not going anywhere. When you’re ready, open the app and do one tiny thing. That’s a win.' : 'Five minutes counts. Open the app and do the next small thing, that’s it. And if something’s in the way, tell me.') + creamClose
+    + creamOpen(why ? 'Your why' : 'Your next small step', '') + (why ? quote(esc(why), 'You wrote this in your intentions') : '')
+    + note(x.img, 'sav-sparkle', 'From me', second ? 'I’m not going anywhere. When you’re ready, open the app and do one tiny thing. That’s a win.' : 'Five minutes counts. Open the app and do the next small thing, that’s it. And if something’s in the way, tell me.') + creamClose
     + cta(x.app + '#Course', 'Pick up where I left off &rarr;', second ? 'This is the last email like this. The app will still gently remind you.' : 'Feeling stuck or overwhelmed? Reply and tell me. That’s what I’m here for.')
     + signoff(x.img, 'Still cheering for you.');
   return { subject: second ? 'Whenever you’re ready, ' + x.first + ' 🌿' : x.first + ', remember why you started? 💛', html: shell({ title: 'Checking in', pre: 'No guilt, no pressure. Your next small step is waiting.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 13b. Module (week) complete: a big celebration with everything they've done so far */
 function moduleCompleteEmail(o) {
-  const x = J(o), d = Object.assign({
+  const x = J(o), d = Object.assign(o && o.real ? { week: 1, title: '', next: '', lessons: [], acts: [], wins: [], reps: 0, proof: 0, streak: 0, highlight: '' } : {
     week: 1, title: 'The Foundations', next: 'Week 2 · The Reality Framework',
     lessons: ['Brain + Body', 'Conscious + Unconscious Mind', 'Nervous System', 'Neurotransmitters + Hormones', 'Anxiety', 'Fight or Flight', 'Body', 'Neuroplasticity', 'Breathing'],
     acts: [['dose', 'Your daily DOSE', 'Your plan: music while you cook, morning sun, dance in the kitchen'], ['whatif', 'The What If Workout', 'Worst case → best case, 3 times'], ['pause', 'Pause', 'Your 30-second reset'], ['move', 'Move', 'Your daily movement menu'], ['breathe', 'Breathwork', 'The physiological sigh'], ['vagal', 'Vagal Tone Workout', '']],
@@ -367,7 +401,7 @@ function moduleCompleteEmail(o) {
     + creamOpen('Your Week ' + d.week + ' in pictures', 'Look at everything you did')
     + visualStats(x.img, { lessons: d.lessons.length, acts: d.acts.length, reps: d.reps, proof: d.proof, streak: d.streak })
     + (d.highlight ? '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">A moment from your notebook</p>' + quote(esc(d.highlight), 'You wrote this in Week ' + d.week) : '')
-    + '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Your wins</p>'
+    + (d.wins.length ? '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Your wins</p>' : '')
     + d.wins.map(function (w) { return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px"><tr><td width="40" valign="top" style="padding-top:2px">' + ic(x.img, 'sparkle', 30) + '</td><td style="background:' + C.lime + ';border:2px solid ' + C.ink + ';border-radius:16px;padding:10px 14px;font-size:15px;font-weight:600;color:' + C.ink + '">' + esc(w) + '</td></tr></table>'; }).join('')
     + '<h2 style="margin:26px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Everything you’ve completed so far</h2>'
     + doneList(x.img, d.lessons.map(function (l) { return ['play', esc(l)]; }).concat(d.acts.map(function (a) { return [a[0], '<strong>' + esc(a[1]) + '</strong>', a[2] ? esc(a[2]) : '']; })))
@@ -375,13 +409,13 @@ function moduleCompleteEmail(o) {
     + '<div style="font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.lime + '">Make it official</div>'
     + '<div style="font-family:' + SERIF + ';font-weight:700;font-size:21px;line-height:1.3;color:' + C.cream + ';margin:4px 0 8px">Add “I finished Week ' + d.week + '” to your proof portfolio</div>'
     + '<div style="font-size:14px;line-height:1.6;color:' + C.soft + '">This is proof you finish things. Proof you’re capable. Proof the old story is out of date. Put it in your portfolio so your brain keeps the receipt.</div></td></tr></table>'
-    + note(x.img, 'sav-dog', 'From me', 'I am doing a little happy dance for you right now. Next up: <strong>' + esc(d.next) + '</strong>.')
+    + note(x.img, 'sav-sparkle', 'From me', 'I am doing a little happy dance for you right now.' + (d.next ? ' Next up: <strong>' + esc(d.next) + '</strong>.' : ''))
     + creamClose + cta(x.app + '#Proof', 'Add it to my proof &rarr;') + signoff(x.img, 'So bloody proud of you.');
   return { subject: '🎉 ' + x.first + ', you finished Week ' + d.week + '! Look at everything you did', html: shell({ title: 'Week ' + d.week + ' complete', pre: 'A whole module of rewiring your brain. Let’s celebrate.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 14. Program complete: where you started vs where you are now, a testimonial invite, and what's next */
 function completeEmail(o) {
-  const x = J(o), d = Object.assign({
+  const x = J(o), d = Object.assign(o && o.real ? { lessons: 0, acts: 0, proof: 0, reps: 0, then: [], now: [], flips: [] } : {
     lessons: 49, acts: 15, sessions: 8, proof: 41, reps: 212,
     then: [['Who I was', 'Done being the one who over-explains and apologises for taking up space.'], ['What I believed', 'I’m not good enough unless I’m busy.'], ['How I felt', 'Overwhelmed, anxious, burnt out, numb.']],
     now: ['I said no to extra work without explaining myself, and nothing bad happened.', 'I am good enough. I have 41 pieces of proof.', 'Calm most days. I catch it in my jaw before it takes over.'],
@@ -389,10 +423,9 @@ function completeEmail(o) {
   }, (o && o.data) || {});
   const body = hero('🎓 YOU. DID. IT.', x.first + ', you finished Breakthrough!', 'Every lesson. Every rep. Every hard, brave conversation with yourself. This is what it looks like when someone actually does the work. Let’s look at it properly.')
     + photoPair(x.img, ['sav-overwhelm', 'Day one', 'Savannah with her head in her hands, covered in sticky notes'], ['sav-sparkler', 'Now', 'Savannah laughing with a sparkler'])
-    + creamOpen('Then → now, in your own words', 'Look how far you’ve come')
-    + para('These are things you wrote in the app. On the left, when you started. On the right, you now.')
-    + thenNow(d.then, d.now)
-    + '<p style="margin:10px 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">The old stories, flipped</p>' + d.flips.map(function (f) { return flip(esc(f[0]), esc(f[1])); }).join('')
+    + creamOpen(d.then.length ? 'Then → now, in your own words' : 'Look how far you’ve come', d.then.length ? 'Look how far you’ve come' : '')
+    + (d.then.length ? para('These are things you wrote in the app. On the left, when you started. On the right, you now.') + thenNow(d.then, d.now) : '')
+    + (d.flips.length ? '<p style="margin:10px 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">The old stories, flipped</p>' + d.flips.map(function (f) { return flip(esc(f[0]), esc(f[1])); }).join('') : '')
     + '<h2 style="margin:24px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Your Breakthrough, in pictures</h2>'
     + visualStats(x.img, { lessons: d.lessons, acts: d.acts, reps: d.reps, proof: d.proof })
     + creamClose
@@ -400,8 +433,8 @@ function completeEmail(o) {
     + '<tr><td class="pad" style="padding:36px 36px 8px">'
     + '<p style="margin:0 0 8px;font-family:' + HAND + ';font-size:20px;letter-spacing:2px;color:' + C.lime + '">Your story could change someone’s life</p>'
     + '<h2 style="margin:0 0 14px;font-family:' + SERIF + ';font-weight:800;font-size:30px;line-height:1.15;color:' + C.cream + '">I’d love you to write me a testimonial</h2>'
-    + '<p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:' + C.soft + '">Somewhere out there is a woman who feels exactly how you felt when you started. Overwhelmed, stuck, sure something’s wrong with her. Your words might be the thing that tells her it can change.</p>'
-    + '<p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:' + C.soft + '">For me, it means everything. It’s how I know this works, and it’s how the next woman finds me. And for you, writing it down locks in how far you’ve come. Win, win.</p>'
+    + '<p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:' + C.soft + '">Somewhere out there is a person who feels exactly how you felt when you started. Overwhelmed, stuck, sure something’s wrong with them. Your words might be the thing that tells them it can change.</p>'
+    + '<p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:' + C.soft + '">For me, it means everything. It’s how I know this works, and it’s how the next person finds me. And for you, writing it down locks in how far you’ve come. Win, win.</p>'
     + '</td></tr>'
     + '<tr><td class="pad" style="padding:8px 36px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:' + C.cream + ';border-radius:20px;padding:20px 22px;color:' + C.ink + '">'
     + '<div style="font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + ';margin-bottom:8px">A few prompts, if you want them</div>'
@@ -412,8 +445,8 @@ function completeEmail(o) {
     + creamOpen('What’s next', 'Keep the momentum going')
     + box('<div style="font-family:' + SERIF + ';font-weight:800;font-size:20px;margin-bottom:4px">ECT with me</div>Emotional Change Technique: release the heaviest emotions and the two limiting beliefs holding you back most. Six fortnightly 1:1 sessions.', C.lime)
     + box('<div style="font-family:' + SERIF + ';font-weight:800;font-size:20px;margin-bottom:4px">Keep going 1:1</div>Ongoing monthly coaching with me, to keep building on everything you’ve started.')
-    + box('<div style="font-family:' + SERIF + ';font-weight:800;font-size:20px;margin-bottom:4px">Group calls</div>Two live group calls a month with women doing the same work.')
-    + note(x.img, 'sav-laptop', 'From me', 'Want to chat about what’s right for you? Reply to this email and we’ll work it out together. Either way, your app stays yours. Keep adding proof and doing your reps.')
+    + box('<div style="font-family:' + SERIF + ';font-weight:800;font-size:20px;margin-bottom:4px">Group calls</div>Two live group calls a month with people doing the same work.')
+    + note(x.img, 'sav-sparkle', 'From me', 'Want to chat about what’s right for you? Reply to this email and we’ll work it out together. Either way, your app stays yours. Keep adding proof and doing your reps.')
     + creamClose + signoff(x.img, 'I am so, so proud of you.');
   return { subject: '🎓 ' + x.first + ', you finished Breakthrough! Look how far you’ve come', html: shell({ title: 'You did it', pre: 'Then and now, in your own words. Plus a little favour to ask.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
@@ -432,7 +465,7 @@ function nameFirst(subject, first) {
   return first + ', ' + (lead ? lead.trim() + ' ' : '') + body.replace(/\s+/g, ' ').trim() + BRAND_TAIL;
 }
 function withName(fn) { return function (o) { const m = fn(o); m.subject = nameFirst(m.subject, o && o.noName ? '' : (o && o.first) || (fn === loginCodeEmail ? '' : 'Bec')); return m; }; }
-const API = { whenText, SITE, nameFirst };
-[welcomeEmail, reminderEmail, loginCodeEmail, welcomeSelfEmail, notOpenedEmail, agreementEmail, firstCallPrepEmail, recapEmail, weekUnlockedEmail, weeklyEmail, milestoneEmail, missYouEmail, completeEmail, moduleCompleteEmail].forEach(function (f) { API[f.name] = withName(f); });
+const API = { whenText, placeOf, SITE, nameFirst };
+[welcomeEmail, reminderEmail, loginCodeEmail, welcomeSelfEmail, notOpenedEmail, agreementEmail, firstCallPrepEmail, recapEmail, weekUnlockedEmail, weeklyEmail, milestoneEmail, missYouEmail, completeEmail, moduleCompleteEmail, waitlistEmail].forEach(function (f) { API[f.name] = withName(f); });
 if (typeof module !== 'undefined' && module.exports) module.exports = API; else window.BT_EMAILS = API;
 })();

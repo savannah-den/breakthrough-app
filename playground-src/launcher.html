@@ -111,6 +111,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
 .sl-copy{align-self:flex-start;min-height:42px;padding:8px 18px;border-radius:999px;border:0;background:var(--maroon);color:#FFF4EE;font:600 14px var(--body);cursor:pointer}
 .sl-copy:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
 .k-reps{background:#F1F9A6}.k-back{background:#F4C2F7}.k-gentle{background:#BFE3D0}.k-week{background:#F28C3B}.k-sav{background:#8FA6C9}.k-act{background:#E9E1FF}
+.todo-done{opacity:.85}.todo-done>summary{cursor:pointer;font-weight:600;padding:6px 0}.todo-done li{text-decoration:line-through;opacity:.7}.nf-prev{display:inline-block;margin-top:6px;font-size:13px;font-weight:600;color:#A8231F}
 </style>
 
 <div class="wrap">
@@ -128,7 +129,13 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
       <div class="sl-card pink"><b>1:1 clients</b><code>https://app.colourmeneurospicy.com.au/1to1</code><button type="button" class="sl-copy" data-copy="https://app.colourmeneurospicy.com.au/1to1">Copy link</button></div>
       <div class="sl-card lime"><b>Self-paced clients</b><code>https://app.colourmeneurospicy.com.au/course</code><button type="button" class="sl-copy" data-copy="https://app.colourmeneurospicy.com.au/course">Copy link</button></div>
     </div>
+    <p class="todo-sub">✉️ <a href="email-preview.html" target="_blank" rel="noopener" style="color:inherit;font-weight:600">Preview the welcome email and call reminder emails</a> · the “Send welcome email” button is on each 1:1 client’s page in the coach dashboard.</p>
   </section>
+  <div class="livebar" aria-label="Client journey">
+    <span>The client journey <i>(opens in a new tab)</i></span>
+    <a class="live-btn" href="email-journey.html" target="_blank" rel="noopener"><b>✉️ Email sequence</b><span>All 17 emails in order, with previews</span></a>
+    <a class="live-btn" href="push-journey.html" target="_blank" rel="noopener"><b>🔔 Phone notifications</b><span>Every notification in order, on a lock screen</span></a>
+  </div>
   <div class="livebar" aria-label="The real app">
     <span>The real thing <i>(opens in a new tab)</i></span>
     <a class="live-btn" href="https://app.colourmeneurospicy.com.au/" target="_blank" rel="noopener"><b>📱 Live app</b><span>What your clients use</span></a>
@@ -146,11 +153,11 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
   </section>
   <section class="nf" aria-labelledby="nf-h">
     <h2 id="nf-h">Notifications: what goes out, and when</h2>
-    <p class="todo-sub">Clients get <b>one kind reminder a day at most</b>, at the time they pick in their profile, in their own timezone. Nothing if they’ve turned notifications off. Tap any card or day to see the preview.</p>
+    <p class="todo-sub">Call reminders (day before, 2 hours, 15 minutes) go out as a phone notification <b>and</b> a branded email with their Zoom link. Apart from those, clients get <b>one kind reminder a day at most</b>, at the time they pick in their profile, in their own timezone. Nothing if they’ve turned notifications off. Tap any card or day to see the preview.</p>
     <div class="nf-tabs" role="tablist"><button class="nf-tab on" type="button" data-t="list" role="tab" aria-selected="true">All notifications</button><button class="nf-tab" type="button" data-t="cal" role="tab" aria-selected="false">An example month</button></div>
     <div id="nf-list" class="nf-grid"></div>
     <div id="nf-cal" hidden>
-      <p class="todo-sub"><b>Example: Bec, a 1:1 client.</b> Reminder time 7pm. She starts on day 1, builds her DOSE on day 4 (her reps switch on), watches lessons until day 9, ticks her reps most days, then life gets busy and she stops. You unlock Week 2 for her on day 8.</p>
+      <p class="todo-sub"><b>Example: Bec, a 1:1 client.</b> Reminder time 7pm. They start on day 1, build their DOSE on day 4 (their reps switch on), watch lessons until day 9, tick their reps most days, then life gets busy and they stop. You unlock Week 2 for them on day 8.</p>
       <div class="nf-legend" id="nf-legend"></div>
       <div class="nf-cal" id="nf-days" role="grid" aria-label="Bec’s first five weeks"></div>
       <div class="nf-pv" id="nf-pv" aria-live="polite"></div>
@@ -160,6 +167,7 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     <span>See what new clients see first</span>
     <a class="tour-btn" href="app.html?door=course&amp;tour=1"><b>▶ App tour</b><span>Self-paced</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1"><b>▶ New 1:1 client</b><span>The full first-time journey</span></a>
+    <a class="tour-btn" href="app.html?door=course&amp;fresh=1"><b>▶ New self-paced client</b><span>Save the app, welcome module, a week at a time</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=welcome"><b>▶ The welcome module</b><span>Start at step 5, with steps 1–4 done</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;peek=1&amp;unlock=1"><b>🔓 Everything unlocked</b><span>1:1 view, every week open, your answers kept</span></a>
     <a class="tour-btn" href="app.html?door=private&amp;fresh=1&amp;skip=contract"><b>📄 The agreement</b><span>What they sign at step 2</span></a>
@@ -234,6 +242,15 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     });
   }
   window.BT_OPEN = function (href) { open(href, ''); };
+  // the email previews, email sequence and phone notification pages open here in the playground frame
+  // (a new browser tab can't open them: the artifact only serves them inside this page)
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/^(https?:|mailto:|tel:|#)/i.test(href) || !/\.html(\?|#|$)/i.test(href)) return;
+    if (a.matches('a.door, a.tool, a.tour-btn')) return;
+    e.preventDefault(); open(href, (a.querySelector('b') || a).textContent.trim().slice(0, 60));
+  }, true);
   function close() { stage.hidden = true; view.srcdoc = ''; }
   window.BT_PLAYGROUND_CLOSE = close;
   document.getElementById('close').addEventListener('click', close);
@@ -280,9 +297,16 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     ['lawyer', 'Ask your lawyer to check the agreement + app terms'],
     ['library', 'Build the resource library'],
     ['email', 'Set up email sending (Resend)', 'So “Week unlocked” emails go out. I’ll walk you through it: a free Resend account, verify your domain, then two Netlify keys'],
-    ['reps', 'Pick a name for “Today’s reps”']
+    ['reps', 'Pick a name for “Today’s reps”'],
+    ['zoom-summary', 'Work out how Claude can upload the Zoom session summary to the coach portal', 'Ask Claude next time: e.g. pull the Zoom AI summary for each call and save it on that client’s page'],
+    ['email-keys', 'Switch on emails: RESEND_API_KEY + EMAIL_FROM in Netlify', 'Needed for the welcome email button and the call reminder emails'],
+    ['sql-welcome', 'Run the latest Supabase SQL (founding members + welcome email column)']
   ];
   var CHECK = [
+    ['c-welcome', 'Coach dashboard: “Send welcome email” + “Send me a test” on each 1:1 client', 'Coach dashboard → Clients → Example: Anna (or Jess). Preview it with “Preview it”'],
+    ['c-consent', 'Social media consent at the top of each client', 'Coach dashboard → open a client, under their name'],
+    ['c-reminders', 'Call reminders card + test buttons', 'Coach dashboard → App settings → Call reminders (sample calls in the playground)'],
+    ['c-tobedone', 'Profile: tests “To be completed” at the top, links always there', '🔓 Everything unlocked → Profile'],
     ['c-banner', 'Branding banner above the menu', 'Any view: “Colour Me Neurospicy · Neurodivergent breakthrough program” at the very top'],
     ['c-tour', 'The new full app tour', 'Tap “▶ App tour” below. It walks every page part by part'],
     ['c-w1l1', 'Week 1 Lesson 1: shorter description + the two new questions', 'Self-paced view → Course → Week 1 → Lesson 1'],
@@ -309,15 +333,22 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
   function item(it) {
     var li = document.createElement('li'); if (st.done[it[0]]) li.className = 'done';
     var lab = document.createElement('label'), cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!st.done[it[0]];
-    cb.addEventListener('change', function () { if (cb.checked) st.done[it[0]] = Date.now(); else delete st.done[it[0]]; li.className = cb.checked ? 'done' : ''; save(); });
+    cb.addEventListener('change', function () { if (cb.checked) st.done[it[0]] = Date.now(); else delete st.done[it[0]]; li.className = cb.checked ? 'done' : ''; save(); setTimeout(draw, 450); });
     var t = document.createElement('span'); t.textContent = it[1]; if (it[2]) { var sm = document.createElement('small'); sm.textContent = it[2]; t.appendChild(sm); }
     lab.appendChild(cb); lab.appendChild(t); li.appendChild(lab); return li;
   }
   function draw() {
     var f = document.getElementById('todo-film'), m = document.getElementById('todo-more'), ck = document.getElementById('todo-check'); f.innerHTML = ''; m.innerHTML = ''; ck.innerHTML = '';
-    CHECK.forEach(function (it) { ck.appendChild(item(it)); });
-    FILM.forEach(function (it) { f.appendChild(item(it)); });
-    MORE.concat(st.extra).forEach(function (it) { m.appendChild(item(it)); });
+    var doneAll = [];
+    function fill(ul, list) { list.forEach(function (it) { if (st.done[it[0]]) doneAll.push(it); else ul.appendChild(item(it)); }); }
+    fill(ck, CHECK); fill(f, FILM); fill(m, MORE.concat(st.extra));
+    var old = document.getElementById('todo-donebox'); if (old) old.remove();
+    if (doneAll.length) {
+      var det = document.createElement('details'); det.id = 'todo-donebox'; det.className = 'todo-g todo-done';
+      var sum = document.createElement('summary'); sum.textContent = '✓ Done (' + doneAll.length + ') · tap to see them'; det.appendChild(sum);
+      var ul = document.createElement('ul'); doneAll.sort(function (a, b) { return (st.done[b[0]] || 0) - (st.done[a[0]] || 0); }).forEach(function (it) { ul.appendChild(item(it)); }); det.appendChild(ul);
+      document.getElementById('todo-add').before(det);
+    }
   }
   document.getElementById('todo-add').addEventListener('submit', function (e) {
     e.preventDefault(); var i = document.getElementById('todo-new'), v = i.value.trim(); if (!v) return;
@@ -334,11 +365,15 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
     { k: 'back', who: 'Client', name: 'Come back to the course', title: 'Bec, your next lesson is waiting ✨', body: 'Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.', when: 'At their reminder time, counted from the last time they opened a lesson', often: 'Day 3, 7, 14, 21 and 30 after they stop, then every 15 days. Uses their why, North Star and anchor word. Replaces the reps reminder that day.', opens: 'The Course, at their next lesson', alt: ['Day 7: Future you says hi 💛 · “Remember who you’re becoming: …”', 'Day 14: No catching up needed 🌿 · “No guilt, no pressure. Just the next small step. Your word: Steady.”', 'Day 21: Still cheering for you 📣', 'Day 30+: Whenever you’re ready 💌'] },
     { k: 'gentle', who: 'Client', name: 'Gentle 1% nudge', title: 'Your 1% for today 💛', body: 'Five minutes counts. Open Breakthrough and do one small thing.', when: 'Every day at the time they picked', often: 'Only early in Week 1, before their reps switch on, and only on days they haven’t opened a lesson', opens: 'The Course' },
     { k: 'week', who: 'Client (1:1)', name: 'Next week unlocked', title: '🔓 Week 2 is open!', body: 'Bec, your next week is ready for you. One small step at a time.', when: 'The moment you tap “Unlock Week…” for them in the coach dashboard', often: 'Each time you open a new week', opens: 'The Course', email: { s: 'Week 2 is open for you ✨', h: 'Week 2 is open for you: The Reality Framework', b: 'I’ve just unlocked your next week. Go at your own pace, one small step at a time.', c: 'Open Week 2 →' } },
+    { k: 'call', who: 'Client (1:1 + group)', name: 'Call reminder: the day before', title: '📅 Tomorrow: your 1:1 with Sav', body: '10:00am Wednesday 5 November. Tap for your Zoom link.', when: '24 hours before each call in your Google Calendar that they’re invited to', often: 'Every call', opens: 'Their Zoom link', email: { s: 'Tomorrow: our 1:1 call at 10:00am 🎥', h: 'Our 1:1 call is tomorrow', b: 'Your photo, the day and time in their timezone, a big Join on Zoom button and a little get-ready list.', c: 'Preview it ↗' }, preview: 'r24' },
+    { k: 'call', who: 'Client (1:1 + group)', name: 'Call reminder: 2 hours before', title: '⏰ In 2 hours: your 1:1 with Sav', body: 'At 10:00am. Find a quiet spot, Bec. Tap for your Zoom link.', when: '2 hours before each call', often: 'Every call', opens: 'Their Zoom link', email: { s: 'In 2 hours: our 1:1 call at 10:00am 🎥', h: 'Our 1:1 call is in 2 hours', b: 'Same branded email with the Zoom button, plus “before we start” tips.', c: 'Preview it ↗' }, preview: 'r2' },
+    { k: 'call', who: 'Client (1:1 + group)', name: 'Call reminder: 15 minutes before', title: '🎥 Starting in 15 minutes', body: 'Your 1:1 with Sav is at 10:00am. Tap to join on Zoom.', when: '15 minutes before each call', often: 'Every call', opens: 'Zoom, straight into the call', email: { s: 'Starting in 15 minutes: our 1:1 call 🎥 Your Zoom link', h: 'We’re starting in 15 minutes', b: 'One tap and they’re in.', c: 'Preview it ↗' }, preview: 'r15' },
+    { k: 'call', who: 'New 1:1 client', name: 'Welcome email', noPush: true, when: 'When you tap “Send welcome email” on their page in the coach dashboard', often: 'Once (you can resend)', opens: 'The app, to download it', email: { s: 'Welcome to Breakthrough, Bec ✨ Here’s what to do before our first call', h: 'You’re in. Let’s get you set up.', b: 'Your photo, the Download your app button, and the 4 steps before your first call, each with a picture from the app.', c: 'Preview it ↗' }, preview: 'welcome' },
     { k: 'sav', who: 'You', name: 'A client added a win', title: '🏆 Bec added a win', body: '“I said no without explaining myself”', when: 'Straight away', often: 'Every win', opens: 'Your coach dashboard' },
     { k: 'sav', who: 'You', name: 'A client signed their agreement', title: '✍️ Bec signed their agreement', body: 'Their package is locked in. Time to welcome them!', when: 'Straight away', often: 'Once per client', opens: 'Your coach dashboard' },
     { k: 'sav', who: 'You', name: 'A client is waiting for their agreement', title: '📝 Bec is waiting for their agreement', body: 'They can’t go any further until you send it. Open their profile to send it.', when: 'When a 1:1 client reaches the agreement step and you haven’t sent it yet', often: 'Once per client', opens: 'Your coach dashboard' }
   ];
-  var COL = { reps: 'k-reps', back: 'k-back', gentle: 'k-gentle', week: 'k-week', sav: 'k-sav' };
+  var COL = { reps: 'k-reps', back: 'k-back', gentle: 'k-gentle', week: 'k-week', sav: 'k-sav', call: 'k-week' };
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function phone(n, time) {
     var p = el('div', 'nf-phone'), b = el('div', 'nf-bub'), i = el('span', 'nf-ic', '✦'), t = el('div', 'nf-bt'), s = el('small');
@@ -350,15 +385,15 @@ button{min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid v
   N.forEach(function (n) {
     var c = el('article', 'nf-card'), h = el('h3'), dot = el('i', COL[n.k]); h.appendChild(dot); h.appendChild(document.createTextNode(n.name));
     c.appendChild(h); c.appendChild(el('span', 'nf-who' + (n.who === 'You' ? ' sav' : ''), n.who === 'You' ? 'Goes to you' : 'Goes to: ' + n.who));
-    c.appendChild(phone(n, n.k === 'sav' || n.k === 'week' ? 'now' : '7:00 pm'));
-    if (n.email) c.appendChild(mail(n.email));
+    if (!n.noPush) c.appendChild(phone(n, n.k === 'sav' || n.k === 'week' ? 'now' : n.k === 'call' ? 'reminder' : '7:00 pm'));
+    if (n.email) { var mm = mail(n.email); if (n.preview) { var a = el('a', 'nf-prev', 'Open the real email ↗'); a.href = 'email-preview.html?k=' + n.preview; a.target = '_blank'; a.rel = 'noopener'; mm.appendChild(a); } c.appendChild(mm); }
     var dl = el('dl', 'nf-dl'); [['When', n.when], ['How often', n.often], ['Tapping opens', n.opens]].concat(n.alt ? [['It rotates', n.alt.join(' · ')]] : []).concat(n.email ? [['Email', 'Sent too, once email is set up (see your to-do list)']] : []).forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); });
     c.appendChild(dl); list.appendChild(c);
   });
   // the example month: run the real rules day by day
   var lessonDays = [1, 2, 3, 4, 5, 6, 7, 8, 9], ticked = { 4: 1, 5: 1, 6: 1, 8: 1, 9: 1, 11: 1 }, repsFrom = 4, DUE = [3, 7, 14, 21, 30];
   function due(d) { return d >= 3 && (DUE.indexOf(d) >= 0 || (d > 30 && (d - 30) % 15 === 0)); }
-  var BACK = { 3: ['Bec, your next lesson is waiting ✨', 'Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.'], 7: ['Future you says hi 💛', 'Remember who you’re becoming: “I am calm, grounded and trust myself”. She’s built one small step at a time. Ready for the next one?'], 14: ['No catching up needed 🌿', 'No guilt, no pressure. Just the next small step. Your word: Steady.'], 21: ['Still cheering for you 📣', '“I want to stop living in survival mode and actually enjoy my kids” still matters. Your course is right where you left it.'] };
+  var BACK = { 3: ['Bec, your next lesson is waiting ✨', 'Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.'], 7: ['Future you says hi 💛', 'Remember who you’re becoming: “I am calm, grounded and trust myself”. That person is built one small step at a time. Ready for the next one?'], 14: ['No catching up needed 🌿', 'No guilt, no pressure. Just the next small step. Your word: Steady.'], 21: ['Still cheering for you 📣', '“I want to stop living in survival mode and actually enjoy my kids” still matters. Your course is right where you left it.'] };
   var days = [], legend = document.getElementById('nf-legend');
   [['k-act', 'Bec opened a lesson'], ['k-reps', 'Today’s reps'], ['k-back', 'Come back to the course'], ['k-gentle', 'Gentle 1% nudge'], ['k-week', 'Week unlocked (+ email)']].forEach(function (l) { var s = el('span'); s.appendChild(el('i', l[0])); s.appendChild(document.createTextNode(l[1])); legend.appendChild(s); });
   for (var d = 1; d <= 35; d++) {

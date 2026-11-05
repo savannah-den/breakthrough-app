@@ -19,3 +19,9 @@
 
 [functions."call-reminders"]
   schedule = "*/5 * * * *"
+
+[functions."week-unlocks"]
+  schedule = "@hourly"
+
+[functions."lifecycle-emails"]
+  schedule = "@hourly"

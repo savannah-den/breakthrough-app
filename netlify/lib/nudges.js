@@ -22,7 +22,7 @@ function comebackDue(days) { if (days < 3) return false; if (COMEBACK_DAYS.index
 function comeback(days, who) {
   const first = who.first ? who.first + ', ' : '', why = clip(who.why, 90), toward = clip(who.toward, 80), anchor = clip(who.anchor, 30);
   if (days <= 3) return { title: first + 'your next lesson is waiting ✨', body: why ? 'Remember why you started: “' + why + '”. Five minutes is enough.' : 'Five minutes is enough to keep the momentum going. Pick up right where you left off.' };
-  if (days <= 7) return { title: 'Future you says hi 💛', body: toward ? 'Remember who you’re becoming: “' + toward + '”. She’s built one small step at a time. Ready for the next one?' : 'Who you’re becoming is built one small step at a time. Ready for the next one?' };
+  if (days <= 7) return { title: 'Future you says hi 💛', body: toward ? 'Remember who you’re becoming: “' + toward + '”. That person is built one small step at a time. Ready for the next one?' : 'Who you’re becoming is built one small step at a time. Ready for the next one?' };
   if (days <= 14) return { title: 'No catching up needed 🌿', body: 'No guilt, no pressure. Just the next small step.' + (anchor ? ' Your word: ' + anchor + '.' : '') };
   if (days <= 21) return { title: 'Still cheering for you 📣', body: why ? '“' + why + '” still matters. Your course is right where you left it.' : 'Your course is right where you left it, whenever you’re ready.' };
   return { title: 'Whenever you’re ready 💌', body: 'Life gets full. That’s okay. Your next lesson is here when you are' + (why ? ', and so is your why: “' + clip(why, 60) + '”' : '') + '.' };

@@ -216,3 +216,26 @@ create trigger on_profile_invite_meta after insert on public.profiles
 
 -- Welcome email (3 Nov 2026): when Sav sent the welcome email to someone who hasn't logged in yet.
 alter table public.invites add column if not exists welcome_sent_at timestamptz;
+
+-- Leads (4 Nov 2026): waitlist sign-ups and Breakthrough applications. Only Sav can read or change them;
+-- the public waitlist + application forms write through the "lead" Netlify function (service key), never directly.
+create table if not exists public.leads (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  first_name text, last_name text, phone text, country text,
+  interests text[] not null default '{}',          -- what they ticked: community, group, 1:1
+  tags text[] not null default '{}',               -- waitlist, group enquiry, 1:1 enquiry (+ any Sav adds)
+  source text,                                     -- waitlist page, application, …
+  application jsonb,                               -- their application answers
+  applied_at timestamptz,
+  score int not null default 0,
+  heat text not null default 'cold',               -- cold, warm, hot, fire (worked out from their answers)
+  heat_override text,                              -- Sav's own call, if she changes it
+  notes text,
+  welcomed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.leads enable row level security;
+drop policy if exists "coach manages leads" on public.leads;
+create policy "coach manages leads" on public.leads for all using (public.is_admin()) with check (public.is_admin());

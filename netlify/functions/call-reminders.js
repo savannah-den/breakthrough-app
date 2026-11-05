@@ -1,7 +1,7 @@
 // Runs every 5 minutes (see netlify.toml). Looks at Sav's Google Calendar for 1:1 and group calls and reminds
 // each client who's invited:
 //   24 hours before: phone notification + email      2 hours before: phone notification + email
-//   15 minutes before: phone notification + email
+//   15 minutes before: phone notification only (no email)
 // Each email has a big "Join on Zoom" button using the Zoom link from the calendar invite.
 // A client is matched to a call when their email is on the invite (or the match words Sav set on their page).
 // Every reminder is logged on the client (client_data 'bt-call-log') so nobody gets the same one twice.
@@ -17,7 +17,7 @@ const GROUP_ZOOM = 'https://us06web.zoom.us/j/2567750438?pwd=pSXpuUGvDMULpFCMsay
 const LEADS = [
   { k: '24h', ms: 24 * 3600e3, win: 40 * 60e3, email: true },
   { k: '2h', ms: 2 * 3600e3, win: 30 * 60e3, email: true },
-  { k: '15m', ms: 15 * 60e3, win: 12 * 60e3, email: true }
+  { k: '15m', ms: 15 * 60e3, win: 12 * 60e3, email: false } // 15 minutes before: phone notification only
 ];
 const j = (r) => r.json().catch(() => []);
 
@@ -76,19 +76,49 @@ function pushText(job, tz) {
   return { title: '🎥 Starting in 15 minutes', body: 'Your ' + what + ' is at ' + w.time + '. Tap to join on Zoom.' };
 }
 
-exports.calls = calls; exports.plan = plan; exports.pushText = pushText; exports.sendEmail = sendEmail;
+// Once an hour: copy each 1:1 client's upcoming calls (and each call's own Zoom link) onto their agreement,
+// so the "Your calls with Sav" card in their app always has the dates and a Join on Zoom button,
+// even if Sav hasn't opened their page in the coach dashboard.
+async function syncSessions(now) {
+  const list = await calls(now - 2 * 3600e3, now + 60 * 864e5);
+  const per = {};
+  list.forEach(c => { if (c.kind !== '1:1') return; c.who.forEach(p => { (per[p.id] = per[p.id] || []).push({ start: c.ev.start, end: c.ev.end || null, zoom: c.ev.zoom || c.zoomOf[p.id] || '' }); }); });
+  const ids = Object.keys(per); if (!ids.length) return 0;
+  const rows = await push.svc('contracts?select=user_id,terms&user_id=in.(' + ids.join(',') + ')').then(j);
+  let n = 0;
+  for (const r of rows || []) {
+    const t = Object.assign({}, r.terms || {}), call = Object.assign({}, t.call || {});
+    const sessions = per[r.user_id].sort((a, b) => a.start.localeCompare(b.start)), upcoming = sessions.map(x => x.start);
+    if (JSON.stringify(sessions) === JSON.stringify(call.sessions || [])) continue;
+    call.sessions = sessions; call.upcoming = upcoming;
+    if (!call.zoom) { const z = sessions.find(x => x.zoom); if (z) call.zoom = z.zoom; }
+    t.call = call;
+    const u = await push.svc('contracts?user_id=eq.' + r.user_id, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ terms: t, updated_at: new Date().toISOString() }) });
+    if (u.ok) n++;
+  }
+  return n;
+}
+
+exports.calls = calls; exports.syncSessions = syncSessions; exports.plan = plan; exports.pushText = pushText; exports.sendEmail = sendEmail;
 exports.handler = async () => {
   if (!process.env.GCAL_ICS_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return { statusCode: 200, body: 'not set up' };
   const now = Date.now();
+  if (new Date(now).getUTCMinutes() < 5) { try { await syncSessions(now); } catch (e) {} }
   const { jobs } = await plan(now);
   if (!jobs.length) return { statusCode: 200, body: 'none due' };
   const ids = Array.from(new Set(jobs.map(x => x.p.id)));
   const [rows, subs] = await Promise.all([
-    push.svc('client_data?select=user_id,key,value&user_id=in.(' + ids.join(',') + ')&key=in.(bt-call-log,bt-tz)').then(j),
+    push.svc('client_data?select=user_id,key,value&user_id=in.(' + ids.join(',') + ')&key=in.(bt-call-log,bt-tz,bt-profile)').then(j),
     push.ready() ? push.svc('push_subs?select=endpoint,sub,tz,user_id&user_id=in.(' + ids.join(',') + ')').then(j) : []
   ]);
-  const log = {}, tzOf = {};
-  (rows || []).forEach(r => { if (r.key === 'bt-call-log') { try { log[r.user_id] = JSON.parse(r.value) || {}; } catch (e) { log[r.user_id] = {}; } } else if (r.value) tzOf[r.user_id] = r.value; });
+  // each client's own timezone: the one they picked in the app (bt-profile), then their device's, then their phone's
+  const log = {}, tzOf = {}, picked = {}, countryOf = {};
+  (rows || []).forEach(r => {
+    if (r.key === 'bt-call-log') { try { log[r.user_id] = JSON.parse(r.value) || {}; } catch (e) { log[r.user_id] = {}; } }
+    else if (r.key === 'bt-profile') { try { const pr = JSON.parse(r.value) || {}; if (pr.tz) picked[r.user_id] = pr.tz; if (pr.country) countryOf[r.user_id] = pr.country; } catch (e) {} }
+    else if (r.value && r.key === 'bt-tz') tzOf[r.user_id] = r.value;
+  });
+  Object.keys(picked).forEach(u => { tzOf[u] = picked[u]; });
   (subs || []).forEach(s => { if (s.tz && !tzOf[s.user_id]) tzOf[s.user_id] = s.tz; });
   const changed = {}, todo = []; let nPush = 0, nMail = 0;
   jobs.forEach(job => {
@@ -108,7 +138,7 @@ exports.handler = async () => {
     const uid = job.p.id, tz = tzOf[uid] || 'Australia/Brisbane', mine = (subs || []).filter(s => s.user_id === uid);
     if (mine.length) { const t = pushText(job, tz); nPush += await push.send(mine, { title: t.title, body: t.body, url: job.zoom || '/#Profile', tag: 'call-' + job.ev.id }); }
     if (job.L.email && process.env.RESEND_API_KEY) {
-      const m = reminderEmail({ first: String(job.p.full_name || '').split(' ')[0], kind: job.kind, lead: job.L.k, start: job.ev.start, tz, zoom: job.zoom, site: SITE });
+      const m = reminderEmail({ first: String(job.p.full_name || '').split(' ')[0], kind: job.kind, lead: job.L.k, start: job.ev.start, tz, country: countryOf[uid], zoom: job.zoom, site: SITE });
       if (await sendEmail(job.p.email, m)) nMail++;
     }
   }

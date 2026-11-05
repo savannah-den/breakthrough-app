@@ -57,7 +57,7 @@
   // the Vagal Tone Workout series menu, along the top of every page in it
   function seriesTabs(active) {
     var T = [['plan', 'My plan', '#Vagal', 'vagal'], ['dose', 'DOSE', '#Dose', 'dose'], ['breathe', 'Breathe', '#Breathe', 'breathe'], ['pause', 'Pause', '#Pause', 'pause'], ['move', 'Move', '#Move', 'move']];
-    return h('nav', { class: 'vg-tabs', 'aria-label': 'Vagal Tone Workout' }, T.map(function (t) { var on = t[0] === active; return h('a', { class: 'vg-tab' + (on ? ' on' : ''), href: t[2], 'aria-current': on ? 'page' : null }, [kit.emblem(t[3]), h('span', { text: t[1] })]); }));
+    return h('nav', { class: 'vg-tabs', 'aria-label': 'Vagal Tone Workout' }, T.map(function (t) { var on = t[0] === active, lk = t[0] !== 'plan' && !partOpen(t[0]); return h('a', { class: 'vg-tab' + (on ? ' on' : '') + (lk ? ' lock' : ''), href: t[2], 'aria-current': on ? 'page' : null, 'aria-label': lk ? t[1] + ' (locked until you reach it in the course)' : null }, [kit.emblem(t[3]), h('span', { text: (lk ? '🔒 ' : '') + t[1] })]); }));
   }
   function chipRow(opts, cur, onPick, label) {
     return h('div', { class: 'vg-chips', role: 'radiogroup', 'aria-label': label }, opts.map(function (o) {
@@ -482,6 +482,11 @@
     var d0 = doseData(), setUp = function () { var x = doseData(); return x.loves.length && x.plan.length; }; if (!ds.tab) ds.tab = !d0.loves.length ? 'learn' : !d0.plan.length ? 'routine' : 'home';
     var tabs = h('div', { class: 'ds-tabs', role: 'tablist' }), body = h('div', { class: 'ds-body' });
     wrap.appendChild(tabs); wrap.appendChild(body);
+    // a clear Done at the very bottom: ticks the activity off and takes her back to where she came from
+    wrap.appendChild(h('div', { class: 'ds-end' }, [h('button', { class: 'bt-btn lime ds-end-done', type: 'button', text: window.BT_COURSE.doneLabel('dose', 'Done ✓'), onclick: function (e) {
+      kit.sparkleBurst(e.currentTarget);
+      setTimeout(function () { var went = false; try { went = window.BT_COURSE.activityDone('dose'); } catch (x) {} if (!went) { try { var f = kit.lessonForRes('dose'); if (f) kit.markDone(f.l.id); } catch (x) {} toast('DOSE saved. It’s on your Home page in Today’s reps.'); location.hash = '#Vagal'; } }, 350);
+    } }), h('span', { class: 'ds-end-s', text: 'Everything you’ve picked is saved here. Come back any time from My plan, Home or Resources.' })]));
     var TABS0 = [['learn', 'Step 1 · Build my menu'], ['routine', 'Step 2 · Choose my daily DOSE'], ['home', 'Step 3 · Where it lives']], TABS = TABS0;
     function go(t) { ds.tab = t; draw(); try { tabs.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
     function draw() {
@@ -823,7 +828,7 @@
     page.appendChild(guideCard('Still vs moving', [vis]));
     page.appendChild(guideCard('Your body, on movement', [h('p', { text: 'Not about weight or looks. This is about how your body and brain actually work.' }), h('div', { class: 'vg-why' }, WHY.map(function (w, i) { return h('details', { class: 'vg-why-i' }, [h('summary', null, [h('span', { class: 'vg-why-ic', 'aria-hidden': 'true', text: w[0] }), w[1]]), h('p', { text: w[2] })]); })), h('p', { class: 'vg-perf', text: 'Sitting for a long stretch? Get up every 30 to 60 minutes, even just to stretch or refill your water.' })]));
     page.appendChild(guideCard('Pick your level', [h('p', { text: 'All of these count. Match it to your energy today, not the energy you think you should have.' }),
-      h('div', { class: 'mv-two' }, [h('span', { class: 'ds-lt1', style: '--c:#BFE3D0', text: 'E' }), h('span', null, [h('b', { text: 'Two birds, one stone. ' }), 'Moving is the E (endorphins) in your DOSE, so every move counts twice.'])]),
+      h('div', { class: 'mv-two' }, [h('span', { class: 'ds-lt1', style: '--c:#BFE3D0', text: 'E' }), h('span', null, [h('b', { text: 'Two birds, one stone. ' }), 'Moving is the E (endorphins) in your DOSE, so every move counts twice. ', h('a', { href: '#Dose', text: 'Open my DOSE →' })])]),
       h('p', { class: 'vg-sub', text: 'Pick at least 3 from each level that you’d actually do. They build your move menu and show up on your daily list.' }), (function () { var box = h('div'); (function drawMM() { var menu = moveData().menu || []; box.innerHTML = ''; box.appendChild(h('div', { class: 'vg-lvls' }, LEVELS4.map(function (L) { return h('div', { class: 'vg-lvl', style: '--n:' + L[2] }, [h('span', { class: 'vg-lvl-bars', 'aria-hidden': 'true' }, [1, 2, 3, 4].map(function (i) { return h('i', { class: i <= L[2] ? 'on' : '' }); })), h('b', { text: L[1] }), (function () { var c = MOVE_IDEAS[L[0]].filter(function (t) { return menu.indexOf(t) >= 0; }).length; return h('span', { class: 'mv-cnt' + (c >= 3 ? ' ok' : ''), text: c >= 3 ? '✓ ' + c + ' picked' : c + ' of 3 picked' }); })(), h('div', { class: 'vg-lvl-l' }, MOVE_IDEAS[L[0]].map(function (t) { var on = menu.indexOf(t) >= 0; return h('button', { class: 'vg-idea sm' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', onclick: function (e) { var d = moveData(); d.menu = d.menu || []; if (on) d.menu = d.menu.filter(function (x) { return x !== t; }); else { d.menu.push(t); kit.sparkleBurst(e.currentTarget); } wr(K.move, d); drawMM(); } }, [h('span', { class: 'vg-idea-ic', 'aria-hidden': 'true', text: on ? '♥' : '+' }), h('span', { text: t })]); }))]); }))); })(); return box; })()]));
     page.appendChild(guideCard('On a low day', [h('p', { text: 'If you’re flat, tired or in shutdown, gentle counts. Shake it out for a minute, sway to one song, stretch in bed. The goal is to move energy, not to punish your body.' })]));
     page.appendChild(guideCard('How much?', [h('div', { class: 'vg-whens' }, [['◔', 'Start with 5 minutes'], ['☀', 'Every day if you can'], ['↗', 'Add a little each week'], ['♡', 'Any movement counts']].map(function (w) { return h('span', { class: 'vg-when-b' }, [h('span', { class: 'vg-when-ic', 'aria-hidden': 'true', text: w[0] }), w[1]]); }))]));
@@ -845,6 +850,36 @@
   };
   var PNAMES = { dose: 'DOSE', breathe: 'Breathe', pause: 'Pause', move: 'Move' };
   var PR_RES = { dose: '#Dose', breathe: '#Breathe', pause: '#Pause', move: '#Move' };
+  /* Each part of the Vagal Tone Workout stays locked until she reaches it in the course:
+     the video before it is watched AND she opens that activity from the course page.
+     Anything she's already used (or ticked off in the course) stays open. */
+  var OPENK = 'bt-vg-open';
+  function partOpen(r) {
+    try {
+      if (A && A.state && A.state.isAdmin && !A.state.trial && !(kit.playground && kit.playground())) return true;
+      var f = kit.lessonForRes(r); if (!f) return true;
+      var op = rd(OPENK) || {};
+      if (op[r] || kit.isDone(f.l.id) || tried(r)) return true;
+      if (kit.lessonOpen(f.l.id) && window.BT_COURSE.returnKind(r) === 'course') { op[r] = Date.now(); wr(OPENK, op); return true; }
+      return false;
+    } catch (e) { return true; }
+  }
+  function lockedPage(root, r) {
+    var f = null; try { f = kit.lessonForRes(r); } catch (e) {}
+    var ready = false; try { ready = !!(f && kit.lessonOpen(f.l.id)); } catch (e) {}
+    var wrap = shell(root, 'Vagal Tone Workout', PNAMES[r] + ' is locked for now', ready ? 'You’re up to it! Open it from your course page and it unlocks here.' : 'It opens when you get to it in the course, so you’re never ahead of yourself.');
+    wrap.appendChild(seriesTabs(r));
+    wrap.appendChild(h('section', { class: 'vg-gcard vg-partlock' }, [
+      h('span', { class: 'vg-partlock-ic', 'aria-hidden': 'true', text: '🔒' }),
+      h('b', { class: 'vg-partlock-t', text: ready ? 'Ready when you are' : 'Coming up in your course' }),
+      h('p', { class: 'vg-sub', text: f ? (ready ? 'Tap below to go to “' + f.l.title + '” in your course, then open the activity.' : 'Watch the lessons before “' + f.l.title + '” in ' + (f.w && f.w.title ? 'Week ' + f.w.week + ': ' + f.w.title : 'your course') + ', then open the activity from the course page.') : '' }),
+      h('button', { class: 'bt-btn lime', type: 'button', text: ready ? 'Take me to it →' : 'Back to my course →', onclick: function () { try { sessionStorage.setItem('bt-scrollto', ready ? PR_RES[r] : ''); } catch (e) {} location.hash = '#Course'; } }),
+      h('a', { class: 'bt-btn ghost', href: '#Vagal', text: 'My vagal tone plan' })
+    ]));
+    return wrap;
+  }
+  function gated(r, fn) { return function (root) { boot(); if (!partOpen(r)) return lockedPage(root, r); return fn.apply(this, arguments); }; }
+
   var PR_BTN = { dose: 'Explore DOSE →', breathe: 'Open Breathe →', pause: 'Open my pause menu →', move: 'Open my move menu →' };
   var PR_SUB = { dose: 'A hit of the feel-good chemicals', breathe: 'Any breathwork counts', pause: 'Little pockets of slow', move: 'Get your body moving' };
   var noonOf = function (k) { return fromKey(k) + 12 * 3600000; };
@@ -959,7 +994,7 @@
     wrap.appendChild(h('p', { class: 'vg-sub', text: 'Built from the plans you made in each part. Change any of them whenever you like. Too much? Make it smaller.' }));
     wrap.appendChild(h('ul', { class: 'vg-minl' }, rows.map(function (r) {
       var shown = r[1].slice(0, 3);
-      return h('li', { class: 'vg-minr' }, [h('span', { class: 'vg-pr-art sm' }, [kit.emblem(r[0])]), h('div', { class: 'vg-minr-b' }, [h('b', { text: PNAMES[r[0]] }), r[1].length ? h('span', { text: shown.join(' · ') + (r[1].length > 3 ? ' · +' + (r[1].length - 3) + ' more' : '') }) : h('span', { class: 'vg-minr-none', text: 'Not set yet' })]), h('a', { class: 'vg-pr-go', href: r[2], text: r[1].length ? 'Change' : r[3] + ' →' })]);
+      return h('li', { class: 'vg-minr' }, [h('span', { class: 'vg-pr-art sm' }, [kit.emblem(r[0])]), h('div', { class: 'vg-minr-b' }, [h('b', { text: PNAMES[r[0]] }), r[1].length ? h('span', { text: shown.join(' · ') + (r[1].length > 3 ? ' · +' + (r[1].length - 3) + ' more' : '') }) : h('span', { class: 'vg-minr-none', text: 'Not set yet' })]), (partOpen(r[0]) ? h('a', { class: 'vg-pr-go', href: r[2], text: r[1].length ? 'Change' : r[3] + ' →' }) : h('span', { class: 'vg-pr-go lock', text: '🔒 Opens in the course' }))]);
     })));
     return wrap;
   }
@@ -1182,6 +1217,7 @@
         : h('a', { class: 'rp-big', href: '#Dose' }, [h('b', { text: 'Build your bare-ass minimum →' }), h('span', { text: 'Then it’s one tap here every day.' })]),
       h('button', { class: 'rp-big alt' + (vs.doseOther ? ' on' : ''), type: 'button', 'aria-expanded': vs.doseOther ? 'true' : 'false', onclick: function () { vs.doseOther = !vs.doseOther; redraw(); } }, [h('b', { text: '✎ I did something different' }), h('span', { text: 'Pick it from your menu or add a new one' })])
     ]));
+    doseKids.push(h('a', { class: 'rp-link', href: '#Dose', text: 'Open my DOSE page (my menu + plan) →' }));
     if (vs.doseOther) {
       var oIn = h('input', { class: 'bt-in sm', id: 'rp-dose-other', placeholder: 'What did you do? e.g. danced with the dog', value: vs.doseQ || '', 'aria-label': 'What you did for your DOSE' });
       var sug = h('div', { class: 'rp-sug' });
@@ -1378,5 +1414,5 @@
 
   window.BT_VAGAL = { repsCard: repsCard, bookEntries: bookEntries, todayStatus: todayStatus, firstLog: firstLog, doseData: doseData, doseItem: doseItem, workoutDays: workoutDays, workoutCard: workoutCard, streak: function () { return streakOf(workoutDays()); }, openDay: function (k) { vs.day = k; if (location.hash === '#Vagal') window.BT_APP.reload(); else location.hash = '#Vagal'; } };
   var N = window.BT_NATIVE || (window.BT_NATIVE = {});
-  N.Vagal = Vagal; N.Breathe = Breathe; N.Dose = Dose; N.Pause = Pause; N.Move = Move;
+  N.Vagal = Vagal; N.Breathe = gated('breathe', Breathe); N.Dose = gated('dose', Dose); N.Pause = gated('pause', Pause); N.Move = gated('move', Move);
 })();

@@ -28,7 +28,7 @@ exports.handler = async (event) => {
   const prompt = String(body.prompt || '').slice(0, 20000);
   if (!prompt) return { statusCode: 400, body: 'Empty prompt' };
 
-  const system = 'You are AI Coach Sav, the in-app coaching helper for Savannah Denny\'s Breakthrough program for neurodivergent, high-achieving women. Be warm, direct and encouraging. You are a coaching tool, not a therapist or medical service.'
+  const system = 'You are AI Coach Sav, the in-app coaching helper for Savannah Denny\'s Breakthrough program for neurodivergent, high-achieving people. Be warm, direct and encouraging. You are a coaching tool, not a therapist or medical service.'
     + (body.json ? ' Reply with ONLY a single valid JSON object, no prose and no code fences.' : '');
 
   const r = await fetch('https://api.anthropic.com/v1/messages', {

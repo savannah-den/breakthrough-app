@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breakthrough Phone Notifications</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: the notification journey in order; each card pairs the rule with a lock-screen preview. */
+:root {
+  --bg: #FBF4F1; --surface: #FFFFFF; --ink: #24130F; --muted: #6E5B57; --line: #E7D3CD;
+  --maroon: #4A1210; --lime: #F1F9A6; --pink: #F4C2F7; --red: #A8231F;
+  --display: 'Playfair Display', Georgia, 'Times New Roman', serif; --body: 'Poppins', Arial, Helvetica, sans-serif; --hand: 'Patrick Hand SC', 'Trebuchet MS', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1D0B09; --surface: #2B110E; --ink: #FCEFEA; --muted: #CDB2AC; --line: #4A2621; --maroon: #5A1A16; --red: #F08A80; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #1D0B09; --surface: #2B110E; --ink: #FCEFEA; --muted: #CDB2AC; --line: #4A2621; --maroon: #5A1A16; --red: #F08A80; color-scheme: dark }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 26px }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0 }
+.backlink { color: var(--red); font-weight: 600; text-decoration: none }
+.kick { font-family: var(--hand); letter-spacing: .08em; font-size: 18px; color: var(--red) }
+.top h1 { font-size: clamp(32px, 5vw, 46px); line-height: 1.05; margin: 4px 0 12px }
+.top p { margin: 0 0 8px; max-width: 64ch; color: var(--muted) }
+.rules { background: var(--maroon); color: #FCEFEA; border-radius: 22px; padding: 18px 22px }
+.rules h2 { font-size: 21px; color: #F1F9A6; margin-bottom: 8px }
+.rules ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px }
+.rules b { color: #F1F9A6 }
+.stage > h2 { font-size: 26px; margin-bottom: 12px }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px }
+.card { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.ttl { display: flex; gap: 10px; align-items: center }
+.num { font-family: var(--display); font-weight: 800; font-size: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--maroon); color: #F1F9A6; display: grid; place-items: center; flex: none }
+.ttl h3 { font-size: 19px; line-height: 1.2 }
+.who { align-self: flex-start; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 10px; background: var(--pink); color: #24130F }
+.who.sav { background: var(--lime) }
+.phone { background: linear-gradient(160deg, #6A1E1A, #2A0806); border-radius: 22px; padding: 16px 12px 18px; display: flex; flex-direction: column; gap: 8px; align-items: stretch }
+.clock { text-align: center; color: #FCEFEA; font-weight: 600; font-size: 28px; letter-spacing: .02em; line-height: 1 }
+.date { text-align: center; color: #F3DCD6; font-size: 12px; margin-bottom: 4px }
+.bub { background: rgba(255, 244, 238, .92); border-radius: 16px; padding: 10px 12px; display: flex; gap: 10px; color: #24130F }
+.app { width: 34px; height: 34px; border-radius: 9px; flex: none; background: #4A1210; display: grid; place-items: center }
+.app svg { width: 22px; height: 22px }
+.bt { min-width: 0; display: flex; flex-direction: column; font-size: 13px; line-height: 1.35 }
+.bt small { display: flex; justify-content: space-between; color: #6E5B57; font-size: 11px; gap: 8px }
+.bt b { font-size: 13.5px }
+dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 13.5px }
+dt { color: var(--muted) }
+dd { margin: 0 }
+.week { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px }
+.week p { margin: 0; color: var(--muted); font-size: 14px }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px }
+.day { border: 1px solid var(--line); border-radius: 12px; min-height: 72px; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; line-height: 1.25; min-width: 0 }
+.day .d { font-weight: 600; color: var(--muted) }
+.day .e { border-radius: 6px; padding: 2px 5px; background: var(--lime); color: #24130F; overflow-wrap: anywhere }
+.day .e.call { background: var(--pink) }
+.day .e.none { background: transparent; color: var(--muted); font-style: italic; padding: 0 }
+@media (max-width: 640px) { .days { gap: 3px } .day { font-size: 10px; padding: 4px; min-height: 60px } }
+</style>
+</head><body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← Back to the playground</a>
+  <header class="top">
+    <div class="kick">Colour Me Neurospicy · client journey</div>
+    <h1>Every phone notification</h1>
+    <p>What lands on your clients’ phones (and yours), in the order they meet them, and what it looks like on a lock screen. Tapping a notification opens the right place in the app, or Zoom for call reminders.</p>
+  </header>
+  <aside class="rules" aria-labelledby="r-h">
+    <h2 id="r-h">The rules</h2>
+    <ul>
+      <li><b>One kind reminder a day at most</b>, at the time they pick in their Profile, in their own timezone.</li>
+      <li><b>Call reminders are extra</b>: the day before, 2 hours before and 15 minutes before every call.</li>
+      <li><b>On by default.</b> They tap Allow at the end of the welcome steps, and can turn them off any time in Profile.</li>
+      <li><b>Nothing at all</b> if they’ve turned notifications off. iPhones need the app on the home screen first.</li>
+    </ul>
+  </aside>
+  <section class="week" aria-labelledby="w-h">
+    <h2 id="w-h">Bec’s first two weeks, on her phone</h2>
+    <p>Reminder time 7pm. Starts on a Monday, call on Friday, group call the next Thursday, misses a few days in week 2.</p>
+    <div class="days" id="days"></div>
+  </section>
+  <div id="stages"></div>
+</div>
+<script>
+var N = [
+{"stage":"Every day","name":"Today’s reps","who":"Everyone","time":"7:00","title":"Today’s reps 💪","body":"One tap each: DOSE, breathe, pause, move. That’s you rewiring, one rep at a time.","when":"At the time they picked, once their reps have switched on and they haven’t ticked any today","often":"Daily at most","opens":"Home, at Today’s reps"},
+{"stage":"Every day","name":"Come back to the course","who":"Everyone","time":"7:00","title":"Bec, your next lesson is waiting ✨","body":"Remember why you started: “I want to stop living in survival mode and actually enjoy my kids”. Five minutes is enough.","when":"3, 7, 14, 21 and 30 days after they last opened a lesson, then every 15 days","often":"Uses their own why, North Star and anchor word","opens":"Their next lesson"},
+{"stage":"Every day","name":"Gentle 1% nudge","who":"Everyone","time":"7:00","title":"Your 1% for today 💛","body":"Five minutes counts. Open Breakthrough and do one small thing.","when":"Early in Week 1, before their reps switch on, if they haven’t been in a lesson today","often":"Daily at most","opens":"Home"},
+{"stage":"Course","name":"Next week unlocked","who":"1:1 clients","time":"11:42","title":"🔓 Week 2 is open!","body":"Bec, your next week is ready for you. One small step at a time.","when":"The moment you tap “Unlock Week…” for them (the email goes too)","often":"Each week you unlock","opens":"The Course"},
+{"stage":"Course","name":"Switch on your notifications","who":"Anyone who hasn’t yet","time":"","title":"🔔 Switch on your notifications","body":"So you get your call reminders and Zoom link. Tap, then Allow.","when":"A card on Home (not a notification) the first time they open the home-screen app","often":"Once","opens":"The Allow prompt"},
+{"stage":"Calls","name":"1:1 call reminders","who":"1:1 clients","time":"10:00","title":"📅 Tomorrow: your 1:1 with Sav","body":"10:00am Friday 6 November. Tap for your Zoom link.","when":"The day before, 2 hours before (“⏰ In 2 hours…”) and 15 minutes before (“🎥 Starting in 15 minutes”)","often":"Every 1:1 call in your Google Calendar they’re invited to","opens":"Their Zoom link"},
+{"stage":"Calls","name":"CMS group call reminders","who":"Group + 1:1 clients","time":"18:00","title":"📅 Tomorrow: CMS group call","body":"6:00pm Thursday. Bring a win and a question. Tap for the Zoom link.","when":"The day before, 2 hours and 15 minutes before every “CMS group” call in your calendar","often":"Every group call","opens":"Your group Zoom room"},
+{"stage":"For you (coach)","name":"A client added a win","who":"","sav":true,"time":"14:05","title":"🏆 Bec added a win","body":"“I said no without explaining myself”","when":"Straight away","often":"Every win","opens":"Your coach dashboard"},
+{"stage":"For you (coach)","name":"A client signed their agreement","who":"","sav":true,"time":"09:12","title":"✍️ Bec signed their agreement","body":"Their package is locked in. Time to welcome them!","when":"Straight away","often":"Once per client","opens":"Your coach dashboard"},
+{"stage":"For you (coach)","name":"A client is waiting for their agreement","who":"","sav":true,"time":"16:30","title":"📝 Bec is waiting for their agreement","body":"They can’t go any further until you send it. Open their profile to send it.","when":"When a 1:1 client reaches the agreement step and you haven’t sent one","often":"Once","opens":"Their profile in your dashboard"}
+]
+;
+(function () {
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z" fill="#F1F9A6"/></svg>';
+  var plan = { 1: [['', '3 Gentle 1% nudge']], 2: [['', '3 Gentle 1% nudge']], 3: [['', '1 Today’s reps']], 4: [['call', '6 Call tomorrow'], ['', '1 Today’s reps']], 5: [['call', '6 In 2 hours'], ['call', '6 In 15 min']], 6: [['', '1 Today’s reps']], 7: [['', '1 Today’s reps']], 8: [['none', 'Nothing: they already ticked their reps']], 9: [['', '1 Today’s reps']], 10: [['call', '7 Group call tomorrow']], 11: [['call', '7 Group in 2 hours'], ['call', '7 Group in 15 min']], 12: [['none', 'Nothing: missed day 1']], 13: [['none', 'Nothing']], 14: [['', '2 Come back (day 3)']] };
+  var names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], days = document.getElementById('days');
+  for (var d = 1; d <= 14; d++) { var c = el('div', 'day'); c.appendChild(el('span', 'd', names[(d - 1) % 7] + ' ' + d)); (plan[d] || []).forEach(function (x) { c.appendChild(el('span', 'e ' + x[0], x[1])); }); days.appendChild(c); }
+  var root = document.getElementById('stages'), cur = null, grid = null;
+  N.forEach(function (n, i) {
+    if (n.stage !== cur) { cur = n.stage; var s = el('section', 'stage'); s.appendChild(el('h2', null, n.stage)); grid = el('div', 'grid'); s.appendChild(grid); root.appendChild(s); }
+    var card = el('article', 'card'), t = el('div', 'ttl'); t.appendChild(el('span', 'num', String(i + 1))); t.appendChild(el('h3', null, n.name)); card.appendChild(t);
+    card.appendChild(el('span', 'who' + (n.sav ? ' sav' : ''), n.sav ? 'Goes to you' : 'Goes to: ' + n.who));
+    var ph = el('div', 'phone'); ph.appendChild(el('div', 'clock', n.time)); ph.appendChild(el('div', 'date', 'Thursday 5 November'));
+    var b = el('div', 'bub'), a = el('span', 'app'); a.innerHTML = STAR; b.appendChild(a);
+    var bt = el('div', 'bt'), sm = el('small'); sm.appendChild(el('span', null, n.sav ? 'BREAKTHROUGH · COACH' : 'BREAKTHROUGH')); sm.appendChild(el('span', null, 'now'));
+    bt.appendChild(sm); bt.appendChild(el('b', null, n.title)); bt.appendChild(el('span', null, n.body)); b.appendChild(bt); ph.appendChild(b); card.appendChild(ph);
+    var dl = el('dl'); [['When', n.when], ['How often', n.often], ['Tapping opens', n.opens]].forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); }); card.appendChild(dl);
+    grid.appendChild(card);
+  });
+})();
+</script>
+
+</body></html>
