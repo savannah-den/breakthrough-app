@@ -62,15 +62,70 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--lime);outline-of
 .next{background:var(--cr);color:var(--ink);border:2px solid var(--ink);border-radius:18px;padding:16px 18px;margin:12px 0}
 .next h3{font-family:'Playfair Display',serif;margin:0 0 4px;font-size:20px}
 .next p{color:#4A3A38;margin:0;font-size:15px}
+.sheet.done .dance{display:block;width:min(320px,80%);margin:-6px auto 14px;border-radius:24px;border:3px solid var(--ink);box-shadow:6px 6px 0 #F4C2F7;transform:rotate(-2deg);animation:danceBob 3s ease-in-out infinite}
+@keyframes danceBob{50%{transform:rotate(2deg) translateY(-4px)}}
+.note.small{font-size:13px}
+.pod{display:grid;gap:10px;margin-top:10px}
+.pod-yt{position:relative;display:block;border-radius:16px;overflow:hidden;border:2px solid var(--ink)}
+.pod-yt img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#2A0806}
+.pod-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#FF0000;color:#fff;display:grid;place-items:center;font-size:22px;border:2px solid #fff}
+.pod-tag{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.75);color:#fff;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:600}
+.pod-btns{display:flex;flex-wrap:wrap;gap:8px}
+.pod-b{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 14px 6px 6px;color:var(--ink);font-weight:700;font-size:14px;text-decoration:none}
+.pod-b svg{width:30px;height:30px}
+@media(prefers-reduced-motion:reduce){.sheet.done .dance{animation:none}}
 .links a{display:inline-block;margin:6px 8px 0 0;color:var(--m2);background:var(--lime);border:2px solid var(--ink);border-radius:999px;padding:8px 14px;font-weight:600;text-decoration:none;font-size:14px}
 .hp{position:absolute;left:-9999px}
+
+/* ===== app-style application: art, Sav guide, cream cards ===== */
+main{padding-top:74px}
+.card{max-width:640px}
+.sheet{background:var(--cr);color:var(--ink);border:2px solid var(--ink);border-radius:26px;box-shadow:6px 6px 0 #1A0503;padding:22px 20px 22px;position:relative}
+.sheet p{color:#463A38}.sheet .kick{color:#A8231F}.sheet h1,.sheet h2{color:var(--ink)}.sheet h1 em{color:#B5281E;background:linear-gradient(transparent 62%,var(--lime) 62%)}
+.sheet label.q{color:var(--ink)}.sheet label.q small{color:#7A6A67}
+.sheet .note{background:#FBE6FC;color:var(--ink)}
+.sheet .btn.ghost{color:var(--ink);border-color:var(--ink);background:#fff}
+.sheet .err{color:#B5281E}
+.art{display:flex;justify-content:center;margin:-62px auto 6px;height:118px}
+.art svg{height:118px;width:auto;overflow:visible;filter:drop-shadow(3px 3px 0 rgba(31,20,18,.18))}
+.art .s{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.art .f{stroke:var(--ink);stroke-width:2.6;stroke-linejoin:round}
+.bob{animation:bob 2.6s ease-in-out infinite}.tw{animation:tw 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}.tw.b{animation-delay:.6s}.tw.c{animation-delay:1.2s}
+.wave{animation:wave 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:0 100%}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes tw{0%,100%{transform:scale(.5);opacity:.35}50%{transform:scale(1.1);opacity:1}}
+@keyframes wave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(14deg)}}
+.say{display:flex;gap:10px;align-items:flex-end;margin:0 0 14px}
+.say .ball{flex:none;width:46px;height:46px}
+.say .bub{background:#fff;border:2px solid var(--ink);border-radius:18px 18px 18px 4px;padding:9px 13px;font-family:'Patrick Hand SC',cursive;font-size:17px;letter-spacing:.5px;line-height:1.25;color:var(--ink);box-shadow:3px 3px 0 var(--pink)}
+.track{position:relative;margin:0 max(16px,env(safe-area-inset-left));height:30px}
+.track .bar{margin:0;position:absolute;left:0;right:0;top:12px}
+.track .runner{position:absolute;top:-2px;width:30px;height:30px;transform:translateX(-50%);transition:left .4s}
+.opt{background:#fff}
+.opt .ico{font-size:22px;line-height:1;flex:none}
+.perks{grid-template-columns:1fr 1fr}
+@media (max-width:480px){.perks{grid-template-columns:1fr}}
+.perks div{background:#FBE6FC;color:var(--ink);border:1.5px solid var(--ink)}
+.perks b{color:#A8231F}
+.spots{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 14px}
+.spots i{width:18px;height:18px;border-radius:50%;background:var(--hot);border:2px solid var(--ink);display:block}
+.spots i:nth-child(3n){background:var(--lime)}.spots i:nth-child(3n+1){background:var(--pink)}
+.next{background:#fff}
+.joke{background:var(--lime);border:2px dashed var(--ink);border-radius:16px;padding:12px 14px;font-size:14.5px;color:var(--ink)}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:3px;animation:fall 2.8s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.bob,.tw,.wave,.confetti i{animation:none}}
+.pod-yt{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}.pod-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.soon{display:inline-block;background:#fff4d6;color:#7a5200;border-radius:10px;padding:8px 12px;font-weight:600;font-size:.92em}
 </style>
 </head>
 <body>
 <div class="top"><img src="/icons/icon-192.png" alt=""><b>Colour Me Neurospicy</b></div>
-<div class="bar" aria-hidden="true"><i id="bar"></i></div>
+<div class="track" aria-hidden="true"><div class="bar"><i id="bar"></i></div><svg class="runner" id="runner" viewBox="-20 -24 40 40"><path d="M-14 14 C-15 -2 -9 -12 0 -12 C9 -12 15 -2 14 14 Z" fill="#F4C2F7" stroke="#1F1412" stroke-width="2.4"/><circle cx="-4.5" cy="0" r="1.8" fill="#1F1412"/><circle cx="4.5" cy="0" r="1.8" fill="#1F1412"/><path d="M-4 5 q4 3.5 8 0" fill="none" stroke="#1F1412" stroke-width="1.6" stroke-linecap="round"/></svg></div>
 <p class="step-n" id="stepn" aria-live="polite"></p>
 <main><form class="card" id="card" novalidate></form></main>
+<script src="/js/ccy.js"></script>
 <script src="/js/apply.js"></script>
 </body>
 </html>

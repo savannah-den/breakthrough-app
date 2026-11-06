@@ -82,10 +82,11 @@ os.makedirs(OUT + '/js/vendor', exist_ok=True)
 for f in os.listdir('public/js/vendor'):
     shutil.copy('public/js/vendor/' + f, OUT + '/js/vendor/' + f)
 wr(OUT + '/js/config.js', "// PLAYGROUND: uses the pretend database in demo-backend.js, never the live one.\nwindow.BT_CONFIG = { supabaseUrl: 'playground', supabaseAnonKey: 'playground', aiEnabled: false, coachName: 'Sav' };\n")
-wr(OUT + '/js/demo-backend.js', rd('playground-src/tyler-insight.js') + '\n' + rd('playground-src/demo-backend.js'))
+wr(OUT + '/js/demo-backend.js', rd('playground-src/tyler-insight.js') + '\n' + rd('playground-src/tyler-map.js') + '\n' + rd('playground-src/demo-backend.js'))
 # Breakthrough application (public page): pretend "lead" function lives in demo-backend.js
 ap = rd('public/apply.html').replace('href="/icons/', 'href="icons/').replace('src="/icons/', 'src="icons/')
 ap = must(ap, '<script src="/js/apply.js"></script>', '<script src="js/lead-score.js"></script>\n<script src="js/demo-backend.js"></script>\n<script src="js/apply.js"></script>', 'apply.html')
+ap = must(ap, '<script src="/js/ccy.js"></script>', '<script src="js/ccy.js"></script>', 'apply.html ccy')
 wr(OUT + '/apply.html', ap)
 # Launcher: the tools, in the order they come up in the program, with their logos (like the course cards)
 import subprocess, html as _h

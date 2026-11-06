@@ -10,7 +10,8 @@ const { waitlistEmail, SITE } = require('../lib/emails');
 const { score } = require('../../public/js/lead-score.js');
 
 const OK_ORIGIN = /^https:\/\/([a-z0-9-]+\.)*(colourmeneurospicy\.com\.au|netlify\.app|myshopify\.com)$/i;
-const TAG_FOR = { community: 'waitlist', group: 'group enquiry', '1:1': '1:1 enquiry' };
+// segments: everyone who signs up is on the Breakthrough waitlist, then they pick which program(s) to hear about
+const TAG_FOR = { mini: 'mini course waitlist', self: 'self-paced waitlist', community: 'community waitlist', group: 'group waitlist', '1:1': '1:1 waitlist' };
 const INTERESTS = Object.keys(TAG_FOR);
 
 function cors(event) {
@@ -67,8 +68,12 @@ exports.handler = async (event) => {
     updated_at: new Date().toISOString()
   };
   const tags = (cur.tags || []).slice();
-  if (kind === 'waitlist') tags.push('waitlist');
+  tags.push('breakthrough waitlist');
+  if (kind === 'apply') tags.push('applied');
   row.interests.forEach(i => tags.push(TAG_FOR[i]));
+  // the "find your fit" quiz on the waitlist page: what it suggested
+  const QZ = { self: 'self-paced', community: 'community', group: 'group', one: '1:1', mini: 'mini course' };
+  if (b.quiz && QZ[b.quiz.rec]) tags.push('quiz: ' + QZ[b.quiz.rec]);
   row.tags = uniq(tags);
 
   if (kind === 'apply') {

@@ -27,7 +27,7 @@ async function setting(key) { const r = await push.svc('app_settings?select=valu
 let SYS = null;
 async function sysLoad() {
   const admins = await push.svc('profiles?select=id,email&is_admin=eq.true').then(j);
-  const me = (admins || []).find(a => /colourmeneurospicy|savannahdenny/i.test(a.email || '')) || (admins || [])[0];
+  const me = (admins || []).find(a => /colourmeneurospicy/i.test(a.email || '')) || (admins || []).find(a => /savannahdenny/i.test(a.email || '')) || (admins || [])[0];
   if (!me) return (SYS = { id: null, data: {} });
   const row = ((await push.svc('coach_clients?select=data&client_id=eq.' + me.id).then(j)) || [])[0];
   return (SYS = { id: me.id, data: (row && row.data) || {} });
@@ -128,7 +128,7 @@ async function run(opts) {
       const nxt = ((course.weeks || [])[wi + 1]) || null, from = Math.min.apply(null, ls.map(x => doneAt(prog, x.l.id) || now)) - 7 * DAY;
       const hl = ls.map(x => Object.keys(comp.j || {}).filter(k => k.indexOf(x.l.id + '_') === 0).map(k => comp.j[k]).filter(Boolean)[0]).filter(Boolean)[0];
       due.push(['wk' + w.week, () => E.moduleCompleteEmail(Object.assign({ data: {
-        week: w.week, title: w.title || '', next: nxt ? 'Week ' + nxt.week + (nxt.title ? ' · ' + nxt.title : '') : '',
+        week: w.week, title: w.title || '', next: nxt ? 'Week ' + (nxt.week + 1) + (nxt.title ? ' · ' + nxt.title : '') : '',
         lessons: ls.filter(x => !x.act).map(x => String(x.l.title || '').replace(/^Lesson \d+:\s*/i, '')), acts: ls.filter(x => x.act).map(x => [((x.l.res || [])[0]) || 'setup', String(x.l.title || '').replace(/^Activity:\s*/i, ''), '']),
         wins: wins.filter(e => e.at >= from).slice(0, 3).map(e => clip(e.text, 140)), reps: repDays(vw, from), proof: ev.filter(e => e.at >= from).length, streak: streak(vw, tz, now), highlight: hl ? clip(hl, 220) : '' } }, base))]);
     });
@@ -153,7 +153,7 @@ async function run(opts) {
     // 13: Sunday 6pm their time, if they were in the app this week
     if (dowIn(tz, now) === 'Sun' && hour === 18 && log.weekly !== today && now - lastAt < 7 * DAY) {
       const from = now - 7 * DAY, nx = L.find(x => !doneAt(prog, x.l.id));
-      due.push(['weekly', () => E.weeklyEmail(Object.assign({ data: { done: nDone, total: L.length || 1, week: nx ? (nx.w.week === 0 ? 'Introduction' : 'Week ' + nx.w.week + (nx.w.title ? ' · ' + nx.w.title : '')) : 'All done!', next: nx ? nx.l.title : '',
+      due.push(['weekly', () => E.weeklyEmail(Object.assign({ data: { done: nDone, total: L.length || 1, week: nx ? (nx.w.week === 0 ? 'Introduction' : 'Week ' + (nx.w.week + 1) + (nx.w.title ? ' · ' + nx.w.title : '')) : 'All done!', next: nx ? nx.l.title : '',
         thisWeek: L.filter(x => doneAt(prog, x.l.id) >= from).length, reps: repDays(vw, from), proof: ev.filter(e => e.at >= from).length, win: (wins.filter(e => e.at >= from)[0] || {}).text || '' } }, base)), false, 'today']);
     }
 

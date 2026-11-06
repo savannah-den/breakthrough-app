@@ -2,6 +2,8 @@
 // Lives in public/js so the coach dashboard can preview it; the Netlify functions load it via netlify/lib/emails.js.
 // img: a function that turns an image name into its URL (the live site by default).
 (function () {
+// Week 1 is the Set yourself up for success mini course, so course weeks show one higher than their number in the data
+const WKN = (n) => { n = Number(n); return n >= 1 ? n + 1 : n; };
 const SITE = 'https://app.colourmeneurospicy.com.au';
 const C = { bg: '#3A0E0C', card: '#4A1210', line: '#6A2420', lime: '#F2F7AE', pink: '#EFC6EE', cream: '#FCF3EF', ink: '#1E1414', soft: '#F3DCD6', red: '#A3302A' };
 const HAND = "'Patrick Hand SC','Trebuchet MS',Arial,sans-serif", SERIF = "'Playfair Display',Georgia,'Times New Roman',serif", SANS = "'Poppins',Arial,Helvetica,sans-serif";
@@ -335,8 +337,8 @@ function firstCallPrepEmail(o) {
 function recapEmail(o) {
   const x = J(o), n = (o && o.n) || 2;
   const pts = (o && o.points) || ['You noticed the “I have to earn rest” program running at work, not just at home.', 'The anger that shows up when the house gets loud is your nervous system asking for a pause, not you being a bad mum.', 'You already have proof you can say no: you did it twice this week.'];
-  const todo = (o && o.todo) || ['Do the Pause activity once a day, even for 30 seconds.', 'Add 3 pieces of proof against “I’m not good enough”.', 'Watch Week 2, Lessons 1 and 2.'];
-  const coach = (o && o.coach) || ['Send you the Pause and Rewind worksheet tonight.', 'Unlock Week 2 for you once you’ve finished Week 1.'];
+  const todo = (o && o.todo) || ['Do the Pause activity once a day, even for 30 seconds.', 'Add 3 pieces of proof against “I’m not good enough”.', 'Watch Week 3, Lessons 1 and 2.'];
+  const coach = (o && o.coach) || ['Send you the Pause and Rewind worksheet tonight.', 'Unlock Week 3 for you once you’ve finished Week 2.'];
   const body = hero('Session ' + n + ' recap', 'What we covered today', 'Here’s the summary so you can come back to it any time. It’s saved in your app too.')
     + creamOpen('Your big takeaways', '') + note(x.img, 'sav-laugh', 'From today', 'You showed up and did the real work. Here’s what I want you to hold on to.') + pts.map(function (p) { return box('✦&nbsp; ' + esc(p)); }).join('')
     + '<h2 style="margin:22px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Before our next call</h2>'
@@ -352,11 +354,11 @@ function weekUnlockedEmail(o) {
   const body = hero('🔓 Unlocked', 'Week ' + wk + ' is open' + (title ? ': ' + esc(title) : ''), 'Go at your own pace, one small step at a time. I’m so proud of the work you’re putting in.')
     + (lessons.length ? creamOpen('What’s inside', '') + lessons.map(function (l, i) { return box('<strong>' + (i + 1) + '.</strong>&nbsp; ' + esc(l)); }).join('') + creamClose : '')
     + cta(x.app + '#Course', 'Start Week ' + wk + ' &rarr;') + signoff(x.img, 'Let’s go!');
-  return { subject: '🔓 Week ' + wk + ' is open for you, ' + x.first, html: shell({ title: 'Week ' + wk + ' is open', pre: 'Your next week is ready. One small step at a time.', pill: (o && o.tier === 'self') ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
+  return { subject: '🔓 Week ' + WKN(wk) + ' is open for you, ' + x.first, html: shell({ title: 'Week ' + WKN(wk) + ' is open', pre: 'Your next week is ready. One small step at a time.', pill: (o && o.tier === 'self') ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 11. Weekly check-in: where you're up to (Sunday 6pm their time, only if they've started) */
 function weeklyEmail(o) {
-  const x = J(o), d = Object.assign(o && o.real ? { done: 0, total: 1, week: '', next: '', thisWeek: 0, reps: 0, proof: 0, win: '' } : { done: 12, total: 49, week: 'Week 1 · The Foundations', next: 'Lesson 6: Fight or Flight', thisWeek: 4, reps: 9, proof: 5, win: 'I said no to extra work without explaining myself.' }, (o && o.data) || {});
+  const x = J(o), d = Object.assign(o && o.real ? { done: 0, total: 1, week: '', next: '', thisWeek: 0, reps: 0, proof: 0, win: '' } : { done: 12, total: 49, week: 'Week 2 · The Foundations', next: 'Lesson 6: Fight or Flight', thisWeek: 4, reps: 9, proof: 5, win: 'I said no to extra work without explaining myself.' }, (o && o.data) || {});
   const body = hero('Your week in Breakthrough', x.first + ', look what you did this week', 'A little Sunday snapshot of your progress. Every tick is your brain rewiring.')
     + creamOpen('Where you’re up to', esc(d.week)) + bar(100 * d.done / d.total, d.done + ' of ' + d.total + ' lessons done')
     + '<p style="margin:0 0 10px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">This week you…</p>'
@@ -390,7 +392,7 @@ function missYouEmail(o) {
 /* 13b. Module (week) complete: a big celebration with everything they've done so far */
 function moduleCompleteEmail(o) {
   const x = J(o), d = Object.assign(o && o.real ? { week: 1, title: '', next: '', lessons: [], acts: [], wins: [], reps: 0, proof: 0, streak: 0, highlight: '' } : {
-    week: 1, title: 'The Foundations', next: 'Week 2 · The Reality Framework',
+    week: 1, title: 'The Foundations', next: 'Week 3 · The Reality Framework',
     lessons: ['Brain + Body', 'Conscious + Unconscious Mind', 'Nervous System', 'Neurotransmitters + Hormones', 'Anxiety', 'Fight or Flight', 'Body', 'Neuroplasticity', 'Breathing'],
     acts: [['dose', 'Your daily DOSE', 'Your plan: music while you cook, morning sun, dance in the kitchen'], ['whatif', 'The What If Workout', 'Worst case → best case, 3 times'], ['pause', 'Pause', 'Your 30-second reset'], ['move', 'Move', 'Your daily movement menu'], ['breathe', 'Breathwork', 'The physiological sigh'], ['vagal', 'Vagal Tone Workout', '']],
     wins: ['I said no to extra work without explaining myself.', 'Did my breathwork before a hard conversation and stayed calm.', 'Danced in the kitchen with the kids instead of scrolling.'],
@@ -400,18 +402,18 @@ function moduleCompleteEmail(o) {
     + bigPhoto(x.img, 'sav-jump', 'Savannah jumping in the air, celebrating')
     + creamOpen('Your Week ' + d.week + ' in pictures', 'Look at everything you did')
     + visualStats(x.img, { lessons: d.lessons.length, acts: d.acts.length, reps: d.reps, proof: d.proof, streak: d.streak })
-    + (d.highlight ? '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">A moment from your notebook</p>' + quote(esc(d.highlight), 'You wrote this in Week ' + d.week) : '')
+    + (d.highlight ? '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">A moment from your notebook</p>' + quote(esc(d.highlight), 'You wrote this in Week ' + WKN(d.week)) : '')
     + (d.wins.length ? '<p style="margin:16px 0 8px;font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.red + '">Your wins</p>' : '')
     + d.wins.map(function (w) { return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px"><tr><td width="40" valign="top" style="padding-top:2px">' + ic(x.img, 'sparkle', 30) + '</td><td style="background:' + C.lime + ';border:2px solid ' + C.ink + ';border-radius:16px;padding:10px 14px;font-size:15px;font-weight:600;color:' + C.ink + '">' + esc(w) + '</td></tr></table>'; }).join('')
     + '<h2 style="margin:26px 0 12px;font-family:' + SERIF + ';font-weight:800;font-size:24px;color:' + C.ink + '">Everything you’ve completed so far</h2>'
     + doneList(x.img, d.lessons.map(function (l) { return ['play', esc(l)]; }).concat(d.acts.map(function (a) { return [a[0], '<strong>' + esc(a[1]) + '</strong>', a[2] ? esc(a[2]) : '']; })))
     + '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 4px"><tr><td style="background:' + C.card + ';border-radius:20px;padding:20px 22px">'
     + '<div style="font-family:' + HAND + ';font-size:17px;letter-spacing:1px;color:' + C.lime + '">Make it official</div>'
-    + '<div style="font-family:' + SERIF + ';font-weight:700;font-size:21px;line-height:1.3;color:' + C.cream + ';margin:4px 0 8px">Add “I finished Week ' + d.week + '” to your proof portfolio</div>'
+    + '<div style="font-family:' + SERIF + ';font-weight:700;font-size:21px;line-height:1.3;color:' + C.cream + ';margin:4px 0 8px">Add “I finished Week ' + WKN(d.week) + '” to your proof portfolio</div>'
     + '<div style="font-size:14px;line-height:1.6;color:' + C.soft + '">This is proof you finish things. Proof you’re capable. Proof the old story is out of date. Put it in your portfolio so your brain keeps the receipt.</div></td></tr></table>'
     + note(x.img, 'sav-sparkle', 'From me', 'I am doing a little happy dance for you right now.' + (d.next ? ' Next up: <strong>' + esc(d.next) + '</strong>.' : ''))
     + creamClose + cta(x.app + '#Proof', 'Add it to my proof &rarr;') + signoff(x.img, 'So bloody proud of you.');
-  return { subject: '🎉 ' + x.first + ', you finished Week ' + d.week + '! Look at everything you did', html: shell({ title: 'Week ' + d.week + ' complete', pre: 'A whole module of rewiring your brain. Let’s celebrate.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
+  return { subject: '🎉 ' + x.first + ', you finished Week ' + WKN(d.week) + '! Look at everything you did', html: shell({ title: 'Week ' + WKN(d.week) + ' complete', pre: 'A whole module of rewiring your brain. Let’s celebrate.', pill: o && o.tier === 'self' ? 'Self-paced' : '1:1 client', img: x.img, body: body }) };
 }
 /* 14. Program complete: where you started vs where you are now, a testimonial invite, and what's next */
 function completeEmail(o) {

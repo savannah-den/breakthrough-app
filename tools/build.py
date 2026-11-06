@@ -7,12 +7,14 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(root)
 subprocess.check_call([sys.executable, 'tools/patch_box_proof.py'])
 subprocess.check_call([sys.executable, 'tools/patch_box_game.py'])
+subprocess.check_call([sys.executable, 'tools/patch_proof_flow.py'])
 subprocess.check_call([sys.executable, 'tools/merge_artifacts.py', 'src/companion.html', 'src/one-on-one.html', 'src/app-bundle.html'])
 tpl = open('src/index.template.html', encoding='utf-8').read()
 bundle = open('src/app-bundle.html', encoding='utf-8').read()
 assert '<!--APP-BUNDLE-->' in tpl
 open('public/index.html', 'w', encoding='utf-8').write(tpl.replace('<!--APP-BUNDLE-->', bundle))
 print('built public/index.html')
+subprocess.check_call([sys.executable, 'tools/build_ect.py'])
 
 # Default course outline + resources (src/course-outline.json from tools/make_course_outline.py,
 # src/resources.json). Loaded in <head> so the views can use them as soon as they start.

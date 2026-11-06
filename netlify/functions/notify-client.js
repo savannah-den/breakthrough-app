@@ -11,9 +11,9 @@ function weekEmail(first, week, title) {
     + '<div style="background:#2A0806;padding:10px;text-align:center;color:#F1F9A6;font-size:15px;letter-spacing:1px">Colour Me Neurospicy<br><span style="color:#F4C2F7;font-size:10px;letter-spacing:2px">NEURODIVERGENT BREAKTHROUGH PROGRAM</span></div>'
     + '<div style="padding:28px 26px">'
     + '<p style="margin:0 0 6px;color:#A8231F;font-size:15px">Hey ' + esc(first || 'you') + ' ✨</p>'
-    + '<h1 style="margin:0 0 14px;font-family:Georgia,serif;font-size:28px;line-height:1.2;color:#4E0C08">Week ' + week + ' is open for you' + (title ? ': ' + esc(title) : '') + '</h1>'
+    + '<h1 style="margin:0 0 14px;font-family:Georgia,serif;font-size:28px;line-height:1.2;color:#4E0C08">Week ' + (Number(week) + 1) + ' is open for you' + (title ? ': ' + esc(title) : '') + '</h1>'
     + '<p style="margin:0 0 18px;font-size:16px;line-height:1.6;color:#3A2A27">I’ve just unlocked your next week. Go at your own pace, one small step at a time. I’m so proud of the work you’re putting in.</p>'
-    + '<a href="' + SITE + '/#Course" style="display:inline-block;padding:14px 22px;border-radius:999px;background:#F1F9A6;border:2px solid #1F1412;color:#1F1412;font-weight:bold;text-decoration:none">Open Week ' + week + ' →</a>'
+    + '<a href="' + SITE + '/#Course" style="display:inline-block;padding:14px 22px;border-radius:999px;background:#F1F9A6;border:2px solid #1F1412;color:#1F1412;font-weight:bold;text-decoration:none">Open Week ' + (Number(week) + 1) + ' →</a>'
     + '<p style="margin:22px 0 0;font-size:14px;color:#6A5A57">Sav x</p></div></div></div>';
 }
 exports.handler = async (event) => {
@@ -25,7 +25,7 @@ exports.handler = async (event) => {
   const out = { push: 0, email: false };
   if (push.ready()) {
     const subs = await (await push.svc('push_subs?select=endpoint,sub&user_id=eq.' + encodeURIComponent(b.to))).json();
-    out.push = await push.send(subs || [], { title: '🔓 Week ' + week + ' is open!', body: (first ? first + ', y' : 'Y') + 'our next week is ready for you. One small step at a time.', url: '/#Course' });
+    out.push = await push.send(subs || [], { title: '🔓 Week ' + (Number(week) + 1) + ' is open!', body: (first ? first + ', y' : 'Y') + 'our next week is ready for you. One small step at a time.', url: '/#Course' });
   }
   if (process.env.RESEND_API_KEY && prof.email) {
     const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' },

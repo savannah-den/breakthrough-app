@@ -2,7 +2,7 @@
 // Score is 0-100. Reasons explain the score so Sav can see why someone is hot.
 (function () {
 var HEAT = [[75, 'fire', '🔥 On fire'], [50, 'hot', 'Hot'], [25, 'warm', 'Warm'], [0, 'cold', 'Cold']];
-var WORTH = { '$1,000 - $2,000 USD': 6, '$2,000 - $3,000 USD': 14, '$3,000 - $4,000 USD': 20, 'Priceless - I\'m ready to invest in becoming HER': 25 };
+var WORTH = { '$1,000 - $2,000 AUD': 6, '$2,000 - $3,000 AUD': 14, '$3,000 - $4,000 AUD': 20, 'Priceless: I\'m ready to invest whatever it takes to become them': 25, '$1,000 - $2,000 USD': 6, '$2,000 - $3,000 USD': 14, '$3,000 - $4,000 USD': 20, 'Priceless - I\'m ready to invest in becoming HER': 25 };
 function len(s) { return String(s || '').trim().length; }
 function score(lead) {
   lead = lead || {}; var a = lead.application || {}, ints = lead.interests || [], s = 0, why = [];

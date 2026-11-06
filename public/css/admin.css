@@ -706,3 +706,74 @@ svg.ct-shot{border:0;height:auto}
 .ad-loop-x{grid-column:2;grid-row:1;border:0;background:none;color:#7A6A67;cursor:pointer;font:inherit;font-size:13px}
 .ad-loop-add{display:flex;gap:8px;flex-wrap:wrap}.ad-loop-add .bt-in:first-child{flex:1;min-width:200px}
 .ad-recap-ed{display:flex;flex-direction:column;gap:10px;background:#FBE6FC;border:1.5px solid #1F1412;border-radius:14px;padding:14px}
+
+/* first calls (before the program) */
+.ad-first{display:flex;flex-direction:column;gap:8px;margin:6px 0 12px}
+
+/* the belief map */
+.ad-map{background:linear-gradient(180deg,#FFFDF7,#FFF6FB)}
+.ad-map-acts{display:flex;gap:8px;flex-wrap:wrap}
+.ad-map-sum{font-size:15px;line-height:1.6;margin:6px 0 10px;max-width:80ch}
+.ad-map-sw{display:inline-flex;border:1.5px solid #1F1412;border-radius:999px;overflow:hidden;margin:6px 0 12px}
+.ad-map-swb{border:0;background:#fff;padding:7px 14px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:#1F1412}
+.ad-map-swb.on{background:#4E0C08;color:#F1F9A6}
+.ad-map-bs{display:flex;flex-wrap:wrap;gap:8px}
+.ad-map-b{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:2px solid #1F1412;border-radius:16px;background:#F4C2F7;padding:9px 14px;font:inherit;cursor:pointer;box-shadow:3px 3px 0 #4E0C08;transition:transform .15s}
+.ad-map-b:hover{transform:translateY(-2px)}.ad-map-b.on{background:#F1F9A6;transform:translateY(-2px)}
+.ad-map-bt{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:16px;color:#4E0C08}
+.ad-map-bn{font-size:12px;color:#6A4A45;letter-spacing:.5px}
+.ad-mind{position:relative;margin:16px 0 8px;padding:18px;border-radius:22px;background:#fff;border:1.5px dashed #E6C3BC}
+.ad-mind-c{max-width:520px;margin:0 auto 18px;text-align:center;background:#4E0C08;color:#FFF4EE;border-radius:24px;padding:16px 22px;box-shadow:0 0 0 6px rgba(244,194,247,.45);animation:mindGlow 3.6s ease-in-out infinite}
+.ad-mind-c b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:22px;line-height:1.25;color:#F1F9A6}
+.ad-mind-c p{margin:6px 0 0;font-size:14px;color:#F2D9D2}
+.ad-mind-k{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#F4C2F7}
+@keyframes mindGlow{0%,100%{box-shadow:0 0 0 6px rgba(244,194,247,.45)}50%{box-shadow:0 0 0 12px rgba(244,194,247,.2)}}
+.ad-mind-br{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ad-mind-br::before{content:"";position:absolute;left:50%;top:-18px;height:18px;border-left:2px dotted #E8338A}
+.ad-mind-g{position:relative;border:1.5px solid #EDE3DF;border-radius:18px;padding:12px 14px;background:#FFFDF7;animation:mindIn .45s ease-out both;animation-delay:var(--d)}
+.ad-mind-g::before{content:"";position:absolute;top:-9px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#F4C2F7;border:2px solid #1F1412}
+.ad-mind-g.t-counter{background:#F4FBE9;border-color:#BFE3A0}.ad-mind-g.t-memory{background:#FFF4EE}.ad-mind-g.t-emotion{background:#FBE6FC}.ad-mind-g.t-concept{background:#EEF5FD}
+@keyframes mindIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ad-mind-g h4{margin:4px 0 8px;font-size:14px;color:#4E0C08}
+.ad-mind-g ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ad-mind-i{position:relative;background:#fff;border:1px solid #EDE3DF;border-left:4px solid #E8338A;border-radius:10px;padding:8px 26px 8px 10px;font-size:13.5px;line-height:1.45;display:flex;flex-direction:column;gap:3px}
+.ad-mind-i.app{border-left-color:#BFD7F2}
+.ad-mind-i q{font-style:italic;color:#4E0C08}
+.ad-mind-src{font-size:11.5px;color:#7A6A67;font-weight:600}
+.ad-mind-x{position:absolute;top:4px;right:4px;border:0;background:none;color:#B9ABA8;cursor:pointer;font-size:12px}
+.ad-mind-add{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.ad-mind-add input{flex:1;min-width:200px}
+.ad-mind-add.nb{margin-top:10px}
+.ad-map-foot{margin-top:10px;font-size:12.5px}
+@media(max-width:900px){.ad-mind-br{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ad-mind-br{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.ad-mind-c,.ad-mind-g{animation:none}}
+.ad-mind-add select{width:auto;flex:none;max-width:100%}.ad-mind-add .bt-btn{flex:none}
+/* belief map: look by Fierce 5 or by the emotion wheel */
+.ad-map-view{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+.ad-map-vb{border:2px solid #1F1412;border-radius:999px;background:#fff;padding:7px 14px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:#1F1412}
+.ad-map-vb.on{background:#F1F9A6;box-shadow:2px 2px 0 #4E0C08}
+.ad-f5{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:0 0 10px}
+.ad-f5-b{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:2px solid #1F1412;border-radius:14px;background:#4E0C08;color:#FBE6FC;padding:10px 12px;font:inherit;cursor:pointer;box-shadow:3px 3px 0 #E8338A;transition:transform .15s}
+.ad-f5-b span{font-size:12px;color:#F4C2F7}
+.ad-f5-b:hover{transform:translateY(-2px)}.ad-f5-b.on{background:#E8338A;color:#fff;box-shadow:3px 3px 0 #4E0C08}.ad-f5-b.on span{color:#fff}
+.ad-f5-b.none{background:#f3eaee;color:#9A8A87;border-color:#d9c9cd;box-shadow:none;cursor:default}.ad-f5-b.none span{color:#9A8A87}
+.ad-map-sub{padding:10px 0 4px 14px;border-left:3px dashed #E8338A;margin:0 0 6px 10px;animation:adPop .3s ease}
+.ad-emo-cores{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.ad-emo-c{display:inline-flex;align-items:center;gap:7px;border:2px solid var(--c);border-radius:999px;background:#fff;padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer;color:#1F1412}
+.ad-emo-c span:last-child{font-size:12px;background:var(--c);color:#fff;border-radius:999px;padding:0 7px}
+.ad-emo-dot{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.ad-emo-c.on{background:var(--c);color:#fff}.ad-emo-c.on span:last-child{background:#fff;color:#1F1412}
+.ad-emo-c.none{opacity:.4;cursor:default}
+.ad-emo-open{border:2px solid var(--c);border-radius:16px;padding:12px 14px;background:#fff;animation:adPop .3s ease}
+.ad-emo-hd{margin:0 0 6px}.ad-emo-hd b{color:var(--c);font-size:17px}
+.ad-emo-f h4{margin:10px 0 4px;font-size:14px;display:inline-block;background:var(--c);color:#fff;border-radius:999px;padding:2px 10px}
+.ad-emo-f ul{list-style:none;margin:0;padding:0}
+.ad-emo-ln{display:block;font-size:12px;margin-top:3px;color:#6A5A57}
+.ad-linkbtn{border:0;background:none;color:#E8338A;font:inherit;font-weight:600;cursor:pointer;padding:0 4px;text-decoration:underline}
+@keyframes adPop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* leads: a tab per waitlist */
+.ld-segs{display:flex;gap:6px;overflow-x:auto;margin:4px 0 12px;padding-bottom:4px;scrollbar-width:thin}
+.ld-seg{flex:none;display:inline-flex;align-items:center;gap:8px;border:2px solid #1F1412;border-radius:999px;background:#fff;padding:7px 14px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:#1F1412}
+.ld-seg b{background:#FBE6FC;border-radius:999px;padding:0 8px;font-size:12px}
+.ld-seg.on{background:#4E0C08;color:#F1F9A6}.ld-seg.on b{background:#F1F9A6;color:#4E0C08}

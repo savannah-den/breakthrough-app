@@ -645,7 +645,7 @@
         { route: '#Dose', sel: '.ds-home', title: 'Your daily DOSE lives here', text: 'This is your plan. Each day, tick each one off as you do it, or tap “I did my whole minimum” in one go.' },
         { route: '#Dose', sel: '.ds-spicebtn', title: 'Get more dopamine', text: 'Want a bigger, more fun dose today? Tap here to ask Sav for a wildcard surprise DOSE plan.' },
         { route: '#Dose', sel: '.ds-menu.sm', title: 'Your whole DOSE menu', text: 'Everything you picked in step 1. Add or change things any time. Bored of your plan? Tap “Change my plan”.' },
-        { route: '#Dashboard', sel: '.rp', title: 'Today’s reps: the key to rewiring', text: 'Your DOSE is on your Home page now, in Today’s reps. This is where you tick it off every day. The rest stays locked until you do each activity in Week 1.' },
+        { route: '#Dashboard', sel: '.rp', title: 'Today’s reps: the key to rewiring', text: 'Your DOSE is on your Home page now, in Today’s reps. This is where you tick it off every day. The rest stays locked until you do each activity in Week 2.' },
         { route: '#Dashboard', sel: '.rp-mode', title: 'Short or detailed', text: '“I’ve got 3 seconds”: just tick it. “I want to add detail”: pick or write exactly what you did. Switch any time.' },
         { route: '#Dashboard', sel: '.rp [data-rp="dose"]', title: 'Change it any time', text: 'Did something different today? Tap it and pick from your menu, or add something new. To change your plan, open DOSE.' },
         { route: '#Dashboard', title: 'Back to the course', text: 'That’s your DOSE sorted. On to the next video.', last: true, cta: 'Watch the next video →' }
@@ -872,7 +872,7 @@
     wrap.appendChild(h('section', { class: 'vg-gcard vg-partlock' }, [
       h('span', { class: 'vg-partlock-ic', 'aria-hidden': 'true', text: '🔒' }),
       h('b', { class: 'vg-partlock-t', text: ready ? 'Ready when you are' : 'Coming up in your course' }),
-      h('p', { class: 'vg-sub', text: f ? (ready ? 'Tap below to go to “' + f.l.title + '” in your course, then open the activity.' : 'Watch the lessons before “' + f.l.title + '” in ' + (f.w && f.w.title ? 'Week ' + f.w.week + ': ' + f.w.title : 'your course') + ', then open the activity from the course page.') : '' }),
+      h('p', { class: 'vg-sub', text: f ? (ready ? 'Tap below to go to “' + f.l.title + '” in your course, then open the activity.' : 'Watch the lessons before “' + f.l.title + '” in ' + (f.w && f.w.title ? 'Week ' + (window.BT_WK ? window.BT_WK(f.w.week) : f.w.week + 1) + ': ' + f.w.title : 'your course') + ', then open the activity from the course page.') : '' }),
       h('button', { class: 'bt-btn lime', type: 'button', text: ready ? 'Take me to it →' : 'Back to my course →', onclick: function () { try { sessionStorage.setItem('bt-scrollto', ready ? PR_RES[r] : ''); } catch (e) {} location.hash = '#Course'; } }),
       h('a', { class: 'bt-btn ghost', href: '#Vagal', text: 'My vagal tone plan' })
     ]));
@@ -1034,7 +1034,7 @@
     // stays open for the whole week (7 days from when they first see it), then folds away
     var d = h('details', { class: 'emb', open: !seen || Date.now() - Number(seen) < 7 * DAY ? 'open' : null });
     if (!seen) try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
-    d.appendChild(h('summary', { class: 'emb-sum' }, [h('span', { class: 'emb-k', text: 'Week 1 · Embodiment' }), h('b', { text: 'Your next 7 days: the why and the how' }), h('span', { class: 'emb-tg', 'aria-hidden': 'true' })]));
+    d.appendChild(h('summary', { class: 'emb-sum' }, [h('span', { class: 'emb-k', text: 'Week 2 · Embodiment' }), h('b', { text: 'Your next 7 days: the why and the how' }), h('span', { class: 'emb-tg', 'aria-hidden': 'true' })]));
     var b = h('div', { class: 'emb-b' }); d.appendChild(b);
     b.appendChild(h('p', { class: 'emb-lead', text: 'For the next 7 days, the only thing I want you to focus on implementing is your DOSE, Breathe, Pause and Move. That might seem like a lot, but here’s how small it can look to begin with.' }));
     // the purpose: the cogs
@@ -1098,7 +1098,7 @@
       page.appendChild(h('h2', { class: 'vg-h vg-series-h', text: 'Everything in the series' }));
       page.appendChild(h('div', { class: 'vg-parts' }, PARTS.map(function (p) {
         var r = kit.resource(p[0]) || { week: 1 }, op = r.week <= 1 || kit.isOpen(r.week) || !!(window.BT_COURSE && window.BT_COURSE.allOpen && window.BT_COURSE.allOpen()), href = r.href || '#' + p[1];
-        var inner = [h('span', { class: 'vg-part-art' }, [kit.emblem(p[0])]), h('span', { class: 'vg-part-b' }, [h('b', { text: p[1] }), h('span', { text: op ? p[2] : 'Opens in Week ' + r.week })]), op ? h('span', { class: 'vg-part-go', 'aria-hidden': 'true', text: '→' }) : null];
+        var inner = [h('span', { class: 'vg-part-art' }, [kit.emblem(p[0])]), h('span', { class: 'vg-part-b' }, [h('b', { text: p[1] }), h('span', { text: op ? p[2] : 'Opens in Week ' + (window.BT_WK ? window.BT_WK(r.week) : r.week + 1) })]), op ? h('span', { class: 'vg-part-go', 'aria-hidden': 'true', text: '→' }) : null];
         return op ? h('a', { class: 'vg-part', href: href, style: '--cv:' + (r.cover || '#FFF4EE') }, inner) : h('div', { class: 'vg-part lock', style: '--cv:' + (r.cover || '#FFF4EE') }, inner.concat([kit.icon('lock', 'vg-lock')]));
       })));
     }
@@ -1120,8 +1120,8 @@
   function waterML(w) { w = w || {}; return w.ml != null ? w.ml : (w.n || 0) * 250; }
   function waterGoalMl() { var d = vw(); return d.waterGoalMl || (d.waterGoal ? d.waterGoal * 250 : 0); }
   function waterLevel(k) { var w = (vday(k).water || {}); if (w.ml != null || w.n) { var ml = waterML(w), goal = waterGoalMl() || 2000; return ml >= goal ? 3 : ml >= goal / 2 ? 2 : ml > 0 ? 1 : 0; } if (w.level) return (WATER3.filter(function (x) { return x[0] === w.level; })[0] || [0, 0, 0, 0])[3]; var n = w.n || 0, goal = vw().waterGoal || 8; return n >= goal ? 3 : n >= Math.ceil(goal / 2) ? 2 : n > 0 ? 1 : 0; }
-  // each part of Today's reps switches on as they do its activity in Week 1; everything is on once Week 1 is done
-  var PART_LOCK = { dose: 'Switches on with Activity: Your daily DOSE', breathe: 'Switches on with Activity: Breathwork', pause: 'Switches on with Activity: Pause', move: 'Switches on with Activity: Move', water: 'Switches on when Week 1 is done', win: 'Switches on when Week 1 is done' };
+  // each part of Today's reps switches on as they do its activity in Week 2; everything is on once Week 2 is done
+  var PART_LOCK = { dose: 'Switches on with Activity: Your daily DOSE', breathe: 'Switches on with Activity: Breathwork', pause: 'Switches on with Activity: Pause', move: 'Switches on with Activity: Move', water: 'Switches on when Week 2 is done', win: 'Switches on when Week 2 is done' };
   function partsOn() {
     var C = window.BT_COURSE, all = (C && C.weekComplete && C.weekComplete(1)) || !!(window.BT_COURSE && window.BT_COURSE.allOpen && window.BT_COURSE.allOpen()) || !!vw().repsUnlocked;
     if (all) return { all: true, win: 1, dose: 1, breathe: 1, pause: 1, move: 1, water: 1 };
@@ -1144,7 +1144,7 @@
       box.appendChild(h('div', { class: 'rp-lockmsg' }, [
         h('span', { class: 'rp-lock-ic', 'aria-hidden': 'true', text: '🔒' }),
         h('b', { text: 'This one’s waiting for you' }),
-        h('p', { text: 'Your daily reps switch on one by one as you do the activities in Week 1, starting with your DOSE.' })
+        h('p', { text: 'Your daily reps switch on one by one as you do the activities in Week 2, starting with your DOSE.' })
       ]));
       return box;
     }

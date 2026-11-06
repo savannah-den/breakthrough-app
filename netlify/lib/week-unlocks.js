@@ -35,7 +35,7 @@ async function run(opts) {
     if (!sv.ok) continue;
     let pushed = 0, mailed = false;
     const mine = (subs || []).filter(s => s.user_id === p.id);
-    if (mine.length) pushed = await push.send(mine, { title: '🔓 Week ' + open + ' is open!', body: (first ? first + ', y' : 'Y') + 'our next week is ready for you. One small step at a time.', url: '/#Course', tag: 'week-' + open });
+    if (mine.length) pushed = await push.send(mine, { title: '🔓 Week ' + (open + 1) + ' is open!', body: (first ? first + ', y' : 'Y') + 'our next week is ready for you. One small step at a time.', url: '/#Course', tag: 'week-' + open });
     if (process.env.RESEND_API_KEY) {
       const m = weekUnlockedEmail({ first, week: open, title: wk.title || '', lessons: (wk.lessons || []).filter(l => !l.optional).map(l => String(l.title || '').replace(/^Activity:\s*/, '')).slice(0, 8), tier: 'self', site: SITE });
       const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' },

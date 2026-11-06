@@ -452,21 +452,21 @@
     return { overview: overview, secs: secs, steps: steps };
   }
   function isCoachName(w) { return /^(savannah|sav|coach|the coach)\b/i.test(String(w || '').trim()); }
-  function firstSentence(t) { var m = /^(.{20,220}?[.!?])(\s|$)/.exec(String(t || '')); return m ? m[1] : String(t || '').slice(0, 200); }
+  function firstSentence(t) { t = String(t || ''); var m = /^(.{20,260}?[.!?])(\s|$)/.exec(t); if (m) return m[1]; return t.length > 240 ? t.slice(0, 240).replace(/\s+\S*$/, '') + '…' : t; }
   function summaryView(c, key, rec, onEdit) {
     var R = readSummary(rec.summary), first = (c.full_name || 'them').replace(/^Example:\s*/i, '').split(' ')[0];
     var mine = R.steps.filter(function (x) { return isCoachName(x.who); }), theirs = R.steps.filter(function (x) { return !isCoachName(x.who); });
     var box = h('div', { class: 'ad-sum' });
-    box.appendChild(h('div', { class: 'ad-sum-top' }, [h('b', { text: 'Session summary' }), rec.zoom ? h('span', { class: 'ad-conn on', text: '✓ From Zoom' }) : null, h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Edit ✎', onclick: onEdit })]));
+    box.appendChild(h('div', { class: 'ad-sum-top' }, [h('b', { text: rec._first ? 'Call summary' : 'Session summary' }), rec.zoom ? h('span', { class: 'ad-conn on', text: '✓ From Zoom' }) : null, rec._first ? null : h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Edit ✎', onclick: onEdit })]));
     if (R.secs.length || R.steps.length) {
       var kp = h('div', { class: 'ad-sum-kp' }, [h('p', { class: 'ad-bk', text: 'Key points' })]);
       kp.appendChild(h('ul', null, R.secs.filter(function (x) { return x.h; }).slice(0, 8).map(function (x) { return h('li', null, [h('b', { text: x.h + ': ' }), firstSentence(x.t)]); })));
       box.appendChild(kp);
     }
-    if (mine.length) box.appendChild(h('div', { class: 'ad-sum-acts mine' }, [h('p', { class: 'ad-bk', text: '🔁 Your actions (on your close-the-loop list)' }), h('ul', null, mine.map(function (x) { return h('li', { text: x.text }); }))]));
+    if (mine.length) box.appendChild(h('div', { class: 'ad-sum-acts mine' }, [h('p', { class: 'ad-bk', text: rec._first ? 'Your actions from that call' : '🔁 Your actions (on your close-the-loop list)' }), h('ul', null, mine.map(function (x) { return h('li', { text: x.text }); }))]));
     if (theirs.length) box.appendChild(h('div', { class: 'ad-sum-acts' }, [h('p', { class: 'ad-bk', text: first + '’s next steps' }), h('ul', null, theirs.map(function (x) { return h('li', { text: x.text }); }))]));
     // email them their recap (design #11): Sav checks every line before it goes
-    if (!c.is_admin) {
+    if (!c.is_admin && !rec._first) {
       var rb = h('div', { class: 'ad-recap' });
       var sentAt = rec.recapAt;
       var openR = function () {
@@ -519,7 +519,7 @@
   ];
   function loopDoneBy(c, l) {
     var t = l.text, unl = (S.settings.unlocks || {})[c.id], m = /unlock\s+week\s*(\d+)/i.exec(t);
-    if (m) return (unl === 'all' || Number(unl) >= Number(m[1])) ? 'Week ' + m[1] + ' is unlocked for them' : '';
+    if (m) return (unl === 'all' || Number(unl) >= Number(m[1])) ? 'Week ' + (Number(m[1]) + 1) + ' is unlocked for them' : '';
     if (/(agreement|contract)/i.test(t) && /send|sign|set ?up/i.test(t)) { var k = (S.contracts || {})[c.id]; return k && (k.status === 'sent' || k.status === 'signed') ? 'Their agreement has been ' + k.status : ''; }
     if (/welcome email/i.test(t)) return welcomeSentAt(c) ? 'Welcome email sent' : '';
     if (/\bbook\b.{0,30}(session|call)|schedule.{0,20}(session|call)/i.test(t)) return sessionPlan(c).fut.length ? 'Their next call is booked' : '';
@@ -575,15 +575,16 @@
   // every client's open loops in one list, plus Sav's own to-dos (app_settings 'coachTodos')
   // Sav's own to-dos to start with (asked for 5 Nov 2026); once she changes the list it's saved and these are just history
   var COACH_TODOS_START = [
-    { id: 'ect-page', text: 'Finish the ECT landing page (before Tyler and Shannon reach Week 4)', at: 1793836800000, due: '2026-11-20', urg: 'high' },
+    { id: 'ect-page', text: 'Finish the ECT landing page (before Tyler and Shannon reach Week 5)', at: 1793836800000, due: '2026-11-20', urg: 'high' },
     { id: 'lp-1to1-group', text: 'Make landing pages for 1:1 and group, and link them to the ECT page', at: 1793836800000, due: '2026-11-27', urg: 'normal' },
     { id: 'group-calls', text: 'Sort out the group calls, then approve the group call reminder emails (draft #10)', at: 1793836800000, due: '', urg: 'normal' }
   ];
-  function openLoopCount() { var n = 0; (S.clients || []).forEach(function (c) { if (!c.is_admin) n += (coach(c).loops || []).filter(function (l) { return !l.done; }).length; }); return n + ((S.settings && S.settings.coachTodos) || COACH_TODOS_START).filter(function (l) { return !l.done; }).length; }
+  function openLoopCount() { var n = 0; (S.clients || []).forEach(function (c) { if (!c.is_admin) n += (coach(c).loops || []).filter(function (l) { return !l.done; }).length; }); return n + (coach(coachRec()).todos || COACH_TODOS_START).filter(function (l) { return !l.done; }).length; }
   function allLoopsCard() {
-    var rows = [], todos = JSON.parse(JSON.stringify(S.settings.coachTodos || COACH_TODOS_START));
+    var meC = coachRec(), rows = [], todos = JSON.parse(JSON.stringify(coach(meC).todos || COACH_TODOS_START));
     (S.clients || []).forEach(function (c) { if (c.is_admin) return; syncLoops(c).forEach(function (l) { rows.push({ c: c, l: l }); }); });
-    var saveT = function () { sb.from('app_settings').upsert({ key: 'coachTodos', value: todos, updated_at: new Date().toISOString() }).then(function (r) { if (!r.error) S.settings.coachTodos = todos; page(); }); };
+    // kept on your own coach row (coach-only), not in app settings, which every client can read
+    var saveT = function () { saveCoach(meC, { todos: todos }); };
     todos.forEach(function (l) { rows.push({ c: null, l: l }); });
     rows.sort(function (a, b) { return loopRank(a.l) - loopRank(b.l); });
     var openN = rows.filter(function (r) { return !r.l.done; }).length;
@@ -601,6 +602,195 @@
       })) : h('p', { class: 'ad-muted', text: 'Nothing open. Beautiful.' }),
       h('div', { class: 'ad-loop-add' }, [add, addDue, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: go })])
     ]);
+  }
+
+  /* ---------- First calls (discovery / first Zoom before the program), shown with the 1:1 sessions ---------- */
+  // Sav's own "coach home" record (to-dos, first calls for people not logged in yet, email bookkeeping):
+  // always her main login, so it's the same whichever of her logins she's using
+  function coachRec() { var a = (S.clients || []).filter(function (x) { return x.is_admin; }); var m = a.filter(function (x) { return /colourmeneurospicy/i.test(x.email || ''); })[0] || a.filter(function (x) { return x.id === S.me; })[0] || a[0]; return { id: m ? m.id : S.me }; }
+  function firstCallsOf(c) {
+    var mine = coach(c).calls || {}, pend = ((coach(coachRec()).pendingCalls || {})[String(c.email || '').toLowerCase()]) || {};
+    var all = Object.assign({}, pend, mine);
+    return Object.keys(all).map(function (k) { return Object.assign({ key: k }, all[k]); }).filter(function (x) { return x.summary || x.transcript; }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
+  }
+  function firstCallsBlock(c) {
+    var list = firstCallsOf(c); if (!list.length) return null;
+    return h('div', { class: 'ad-first' }, list.map(function (x) {
+      var d = new Date(x.at), row = h('details', { class: 'ad-sess-i done' }, [h('summary', null, [h('span', { class: 'ad-sess-n', text: '★' }), h('div', { class: 'ad-sess-h' }, [h('b', { text: (x.title || 'Discovery call') + ' · ' + d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) }), h('span', { class: 'ad-muted', text: 'Before the program' })]), h('span', { class: 'ad-sess-st done', text: '✓ Notes' })])]);
+      row.appendChild(h('div', { class: 'ad-sess-b' }, [summaryView(c, x.key, Object.assign({ _first: true }, x), function () {})]));
+      return row;
+    }));
+  }
+
+  /* ---------- The belief map: Sav's back-of-house proof portfolio for one client ----------
+     coach_clients.data.map (built by AI from calls, WhatsApp and the app, see client-map-background.js):
+     { summary, themes[], beliefs: [{ id, text, how, strength, items: [{ type, text, quote, src: call|message|app, told, where }] }], emotions[], manual[], hidden[] } */
+  var MAP_TYPES = [['memory', '🕰️', 'Memories that built it'], ['emotion', '💗', 'Emotions'], ['self', '🪞', 'What they believe about themselves'], ['proof', '🧱', 'How they prove it “true”'], ['counter', '✨', 'New proof against it'], ['concept', '🧭', 'Tools + concepts for it']];
+  var SRC = { call: ['📞', 'Call'], message: ['💬', 'Message'], app: ['📱', 'In the app'] };
+  // the Fierce 5 roots (same as Breaking Out of Your Box) and the Energy in Motion wheel (same as the Emotional Blueprint)
+  var F5 = [['worthy', 'I’m not worthy'], ['good', 'I’m not good enough'], ['loved', 'I’m not loved'], ['safe', 'I’m not safe'], ['capable', 'I’m not capable']];
+  var WHEEL = [['anger', 'Anger', '#D3302B', 'Furious Resentful Frustrated Jealous Irritated Defensive Annoyed Critical Determined Assertive Motivated Empowered Passion'],
+    ['sadness', 'Sadness', '#4C7FD1', 'Despair Lonely Hopeless Isolated Down Disconnected Apathetic Unmotivated Accepting Comforted Open-hearted Gentle Compassion'],
+    ['fear', 'Fear', '#6B4FB0', 'Panicked Anxious Overwhelmed Threatened Nervous Worried Unsettled Insecure Eager Curious Capable Brave Excitement'],
+    ['hurt', 'Hurt', '#E890EC', 'Betrayed Rejected Abandoned Excluded Disappointed Unseen Let-down Misunderstood Letting-go Open Healing Understanding Forgiveness'],
+    ['guilt', 'Guilt', '#F28C3B', 'Remorseful Regretful Self-blaming Burdened Sorry Torn Uneasy Obligated Accountable Learning At-peace Reliable Integrity'],
+    ['shame', 'Shame', '#E6B820', 'Humiliated Embarrassed Worthless Exposed Inadequate Awkward Like-a-fraud Self-conscious Confident At-ease Worthy Seen Self-acceptance'],
+    ['grief', 'Grief', '#5FA35A', 'Bereft Longing Empty Numb Missing Nostalgic Homesick Wistful Remembering Thankful Cherishing Appreciative Gratitude'],
+    ['joy', 'Joy', '#22B3A6', 'Excited Playful Happy Proud Hopeful Free Cheerful Content Fulfilled Serene Calm Grounded Peace'],
+    ['love', 'Love', '#E0457B', 'Devoted Connected Tender Intimate Valued Accepted Warm Trusting Generous Whole Self-loving Secure Unconditional-love']]
+    .map(function (w) { return { id: w[0], name: w[1], col: w[2], words: w[3].split(' ').map(function (x) { return x.replace(/-/g, ' '); }) }; });
+  var EMO_EXTRA = [[/lonel/, 'sadness', 'Lonely'], [/self.?doubt|doubt/, 'shame', 'Inadequate'], [/judg/, 'fear', 'Anxious'], [/reject/, 'hurt', 'Rejected'], [/misunderst/, 'hurt', 'Misunderstood'], [/overwhelm/, 'fear', 'Overwhelmed'], [/anx|worr|scared|afraid/, 'fear', 'Anxious'], [/shame/, 'shame', 'Shame'], [/grat/, 'grief', 'Gratitude'], [/angr|mad\b/, 'anger', 'Anger'], [/sad/, 'sadness', 'Sadness'], [/guilt/, 'guilt', 'Guilt'], [/fear/, 'fear', 'Fear'], [/hurt/, 'hurt', 'Hurt']];
+  function emoOf(it) {
+    var core = it.core && WHEEL.filter(function (w) { return w.id === it.core; })[0];
+    if (core) return { core: core.id, feel: it.feel || core.name };
+    var t = String(it.text || '').toLowerCase();
+    for (var i = 0; i < WHEEL.length; i++) for (var j = 0; j < WHEEL[i].words.length; j++) if (new RegExp('\\b' + WHEEL[i].words[j].toLowerCase()).test(t)) return { core: WHEEL[i].id, feel: WHEEL[i].words[j] };
+    for (var k = 0; k < EMO_EXTRA.length; k++) if (EMO_EXTRA[k][0].test(t)) return { core: EMO_EXTRA[k][1], feel: EMO_EXTRA[k][2] };
+    for (var n = 0; n < WHEEL.length; n++) if (t.indexOf(WHEEL[n].id) >= 0) return { core: WHEEL[n].id, feel: WHEEL[n].name };
+    return { core: 'other', feel: it.text };
+  }
+  function rootOf(b) {
+    if (b.root && F5.some(function (f) { return f[0] === b.root; })) return b.root;
+    var t = String(b.text || '').toLowerCase();
+    if (/worth|deserv/.test(t)) return 'worthy';
+    if (/safe|judg|danger|trust|attack/.test(t)) return 'safe';
+    if (/lov|belong|too much|different|reject|alone|leave|unwanted/.test(t)) return 'loved';
+    if (/lazy|can.?t|capable|fail|mess|stupid|competen|useless|waste/.test(t)) return 'capable';
+    return 'good';
+  }
+  function mapKey(b, it) { return (b.id || b.text) + '|' + String(it.text || '').slice(0, 60); }
+  function mapOf(c) {
+    var m = coach(c).map; if (!m || !m.beliefs) return null;
+    var hidden = {}; (m.hidden || []).forEach(function (k) { hidden[k] = 1; });
+    var bs = m.beliefs.map(function (b) {
+      var items = (b.items || []).filter(function (it) { return !hidden[mapKey(b, it)]; });
+      (m.manual || []).forEach(function (it) { if (it.belief === b.text && !hidden[mapKey(b, it)]) items.push(it); });
+      return Object.assign({}, b, { items: items });
+    });
+    (m.manual || []).filter(function (it) { return it.newBelief; }).forEach(function (nb) { if (!bs.some(function (b) { return b.text === nb.belief; })) bs.push({ id: 'm' + nb.at, text: nb.belief, how: '', strength: 3, items: [], manual: true }); });
+    return Object.assign({}, m, { beliefs: bs });
+  }
+  // emotions view: the wheel's core emotions as the blanket, tap one to open the feelings we found for them under it
+  function emoView(m, ui, vis) {
+    var found = {}, list = [];
+    var add = function (it, b) {
+      if (!vis(it)) return; var k = String(it.text || '').toLowerCase().trim(); if (!k) return;
+      var e = found[k]; if (!e) { var eo = emoOf(it); e = found[k] = { text: it.text, quote: it.quote || '', src: it.src, where: it.where || '', core: eo.core, feel: eo.feel, beliefs: [] }; list.push(e); }
+      if (b && e.beliefs.indexOf(b) < 0) e.beliefs.push(b);
+    };
+    m.beliefs.forEach(function (b) { (b.items || []).forEach(function (it) { if (it.type === 'emotion') add(it, b); }); });
+    (m.emotions || []).forEach(function (it) { add(it, null); });
+    var cores = WHEEL.concat([{ id: 'other', name: 'Not on the wheel', col: '#9A8A87', words: [] }]);
+    var wrap = h('div', { class: 'ad-emo' });
+    wrap.appendChild(h('div', { class: 'ad-emo-cores' }, cores.map(function (w) {
+      var n = list.filter(function (e) { return e.core === w.id; }).length, on = ui.core === w.id;
+      if (w.id === 'other' && !n) return null;
+      return h('button', { class: 'ad-emo-c' + (on ? ' on' : '') + (n ? '' : ' none'), type: 'button', style: '--c:' + w.col, disabled: n ? null : true, 'aria-expanded': on ? 'true' : 'false', onclick: function () { ui.core = on ? null : w.id; page(); } },
+        [h('span', { class: 'ad-emo-dot', 'aria-hidden': 'true' }), h('b', { text: w.name }), h('span', { text: n ? String(n) : '·' })]);
+    })));
+    if (!list.length) wrap.appendChild(h('p', { class: 'ad-muted', text: ui.told ? 'No emotions they’ve told you directly yet.' : 'No emotions on the map yet.' }));
+    var w = cores.filter(function (x) { return x.id === ui.core; })[0];
+    if (w) {
+      var mine = list.filter(function (e) { return e.core === w.id; }), feels = [];
+      mine.forEach(function (e) { if (feels.indexOf(e.feel) < 0) feels.push(e.feel); });
+      var box = h('div', { class: 'ad-emo-open', style: '--c:' + w.col });
+      box.appendChild(h('div', { class: 'ad-emo-hd' }, [h('b', { text: w.name }), w.words.length ? h('span', { class: 'ad-muted', text: ' · on the wheel: ' + w.words.slice(0, 8).join(', ') + '…' }) : null]));
+      feels.forEach(function (f) {
+        box.appendChild(h('section', { class: 'ad-emo-f' }, [h('h4', { text: f }), h('ul', null, mine.filter(function (e) { return e.feel === f; }).map(function (e) {
+          var sc = SRC[e.src] || SRC.app;
+          return h('li', { class: 'ad-mind-i ' + (e.src !== 'app' ? 'told' : 'app') }, [h('span', { class: 'ad-mind-it', text: e.text }), e.quote ? h('q', { text: e.quote }) : null,
+            h('span', { class: 'ad-mind-src' }, [sc[0] + ' ' + sc[1] + (e.where ? ' · ' + e.where : '')]),
+            e.beliefs.length ? h('span', { class: 'ad-emo-ln' }, ['Tied to: '].concat(e.beliefs.map(function (b) { return h('button', { class: 'ad-linkbtn', type: 'button', text: '“' + b.text + '”', onclick: function () { ui.view = 'beliefs'; ui.root = rootOf(b); ui.open = b.id; page(); } }); }))) : null]);
+        }))]));
+      });
+      wrap.appendChild(box);
+    }
+    return wrap;
+  }
+  function mapCard(c, all) {
+    var first = (c.full_name || 'them').replace(/^Example:\s*/i, '').split(' ')[0], co = coach(c), m = mapOf(c), job = co.mapJob || {};
+    S.mapUi = S.mapUi || {}; var ui = S.mapUi[c.id] = S.mapUi[c.id] || { open: null, told: false };
+    var card = h('div', { class: 'ad-card ad-map' });
+    var working = S.mapWorking && S.mapWorking[c.id];
+    var build = function () {
+      S.mapWorking = S.mapWorking || {}; S.mapWorking[c.id] = true; page();
+      if (isPlay()) { setTimeout(function () { S.mapWorking[c.id] = false; if (/tyler/i.test(c.full_name || '') && window.BT_TYLER_MAP) saveCoach(c, { map: Object.assign({}, window.BT_TYLER_MAP, { manual: (co.map || {}).manual || [], hidden: (co.map || {}).hidden || [] }), mapJob: { state: 'done', at: new Date().toISOString() } }); else { page(); toastA('Playground: only Tyler has an example map. On the live app this builds from ' + first + '’s real calls, messages and app answers.'); } }, 2200); return; }
+      var t0 = new Date().toISOString();
+      sb.auth.getSession().then(function (r) { var tok = r.data && r.data.session && r.data.session.access_token;
+        return fetch('/.netlify/functions/client-map-background', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ clientId: c.id }) }); })
+        .then(function () { var n = 0; (function poll() { n++; if (n > 45) { S.mapWorking[c.id] = false; toastA('Still building. Refresh in a minute to see it.'); page(); return; }
+          setTimeout(function () { sb.from('coach_clients').select('data').eq('client_id', c.id).maybeSingle().then(function (r) { var d = r.data && r.data.data, j = d && d.mapJob;
+            if (j && j.at && j.at >= t0) { S.coach[c.id] = d; S.mapWorking[c.id] = false; toastA(j.state === 'done' ? first + '’s map is ready ✨' : 'The map didn’t build: ' + (j.error || 'try again')); page(); return; } poll(); }); }, 6000); })(); })
+        .catch(function () { S.mapWorking[c.id] = false; page(); toastA('Couldn’t start the map just now.'); });
+    };
+    // WhatsApp: export the chat (without media) and upload the .txt
+    var waIn = h('input', { type: 'file', accept: '.txt,text/plain', class: 'bt-file', id: 'wa-' + c.id, onchange: function (e) {
+      var f = e.target.files && e.target.files[0]; if (!f) return;
+      var rd = new FileReader(); rd.onload = function () { var txt = String(rd.result || ''); var lines = txt.split(/\n/).length;
+        var wa = (co.wa || []).concat([{ at: new Date().toISOString(), name: f.name, lines: lines, text: txt.slice(-150000) }]).slice(-6);
+        saveCoach(c, { wa: wa }); toastA('Imported ' + lines + ' lines from WhatsApp. Tap “Update the map” to add what’s new.'); }; rd.readAsText(f);
+    } });
+    var newer = (function () { var t = m && m.made ? Date.parse(m.made) : 0, n = 0; Object.keys(co.sessions || {}).forEach(function (k) { var x = co.sessions[k]; if (x && x.summary && Date.parse(x.at || 0) > t) n++; }); (co.wa || []).forEach(function (x) { if (Date.parse(x.at) > t) n++; }); firstCallsOf(c).forEach(function (x) { if ((x.zoom || 0) > t) n++; }); return n; })();
+    card.appendChild(h('div', { class: 'ad-ct-top' }, [h('h3', { class: 'ad-h3', text: '🧠 ' + first + '’s belief map' }),
+      h('div', { class: 'ad-map-acts' }, [
+        h('label', { class: 'bt-btn ghost sm', for: 'wa-' + c.id, title: 'In WhatsApp: open their chat → tap their name → Export chat → Without media. Upload the .txt here (unzip it first if it comes as a .zip).' }, ['💬 Import WhatsApp chat', waIn]),
+        h('button', { class: 'bt-btn sm ' + (m ? 'ghost' : 'lime'), type: 'button', disabled: working ? true : null, text: working ? 'Building… (a minute or two)' : m ? (newer ? '↻ Update the map · ' + newer + ' new' : '↻ Update the map') : '✨ Build the map', onclick: build })])]));
+    if (!m) { card.appendChild(h('p', { class: 'ad-muted', text: 'Builds a map of ' + first + '’s key limiting beliefs from their calls with you (discovery call + every session), any WhatsApp chats you import, and everything they’ve written in the app. Each belief links the memories, emotions and proof that built it, and the new proof against it.' })); return card; }
+    card.appendChild(h('p', { class: 'ad-map-sum', text: m.summary || '' }));
+    if ((m.themes || []).length) card.appendChild(h('div', { class: 'ad-chips' }, m.themes.map(function (t) { return h('span', { class: 'ad-chip', text: t }); })));
+    // the switch: everything, or only what they've told you
+    var sw = h('div', { class: 'ad-map-sw', role: 'radiogroup', 'aria-label': 'Show' }, [[false, 'Everything'], [true, '📞💬 Only what they told me']].map(function (o) {
+      return h('button', { class: 'ad-map-swb' + (ui.told === o[0] ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': ui.told === o[0] ? 'true' : 'false', text: o[1], onclick: function () { ui.told = o[0]; page(); } });
+    }));
+    card.appendChild(sw);
+    var vis = function (it) { return !ui.told || it.told || it.src === 'call' || it.src === 'message'; };
+    // how to look at it: by belief (Fierce 5 roots, then the beliefs we found under each) or by emotion (the wheel's core emotions, then the ones we found)
+    ui.view = ui.view || 'beliefs';
+    card.appendChild(h('div', { class: 'ad-map-view', role: 'tablist', 'aria-label': 'Look by' }, [['beliefs', '🧱 Limiting beliefs'], ['emotions', '💗 Emotions']].map(function (o) {
+      var on = ui.view === o[0];
+      return h('button', { class: 'ad-map-vb' + (on ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: o[1], onclick: function () { ui.view = o[0]; page(); } });
+    })));
+    var beliefBtn = function (b) {
+      var n = (b.items || []).filter(vis).length, on = ui.open === b.id;
+      return h('button', { class: 'ad-map-b' + (on ? ' on' : ''), type: 'button', 'aria-expanded': on ? 'true' : 'false', onclick: function () { ui.open = on ? null : b.id; page(); } }, [h('span', { class: 'ad-map-bt', text: '“' + b.text + '”' }), h('span', { class: 'ad-map-bn', text: n + ' linked' + (b.strength ? ' · ' + '●'.repeat(Math.min(5, b.strength)) : '') })]);
+    };
+    if (ui.view === 'emotions') { card.appendChild(emoView(m, ui, vis)); }
+    else {
+      // the Fierce 5 as the blanket: tap one to open the beliefs we found under it
+      card.appendChild(h('div', { class: 'ad-f5' }, F5.map(function (f) {
+        var bs = m.beliefs.filter(function (x) { return rootOf(x) === f[0]; }), on = ui.root === f[0];
+        return h('button', { class: 'ad-f5-b' + (on ? ' on' : '') + (bs.length ? '' : ' none'), type: 'button', 'aria-expanded': on ? 'true' : 'false', disabled: bs.length ? null : true,
+          onclick: function () { ui.root = on ? null : f[0]; if (!on && bs.length === 1) ui.open = bs[0].id; page(); } }, [h('b', { text: f[1] }), h('span', { text: bs.length ? bs.length + ' found' : 'nothing yet' })]);
+      })));
+      if (ui.root) card.appendChild(h('div', { class: 'ad-map-bs ad-map-sub' }, m.beliefs.filter(function (x) { return rootOf(x) === ui.root; }).map(beliefBtn)));
+    }
+    var b = ui.view === 'beliefs' && ui.root ? m.beliefs.filter(function (x) { return x.id === ui.open && rootOf(x) === ui.root; })[0] : null;
+    if (b) {
+      var save = function (patch) { var mm = Object.assign({}, co.map || {}); Object.keys(patch).forEach(function (k) { mm[k] = patch[k]; }); saveCoach(c, { map: mm }); };
+      var mind = h('div', { class: 'ad-mind' });
+      mind.appendChild(h('div', { class: 'ad-mind-c' }, [h('span', { class: 'ad-mind-k', text: 'Limiting belief' }), h('b', { text: '“' + b.text + '”' }), b.how ? h('p', { text: b.how }) : null]));
+      var br = h('div', { class: 'ad-mind-br' });
+      MAP_TYPES.forEach(function (T, ti) {
+        var its = (b.items || []).filter(function (it) { return it.type === T[0] && vis(it); });
+        if (!its.length && T[0] === 'concept') return;
+        br.appendChild(h('section', { class: 'ad-mind-g t-' + T[0], style: '--d:' + (ti * 0.07) + 's' }, [h('h4', null, [h('span', { 'aria-hidden': 'true', text: T[1] + ' ' }), T[2], h('span', { class: 'ad-muted', text: ' ' + its.length })]),
+          its.length ? h('ul', null, its.map(function (it) {
+            var sc = SRC[it.src] || SRC.app, x = h('button', { class: 'ad-mind-x', type: 'button', 'aria-label': 'Remove from the map', text: '✕', onclick: function () { if (!x.dataset.sure) { x.dataset.sure = 1; x.textContent = 'Remove?'; return; } save({ hidden: ((co.map || {}).hidden || []).concat([mapKey(b, it)]) }); } });
+            return h('li', { class: 'ad-mind-i ' + (it.told || it.src !== 'app' ? 'told' : 'app') }, [h('span', { class: 'ad-mind-it', text: it.text }), it.quote ? h('q', { text: it.quote }) : null, h('span', { class: 'ad-mind-src' }, [sc[0] + ' ' + sc[1] + (it.where ? ' · ' + it.where : '') + (it.byYou ? ' · added by you' : '')]), x]);
+          })) : h('p', { class: 'ad-muted', text: ui.told ? 'Nothing they’ve told you directly yet.' : 'Nothing yet.' })]));
+      });
+      mind.appendChild(br);
+      // add something by hand
+      var tSel = h('select', { class: 'bt-in sm', 'aria-label': 'Type' }, MAP_TYPES.map(function (T) { return h('option', { value: T[0], text: T[1] + ' ' + T[2] }); }));
+      var sSel = h('select', { class: 'bt-in sm', 'aria-label': 'Where it came from' }, [['call', '📞 A call'], ['message', '💬 A message'], ['app', '📱 The app']].map(function (o) { return h('option', { value: o[0], text: o[1] }); }));
+      var tx = h('input', { class: 'bt-in sm', placeholder: 'Add a memory, emotion, proof… in their words if you can', 'aria-label': 'What to add' });
+      mind.appendChild(h('div', { class: 'ad-mind-add' }, [tSel, tx, sSel, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: function () { var v = tx.value.trim(); if (!v) return; save({ manual: ((co.map || {}).manual || []).concat([{ belief: b.text, type: tSel.value, text: v, quote: '', src: sSel.value, told: sSel.value !== 'app', where: 'Added by you · ' + new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }), byYou: true, at: Date.now() }]) }); } })]));
+      card.appendChild(mind);
+    }
+    var nb = h('input', { class: 'bt-in sm', placeholder: 'Add a limiting belief you’ve spotted…', 'aria-label': 'New belief' });
+    card.appendChild(h('div', { class: 'ad-mind-add nb' }, [nb, h('button', { class: 'bt-btn ghost sm', type: 'button', text: '+ Belief', onclick: function () { var v = nb.value.trim(); if (!v) return; var mm = Object.assign({}, co.map || {}); mm.manual = (mm.manual || []).concat([{ newBelief: true, belief: v, at: Date.now() }]); saveCoach(c, { map: mm }); } })]));
+    card.appendChild(h('p', { class: 'ad-muted ad-map-foot', text: 'Built ' + new Date(m.made || Date.now()).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + ' from ' + ((m.sources || []).length || 'your') + ' sources' + ((co.wa || []).length ? ' · ' + co.wa.length + ' WhatsApp import' + (co.wa.length === 1 ? '' : 's') : '') + '. Anything you remove or add stays that way when you update it.' }));
+    return card;
   }
   // 1:1 sessions: slots filled from the calendar, with Zoom summary / transcript / Drive link / notes
   function sessionsCard(c) {
@@ -650,6 +840,7 @@
       }
       list.appendChild(row);
     });
+    var fc = firstCallsBlock(c); if (fc) { card.appendChild(h('p', { class: 'ad-bk', text: 'Before the program' })); card.appendChild(fc); }
     card.appendChild(list);
     return card;
   }
@@ -1003,7 +1194,7 @@
       h('header', { class: 'ad-hero' }, [
         h('div', { class: 'ad-hero-t' }, [
           h('div', { class: 'ad-hero-t' }, [h('img', { class: 'ad-logo', src: 'icons/icon-192.png', alt: '' }), h('div', null, [h('p', { class: 'ad-kick', text: 'Back of house' }), h('h1', { class: 'ad-h1', text: 'Hey Sav' })])]),
-          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
+          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'https://claude.ai/artifact/WA6wA6JZykpKyJ6gjs6NfF' : '/breakthrough', target: '_blank', rel: 'noopener', title: 'The stand-alone Breakthrough landing page. No login, no app access. Share this link: app.colourmeneurospicy.com.au/breakthrough', text: '🌐 Breakthrough landing page' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
         ]),
         h('div', { class: 'ad-stats' }, [
           stat(real.length, 'clients', '#F1F9A6'),
@@ -1081,7 +1272,16 @@
      Rows come from the public waitlist page and /apply.html (via the "lead" function). Heat is worked out from
      their answers (lead-score.js), and Sav can override it. Program tags (community / group / 1:1) are added
      automatically once that email becomes a client. */
-  var LEAD_TAGS = [['waitlist', '#F1F9A6'], ['group enquiry', '#BFE3A0'], ['1:1 enquiry', '#F4C2F7'], ['community', '#FFE08A'], ['group', '#7FCB6A'], ['1:1', '#E58BEA']];
+  var LEAD_TAGS = [['breakthrough waitlist', '#F1F9A6'], ['mini course waitlist', '#BFD7F2'], ['self-paced waitlist', '#D9C8F5'], ['community waitlist', '#FFE08A'], ['group waitlist', '#BFE3A0'], ['1:1 waitlist', '#F4C2F7'], ['applied', '#BFD7F2'], ['community', '#FFE08A'], ['group', '#7FCB6A'], ['1:1', '#E58BEA']];
+  // which waitlist(s) someone is on, from what they picked (older leads had "waitlist / group enquiry / 1:1 enquiry" tags)
+  var SEGS = [['all', 'Everyone'], ['general', 'Breakthrough waitlist · no pick yet'], ['mini', 'Mini courses'], ['self', 'Self-paced'], ['community', 'Community'], ['group', 'Intimate group'], ['1:1', '1:1 with Sav'], ['applied', 'Applied']];
+  function segTags(l) {
+    var i = l.interests || [], out = ['breakthrough waitlist'];
+    if (i.indexOf('mini') >= 0) out.push('mini course waitlist'); if (i.indexOf('self') >= 0) out.push('self-paced waitlist'); if (i.indexOf('community') >= 0) out.push('community waitlist'); if (i.indexOf('group') >= 0) out.push('group waitlist'); if (i.indexOf('1:1') >= 0) out.push('1:1 waitlist'); if (l.applied_at) out.push('applied');
+    (l.tags || []).forEach(function (t) { if (['waitlist', 'group enquiry', '1:1 enquiry'].indexOf(t) < 0 && out.indexOf(t) < 0) out.push(t); });
+    return out;
+  }
+  function inSeg(l, k) { var i = l.interests || []; return k === 'all' || (k === 'general' ? !i.length : k === 'applied' ? !!l.applied_at : i.indexOf(k) >= 0); }
   var HEATS = [['fire', '🔥 On fire', '#E8338A'], ['hot', 'Hot', '#F28C3B'], ['warm', 'Warm', '#F2D23B'], ['cold', 'Cold', '#9CC7E8']];
   function leadTagColor(t) { var m = LEAD_TAGS.filter(function (x) { return x[0] === t; })[0]; return m ? m[1] : '#FBE6FC'; }
   function heatOf(l) { return l.heat_override || l.heat || 'cold'; }
@@ -1153,9 +1353,10 @@
     if (S.leads.loading) return h('div', { class: 'ad-card' }, [h('p', { class: 'ad-muted', text: 'Loading your leads…' })]);
     if (S.leads.error === 'setup') return h('div', { class: 'ad-card' }, [h('h2', { class: 'ad-h2', text: 'One quick database update first' }), h('p', { class: 'ad-muted', text: 'Your leads list needs its table in Supabase. Ask Claude to run the “leads” SQL.' })]);
     if (S.leads.error) return h('div', { class: 'ad-card' }, [h('p', { class: 'ad-muted', text: S.leads.error })]);
-    var rows = S.leads.rows, q = (S.lq || '').toLowerCase(), hf = S.lheat || 'all', tf = S.ltag || '';
+    var rows = S.leads.rows, q = (S.lq || '').toLowerCase(), hf = S.lheat || 'all', tf = S.ltag || '', sg = S.lseg || 'all';
     var hay = function (l) { return [l.first_name, l.last_name, l.email, l.phone, l.country, (l.tags || []).join(' '), (l.interests || []).join(' '), l.notes, JSON.stringify(l.application || {})].join(' ').toLowerCase(); };
-    var list = rows.filter(function (l) { return (hf === 'all' || heatOf(l) === hf) && (!tf || (l.tags || []).indexOf(tf) >= 0) && (!q || hay(l).indexOf(q) >= 0); });
+    var list = rows.filter(function (l) { return inSeg(l, sg) && (hf === 'all' || heatOf(l) === hf) && (!tf || segTags(l).indexOf(tf) >= 0) && (!q || hay(l).indexOf(q) >= 0); });
+    var segTabs = h('div', { class: 'ld-segs', role: 'tablist', 'aria-label': 'Which waitlist' }, SEGS.map(function (x) { var n = rows.filter(function (l) { return inSeg(l, x[0]); }).length; return h('button', { type: 'button', role: 'tab', 'aria-selected': sg === x[0] ? 'true' : 'false', class: 'ld-seg' + (sg === x[0] ? ' on' : ''), onclick: function () { S.lseg = x[0]; page(); } }, [x[1], h('b', { text: String(n) })]); }));
     var order = { fire: 0, hot: 1, warm: 2, cold: 3 };
     if (S.lsort === 'hot') list.sort(function (a, b) { return order[heatOf(a)] - order[heatOf(b)] || (b.score || 0) - (a.score || 0); });
     var search = h('input', { class: 'bt-in ad-search', type: 'search', placeholder: 'Search name, email, country, answers…', value: S.lq || '', 'aria-label': 'Search leads', oninput: function (e) { S.lq = e.target.value; var pos = e.target.selectionStart; page(); var n = root.querySelector('input[type=search]'); n.focus(); n.setSelectionRange(pos, pos); } });
@@ -1163,9 +1364,9 @@
       var n = x[0] === 'all' ? rows.length : rows.filter(function (l) { return heatOf(l) === x[0]; }).length;
       return h('button', { class: 'ad-fchip' + (hf === x[0] ? ' on' : ''), text: x[1] + ' · ' + n, onclick: function () { S.lheat = x[0]; page(); } });
     }));
-    var allTags = []; LEAD_TAGS.forEach(function (x) { allTags.push(x[0]); }); rows.forEach(function (l) { (l.tags || []).forEach(function (t) { if (allTags.indexOf(t) < 0) allTags.push(t); }); });
+    var allTags = []; LEAD_TAGS.forEach(function (x) { allTags.push(x[0]); }); rows.forEach(function (l) { segTags(l).forEach(function (t) { if (allTags.indexOf(t) < 0) allTags.push(t); }); });
     var tagChips = h('div', { class: 'ad-tags filt' }, allTags.map(function (t) {
-      var n = rows.filter(function (l) { return (l.tags || []).indexOf(t) >= 0; }).length;
+      var n = rows.filter(function (l) { return segTags(l).indexOf(t) >= 0; }).length;
       return h('button', { type: 'button', class: 'ad-tag ad-tagbtn ' + (tf === t ? 'on' : 'none'), style: '--tg:' + leadTagColor(t), text: t + ' · ' + n, onclick: function () { S.ltag = tf === t ? '' : t; page(); } });
     }));
     var sortSel = h('select', { class: 'bt-in sm ld-sort', 'aria-label': 'Sort' }, [['new', 'Newest first'], ['hot', 'Hottest first']].map(function (x) { return h('option', { value: x[0], text: x[1], selected: (S.lsort || 'new') === x[0] ? 'selected' : null }); }));
@@ -1177,7 +1378,7 @@
       trs.push(h('tr', { class: 'ld-row' + (open ? ' open' : ''), tabindex: '0', role: 'button', 'aria-expanded': String(open), onclick: function () { S.leadOpen = open ? null : l.id; page(); }, onkeydown: function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); S.leadOpen = open ? null : l.id; page(); } } }, [
         h('td', null, [h('b', { text: [l.first_name, l.last_name].filter(Boolean).join(' ') || '(no name)' }), h('span', { class: 'ld-em', text: l.email })]),
         h('td', null, [heatPill(l)]),
-        h('td', null, [h('div', { class: 'ad-tags sm' }, (l.tags || []).map(function (t) { return h('span', { class: 'ad-tag', style: '--tg:' + leadTagColor(t), text: t }); }))]),
+        h('td', null, [h('div', { class: 'ad-tags sm' }, segTags(l).map(function (t) { return h('span', { class: 'ad-tag', style: '--tg:' + leadTagColor(t), text: t }); }))]),
         h('td', { text: l.phone || '' }), h('td', { text: l.country || '' }),
         h('td', { text: l.applied_at ? '✓ ' + new Date(l.applied_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '–' }),
         h('td', { text: new Date(l.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) })
@@ -1187,7 +1388,7 @@
     return h('div', { class: 'ad-card ld-card' }, [
       h('div', { class: 'ld-top' }, [h('div', null, [h('h2', { class: 'ad-h2', text: 'Leads' }), h('p', { class: 'ad-muted', text: rows.length + ' people · ' + applied + ' applied · ' + rows.filter(function (l) { return /fire|hot/.test(heatOf(l)); }).length + ' hot or on fire' })]),
         h('div', { class: 'ld-acts' }, [h('a', { class: 'bt-btn ghost sm', href: 'apply.html', target: '_blank', rel: 'noopener', text: 'See the application' }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: '⬇ Download CSV', onclick: function () { leadsCsv(list); } }), h('button', { class: 'bt-btn ghost sm', type: 'button', text: '↻ Refresh', onclick: function () { S.leads = null; page(); } })])]),
-      search, h('div', { class: 'ad-filtwrap' }, [heatChips, tagChips]), h('div', { class: 'ld-bar' }, [h('span', { class: 'ad-muted', text: 'Showing ' + list.length }), sortSel]),
+      segTabs, search, h('div', { class: 'ad-filtwrap' }, [heatChips, tagChips]), h('div', { class: 'ld-bar' }, [h('span', { class: 'ad-muted', text: 'Showing ' + list.length }), sortSel]),
       list.length ? h('div', { class: 'ld-scroll' }, [h('table', { class: 'ld-table' }, [h('thead', null, [head]), h('tbody', null, trs)])]) : h('p', { class: 'ad-muted', text: rows.length ? 'Nobody matches that search.' : 'No leads yet. They’ll appear here as soon as someone joins the waitlist.' })
     ]);
   }
@@ -1321,7 +1522,8 @@
     var off = !(S.invites || []).some(function (x) { return 'contract' in x; });
     var d = { contract: i.contract ? { terms: i.contract, status: i.contract_status || 'draft' } : null, contractOff: false };
     var ctc = off ? h('div', { class: 'ad-card ad-ct' }, [h('h3', { class: 'ad-h3', text: 'Package & agreement' }), h('p', { class: 'ad-muted', text: 'To set up an agreement before they log in, your database needs one quick update. Ask Claude for the “invite agreements” SQL to run in Supabase.' })]) : contractCard(c, d);
-    return h('section', { class: 'ad-sec' }, [back, head, tagsCard(c), ctc]);
+    var fcI = firstCallsBlock(c);
+    return h('section', { class: 'ad-sec' }, [back, head, fcI ? h('div', { class: 'ad-card' }, [h('h3', { class: 'ad-h3', text: 'Calls so far' }), fcI]) : null, tagsCard(c), ctc]);
   }
 
   function openClient(c) {
@@ -1617,6 +1819,7 @@
       h('div', { class: 'ad-main' }, [
         h('div', { class: 'ad-card' }, [head]),
         c.is_admin ? null : tagsCard(c),
+        c.is_admin ? null : mapCard(c, all),
         c.is_admin ? null : loopsCard(c),
         sessionsCard(c),
         h('h3', { class: 'ad-h3', text: 'Their journey' }),
@@ -1647,8 +1850,8 @@
     } });
     var wk = c.program_start ? Math.floor((Date.now() - new Date(c.program_start)) / (7 * 86400000)) + 1 : null;
     var unl = (S.settings.unlocks || {})[c.id], maxW = courseData().weeks.reduce(function (m, w) { return Math.max(m, w.week); }, 1);
-    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal: a week at a time, up to Week ' + spCap() + ' for now', selected: unl == null ? 'selected' : null })]
-      .concat(Array.from({ length: Math.max(0, maxW - 1) }, function (_, i) { var n = i + 2; return h('option', { value: String(n), text: 'Open up to Week ' + n + ' now', selected: unl === n ? 'selected' : null }); }))
+    var drip = h('select', { class: 'bt-in', 'aria-label': 'Course weeks open' }, [h('option', { value: '', text: 'Normal: a week at a time, up to Week ' + (spCap() + 1) + ' for now', selected: unl == null ? 'selected' : null })]
+      .concat(Array.from({ length: Math.max(0, maxW - 1) }, function (_, i) { var n = i + 2; return h('option', { value: String(n), text: 'Open up to Week ' + (n + 1) + ' now', selected: unl === n ? 'selected' : null }); }))
       .concat([h('option', { value: 'all', text: 'Open every week now', selected: unl === 'all' ? 'selected' : null })]));
     var dripMsg = h('span', { class: 'ad-muted', role: 'status' });
     drip.addEventListener('change', function () {
@@ -1667,7 +1870,7 @@
           if (r.error) { dripMsg.textContent = 'Couldn’t save'; return; } S.settings.unlocks = u; page();
           // tell them: a phone notification + an email that their next week is open
           var wn = v === 'all' ? null : Number(v);
-          if (wn && wn > cur && isPlay() && wn > spCap()) { S.settings.spCap = wn; sb.from('app_settings').upsert({ key: 'spCap', value: wn, updated_at: new Date().toISOString() }); setTimeout(function () { toastA('Week ' + wn + ' is now open for self-paced clients too (playground: no emails sent).'); }, 600); return; }
+          if (wn && wn > cur && isPlay() && wn > spCap()) { S.settings.spCap = wn; sb.from('app_settings').upsert({ key: 'spCap', value: wn, updated_at: new Date().toISOString() }); setTimeout(function () { toastA('Week ' + (wn + 1) + ' is now open for self-paced clients too (playground: no emails sent).'); }, 600); return; }
           if (wn && wn > cur && !(c.email || '').match(/sample\.test$/)) {
             var wObj = courseData().weeks.filter(function (x) { return x.week === wn; })[0];
             sb.auth.getSession().then(function (ss) { var tok = ss.data && ss.data.session && ss.data.session.access_token; if (!tok) return;
@@ -1679,7 +1882,7 @@
                 S.settings.spCap = wn;
                 fetch('/.netlify/functions/week-unlocks-now', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ week: wn }) }).then(function (x) { return x.json(); }).then(function (o) {
                   var n = (o.told || []).length;
-                  setTimeout(function () { toastA('Week ' + wn + ' is now open for self-paced clients too' + (n ? '. Told ' + n + ' of them (the rest get it when their week comes round).' : '. Each of them gets it when their week comes round.')); }, 2500);
+                  setTimeout(function () { toastA('Week ' + (wn + 1) + ' is now open for self-paced clients too' + (n ? '. Told ' + n + ' of them (the rest get it when their week comes round).' : '. Each of them gets it when their week comes round.')); }, 2500);
                 }).catch(function () {});
               }
               return tell;
@@ -1688,11 +1891,11 @@
         });
       };
       weekCtl = h('div', { class: 'ad-weeklock' }, [
-        h('div', { class: 'ad-wl-row', role: 'list' }, Array.from({ length: maxW }, function (_, i) { var n = i + 1, on = n <= cur; return h('span', { class: 'ad-wl-w' + (on ? ' on' : ''), role: 'listitem', title: 'Week ' + n + (on ? ' open' : ' locked'), text: (on ? '' : '🔒 ') + n }); })),
-        h('p', { class: 'ad-muted', text: cur >= maxW ? 'Every week is open for ' + first + '.' : 'Open for ' + first + ': up to Week ' + cur + '. Week ' + (cur + 1) + ' stays locked until you open it.' }),
+        h('div', { class: 'ad-wl-row', role: 'list' }, Array.from({ length: maxW }, function (_, i) { var n = i + 1, on = n <= cur; return h('span', { class: 'ad-wl-w' + (on ? ' on' : ''), role: 'listitem', title: 'Week ' + (n + 1) + (on ? ' open' : ' locked'), text: (on ? '' : '🔒 ') + (n + 1) }); })),
+        h('p', { class: 'ad-muted', text: cur >= maxW ? 'Every week is open for ' + first + '.' : 'Open for ' + first + ': up to Week ' + (cur + 1) + '. Week ' + (cur + 2) + ' stays locked until you open it.' }),
         h('div', { class: 'ad-wl-acts' }, [
-          cur < maxW ? h('button', { class: 'bt-btn lime', type: 'button', text: 'Unlock Week ' + (cur + 1) + ' for ' + first + ' →', onclick: function () { setCap(cur + 1); } }) : null,
-          cur > 1 ? h('button', { class: 'bt-btn ghost', type: 'button', text: 'Lock Week ' + cur + ' again', onclick: function () { setCap(cur - 1); } }) : null
+          cur < maxW ? h('button', { class: 'bt-btn lime', type: 'button', text: 'Unlock Week ' + (cur + 2) + ' for ' + first + ' →', onclick: function () { setCap(cur + 1); } }) : null,
+          cur > 1 ? h('button', { class: 'bt-btn ghost', type: 'button', text: 'Lock Week ' + (cur + 1) + ' again', onclick: function () { setCap(cur - 1); } }) : null
         ])
       ]);
     }
@@ -1700,7 +1903,7 @@
       h('h3', { class: 'ad-h3', text: 'Their details' }),
       wk && wk > 0 ? h('p', { class: 'ad-week' }, [h('b', { text: 'Week ' + wk }), ' since they started']) : null,
       h('label', { class: 'ad-field' }, ['Name', name]), h('label', { class: 'ad-field' }, ['Access', tier]), h('label', { class: 'ad-field' }, ['Program start (week 1 opens this day)', start]), save,
-      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), c.tier === 'private' ? null : h('p', { class: 'ad-muted', text: 'Self-paced clients only go as far as your 1:1 clients: up to Week ' + spCap() + ' for now (and never more than one new week every 7 days from their start). When you unlock the next week for a 1:1 client it opens for them too, with a notification and an email.' }), dripMsg,
+      c.tier === 'private' ? h('div', { class: 'ad-field' }, [h('span', { text: '1:1 weeks open (you unlock each week)' }), weekCtl]) : h('label', { class: 'ad-field' }, ['Course weeks open', drip]), c.tier === 'private' ? null : h('p', { class: 'ad-muted', text: 'Self-paced clients only go as far as your 1:1 clients: up to Week ' + (spCap() + 1) + ' for now (and never more than one new week every 7 days from their start). When you unlock the next week for a 1:1 client it opens for them too, with a notification and an email.' }), dripMsg,
       loginHelp(c)
     ]);
   }
@@ -1837,7 +2040,7 @@
   function defaultCourse() { var d = window.BT_COURSE_DEFAULT; return JSON.parse(JSON.stringify(d && d.weeks ? d : { weeks: [] })); }
   function courseData() { var c = S.settings && S.settings.course; if (c && c.weeks && c.weeks.length && window.BT_PATCH_COURSE) window.BT_PATCH_COURSE(c); return c && c.weeks && c.weeks.length ? c : defaultCourse(); }
   function lessonIndex() { var m = {}; courseData().weeks.forEach(function (w) { (w.lessons || []).forEach(function (l) { m[l.id] = { w: w, l: l }; }); }); return m; }
-  function weekLabel(w) { return w.week === 0 ? w.title : 'Week ' + w.week + ' · ' + w.title; }
+  function weekLabel(w) { return w.week === 0 ? w.title : 'Week ' + (w.week + 1) + ' · ' + w.title; }
   function weeksOpenFor(c) {
     var u = (S.settings.unlocks || {})[c.id]; if (u === 'all') return 99;
     if (c.tier === 'private') return typeof u === 'number' ? u : 1;
@@ -2034,7 +2237,7 @@
       var wt = input(w, 'title', { placeholder: 'Week title' });
       var wdel = h('button', { type: 'button', class: 'ad-del', text: 'Delete week', onclick: function () { if (wdel.dataset.sure) { C.weeks.splice(wi, 1); dirty(); rerender(); } else { wdel.dataset.sure = 1; wdel.textContent = 'Tap again to delete this week and its lessons'; } } });
       return h('section', { class: 'cb-w' }, [
-        h('div', { class: 'cb-wh' }, [h('span', { class: 'cb-wn', text: w.week === 0 ? 'Intro' : 'Week ' + w.week }), wt,
+        h('div', { class: 'cb-wh' }, [h('span', { class: 'cb-wn', text: w.week === 0 ? 'Intro' : 'Week ' + (w.week + 1) }), wt,
           h('span', { class: 'ad-muted cb-drip', text: 'Opens once they’ve finished every lesson before it' })]),
         h('div', { class: 'cb-ls' }, lessons.length ? lessons : [h('p', { class: 'ad-muted', text: 'No lessons yet. Students see “coming soon”.' })]),
         h('div', { class: 'cb-wact' }, [

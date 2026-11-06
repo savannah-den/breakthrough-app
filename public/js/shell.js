@@ -332,8 +332,8 @@
     menuBtn.insertAdjacentHTML('beforeend', '<svg class="bt-find-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>');
     var items = MENU.filter(function (m) { return (VIEWS[m.view] || nativeView(m.view)) && (!m.private || state.tier === 'private'); }).map(function (m) {
       var locked = weekLocked(m.view);
-      return h('button', { class: 'bt-mi' + (locked ? ' lock' : ''), type: 'button', 'data-view': m.view, 'aria-disabled': locked ? 'true' : null, onclick: function () { if (locked) { toast('This opens in Week ' + WEEK_OF[m.view] + ' of the course.'); return; } toggleMenu(false); go(m.view); } }, [
-        h('span', { class: 'bt-mit', text: (locked ? '🔒 ' : '') + m.label }), h('span', { class: 'bt-mis', text: locked ? 'Opens in Week ' + WEEK_OF[m.view] : m.sub })
+      return h('button', { class: 'bt-mi' + (locked ? ' lock' : ''), type: 'button', 'data-view': m.view, 'aria-disabled': locked ? 'true' : null, onclick: function () { if (locked) { toast('This opens in Week ' + (WEEK_OF[m.view] + 1) + ' of the course.'); return; } toggleMenu(false); go(m.view); } }, [
+        h('span', { class: 'bt-mit', text: (locked ? '🔒 ' : '') + m.label }), h('span', { class: 'bt-mis', text: locked ? 'Opens in Week ' + (WEEK_OF[m.view] + 1) : m.sub })
       ]);
     });
     var who = state.profile ? (state.profile.full_name || state.profile.email) : 'Preview mode (saving on this device only)';

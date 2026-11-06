@@ -511,21 +511,6 @@
           "tip": ""
         },
         {
-          "id": "w2a1",
-          "title": "Activity: Breaking Out of Your Box",
-          "video": "",
-          "vimeo": "",
-          "desc": "Open Breaking Out of Your Box below. Your answers save to your account automatically.",
-          "prompts": [],
-          "res": [
-            "box"
-          ],
-          "notes": false,
-          "optional": false,
-          "transcript": "",
-          "tip": ""
-        },
-        {
           "id": "w2l6",
           "title": "Lesson 6: Thoughts + Feelings + Actions = Reality",
           "video": "https://assets.stanwith.me/live/msc/28154850/wd6cb/week26thoughtsfeelingsactions.mp4",
@@ -546,6 +531,21 @@
             ]
           ],
           "res": [],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": ""
+        },
+        {
+          "id": "w2a1",
+          "title": "Activity: Breaking Out of Your Box",
+          "video": "",
+          "vimeo": "",
+          "desc": "Open Breaking Out of Your Box below. Your answers save to your account automatically.",
+          "prompts": [],
+          "res": [
+            "box"
+          ],
           "notes": false,
           "optional": false,
           "transcript": "",
