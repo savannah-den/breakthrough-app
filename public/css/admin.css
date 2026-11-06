@@ -154,7 +154,7 @@ body{margin:0;background:#FAF4F1;color:#1F1412;font-family:Poppins,system-ui,san
 .ad-del{align-self:flex-end;min-height:36px;border:0;background:none;color:#A8231F;font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
 .ad-linkcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px}
 .ad-linkcard{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:24px;border:1.5px solid #1F1412}
-.ad-linkcard.pink{background:#F4C2F7}.ad-linkcard.lime{background:#F1F9A6}
+.ad-linkcard.pink{background:#F4C2F7}.ad-linkcard.lime{background:#F1F9A6}.ad-linkcard.blue{background:#BFD7F2}.ad-linkcard.cream{background:#FFF4EE}
 .ad-linkcard code{font-size:15px;word-break:break-all}
 .ad-copy{align-self:flex-start;min-height:40px;padding:6px 16px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;font:600 14px Poppins,system-ui,sans-serif;cursor:pointer}
 .ad-loading{animation:ad-fade 1.4s ease-in-out infinite}

@@ -1497,6 +1497,7 @@
     return h('span', { class: 'ad-consent ' + t[0], title: 'From their signed agreement', text: '📣 ' + t[1] });
   }
 
+  var LIVE = 'https://app.colourmeneurospicy.com.au'; // leads always get the real site, never Preview
   function appOrigin() { return /^https?:/.test(location.origin) && !window.BT_DEMO ? location.origin : 'https://app.colourmeneurospicy.com.au'; }
   function inviteClient(i) { return { id: 'invite:' + i.email, email: i.email, full_name: i.full_name || '', tier: i.tier, invite: i, created_at: i.created_at, status: i.status, tags: i.tags }; }
   function inviteClientView(c) {
@@ -2336,6 +2337,11 @@
       h('div', { class: 'ad-linkcards' }, [
         h('div', { class: 'ad-linkcard pink' }, [h('b', { text: '1:1 clients’ link' }), h('code', { text: appOrigin() + '/1to1' }), copy(appOrigin() + '/1to1')]),
         h('div', { class: 'ad-linkcard lime' }, [h('b', { text: 'Self-paced link' }), h('code', { text: appOrigin() + '/course' }), copy(appOrigin() + '/course')])
+      ]),
+      h('h3', { class: 'ad-h3', text: 'Links to send to leads' }),
+      h('div', { class: 'ad-linkcards' }, [
+        h('div', { class: 'ad-linkcard blue' }, [h('b', { text: 'Breakthrough landing page + waitlist' }), h('code', { text: LIVE + '/breakthrough' }), copy(LIVE + '/breakthrough')]),
+        h('div', { class: 'ad-linkcard cream' }, [h('b', { text: 'Breakthrough application' }), h('code', { text: LIVE + '/apply' }), copy(LIVE + '/apply')])
       ]),
       h('p', { class: 'ad-muted', text: 'Anyone who logs in without being added here gets self-paced access. You can upgrade them on their client page.' }),
       h('h3', { class: 'ad-h3', text: 'Added (' + S.invites.length + ')' }),
