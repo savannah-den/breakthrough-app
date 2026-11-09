@@ -1124,8 +1124,11 @@
         var rows = h('div', { class: 'bt-hunt-rows' });
         dr.forEach(function (r, ri) {
           var act = true;
-          var inp = h('input', { class: 'bt-in bt-hunt-in' + (ri ? ' more' : ''), type: 'text', value: r.t, placeholder: ri ? 'Add another…' : !mine.length && !isDump ? 'e.g. ' + it[3][1] : 'Type it here…', 'aria-label': lead(it) + (ri ? ' (add another)' : '') });
-          inp.addEventListener('input', function () { r.t = inp.value; });
+          var inp = h('textarea', { class: 'bt-in bt-hunt-in' + (ri ? ' more' : ''), rows: '1', value: r.t, placeholder: ri ? 'Add another…' : !mine.length && !isDump ? 'e.g. ' + it[3][1] : 'Type it here…', 'aria-label': lead(it) + (ri ? ' (add another)' : '') });
+          inp.value = r.t || '';
+          var grow = function () { inp.style.height = 'auto'; inp.style.height = inp.scrollHeight + 'px'; };
+          inp.addEventListener('input', function () { r.t = inp.value; grow(); });
+          setTimeout(grow, 0);
           var addIt = function (ev) {
             var v = tx(r.t); if (!v && !r.p) { inp.focus(); return; }
             var txt = isDump ? (v || 'A photo of proof') : v ? it[1] + (it[2] === ':' ? ': ' : ' ' + it[2] + ' ') + v : it[1] + ' (photo)';
@@ -1140,7 +1143,8 @@
           var fid = 'bt-hunt-ph-' + it[0] + '-' + ri, fin = h('input', { type: 'file', accept: 'image/*', class: 'bt-file', id: fid, onchange: function (e) { var f = e.target.files && e.target.files[0]; if (!f) return; resizeImage(f, 900).then(function (u) { r.p = u; drawBody(); }, function () { APP.toast('Couldn’t read that photo. Try another one.'); }); } });
           var ph = r.p ? h('span', { class: 'bt-dis-ph has' }, [h('img', { src: r.p, alt: 'Your photo' }), h('button', { type: 'button', 'aria-label': 'Remove photo', text: '✕', onclick: function () { r.p = ''; drawBody(); } })])
             : h('label', { class: 'bt-dis-ph', for: fid, title: 'Add a photo' }, [h('span', { 'aria-hidden': 'true', text: '📷' }), h('span', { class: 'bt-vh', text: 'Add a photo' }), fin]);
-          rows.appendChild(h('div', { class: 'bt-hunt-r' }, [inp, ph, h('button', { class: 'bt-btn lime sm bt-hunt-addb', type: 'button', text: 'Add', onclick: addIt })]));
+          // (no photo here: words only, so the box can use the whole width)
+          void ph; rows.appendChild(h('div', { class: 'bt-hunt-r nopic' }, [inp, h('button', { class: 'bt-btn lime sm bt-hunt-addb', type: 'button', text: 'Add', onclick: addIt })]));
         });
         q.appendChild(rows);
         pg.appendChild(q);
@@ -1603,7 +1607,7 @@
     return false;
   }
   // a little bar at the top of in-app activities (Breaking Out, STAR) when she came from the course or Resources
-  var RET_ROUTES = { 'BreakingOut.dc.html': 'box', 'StarHome.dc.html': 'star', Vagal: 'vagal', Breathe: 'breathe', Dose: 'dose', Pause: 'pause', Move: 'move', Proof: 'proof' };
+  var RET_ROUTES = { Energy: 'energy', 'BreakingOut.dc.html': 'box', 'StarHome.dc.html': 'star', Vagal: 'vagal', Breathe: 'breathe', Dose: 'dose', Pause: 'pause', Move: 'move', Proof: 'proof' };
   function retStrip(resId) {
     var k = retKind(retGet(resId)); if (!k) return null;
     return h('div', { class: 'bt-ret', role: 'navigation', 'aria-label': 'Back to where you were' }, [
@@ -1898,6 +1902,7 @@
   }
   /* little logo for each app tool, so activity cards are easy to spot */
   var EMBLEM = {
+    energy: '<rect x="12" y="20" width="36" height="24" rx="5" fill="#FFF4EE" stroke="#1F1412" stroke-width="2.5"/><rect x="48" y="27" width="5" height="10" rx="1.5" fill="#1F1412"/><rect class="em-fill" x="16" y="24" width="20" height="16" rx="2.5" fill="#5FA052"/><path d="M30 16l-6 14h7l-4 12 11-16h-7l4-10z" fill="#F1F9A6" stroke="#1F1412" stroke-width="2" stroke-linejoin="round"/>',
     vagal: '<path d="M8 40c6-10 10-10 16 0s10 10 16 0 10-10 16 0" fill="none" stroke="#1F1412" stroke-width="3" stroke-linecap="round"/><path class="em-beat" d="M32 30c-8-6-10-9.5-8-13 1.8-2.8 5.6-2.3 8 1.2 2.4-3.5 6.2-4 8-1.2 2 3.5 0 7-8 13z" fill="#D3302B" stroke="#1F1412" stroke-width="1.5"/>',
     breathe: '<circle class="em-breathe" cx="32" cy="32" r="14" fill="#BFD7F2" stroke="#1F1412" stroke-width="2.5"/><circle cx="32" cy="32" r="23" fill="none" stroke="#1F1412" stroke-width="1.8" stroke-dasharray="3 5"/><circle cx="32" cy="9" r="4" fill="#F1F9A6" stroke="#1F1412" stroke-width="1.8"/>',
     dose: '<rect x="8" y="14" width="22" height="16" rx="5" fill="#F1F9A6" stroke="#1F1412" stroke-width="2.2"/><rect x="34" y="14" width="22" height="16" rx="5" fill="#F4C2F7" stroke="#1F1412" stroke-width="2.2"/><rect x="8" y="34" width="22" height="16" rx="5" fill="#FFD9A8" stroke="#1F1412" stroke-width="2.2"/><rect x="34" y="34" width="22" height="16" rx="5" fill="#BFE3D0" stroke="#1F1412" stroke-width="2.2"/><g font-family="Poppins,sans-serif" font-weight="700" font-size="11" fill="#1F1412" text-anchor="middle"><text x="19" y="26">D</text><text x="45" y="26">O</text><text x="19" y="46">S</text><text x="45" y="46">E</text></g>',
@@ -1918,6 +1923,38 @@
   function emblem(id) { var e = document.createElement('span'); e.className = 'bt-emb'; e.setAttribute('aria-hidden', 'true'); handDefs(); e.innerHTML = '<svg viewBox="0 0 64 64"><g filter="url(#bt-hand-s)">' + (EMBLEM[id] || EMBLEM.intent) + '</g></svg>'; return e; }
   var IN_PAGE = { intent: 1, setup: 1 };
   var PROOF_LESSON = 'w2l3';
+  // files to download under a lesson (Google Drive), with a preview
+  // Lesson 5 (week 4): ECT. What it changed for the people who did it, in their words, and the way to the ECT page
+  var LESSON_ECT = { w4l5: 1 };
+  var ECT_SHOTS = [
+    ['et-tahlia-thanks.jpg', 'Thank you Sav for showing me I can have my body back. I am in control of my life and my decisions.', 'Tahlia'],
+    ['t-tahlia-ptsd.jpg', 'This year I didn’t have a big PTSD flare up. This year was just another day. I never thought I would be able to say that.', 'Tahlia'],
+    ['et-tahlia-learnt.jpg', 'What I learnt through the program and through ECT is that I was holding onto a lot of anger. That anger was making it harder for me to be in my body.', 'Tahlia'],
+    ['et-fear.jpg', 'Had ECT this morning and released a lot of fear and hurt. Woke up super refreshed and the most energetic I’ve been in days.'],
+    ['et-grief.jpg', 'After ECT, and being able to move through my grief, I have found myself having a bigger container for compassion and empathy.'],
+    ['et-perfect.jpg', 'I’m less of a perfectionist since the last ECT session. I’m letting things go.'],
+    ['et-guilt.jpg', 'ECT today was even more empowering because it was guilt and shame. Super stoked how things are going and how I’m feeling.'],
+    ['et-grateful.jpg', 'You held space for me in ECT and helped get me to where I wanted to be and to let go. I have felt an incredible change in myself.'],
+    ['et-tahlia-2sessions.jpg', 'Now I have done 2 sessions of ECT, the question I brought up in this call doesn’t feel as heavy.', 'Tahlia'],
+    ['et-confidence.jpg', 'My confidence has improved even more since the last ECT session.'],
+    ['et-help.jpg', 'Since I’ve had ECT, asking for help is easier and I actually do it.'],
+    ['et-halfway.jpg', 'I’m half way through ECT and it has eased many knots.']
+  ];
+  function ectProof() {
+    var strip = h('div', { class: 'bt-ectp-strip', tabindex: '0', 'aria-label': 'What clients say after ECT, scroll sideways' }, ECT_SHOTS.map(function (x) {
+      return h('figure', { class: 'bt-ectp-shot' }, [h('img', { src: 'img/landing/' + x[0], alt: (x[2] ? x[2] + ': ' : 'Client message: ') + '“' + x[1] + '”', loading: 'lazy' })]);
+    }));
+    return h('section', { class: 'bt-ectp' }, [
+      h('span', { class: 'bt-ectp-k', text: 'In their words' }),
+      h('h2', { text: 'What ECT changed for them' }),
+      h('p', { text: 'Real messages from people who’ve done ECT with Sav. Scroll →' }),
+      strip,
+      h('div', { class: 'bt-ectp-cta' }, [
+        h('a', { class: 'bt-btn lime', href: 'ect.html', text: 'Learn more about ECT →' }),
+        h('span', { text: 'Six 1:1 sessions. All seven emotions, plus two limiting beliefs, released at the root.' })])
+    ]);
+  }
+  var LESSON_FILES = { w2a2: [{ title: 'Your Energy Audit', sub: 'Download it, print it or fill it in on your device, and track your energy for the week.', drive: '1PnbS8nnK9Awt8mYbtMdb5LZqdSDqfFfI', app: '#Energy' }] };
   function lessonHref(l) {
     if ((l.res || []).length && IN_PAGE[l.res[0]]) { var ri = resource(l.res[0]); if (ri) return resHref(ri); }
     if ((l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var r = resource(l.res[0]); if (r) return resHref(r); }
@@ -2068,9 +2105,13 @@
     if (direct.indexOf('#Lesson-') !== 0) { setTimeout(function () { if (direct.charAt(0) === '#') location.hash = direct; else if (window.parent !== window && window.parent.BT_OPEN) window.parent.BT_OPEN(direct.replace(/^\//, '')); else location.href = direct; }, 0); return; }
     wrap.appendChild(videoBlock(l, id));
     var p = prog(), nextSlot = h('span', { class: 'bt-next-slot' });
+    // Beliefs and Programs lessons open Breaking Out of Your Box on the matching step
+    var BOXT = { w2l4: 'audit', w2l5: 'decoder' }[id];
+    var toBox = function () { if (!BOXT) return; try { localStorage.setItem('cmn-open-tab', BOXT); } catch (e) {} wr(RETK, { from: '#Lesson-' + id, res: 'box', at: Date.now(), y: 0 }); };
     var drawNext = function () {
       nextSlot.innerHTML = '';
-      if (next && lessonOpen(next.l.id)) nextSlot.appendChild(h('a', { class: 'bt-btn', href: lessonHref(next.l), text: 'Next lesson →' }));
+      if (BOXT && prog().done[id]) nextSlot.appendChild(h('button', { class: 'bt-btn lime', type: 'button', text: BOXT === 'audit' ? 'Next: Breaking Out of Your Box · Beliefs →' : 'Next: back to Breaking Out · Programs →', onclick: function () { toBox(); APP.go('BreakingOut.dc.html'); } }));
+      else if (next && lessonOpen(next.l.id)) nextSlot.appendChild(h('a', { class: 'bt-btn', href: lessonHref(next.l), text: 'Next lesson →' }));
       else if (next && !prog().done[id] && !l.optional) nextSlot.appendChild(h('span', { class: 'bt-next-hint', text: 'Mark this as done to unlock the next lesson.' }));
       else if (next) nextSlot.appendChild(h('span', { class: 'bt-next-hint', text: 'Next: ' + next.l.title + ' · ' + lessonWhy(next.l.id) }));
     };
@@ -2087,15 +2128,23 @@
     drawNext();
     wrap.appendChild(h('div', { class: 'bt-les-actions' }, [doneBtn, nextSlot]));
     if (tx(l.desc) || tx(l.tip)) wrap.appendChild(h('div', { class: 'bt-desc' }, [h('p', { text: tx(l.desc) || tx(l.tip) })]));
+    (LESSON_FILES[id] || []).forEach(function (fl) {
+      wrap.appendChild(h('section', { class: 'bt-lfile' }, [
+        h('div', { class: 'bt-lfile-h' }, [h('span', { class: 'bt-lfile-ic', 'aria-hidden': 'true', text: '📄' }), h('div', null, [h('b', { text: fl.title }), h('span', { text: fl.sub })])]),
+        h('div', { class: 'bt-lfile-pv' }, [h('iframe', { src: 'https://drive.google.com/file/d/' + fl.drive + '/preview', title: fl.title + ' preview', loading: 'lazy', allow: 'autoplay' })]),
+        fl.app ? h('a', { class: 'bt-lfile-app', href: fl.app }, [h('b', { text: 'Or do it in the app →' }), h('span', { text: 'Log your day, see it as a chart, and after 3 days I’ll show you your patterns.' })]) : null,
+        h('div', { class: 'bt-row' }, [h('a', { class: 'bt-btn lime', href: 'https://drive.google.com/uc?export=download&id=' + fl.drive, target: '_blank', rel: 'noopener', text: '⬇ Download it' }), h('a', { class: 'bt-btn ghost', href: 'https://drive.google.com/file/d/' + fl.drive + '/view', target: '_blank', rel: 'noopener', text: 'Open it in Google Drive' })])]));
+    });
+    if (LESSON_ECT[id]) wrap.appendChild(ectProof());
     if (id === PROOF_LESSON) { wrap.appendChild(proofHome(false, true)); wrap.appendChild(h('a', { class: 'bt-btn ghost', href: '#Proof', text: 'Explore the proof part of your Becoming Book →' })); }
     var lres = (l.res || []).map(resource).filter(Boolean);
     // a lesson followed by an activity: show that activity here too, so they know what's coming
     var nextAct = next && isActivityCard(next.l) && !lres.length ? resource(next.l.res[0]) : null;
     if (lres.length) wrap.appendChild(h('section', { class: 'bt-lres' }, [h('h2', { text: lres.length > 1 ? 'Open the activities' : 'Open the activity' })].concat(lres.map(function (r) {
-      return h('a', { class: 'bt-rcard', href: resHref(r), style: 'background:' + (r.cover || '#FFF4EE') }, [h('b', { text: r.title + ' →' }), h('span', { text: r.desc || '' })]);
+      return h('a', { class: 'bt-rcard', href: resHref(r), style: 'background:' + (r.cover || '#FFF4EE'), onclick: function () { if (r.id === 'box') setTimeout(toBox, 0); } }, [h('b', { text: r.title + ' →' }), h('span', { text: r.desc || '' })]);
     }))));
     else if (nextAct) wrap.appendChild(h('section', { class: 'bt-lres' }, [h('h2', { text: 'Your activity after this lesson' }), h('p', { class: 'bt-jr-s', text: 'Do your Becoming Notebook entry first, tap Done, and I’ll take you straight to it.' }),
-      h('a', { class: 'bt-rcard', href: resHref(nextAct), style: 'background:' + (nextAct.cover || '#FFF4EE'), onclick: function () { if (!prog().done[id]) { leaving = true; saveNotebook(); markDone(id, true); } } }, [h('b', { text: nextAct.title + ' →' }), h('span', { text: nextAct.desc || '' })])]));
+      h('a', { class: 'bt-rcard', href: resHref(nextAct), style: 'background:' + (nextAct.cover || '#FFF4EE'), onclick: function () { if (!prog().done[id]) { leaving = true; saveNotebook(); markDone(id, true); } if (nextAct.id === 'box') setTimeout(toBox, 0); } }, [h('b', { text: nextAct.title + ' →' }), h('span', { text: nextAct.desc || '' })])]));
     // any lesson about DOSE / the happy chemicals: a way back to her saved DOSE page
     if (window.BT_VAGAL && !(l.res || []).some(function (r) { return r === 'dose'; }) && /\bDOSE\b|neurotransmitter|dopamine|oxytocin|serotonin|endorphin/i.test(l.title + ' ' + (l.desc || '') + ' ' + (l.tip || '')) && !(nextAct && nextAct.id === 'dose')) {
       try { var ddv = window.BT_VAGAL.doseData(); wrap.appendChild(h('a', { class: 'bt-dose-ln', href: '#Dose' }, [emblem('dose'), h('span', null, [h('b', { text: ddv.plan.length ? 'My DOSE menu + daily plan' : 'Your DOSE activity' }), h('span', { text: ddv.plan.length ? 'Everything you picked is saved here' : 'Build your menu of happy-chemical hits' })]), h('span', { 'aria-hidden': 'true', text: '→' })])); } catch (e) {}
@@ -2107,6 +2156,7 @@
     function goOn() {
       leaving = true; saveNotebook();
       if (!prog().done[id]) markDone(id, true);
+      if (BOXT) { toBox(); APP.go('BreakingOut.dc.html'); setTimeout(celebrate, 600); return; }
       var nx = nextAfter(id), act = nx && isActivityCard(nx);
       try { sessionStorage.setItem('bt-scrollto', nx ? lessonHref(nx) : lessonHref(l)); if (act) sessionStorage.setItem('bt-scrollto-act', '1'); } catch (e) {}
       var pd = profileData(), wrote = prompts.length && boxes.some(function (b) { return tx(b[1].value); });
@@ -3580,7 +3630,8 @@
   // a jar for one of the Fierce 5 (balls land in .bx-jfill)
   function boxJar(f) {
     var j = h('div', { class: 'bx-jar', 'data-k': f.k, style: '--c:' + f.c });
-    j.appendChild(svgEl('<svg viewBox="0 0 100 120" aria-hidden="true"><path d="M30 6h40v14H30z" fill="' + f.c + '" stroke="#4E0C08" stroke-width="2.6"/><path d="M32 20c-14 8-22 18-22 34v46c0 10 8 16 18 16h44c10 0 18-6 18-16V54c0-16-8-26-22-34z" fill="rgba(255,255,255,.55)" stroke="#4E0C08" stroke-width="2.6" stroke-linejoin="round"/><path d="M22 60v34" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/></svg>'));
+    // a tall cylinder, so there's room for lots of marbles
+    j.appendChild(svgEl('<svg viewBox="0 0 100 240" preserveAspectRatio="none" aria-hidden="true"><path d="M24 4h52v16H24z" fill="' + f.c + '" stroke="#4E0C08" stroke-width="2.6"/><path d="M14 30c0-6 4-10 10-10h52c6 0 10 4 10 10v196c0 6-4 10-10 10H24c-6 0-10-4-10-10z" fill="rgba(255,255,255,.55)" stroke="#4E0C08" stroke-width="2.6" stroke-linejoin="round"/><path d="M24 44v150" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/></svg>'));
     j.appendChild(h('div', { class: 'bx-jfill' }));
     return j;
   }
@@ -3828,7 +3879,7 @@
     BOX_F5.forEach(function (f) {
       var mine = list.filter(function (x) { return x.f5 === f.k; }), core = mine.filter(function (x) { return x.core; }), part = mine.filter(function (x) { return !x.core; });
       var card = h('div', { class: 'bx-jc', style: '--c:' + f.c, 'data-k': f.k }), jar = boxJar(f);
-      if (fill) mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ''), style: '--c:' + f.c })); });
+      if (fill) mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ' half'), style: '--c:' + f.c })); });
       card.appendChild(jar); card.appendChild(h('b', { class: 'bx-jn', text: f.name }));
       if (small) { card.appendChild(h('span', { class: 'bx-jcount', text: String(mine.length) })); grid.appendChild(card); return; }
       // six rows per card, so "All the time" and "Sometimes" line up across the cards
@@ -3946,7 +3997,9 @@
     return el;
   }
   // the video for the learning hierarchy bit (paste the embed link in here when it's ready)
-  var BOX_LEARN_VIDEO = 'https://player.vimeo.com/video/1245020790?title=0&byline=0&portrait=0&dnt=1';
+  var BOX_LEARN_VIDEO = 'https://player.vimeo.com/video/1245020790?title=0&byline=0&portrait=0&dnt=1&playsinline=0';
+  // true once the portrait (9:16) version is uploaded: the player then fills a phone screen
+  var BOX_LEARN_PORTRAIT = false;
   var BOX_STAGES = [
     ['Unconsciously incompetent', 'You don’t know what you don’t know.'],
     ['Consciously incompetent', 'You can see it now, but you don’t know how to change it yet.'],
@@ -4010,7 +4063,16 @@
     s0.appendChild(h('h2', { class: 'bx-h', text: 'Where you are right now' }));
     s0.appendChild(P('Here’s the journey in three steps. You’ve just moved from step 1 to step 2.'));
     s0.appendChild(boxCards(BOX_AWARE));
-    if (BOX_LEARN_VIDEO) s0.appendChild(h('div', { class: 'bx-vid' }, [h('iframe', { src: BOX_LEARN_VIDEO, title: 'The learning hierarchy', allow: 'autoplay; fullscreen; picture-in-picture', allowfullscreen: 'true', loading: 'lazy' })]));
+    if (BOX_LEARN_VIDEO) {
+      var vfr = h('iframe', { src: BOX_LEARN_VIDEO, title: 'The learning hierarchy', allow: 'autoplay; fullscreen; picture-in-picture', allowfullscreen: 'true', loading: 'lazy' });
+      var vcov = h('button', { class: 'bx-vidplay', type: 'button', 'aria-label': 'Play the video full screen', onclick: function () {
+        var fs = vfr.requestFullscreen || vfr.webkitRequestFullscreen || vfr.webkitEnterFullscreen;
+        try { if (fs) { var pr = fs.call(vfr); if (pr && pr.catch) pr.catch(function () {}); } } catch (e) {}
+        try { vfr.contentWindow.postMessage(JSON.stringify({ method: 'play' }), '*'); } catch (e) {}
+        vcov.remove();
+      } }, [h('span', { class: 'bx-vidplay-b', 'aria-hidden': 'true', text: '▶' }), h('span', { text: 'Tap to watch full screen' })]);
+      s0.appendChild(h('div', { class: 'bx-vid' + (BOX_LEARN_PORTRAIT ? ' tall' : '') }, [vfr, vcov]));
+    }
     else if (window.BT_DEMO || (window.BT_COURSE && BT_COURSE.isCoach && BT_COURSE.isCoach())) s0.appendChild(h('div', { class: 'bx-vidph' }, [h('b', { text: '🎬 Video goes here' }), h('span', { text: 'Only you can see this box. Send Claude the link when it’s ready.' })]));
     wrap.appendChild(s0);
 
@@ -4033,14 +4095,14 @@
     s2.appendChild(P('Can you see the problem? We’re still living by them now, and we’re not 7 anymore.', 'bx-big'));
     s2.appendChild(P('No one taught us how to let go of them, or how to build new beliefs that actually help us get what we want in life.'));
     s2.appendChild(P('So step one is to disprove the old ones: show your brain that you’re not 7 anymore and these beliefs aren’t actually true. That’s where your proof portfolio comes in. And guess what? The proof you’ve already added is disproving some of these right now.'));
-    s2.appendChild(h('p', { class: 'bt-sub' }, ['You picked ', h('b', { text: String(nc) }), nc === 1 ? ' belief you feel all the time and ' : ' beliefs you feel all the time and ', h('b', { text: String(list.length - nc) }), ' you feel sometimes. Big marbles are the all-the-time ones, small marbles are the sometimes ones.' + (back2 ? '' : ' Hit the button to sort them into their roots.')]));
+    s2.appendChild(h('p', { class: 'bt-sub' }, ['You picked ', h('b', { text: String(nc) }), nc === 1 ? ' belief you feel all the time and ' : ' beliefs you feel all the time and ', h('b', { text: String(list.length - nc) }), ' you feel sometimes. Each marble is one of your beliefs: the full ones are all the time, the half moons are sometimes.' + (back2 ? '' : ' Hit the button to sort them into their roots.')]));
     // the box: every belief as a coloured bubble, with its marble at the start (big = all the time, small = sometimes)
     var heap = h('div', { class: 'bx-heapbox' });
     heap.appendChild(h('span', { class: 'bx-heapk', text: 'Your box' }));
     var wl = list.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0) || BOX_F5.indexOf(boxF5(a.f5)) - BOX_F5.indexOf(boxF5(b.f5)); });
-    heap.appendChild(h('div', { class: 'bx-pills' }, wl.map(function (x) {
+    heap.appendChild(h('div', { class: 'bx-pills bx-dotsbox' }, wl.map(function (x) {
       var f = boxF5(x.f5);
-      return h('span', { class: 'bx-pill' + (x.core ? ' core' : '') + (f.k === 'good' ? ' bx-dk' : ''), style: '--c:' + f.c }, [h('span', { class: 'bx-ball' + (x.core ? ' core' : ''), style: '--c:' + f.c, 'data-k': f.k, 'aria-hidden': 'true' }), x.b.replace(/'/g, '’')]);
+      return h('span', { class: 'bx-ball' + (x.core ? ' core' : ' half'), style: '--c:' + f.c, 'data-k': f.k, title: x.b.replace(/'/g, '’'), 'aria-hidden': 'true' });
     })));
     s2.appendChild(heap);
     // once sorted, the box turns into coloured sections, one per root, sized by how much of the box it makes up
@@ -4063,7 +4125,7 @@
     var row = h('div', { class: 'bx-jarrow' + (back2 ? ' sorted' : '') });
     BOX_F5.forEach(function (f) {
       var jc = h('div', { class: 'bx-jc', style: '--c:' + f.c, 'data-k': f.k }), jar = boxJar(f);
-      if (back2) list.filter(function (x) { return x.f5 === f.k; }).sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ''), style: '--c:' + f.c })); });
+      if (back2) list.filter(function (x) { return x.f5 === f.k; }).sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ' half'), style: '--c:' + f.c })); });
       jc.appendChild(jar); jc.appendChild(h('b', { class: 'bx-jn', text: f.name }));
       row.appendChild(jc);
     });
@@ -4089,9 +4151,9 @@
           var jar = row.querySelector('.bx-jc[data-k="' + b.getAttribute('data-k') + '"] .bx-jfill'); if (!jar) return;
           setTimeout(function () {
             var a = b.getBoundingClientRect(), sr2 = s2.getBoundingClientRect();
-            var ghost = h('span', { class: 'bx-ball fly' + (b.classList.contains('core') ? ' core' : ''), style: '--c:' + b.style.getPropertyValue('--c') + ';left:' + (a.left - sr2.left) + 'px;top:' + (a.top - sr2.top) + 'px' });
+            var ghost = h('span', { class: 'bx-ball fly' + (b.classList.contains('core') ? ' core' : ' half'), style: '--c:' + b.style.getPropertyValue('--c') + ';left:' + (a.left - sr2.left) + 'px;top:' + (a.top - sr2.top) + 'px' });
             s2.appendChild(ghost); b.classList.add('sent');
-            var put = h('span', { class: 'bx-ball in' + (b.classList.contains('core') ? ' core' : ''), style: '--c:' + b.style.getPropertyValue('--c') });
+            var put = h('span', { class: 'bx-ball in' + (b.classList.contains('core') ? ' core' : ' half'), style: '--c:' + b.style.getPropertyValue('--c') });
             jar.appendChild(put); put.style.visibility = 'hidden';
             var t = put.getBoundingClientRect();
             requestAnimationFrame(function () { ghost.style.transform = 'translate(' + (t.left - a.left) + 'px,' + (t.top - a.top) + 'px)'; });
@@ -4116,7 +4178,7 @@
         var card = h('div', { class: 'bx-bd' + (i === 0 && x.w ? ' top' : ''), style: '--c:' + f.c });
         card.appendChild(h('div', { class: 'bx-bdh' }, [h('b', { text: f.name }), h('span', { class: 'bx-bdp', text: pc + '% of your box' })]));
         card.appendChild(h('span', { class: 'bx-bdbar stack', role: 'img', 'aria-label': f.name + ' is ' + pc + ' percent of your box' }, ranked.filter(function (z) { return z.w; }).map(function (z) { return h('i', { class: z.f.k === f.k ? 'on' : '', style: 'flex:' + z.w + ' 1 0;background:' + z.f.c, title: z.f.name }); })));
-        var jar = boxJar(f); x.mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (y) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (y.core ? ' core' : ''), style: '--c:' + f.c })); });
+        var jar = boxJar(f); x.mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (y) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (y.core ? ' core' : ' half'), style: '--c:' + f.c })); });
         var col = function (title, arr, big2) { return h('div', { class: 'bx-bdc' }, [h('span', { class: 'bx-jlt', text: title }), arr.length ? h('ul', { class: 'bx-jl' }, arr.map(function (y) { return h('li', { class: big2 ? 'core' : '' }, [h('span', { class: 'bx-dot' + (big2 ? ' big' : ''), 'aria-hidden': 'true' }), y.b.replace(/'/g, '’')]); })) : h('span', { class: 'bx-jnone', text: 'None' })]); };
         card.appendChild(h('div', { class: 'bx-bdrow' }, [h('div', { class: 'bx-bdj' }, [jar]), col('All the time', core, true), col('Sometimes', part, false)]));
         var more = h('details', { class: 'bx-bdmore' }, [h('summary', { text: 'More about this root' }), h('p', { text: f.d })]);
@@ -4268,6 +4330,60 @@
     root.appendChild(h('p', { text: 'You can do this any time from the search bubble in the bottom right (it’s always there), or from the Home tab of Breaking Out of Your Box. In later weeks, you’ll learn how to rewire this in more depth.' }));
     root.appendChild(h('p', { class: 'pd-mh-map' }, [h('b', { text: 'And the map below? ' }), 'That’s the full view of it all. Scroll through it whenever you like to spot your patterns.']));
   }
+  // the map as a picture: a tall flow chart. Fierce 5, then their beliefs, then the programs they picked
+  function FlowPic(opts) {
+    opts = opts || {};
+    var list = boxPicked(); if (!list.length) { APP.toast('Pick your beliefs in Step 1 first.'); return; }
+    var byText = {}, progById = {}, noted = opts.noted || pdData().noted || {};
+    (opts.cats || boxData().cats).forEach(function (c) { c.items.forEach(function (it) { byText[it[0]] = it[1]; }); });
+    (opts.progs || boxData().progs).forEach(function (p) { progById[p.id] = p; });
+    var ranked = boxTopRoot(list).filter(function (x) { return x.w; });
+    var W = 1080, pad = 60, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    var wrapT = function (t, font, max) { ctx.font = font; var words = String(t).split(' '), lines = [], cur = ''; words.forEach(function (w) { var tt = cur ? cur + ' ' + w : w; if (ctx.measureText(tt).width > max && cur) { lines.push(cur); cur = w; } else cur = tt; }); if (cur) lines.push(cur); return lines; };
+    var BF = '600 30px Poppins, sans-serif', PF = '26px Poppins, sans-serif', bw = W - pad * 2 - 70;
+    // lay it out first, so the canvas is the right height
+    var blocks = [], y = 270, shown = {};
+    ranked.forEach(function (x) {
+      var sec = { f: x.f, y: y, items: [] }; y += 110;
+      x.mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (b) {
+        var bl = wrapT(b.b.replace(/'/g, '’'), BF, bw - 70), pid = byText[b.b], pr = pid && progById[pid], progs = [];
+        if (pr && !shown[pid]) { shown[pid] = 1; pr.c.forEach(function (c, i) { if (noted[pid + '-' + i]) progs.push(c); }); }
+        var pl = []; progs.forEach(function (c) { wrapT('– ' + c, PF, bw - 60).forEach(function (l2) { pl.push(l2); }); });
+        var hgt = 30 + bl.length * 40 + (pl.length ? 14 + pl.length * 34 : 0) + 20;
+        sec.items.push({ b: b, bl: bl, pl: pl, y: y, hgt: hgt }); y += hgt + 16;
+      });
+      sec.end = y; y += 40; blocks.push(sec);
+    });
+    var H = y + 60; cv.width = W; cv.height = H;
+    ctx.fillStyle = '#FAF7F5'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#4E0C08'; ctx.fillRect(0, 0, W, 220);
+    ctx.fillStyle = '#F4C2F7'; ctx.font = '32px "Patrick Hand SC", cursive'; ctx.fillText('Breaking Out of Your Box', pad, 80);
+    ctx.fillStyle = '#FFF4EE'; ctx.font = 'bold 64px "Playfair Display", Georgia, serif'; ctx.fillText('My program map', pad, 155);
+    var pn = Object.keys(noted).filter(function (k) { return noted[k]; }).length;
+    ctx.fillStyle = '#F1F9A6'; ctx.font = '26px Poppins, sans-serif'; ctx.fillText(list.length + ' limiting beliefs · ' + pn + ' programs I picked', pad, 198);
+    var rr = function (x0, y0, w, hh, r) { ctx.beginPath(); ctx.moveTo(x0 + r, y0); ctx.arcTo(x0 + w, y0, x0 + w, y0 + hh, r); ctx.arcTo(x0 + w, y0 + hh, x0, y0 + hh, r); ctx.arcTo(x0, y0 + hh, x0, y0, r); ctx.arcTo(x0, y0, x0 + w, y0, r); ctx.closePath(); };
+    blocks.forEach(function (sec) {
+      // the root
+      ctx.fillStyle = sec.f.c; rr(pad, sec.y, W - pad * 2, 84, 24); ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#4E0C08'; ctx.stroke();
+      ctx.fillStyle = sec.f.k === 'good' ? '#3A1A06' : '#FFFFFF'; ctx.font = 'bold 40px "Playfair Display", Georgia, serif'; ctx.textAlign = 'center'; ctx.fillText(sec.f.name, W / 2, sec.y + 56); ctx.textAlign = 'left';
+      // the trunk line
+      var tx0 = pad + 34; ctx.strokeStyle = sec.f.c; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(tx0, sec.y + 84); ctx.lineTo(tx0, sec.items.length ? sec.items[sec.items.length - 1].y + 40 : sec.y + 100); ctx.stroke();
+      sec.items.forEach(function (it) {
+        var bx = pad + 70; ctx.beginPath(); ctx.moveTo(tx0, it.y + 40); ctx.lineTo(bx, it.y + 40); ctx.stroke();
+        ctx.fillStyle = '#FFFFFF'; rr(bx, it.y, bw, it.hgt, 20); ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = sec.f.c; ctx.stroke();
+        ctx.beginPath(); ctx.arc(bx + 34, it.y + 40, it.b.core ? 13 : 9, 0, Math.PI * 2); ctx.fillStyle = sec.f.c; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = '#4E0C08'; ctx.stroke();
+        ctx.fillStyle = '#1F1412'; ctx.font = (it.b.core ? '700 ' : '500 ') + '30px Poppins, sans-serif';
+        it.bl.forEach(function (l2, i) { ctx.fillText(l2, bx + 62, it.y + 50 + i * 40); });
+        ctx.fillStyle = '#463A38'; ctx.font = PF;
+        it.pl.forEach(function (l2, i) { ctx.fillText(l2, bx + 62, it.y + 50 + it.bl.length * 40 + 14 + i * 34); });
+        ctx.strokeStyle = sec.f.c; ctx.lineWidth = 6;
+      });
+    });
+    ctx.fillStyle = '#6A5A57'; ctx.font = '22px Poppins, sans-serif'; ctx.fillText('These programs aren’t flaws. They’re protection. · Breakthrough with Sav', pad, H - 30);
+    var done = function (url) { var a = document.createElement('a'); a.href = url; a.download = 'my-program-map.jpg'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 100); };
+    try { cv.toBlob(function (b) { if (b) done(URL.createObjectURL(b)); else done(cv.toDataURL('image/jpeg', .92)); }, 'image/jpeg', .92); } catch (e) { done(cv.toDataURL('image/jpeg', .92)); }
+    try { APP.toast('Saved. Check your downloads.'); } catch (e) {}
+  }
   /* Breaking Out Step 2 map as a flow chart: Fierce 5 across the top, the beliefs they picked under each,
      and the programs under each belief. Drawn into the resource's "My map" page (opts from the canvas). */
   var PF_MORE = {};
@@ -4305,7 +4421,195 @@
     sc.appendChild(row); root.appendChild(sc);
     setTimeout(function () { sc.scrollLeft = x0; }, 0);
   }
-  window.BT_NATIVE = { MapHow: MapHowView, BoxNow: BoxNowView, ProgFlow: ProgFlowView, BoxResults: BoxMapView, BoxResultsOld: BoxResultsView, NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
+  /* ---------------- The Energy Audit (#Energy) ----------------
+     The app version of Sav's Energy Audit PDF. Log blocks of the day (time, what, which colour, how full the battery is after),
+     see the day as a chart, and after 3 days it starts pointing out patterns and giving advice. Saved in bt-energy-v1. */
+  var EA_K = 'bt-energy-v1';
+  var EA_KINDS = [
+    { k: 'green', name: 'Recharges me', c: '#5FA052', light: '#DDF0D6', ex: 'Movement, fun, breathing, connection' },
+    { k: 'red', name: 'Drains me fast', c: '#C0392B', light: '#F6D3CF', ex: 'Highly stimulating, lots of peopling, intense focus, fast pace' },
+    { k: 'yellow', name: 'Drains me slowly', c: '#F2B705', light: '#FBEFC2', ex: 'Medium pace, focus, deep thinking' },
+    { k: 'pink', name: 'Barely drains me', c: '#E8338A', light: '#FBDDEB', ex: 'Low stimulation, repetitive, autopilot, scrolling' }
+  ];
+  var EA_BATT = ['Empty', 'Low', 'Okay', 'Good', 'Full'];
+  var EA_QUICK = ['Work', 'Meeting', 'Deep focus work', 'School run', 'Lunch', 'Lunch at my desk', 'Scrolling my phone', 'Walk', 'Exercise', 'Cooking', 'Kids bedtime', 'TV', 'Reading', 'Socialising', 'Housework', 'Ruminating', 'Breathing', 'Music + dancing'];
+  function eaKind(k) { return EA_KINDS.filter(function (x) { return x.k === k; })[0] || EA_KINDS[0]; }
+  function eaData() { var d = rd(EA_K) || {}; d.days = d.days || {}; return d; }
+  function eaSave(d) { wr(EA_K, d); }
+  function eaKey(t) { var d = t ? new Date(t) : new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function eaMins(s) { var m = /^(\d+):(\d+)/.exec(s || ''); return m ? +m[1] * 60 + +m[2] : 0; }
+  function eaTime(mn) { var hh = Math.floor(mn / 60), mm = mn % 60, ap = hh >= 12 ? 'pm' : 'am', h12 = hh % 12 || 12; return h12 + (mm ? ':' + String(mm).padStart(2, '0') : '') + ap; }
+  function eaBlocks(day) { return ((day && day.blocks) || []).slice().sort(function (a, b) { return eaMins(a.start) - eaMins(b.start); }); }
+  // days with at least 3 blocks logged count as a logged day
+  function eaLoggedDays(d) { return Object.keys(d.days).filter(function (k) { return eaBlocks(d.days[k]).length >= 3; }).sort(); }
+  function eaStreak(d) {
+    var set = {}; eaLoggedDays(d).forEach(function (k) { set[k] = 1; });
+    var n = 0, t = new Date(); if (!set[eaKey(t)]) t.setDate(t.getDate() - 1);
+    while (set[eaKey(t)]) { n++; t.setDate(t.getDate() - 1); }
+    return n;
+  }
+  function eaNorm(t) { return String(t || '').toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  // the day as a chart: coloured blocks along the bottom, battery level as a line
+  function eaChart(blocks) {
+    var W = 360, H = 200, x0 = 34, x1 = W - 18, top = 14, bot = 140, T0 = 5 * 60, T1 = 23 * 60;
+    if (blocks.length) { T0 = Math.min(T0, Math.floor(eaMins(blocks[0].start) / 60) * 60); T1 = Math.max(T1, Math.ceil(eaMins(blocks[blocks.length - 1].end) / 60) * 60); }
+    var X = function (m) { return x0 + (m - T0) / (T1 - T0) * (x1 - x0); }, Y = function (r) { return bot - (r - 1) / 4 * (bot - top); };
+    var out = '';
+    for (var r = 1; r <= 5; r++) out += '<line x1="' + x0 + '" x2="' + x1 + '" y1="' + Y(r) + '" y2="' + Y(r) + '" stroke="#EDE3DF" stroke-dasharray="3 4"/><text x="' + (x0 - 6) + '" y="' + (Y(r) + 3) + '" text-anchor="end" font-size="8.5" fill="#7A6A67">' + EA_BATT[r - 1] + '</text>';
+    for (var hr = Math.ceil(T0 / 60); hr * 60 <= T1; hr += 3) out += '<text x="' + X(hr * 60) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="9" fill="#7A6A67">' + eaTime(hr * 60) + '</text>';
+    blocks.forEach(function (b) { var k = eaKind(b.kind), a = X(eaMins(b.start)), e = X(eaMins(b.end)); out += '<rect x="' + a.toFixed(1) + '" y="' + (bot + 10) + '" width="' + Math.max(2, e - a - 1).toFixed(1) + '" height="20" rx="4" fill="' + k.c + '"><title>' + eaTime(eaMins(b.start)) + ' ' + String(b.what).replace(/</g, '') + '</title></rect>'; });
+    var pts = blocks.filter(function (b) { return b.rate; }).map(function (b) { return [X(eaMins(b.end)), Y(b.rate)]; });
+    if (pts.length > 1) out += '<path class="ea-line" d="M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L') + '" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
+    pts.forEach(function (p) { out += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"/>'; });
+    if (!blocks.length) out += '<text x="' + ((x0 + x1) / 2) + '" y="' + (bot / 2 + 10) + '" text-anchor="middle" font-size="12" fill="#7A6A67">Your day will draw itself here</text>';
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Your energy across the day">' + out + '</svg>';
+  }
+  function eaBalance(blocks) {
+    var tot = {}, all = 0; blocks.forEach(function (b) { var m = Math.max(15, eaMins(b.end) - eaMins(b.start)); tot[b.kind] = (tot[b.kind] || 0) + m; all += m; });
+    return EA_KINDS.map(function (k) { return { k: k, m: tot[k.k] || 0, pc: all ? Math.round((tot[k.k] || 0) / all * 100) : 0 }; });
+  }
+  // what the last few days say: patterns + advice
+  function eaPatterns(d) {
+    var days = eaLoggedDays(d), out = [], all = [];
+    days.forEach(function (k) { var bl = eaBlocks(d.days[k]); bl.forEach(function (b, i) { all.push({ day: k, b: b, prev: i ? bl[i - 1].rate : null }); }); });
+    // balance
+    var bal = eaBalance(all.map(function (x) { return x.b; })), by = {}; bal.forEach(function (x) { by[x.k.k] = x.pc; });
+    var avg = all.filter(function (x) { return x.b.rate; }); var avgR = avg.length ? avg.reduce(function (a, x) { return a + x.b.rate; }, 0) / avg.length : 3;
+    if ((by.red || 0) + (by.yellow || 0) >= 60 && (by.green || 0) < 20) out.push({ ic: '🟥', t: 'More red and yellow than green', s: 'Most of your time is draining your battery. You need more relaxing recharging: slower breathing, calm music, a gentle walk, a slow coffee with someone you love.' });
+    else if ((by.pink || 0) >= 35 && avgR < 3 && (by.green || 0) < 20) out.push({ ic: '🩷', t: 'Lots of pink and a flat battery', s: 'You’re under-stimulated more than drained. Try energising recharging: upbeat music and a dance, a brisk walk, singing loud in the car, something fun with people.' });
+    else if ((by.green || 0) >= 25) out.push({ ic: '🟩', t: 'You’re building in recharges', s: 'Around ' + by.green + '% of your logged time is recharging you. That’s your nervous system getting a chance to come back to baseline. Keep it up.' });
+    // what keeps draining or recharging them (same activity on 2+ occasions)
+    var acts = {};
+    all.forEach(function (x) { if (x.prev == null || !x.b.rate) return; var n = eaNorm(x.b.what); if (!n) return; (acts[n] = acts[n] || { t: x.b.what, d: [], days: {} }).d.push(x.b.rate - x.prev); acts[n].days[x.day] = 1; });
+    var list = Object.keys(acts).map(function (n) { var a = acts[n]; return { t: a.t, n: a.d.length, days: Object.keys(a.days).length, avg: a.d.reduce(function (s, v) { return s + v; }, 0) / a.d.length }; }).filter(function (a) { return a.n >= 2; });
+    var drains = list.filter(function (a) { return a.avg <= -0.5; }).sort(function (a, b) { return a.avg - b.avg; }).slice(0, 2);
+    var fills = list.filter(function (a) { return a.avg >= 0.5; }).sort(function (a, b) { return b.avg - a.avg; }).slice(0, 2);
+    drains.forEach(function (a) { out.push({ ic: '🪫', t: '“' + a.t + '” keeps draining you', s: 'It came up ' + a.n + ' times and your battery dropped every time (about ' + Math.abs(a.avg).toFixed(1) + ' levels). Can you plan a 5-minute recharge straight after it: a walk, a song, a few slow breaths?' }); });
+    fills.forEach(function (a) { out.push({ ic: '🔋', t: '“' + a.t + '” fills you back up', s: 'Your battery went up by about ' + a.avg.toFixed(1) + ' levels after it, ' + a.n + ' times. That’s one of your energy givers. Put it in your week on purpose.' }); });
+    // the time of day they dip
+    var hrs = {}; avg.forEach(function (x) { var hh = Math.floor(eaMins(x.b.end) / 60); (hrs[hh] = hrs[hh] || []).push(x.b.rate); });
+    var hl = Object.keys(hrs).filter(function (hh) { return hrs[hh].length >= 2; }).map(function (hh) { return { h: +hh, a: hrs[hh].reduce(function (s, v) { return s + v; }, 0) / hrs[hh].length }; }).sort(function (a, b) { return a.a - b.a; });
+    if (hl.length && hl[0].a <= 2.5) out.push({ ic: '⏰', t: 'Your battery dips around ' + eaTime(hl[0].h * 60), s: 'That’s your lowest time of day so far. Try planning a recharge just before it, around ' + eaTime(hl[0].h * 60 - 30) + ', rather than waiting until you’re empty.' });
+    // rumination, scrolling, lunch at the desk
+    var count = function (re) { return all.filter(function (x) { return re.test(eaNorm(x.b.what)); }).length; };
+    var rum = count(/rumina|overthink|worr|spiral/);
+    if (rum >= 2) out.push({ ic: '🌀', t: 'Ruminating showed up ' + rum + ' times', s: 'Where attention goes, energy follows. When you catch yourself in the loop, change your state: change your environment, move your body differently, or put your focus on something else.' });
+    var desk = count(/lunch (at|on) (my |the )?desk|desk lunch/);
+    if (desk >= 2 && !drains.some(function (a) { return /desk/i.test(a.t); })) out.push({ ic: '🥪', t: 'Lunch at your desk, ' + desk + ' times', s: 'Your brain never gets a break that way. Even 10 minutes away from the screen, outside if you can, gives it new information and a chance to reset.' });
+    var scr = count(/scroll|phone|tiktok|instagram|socials/);
+    if (scr >= 3) out.push({ ic: '📱', t: 'Scrolling came up ' + scr + ' times', s: 'Scrolling feels like rest, but your brain is still taking in information. Swap one scroll for a proper recharger from your list.' });
+    // evenings and the next morning
+    var eve = days.map(function (k, i) { var bl = eaBlocks(d.days[k]), nx = days[i + 1] && eaBlocks(d.days[days[i + 1]])[0]; if (!nx || !nx.rate) return null; var g = bl.some(function (b) { return eaMins(b.start) >= 18 * 60 && b.kind === 'green'; }); return { g: g, r: nx.rate }; }).filter(Boolean);
+    var withG = eve.filter(function (x) { return x.g; }), noG = eve.filter(function (x) { return !x.g; });
+    if (withG.length && noG.length) { var aG = withG.reduce(function (s, x) { return s + x.r; }, 0) / withG.length, aN = noG.reduce(function (s, x) { return s + x.r; }, 0) / noG.length; if (aG - aN >= 1) out.push({ ic: '🌙', t: 'Recharging evenings mean better mornings', s: 'On the days you did something recharging in the evening, you started the next day with more in the tank. What you do at night sets up your morning.' }); }
+    return out;
+  }
+  function EnergyView(root) {
+    root.classList.add('bt-light');
+    var wrap = h('div', { class: 'bt-wrap ea' }); root.appendChild(wrap);
+    var ic = emblem('energy'); if (ic) ic.classList.add('bt-rh-ic');
+    wrap.appendChild(h('header', { class: 'bt-rh' }, [h('div', { class: 'bt-rh-k' }, [ic, h('span', { text: 'Breakthrough Program · embodiment' })]), h('h1', { text: 'The Energy Audit' }), h('p', { class: 'bt-rh-tag', text: 'Balancing your batteries.' }),
+      h('p', { class: 'bt-rh-lead', text: 'Log your day in blocks: what you did, whether it drained or recharged you, and how full your battery feels after. We’re not changing anything yet. Just noticing. After 3 days, I’ll start showing you your patterns.' })]));
+    var day = eaKey(), body = h('div', { class: 'ea-body' }); wrap.appendChild(body);
+    function draw() {
+      body.innerHTML = '';
+      var d = eaData(), logged = eaLoggedDays(d), streak = eaStreak(d), dd = d.days[day] || { blocks: [] }, bl = eaBlocks(dd);
+      // progress to patterns
+      var need = Math.max(0, 3 - logged.length);
+      body.appendChild(h('div', { class: 'ea-prog' }, [h('div', { class: 'ea-dots' }, [0, 1, 2].map(function (i) { return h('span', { class: i < logged.length ? 'on' : '' }); })),
+        h('span', { text: need ? (logged.length ? logged.length + (logged.length === 1 ? ' day logged. ' : ' days logged. ') : '') + need + (need === 1 ? ' more day' : ' more days') + ' to unlock your patterns.' + (streak >= 1 ? ' Streak: ' + streak + (streak === 1 ? ' day' : ' days') + ' in a row.' : '') : 'Patterns unlocked. Keep logging and they get sharper.' + (streak > 1 ? ' ' + streak + ' days in a row!' : '') })]));
+      // which day
+      var days = []; for (var i = 6; i >= 0; i--) { var t = new Date(); t.setDate(t.getDate() - i); days.push(t); }
+      body.appendChild(h('div', { class: 'ea-days', role: 'tablist', 'aria-label': 'Which day' }, days.map(function (t) {
+        var k = eaKey(t), n = eaBlocks(d.days[k]).length, on = k === day;
+        return h('button', { class: 'ea-day' + (on ? ' on' : '') + (n >= 3 ? ' done' : n ? ' some' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', onclick: function () { day = k; draw(); } },
+          [h('b', { text: k === eaKey() ? 'Today' : t.toLocaleDateString('en-AU', { weekday: 'short' }) }), h('span', { text: t.getDate() + '' }), h('i', { text: n ? n + '' : '' })]);
+      })));
+      // the chart
+      var card = h('section', { class: 'ea-card' });
+      var dl = new Date(day + 'T12:00:00');
+      card.appendChild(h('h2', { text: day === eaKey() ? 'Your day so far' : dl.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' }) }));
+      var ch = h('div', { class: 'ea-chart' }); ch.innerHTML = eaChart(bl); card.appendChild(ch);
+      if (bl.length) {
+        var bal = eaBalance(bl);
+        card.appendChild(h('div', { class: 'ea-bal', role: 'img', 'aria-label': bal.map(function (x) { return x.k.name + ' ' + x.pc + '%'; }).join(', ') }, bal.filter(function (x) { return x.pc; }).map(function (x) { return h('i', { style: 'flex:' + x.pc + ' 1 0;background:' + x.k.c, title: x.k.name + ' ' + x.pc + '%' }); })));
+        card.appendChild(h('div', { class: 'ea-key' }, bal.map(function (x) { return h('span', null, [h('i', { style: 'background:' + x.k.c }), x.k.name + ' ' + x.pc + '%']); })));
+        var tip = eaDayTip(bal, bl); if (tip) card.appendChild(h('p', { class: 'ea-tip', text: tip }));
+      }
+      // the blocks, like a diary page
+      var list = h('div', { class: 'ea-list' });
+      bl.forEach(function (b) {
+        var k = eaKind(b.kind);
+        list.appendChild(h('div', { class: 'ea-blk', style: '--c:' + k.c + ';--l:' + k.light }, [
+          h('span', { class: 'ea-bt', text: eaTime(eaMins(b.start)) + '–' + eaTime(eaMins(b.end)) }),
+          h('span', { class: 'ea-bw' }, [h('b', { text: b.what }), h('span', { text: k.name + (b.rate ? ' · battery: ' + EA_BATT[b.rate - 1].toLowerCase() : '') })]),
+          h('button', { class: 'ea-x', type: 'button', 'aria-label': 'Remove ' + b.what, text: '✕', onclick: function () { var d2 = eaData(), x = d2.days[day]; if (x) { x.blocks = (x.blocks || []).filter(function (y) { return y.id !== b.id; }); eaSave(d2); draw(); } } })]));
+      });
+      card.appendChild(list);
+      card.appendChild(eaForm(bl));
+      body.appendChild(card);
+      // patterns
+      var pc = h('section', { class: 'ea-card ea-pat' });
+      pc.appendChild(h('span', { class: 'bt-wins-k', text: 'Your patterns' }));
+      if (logged.length < 3) {
+        pc.appendChild(h('h2', { text: 'Unlocks after 3 days' }));
+        pc.appendChild(h('p', { class: 'bt-sub', text: 'Log at least 3 blocks a day for 3 days (in a row is best) and I’ll start noticing what drains you, what fills you back up, and when you dip.' }));
+      } else {
+        var pats = eaPatterns(d);
+        pc.appendChild(h('h2', { text: 'Here’s what I’m noticing' }));
+        if (!pats.length) pc.appendChild(h('p', { class: 'bt-sub', text: 'Nothing jumps out yet. Keep logging, and rate your battery after each block so I can see what moves it.' }));
+        pats.forEach(function (x) { pc.appendChild(h('div', { class: 'ea-p' }, [h('span', { class: 'ea-pi', 'aria-hidden': 'true', text: x.ic }), h('div', null, [h('b', { text: x.t }), h('span', { text: x.s })])])); });
+        pc.appendChild(h('p', { class: 'ea-note', text: 'There’s no perfect percentage. It’s about awareness and balance: noticing the heavy red days so you can add more green.' }));
+      }
+      body.appendChild(pc);
+      // how to recharge (from the PDF)
+      body.appendChild(h('details', { class: 'ea-card ea-how' }, [h('summary', null, [h('h2', { text: 'How to recharge' })]),
+        h('p', null, [h('b', { text: 'Energising recharging ' }), 'for when you’re flat (lots of pink, low battery): high-energy music, bigger movement, singing loud, fun with people.']),
+        h('p', null, [h('b', { text: 'Relaxing recharging ' }), 'for when you’re frazzled (lots of red and yellow): soft music, slow gentle movement, humming, a slow walk and a coffee in the park.']),
+        h('p', null, [h('b', { text: 'Change your state: ' }), 'a new environment gives your brain new information, moving differently breaks the pattern, and where attention goes, energy follows.']),
+        h('p', null, [h('b', { text: 'Body battery: ' }), 'water, nourishing food, quality sleep, sunlight, movement and regulating your nervous system. ', h('b', { text: 'Mind battery: ' }), 'breathwork, music, movement, connection and your DOSE.'])]));
+    }
+    function eaDayTip(bal, bl) {
+      var by = {}; bal.forEach(function (x) { by[x.k.k] = x.pc; });
+      var last = bl[bl.length - 1];
+      if (last && last.rate && last.rate <= 2) return 'Battery’s low. What’s one small recharge you can do next? ' + ((by.red || 0) + (by.yellow || 0) > (by.pink || 0) ? 'Something relaxing: slow breaths, soft music, a gentle walk.' : 'Something energising: an upbeat song, a quick dance, a walk outside.');
+      if ((by.red || 0) >= 50) return 'A heavy red day so far. Plan in some green before the day ends.';
+      return '';
+    }
+    function eaForm(bl) {
+      var lastEnd = bl.length ? eaMins(bl[bl.length - 1].end) : 7 * 60;
+      var opts = []; for (var m = 5 * 60; m <= 23 * 60 + 30; m += 30) opts.push(m);
+      var sel = function (val, lab) { var s = h('select', { class: 'bt-in ea-sel', 'aria-label': lab }); opts.forEach(function (m) { var o = h('option', { value: String(m), text: eaTime(m) }); if (m === val) o.selected = true; s.appendChild(o); }); return s; };
+      var st = sel(Math.min(lastEnd, 23 * 60), 'Start time'), en = sel(Math.min(lastEnd + 60, 23 * 60 + 30), 'End time');
+      var what = h('input', { class: 'bt-in ea-what', placeholder: 'What were you doing?', 'aria-label': 'What were you doing?' });
+      var kind = '', rate = 0, kindRow = h('div', { class: 'ea-kinds' }), rateRow = h('div', { class: 'ea-rates' });
+      function drawKinds() { kindRow.innerHTML = ''; EA_KINDS.forEach(function (k) { kindRow.appendChild(h('button', { class: 'ea-kind' + (kind === k.k ? ' on' : ''), type: 'button', style: '--c:' + k.c + ';--l:' + k.light, 'aria-pressed': kind === k.k ? 'true' : 'false', onclick: function () { kind = k.k; drawKinds(); } }, [h('b', { text: k.name }), h('span', { text: k.ex })])); }); }
+      function drawRates() { rateRow.innerHTML = ''; EA_BATT.forEach(function (lab, i) { rateRow.appendChild(h('button', { class: 'ea-rate' + (rate === i + 1 ? ' on' : ''), type: 'button', 'aria-pressed': rate === i + 1 ? 'true' : 'false', onclick: function () { rate = i + 1; drawRates(); } }, [h('span', { class: 'ea-batt', 'aria-hidden': 'true' }, [h('i', { style: 'width:' + ((i + 1) * 20) + '%' })]), h('span', { text: lab })])); }); }
+      drawKinds(); drawRates();
+      var quick = h('div', { class: 'ea-quick' }, EA_QUICK.map(function (q) { return h('button', { type: 'button', text: q, onclick: function () { what.value = q; what.focus(); } }); }));
+      var err = h('p', { class: 'ea-err', 'aria-live': 'polite' });
+      var save = h('button', { class: 'bt-btn lime', type: 'button', text: 'Add to my day', onclick: function () {
+        var a = +st.value, b = +en.value;
+        if (!tx(what.value)) { err.textContent = 'What were you doing?'; what.focus(); return; }
+        if (b <= a) { err.textContent = 'The end time needs to be after the start time.'; return; }
+        if (!kind) { err.textContent = 'Pick a colour: did it recharge you or drain you?'; return; }
+        var d = eaData(), x = d.days[day] = d.days[day] || { blocks: [] }, before = eaLoggedDays(d).length;
+        x.blocks.push({ id: String(Date.now()), start: eaTime24(a), end: eaTime24(b), what: tx(what.value), kind: kind, rate: rate || null });
+        eaSave(d); draw();
+        var after = eaLoggedDays(eaData()).length;
+        if (after > before) { try { sparkleBurst(body); } catch (e) {} APP.toast(after >= 3 ? (after === 3 ? 'Day 3 logged! Your patterns are unlocked.' : 'Day logged. Your patterns just got sharper.') : 'Day ' + after + ' logged! See you tomorrow.'); }
+      } });
+      return h('div', { class: 'ea-form' }, [h('h3', { text: 'Add a block' }),
+        h('div', { class: 'ea-times' }, [h('label', null, ['From', st]), h('label', null, ['To', en])]),
+        what, quick,
+        h('span', { class: 'ea-q', text: 'How did it affect your energy?' }), kindRow,
+        h('span', { class: 'ea-q', text: 'How full is your battery now? (optional, but it’s what shows your patterns)' }), rateRow,
+        err, save]);
+    }
+    function eaTime24(m) { return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+    draw();
+  }
+  window.BT_NATIVE = { Energy: EnergyView, FlowPic: FlowPic, MapHow: MapHowView, BoxNow: BoxNowView, ProgFlow: ProgFlowView, BoxResults: BoxMapView, BoxResultsOld: BoxResultsView, NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
     ensureFooter: ensureFooter,

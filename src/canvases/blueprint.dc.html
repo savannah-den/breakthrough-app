@@ -2517,156 +2517,7 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 
 
 <!-- ================= ECT ================= -->
-<sc-if value="{{tabEct}}" hint-placeholder-val="{{ false }}">
-<section class="ecthero">
-<span class="hand" style="font-size: 17px; color: #F1F9A6">The Emotional Breakthrough Program</span>
-<p class="ecth">A fresh emotional start.</p>
-<p class="lead" style="color: #FBE6FC">Release years of stored anger, sadness, fear, hurt, guilt, shame and grief, plus two limiting beliefs, at the root. Six 1:1 sessions of ECT with Sav.</p>
-<div style="display: flex; flex-wrap: wrap; gap: 10px"><a class="primary lime" href="#ect-enquire">I want to know more</a></div>
-</section>
-
-<section class="sec">
-<sc-if value="{{hasEctVideo}}" hint-placeholder-val="{{ false }}">
-<a class="ectvid" href="{{ectVideo}}" target="_blank" rel="noopener" aria-label="Watch Sav explain ECT on YouTube (opens in a new tab)"><span class="evplay" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="evt"><span class="hand" style="font-size: 16px; color: #F1F9A6">Watch</span><strong>Sav explains ECT</strong><span>YouTube · opens in a new tab</span></span></a>
-</sc-if>
-<sc-if value="{{noEctVideo}}" hint-placeholder-val="{{ true }}">
-<div class="ectvid ph" role="img" aria-label="Video coming soon"><span class="evplay" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="evt"><span class="hand" style="font-size: 16px; color: #F1F9A6">Video coming soon</span><strong>Sav explains ECT</strong><span>[VIDEO PLACEHOLDER · add the YouTube link in Tweaks]</span></span></div>
-</sc-if>
-</section>
-
-<section class="sec">
-<div class="eyebrow">Why you feel stuck</div>
-<h2 class="h2">You’re not dealing with today’s feelings. You’re dealing with thirty years of them.</h2>
-<p class="lead">Every time you didn’t get to feel something fully, it got stored. One bead on a string. Then another. Then another. Now one small thing sets off a reaction that’s way bigger than the moment, because it’s carrying every bead before it.</p>
-<p class="lead">The tools in this app help you drain the pressure, one feeling at a time. They give you real relief. But they don’t change your attachment to the past. That’s what ECT does.</p>
-</section>
-
-<section class="dark sec" style="padding: 30px 26px; gap: 18px">
-<div class="eyebrow">What is ECT?</div>
-<h2 class="h2" style="color: #FFF4EE">The Emotional Change Technique.</h2>
-<p class="lead">ECT guides you into your unconscious mind to change the emotions attached to the past. Rather than taking the beads off one at a time, each ECT session cuts a whole emotional string. Here’s how it works, using anger as an example.</p>
-<div class="esteps">
-<div class="estep"><img class="eimg" src="/_blob/e01ae0b495eb9a16003c5c3192cb7164" alt="A woman furiously hitting pillows on the road of her past, flames rising, and a jar of fire labelled present."><span class="en2">1</span><h3>Activate it</h3><p>Instead of holding anger down, we help you bring it up and burn it bright. Big. Fiery.</p></div>
-<div class="estep"><img class="eimg" src="/_blob/8d2542df94e91b4e443b9304ceec32bb" alt="The same woman back at the very start of her timeline, where the anger first began."><span class="en2">2</span><h3>Go back</h3><p>We guide you back along your timeline to where anger began. You don’t need to consciously remember it. Your body will tell you.</p></div>
-<div class="estep"><img class="eimg" src="/_blob/f3007d98cfc9c98fbe52e337a6e48165" alt="The woman drenched with water, the fire out and smoking, the jar of embers in a puddle."><span class="en2">3</span><h3>Release it</h3><p>At the root, we take that giant fire and douse it with a bucket of water, taking the emotional charge out of it.</p></div>
-<div class="estep"><img class="eimg" src="/_blob/114034fde36eefbd5f3ebf16913978a4" alt="The past now lined with smiling yellow faces, the woman calmly watering the road, and a happy glowing jar in the present."><span class="en2">4</span><h3>Reframe and rise</h3><p>We give the event a new, empowering meaning, and bring it back up your timeline with you, filling the anger tank with joy, compassion and calm.</p></div>
-</div>
-</section>
-
-<section class="sec">
-<div class="eyebrow">How it’s held in your body</div>
-<h2 class="h2">The {{b7n}} stack up in layers.</h2>
-<p class="lead">Love is at the core of everything. Over the years, the {{b7n}} build up on top of it, layer by layer, to protect you. Anger sits on the outside, because it’s your fight-or-flight response: defensiveness, protecting yourself from the world. Underneath, the anger is holding the sadness down. And right at the centre, joy is wrapped around love, squashed by everything above it, with no room to expand.</p>
-<div class="stackwrap">
-<img class="layersimg" src="/_blob/e764c61511bfe0dca82c3f449cc298c5" alt="The outline of a person filled with layers that follow the shape of the body: anger around the outer edge, then sadness, hurt, fear, guilt, shame, grief, joy, and a small heart of love in the chest.">
-<div class="laylist"><sc-for list="{{stackLayers}}" as="l" hint-placeholder-count="9"><div class="lay" style="border-left-color: {{l.col}}"><span class="layn" style="background: {{l.col}}">{{l.i}}</span><span><strong>{{l.n}}</strong>{{l.t}}</span></div></sc-for></div>
-</div>
-<p class="lead">Now watch what happens when they’re released, one by one:</p>
-<div class="frames"><sc-for list="{{stackFrames}}" as="f" hint-placeholder-count="7"><div class="frm"><img src="{{f.img}}" alt="{{f.alt}}"><div class="frmt"><span class="frk">{{f.k}}</span><strong>{{f.t}}</strong><p>{{f.d}}</p></div></div><sc-if value="{{f.arrow}}" hint-placeholder-val="{{ true }}"><div class="frarrow" aria-hidden="true">↓</div></sc-if></sc-for></div>
-
-<div class="callout lime"><span><strong>Anger becomes passion.</strong> Released energy doesn’t vanish, it transmutes. Sadness becomes compassion, fear becomes excitement, and joy and love finally get to radiate outward.</span></div>
-<div class="twoways">
-<div class="twy"><span class="hand" style="font-size: 16px; color: #A8231F">Processing in the app</span><strong>Conscious, small scale</strong><p>When you process a feeling in this app, you’re doing it consciously. It works, and it gives real relief, but it loosens the grip a little at a time, releasing small pieces off the top of the stack.</p></div>
-<div class="twy ect"><span class="hand" style="font-size: 16px; color: #F1F9A6">ECT</span><strong>Unconscious, the whole lot</strong><p>ECT works with your unconscious mind. It goes back to the root and releases the whole layer, years of it, in one go, so the next layer can come up and go too.</p></div>
-</div>
-</section>
-
-
-<section class="sec">
-<div class="eyebrow">What you’ll release</div>
-<h2 class="h2">The Big 7, and the beliefs that came with them.</h2>
-<p class="lead">In six sessions we work through all seven emotions, plus two limiting beliefs from the past, like “I’m not good enough” or “I’m not worthy”. We’ll choose the ones that will make the biggest difference for you.</p>
-<div class="domino">
-<div class="dsteps"><sc-for list="{{releaseRowsEct}}" as="r" hint-placeholder-count="7">
-<div class="{{r.cls}}">
-<div class="dcard" style="background: {{r.bg}}; border-color: {{r.bd}}">
-<span class="relh"><img src="{{r.img}}" alt="">{{r.n}}</span>
-<span class="ddir">{{r.dir}}</span>
-<span class="drise">{{r.rise}} <strong>{{r.m}}</strong></span>
-<span class="dline">{{r.t}}</span>
-</div>
-<span class="dunlock" aria-hidden="true">↓ unlocks</span>
-</div>
-</sc-for></div>
-<div class="summit"><span class="hand" style="font-size: 15px; color: #FFFFFF">Where it all leads</span><strong>Pure joy, peace &amp; love</strong><span>Each release knocks over the next, freeing energy that lifts you up the levels, all the way to connection.</span></div>
-</div>
-<div class="callout lime"><span><strong>Moving up the levels.</strong> Every emotion you release at the root frees energy that was stuck below Courage. That’s how you start living from connection instead of protection.</span></div>
-</section>
-
-<section class="sec">
-<div class="ectstory">
-<img class="storyimg" src="/_blob/2aa85a10e798befdc83d0b8a2eb9f860" alt="Sav’s timeline: on the right, a dark night-time path through the moments of her past. On the left, the same life after ECT, a sunlit path through a field of wildflowers to her memory library.">
-<div style="display: flex; flex-direction: column; gap: 10px; flex: 1 1 280px">
-<span class="eyebrow">From Sav</span>
-<p class="ecq">“When I look back at my timeline now, all I see are flowers.”</p>
-<p class="body">Where I used to see hurt, shame, public embarrassment, judgement, self-abandonment, fear, heartbreak, anger and sadness, now I see compassion, love, joy, gratitude and happiness. Everything that once felt painful has become a field of wildflowers.</p>
-<p class="body">ECT gave me my life back. It gave me a fresh start, and let me create new identities and upgrade the way I think, feel and act, without that tether to the past holding me back. It made everything else I was learning so much easier, because I was only dealing with the feelings of now.</p>
-</div>
-</div>
-</section>
-
-<section class="sec">
-<div class="eyebrow">In their words</div>
-<h2 class="h2">What clients say after ECT.</h2>
-<div class="testis"><figure class="testi pair2"><img src="/_blob/1049cd27a6587d7e91092694eab2e91e" alt="Client message: “I did ECT today!”"><img src="/_blob/946f61e3191cc43bba687791f5fba00c" alt="Client message: “So I just went on a date kinda thing. It has been a hot minute since I have done that. I was in the car with her and she drove to where I was assaulted. I haven’t been there in 6 years! I didn’t have a panic attack. Did I freak out a little bit? Yes, and though not in full panic!!”"></figure><figure class="testi"><img src="/_blob/21dd3441fa1468c37623c40e7df368b5" alt="Client message: “I’m less of a perfectionist since the last ECT session. I’m letting things go and I’m not perfecting the house due to fear of judgement.”"></figure><figure class="testi"><img src="/_blob/32fddd771dd54995c7a682d2971acfab" alt="Client message: “My confidence has improved even more since the last ECT session.”"></figure><figure class="testi"><img src="/_blob/bd303b99bc50c21c97bae21271dfb7f7" alt="Client message: “I’m half way through ECT and it has eased many knots.”"></figure><figure class="testi"><img src="/_blob/0a978b3016f288611f08f67842c8b98f" alt="Client message: “Since I’ve had ECT, asking for help is easier and I actually do it.”"></figure><figure class="testi"><img src="/_blob/71906935f7ead0390bb7742d8e63c8e7" alt="Client message: “ECT today was even more empowering because it was guilt and shame, and allowed me to ground myself even deeper on the feelings and wins from today and acknowledge I’m doing great. Super stoked how things are going and how I’m feeling.”"></figure></div>
-</section>
-
-<section class="sec">
-<div class="eyebrow">What changes</div>
-<div class="b7s">
-<div class="gcard"><h3>It takes so much more to trigger you</h3><p>You’re no longer carrying decades of emotional fuel waiting to explode.</p></div>
-<div class="gcard"><h3>You still feel, just in proportion</h3><p>You’ll still feel anger, fear and sadness. Happiness needs sadness to exist. But it’s a normal, healthy amount, and it passes.</p></div>
-<div class="gcard"><h3>Everything else gets easier</h3><p>The tools, the habits, the new identity. They stick, because the past isn’t pulling you back.</p></div>
-<div class="gcard"><h3>You choose your own beads</h3><p>Instead of beads being strung for you unconsciously, you get to choose them, on purpose.</p></div>
-</div>
-</section>
-
-<section class="sec">
-<div class="eyebrow">What’s included</div>
-<div class="incl">
-<div class="inc"><span class="inn">6</span><span><strong>1:1 ECT sessions</strong>Fortnightly, guided by Sav, who is a trained Emotional Change Technique practitioner.</span></div>
-<div class="inc"><span class="inn">7</span><span><strong>Emotions released at the root</strong>Anger, sadness, fear, hurt, guilt, shame and grief.</span></div>
-<div class="inc"><span class="inn">2</span><span><strong>Limiting beliefs released</strong>The two that will make the biggest difference for you. Imagine what could change if you started feeling like you were good enough, and worthy of love.</span></div>
-
-</div>
-</section>
-
-<section class="sec">
-<div class="eyebrow">Questions</div>
-<div class="faq">
-<details><summary>Do I need to remember what happened?</summary><p>No. You don’t need to consciously remember the first time you felt an emotion. Your body will tell you.</p></details>
-<details><summary>Will I never feel anger or sadness again?</summary><p>You will, and that’s healthy. You can’t feel happiness without sadness. The difference is the intensity. It becomes a normal amount, much harder to trigger, and it passes.</p></details>
-<details><summary>Is ECT part of the Breakthrough program?</summary><p>No. ECT is an extensive process that needs six 1:1 sessions with a practitioner, so it’s a separate Emotional Breakthrough program.</p></details>
-<details><summary>How do I know if I’m ready?</summary><p>If you’re tired of carrying the past, if small things set off big reactions, or if you’ve done the work and still feel something pulling you back, it’s worth a conversation.</p></details>
-<details><summary>Is ECT therapy?</summary><p>ECT is a coaching technique, not a replacement for mental health care. If you’re working with a psychologist or counsellor, keep them in the loop.</p></details>
-</div>
-</section>
-
-<section class="enquire" id="ect-enquire">
-<span class="hand" style="font-size: 17px; color: #A8231F">Ready to release and rise?</span>
-<p class="big">Enquire about ECT.</p>
-<p class="body" style="color: #1F1412">Tell Sav a little about you and where you’re at. When you press send, your email opens with everything filled in, ready to go.</p>
-<div class="fgrid">
-<div class="fld"><label class="lbl" for="ect-name">Name *</label><input id="ect-name" class="input" type="text" autocomplete="name" value="{{f.name}}" onChange="{{fset.name}}" placeholder="Your full name"></div>
-<div class="fld"><label class="lbl" for="ect-email">Email *</label><input id="ect-email" class="input" type="email" autocomplete="email" value="{{f.email}}" onChange="{{fset.email}}" placeholder="you@email.com"></div>
-<div class="fld"><label class="lbl" for="ect-phone">Phone</label><input id="ect-phone" class="input" type="tel" autocomplete="tel" value="{{f.phone}}" onChange="{{fset.phone}}" placeholder="+61 400 000 000"></div>
-<div class="fld"><label class="lbl" for="ect-where">Country and time zone *</label><input id="ect-where" class="input" type="text" value="{{f.where}}" onChange="{{fset.where}}" placeholder="Australia, Brisbane time"></div>
-</div>
-<div class="fld"><span class="lbl">Best way to reach you</span><div class="chips"><sc-for list="{{fContact}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="radio"><span></span></span>{{o.l}}</button></sc-for></div></div>
-<div class="fld"><span class="lbl">Which emotions feel heaviest right now?</span><div class="chips"><sc-for list="{{eEmos}}" as="o" hint-placeholder-count="7"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><img src="{{o.img}}" alt="">{{o.l}}</button></sc-for></div></div>
-<div class="fld"><span class="lbl">How long have you been carrying this?</span><div class="chips"><sc-for list="{{fHowLong}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="radio"><span></span></span>{{o.l}}</button></sc-for></div></div>
-<div class="fld"><label class="lbl" for="ect-now">What’s happening for you right now that made you reach out?</label><textarea id="ect-now" class="input" value="{{f.now}}" onChange="{{fset.now}}" placeholder="Small things are setting me off, I keep…"></textarea></div>
-<div class="fld"><label class="lbl" for="ect-why">What would a fresh emotional start change for you?</label><textarea id="ect-why" class="input" value="{{f.why}}" onChange="{{fset.why}}" placeholder="I’d finally feel…"></textarea></div>
-<div class="fld"><span class="lbl">Have you done any inner work before?</span><div class="chips"><sc-for list="{{fBefore}}" as="o" hint-placeholder-count="6"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.l}}</button></sc-for></div></div>
-<div class="fld"><span class="lbl">When would you like to start?</span><div class="chips"><sc-for list="{{fWhen}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="radio"><span></span></span>{{o.l}}</button></sc-for></div></div>
-<div class="fld"><label class="lbl" for="ect-else">Anything else Sav should know?</label><textarea id="ect-else" class="input" value="{{f.other}}" onChange="{{fset.other}}" placeholder="Optional"></textarea></div>
-<button class="{{fAgreeCls}}" aria-pressed="{{fAgreePressed}}" onClick="{{fAgreeToggle}}" style="align-self: flex-start"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>I understand ECT is a coaching technique, not a replacement for mental health care. *</button>
-<sc-if value="{{fValid}}" hint-placeholder-val="{{ false }}"><a class="primary" style="align-self: flex-start" href="{{mailHref}}">Send my enquiry to Sav</a></sc-if>
-<sc-if value="{{fInvalid}}" hint-placeholder-val="{{ true }}"><button class="primary" style="align-self: flex-start" onClick="{{fTry}}">Send my enquiry to Sav</button></sc-if>
-<sc-if value="{{fShowErr}}" hint-placeholder-val="{{ false }}"><div class="callout" role="alert"><span><strong>Almost there.</strong> {{fErr}}</span></div></sc-if>
-<p class="hn">* Required. Sav will get back to you by email or your preferred way to be contacted.</p>
-</section>
-</sc-if>
+<!-- EB_ECT1: the ECT page lives in one place now (/ect) --><sc-if value="{{tabEct}}" hint-placeholder-val="{{ false }}"><section class="sec"><p class="lead">Taking you to the ECT page…</p><div style="display: flex; flex-wrap: wrap; gap: 10px"><a class="primary" href="{{ectPageUrl}}" target="_self">Open the ECT page →</a><button class="ghost" onClick="{{go.mine}}">← My blueprints</button></div></section></sc-if>
 
 <sc-if value="{{notEctTab}}" hint-placeholder-val="{{ true }}">
 <section class="ectfoot"><img src="/_blob/6c4de069e172edaa21031a8fb148e873" alt=""><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 240px"><span class="hand" style="font-size: 16px; color: #F1F9A6">Ready to let go of the whole stack?</span><strong>ECT with Sav</strong><span>Everything in this app loosens the grip, one feeling at a time. ECT goes back to the root and releases years of an emotion in one go.</span></div><button class="primary lime" onClick="{{goEct}}">Find out about ECT</button></section>
@@ -3601,6 +3452,7 @@ class Component extends DCLogic {
   componentDidMount() {
     var s = null;
     try { var raw = window.localStorage.getItem(EB_KEY); if (raw) s = JSON.parse(raw); } catch (e) {}
+    if (s && s.tab === 'ect') s.tab = 'mine'; /* EB_ECT1 */
     if (!s) {
       try {
         var old = window.localStorage.getItem(EB_OLD);
@@ -3623,7 +3475,8 @@ class Component extends DCLogic {
 
   scrollTool(t) { setTimeout(function () { try { var el = document.getElementById('tool-' + t); if (el) { var y = el.getBoundingClientRect().top + (window.pageYOffset || 0) - 100; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); } else window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }, 60); }
   top() { var t = this.state.tab, d = this.state.lessonsDone || {}; if (t === 'tune' || t === 'process' || (d[t] && t !== 'home' && t !== 'ect')) this.scrollTool(t); else { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} } }
-  goTab(t) { this.setState({ tab: t, tuneDone: null, procDone: null, confirm: null }); var d = this.state.lessonsDone || {}; if (d[t]) this.scrollTool(t); else { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} } }
+  openEct() { var u = String(this.props.ectPageUrl || '/ect'); if (this.state.tab === 'ect') this.setState({ tab: 'mine' }); try { window.location.href = u; } catch (e) {} }
+  goTab(t) { if (t === 'ect') return this.openEct(); this.setState({ tab: t, tuneDone: null, procDone: null, confirm: null }); var d = this.state.lessonsDone || {}; if (d[t]) this.scrollTool(t); else { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} } }
   goTool(t) { this.setState({ tab: t, tuneDone: null, procDone: null, confirm: null }); this.scrollTool(t); }
   setCur(p) { this.setState({ cur: Object.assign({}, this.state.cur, p) }); }
   setProc(p) { this.setState({ proc: Object.assign({}, this.state.proc, p) }); }
@@ -4397,7 +4250,7 @@ class Component extends DCLogic {
       l4Loop: l4Done ? 'You thought “' + trim(l4.t) + '”, felt ' + low(trim(l4.f)) + ', and ' + low(trim(l4.d)) + '. Next time, where could you step in? Question the thought, breathe into the feeling, or choose a different action.' : '',
       l7Note: nChecks ? 'You’ve already done ' + nChecks + (nChecks === 1 ? ' check-in' : ' check-ins') + '. Your blueprints are building. Do another whenever something knocks.' : 'Next time something knocks, use What am I feeling? to name it. Every check-in adds to your blueprint automatically.',
       releaseRows: releaseRows, releaseRowsEct: releaseRowsEct, cgHead: cgHead, cgRows: cgRows,
-      goMega: function () { self.goTab('levels'); }, goBody: function () { self.goTab('body'); }, goGuide: function () { self.goTab('wheel'); }, goTune: function () { self.goTab('tune'); }, goProcess: function () { self.startProcess(null, null); }, goEct: function () { self.goTab('ect'); },
+      goMega: function () { self.goTab('levels'); }, goBody: function () { self.goTab('body'); }, goGuide: function () { self.goTab('wheel'); }, goTune: function () { self.goTab('tune'); }, goProcess: function () { self.startProcess(null, null); }, goEct: function () { self.openEct(); }, ectPageUrl: String(self.props.ectPageUrl || '/ect'),
       tabEct: s.tab === 'ect', eEmos: eEmos, mailHref: mailHref, ectVideo: ectVideo, hasEctVideo: /^https?:\/\//.test(ectVideo), noEctVideo: !/^https?:\/\//.test(ectVideo),
       f: { name: F.name || '', email: F.email || '', phone: F.phone || '', where: F.where || '', now: F.now || '', why: F.why || '', other: F.other || '' }, fset: fset,
       fContact: radio('fContact', ['Email', 'Phone call', 'Text message']), fHowLong: radio('fHowLong', ['A few months', 'A few years', 'Most of my life', 'Not sure']), fWhen: radio('fWhen', ['As soon as possible', 'In the next month', 'In a few months', 'Just exploring']),

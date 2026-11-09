@@ -272,6 +272,17 @@ def patch(f):
         a = "      nowRef: function (el) {"
         assert s.count(a) == 1, (f, 'v11 ref')
         s = s.replace(a, "      mapHowRef: function (el) { if (!el || el.__done || !window.BT_NATIVE || !window.BT_NATIVE.MapHow) return; el.__done = 1; window.BT_NATIVE.MapHow(el); },\n" + a, 1)
+    if 'PD_DL_V12' not in s:
+        # download the new flow chart (not the old circles), plus a list option; next steps start at the top of the page
+        a = "      downloadMap: function () { self.exportMap(); },"
+        assert s.count(a) == 1, (f, 'v12 dl')
+        s = s.replace(a, "      downloadMap: function () { /* PD_DL_V12 */ if (window.BT_NATIVE && window.BT_NATIVE.FlowPic) { window.BT_NATIVE.FlowPic({ progs: PD_PROGS, cats: PD_CATS, noted: s.noted || {} }); return; } self.exportMap(); },", 1)
+        a = 'Download as JPEG</button>\n</div>\n</div>\n</sc-if>'
+        if a in s:
+            s = s.replace(a, 'Download my map</button>\n<button class="ghost" onClick="{{downloadMapList}}">Download as a list</button>\n</div>\n</div>\n</sc-if>', 1)
+        a = "    this.setState({ tab: tab, justAdded: '' });"
+        assert s.count(a) == 1, (f, 'v12 go')
+        s = s.replace(a, a + "\n    setTimeout(function () { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} }, 60);", 1)
     a = '<span class="mm-key-prog">program</span>A program that grew from it</span>'
     if a in s: s = s.replace(a, '<span style="color: #A8231F; font-weight: 700">–</span>A program you picked</span>')
     if s != o: open(p, 'w', encoding='utf-8').write(s); print('patched box steps', f)

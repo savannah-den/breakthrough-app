@@ -2609,7 +2609,8 @@ button.mm-node.prog.more{border-style:dashed;color:#4E0C08;font-weight:600}
 <div class="pd-flow bt-native" ref="{{flowRef}}"></div>
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px">
 <span style="font-size: 12px; color: #6A5A57">Scroll sideways to see all of your roots. Tap a program to mark it as yours.</span>
-<button class="primary lime edge" onClick="{{downloadMap}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download as JPEG</button>
+<button class="primary lime edge" onClick="{{downloadMap}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download my map</button>
+<button class="ghost" onClick="{{downloadMapList}}">Download as a list</button>
 </div>
 </div>
 </sc-if>
@@ -5321,6 +5322,7 @@ class Component extends DCLogic {
     if (tab === 'results') window.__PD_RESN = (window.__PD_RESN || 0) + 1;
     if (tab === 'now') { try { var xx = JSON.parse(window.localStorage.getItem(PD_KEY) || '{}'); if (!xx.stepsDone) { xx.stepsDone = Date.now(); window.localStorage.setItem(PD_KEY, JSON.stringify(xx)); } } catch (e) {} }
     this.setState({ tab: tab, justAdded: '' });
+    setTimeout(function () { try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {} }, 60);
     try {
       if (this.rootEl && PD_IN_APP) this.rootEl.scrollTop = 0;
       else window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5893,7 +5895,7 @@ class Component extends DCLogic {
         self.exportCard('My program map', mapFams.length ? total + (total === 1 ? ' belief, ' : ' beliefs, ') + 'all from ' + mapFams.length + (mapFams.length === 1 ? ' root' : ' roots') : '', blocks, 'my-program-map.jpg', 'Your map is ready');
       },
       closeExport: function () { self.setState({ exportUrl: null }); },
-      downloadMap: function () { self.exportMap(); },
+      downloadMap: function () { /* PD_DL_V12 */ if (window.BT_NATIVE && window.BT_NATIVE.FlowPic) { window.BT_NATIVE.FlowPic({ progs: PD_PROGS, cats: PD_CATS, noted: s.noted || {} }); return; } self.exportMap(); },
       closeModal: function () { self.setState({ mmOpen: null, mdNew: false, mdOld: false }); },
       mapList: mapView === 'list', mapMind: mapView === 'mind', pickListCls: 'pd-pickc' + (mapView === 'list' ? ' on' : ''), pickMapCls: 'pd-pickc' + (mapView === 'mind' ? ' on' : ''),
       viewListCls: mapView === 'list' ? 'seg on' : 'seg', viewListPressed: mapView === 'list' ? 'true' : 'false',

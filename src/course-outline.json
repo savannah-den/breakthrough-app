@@ -496,11 +496,26 @@
           "tip": ""
         },
         {
+          "id": "w2a1",
+          "title": "Activity: Breaking Out of Your Box",
+          "video": "",
+          "vimeo": "",
+          "desc": "Open Breaking Out of Your Box below. Your answers save to your account automatically.",
+          "prompts": [],
+          "res": [
+            "box"
+          ],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": ""
+        },
+        {
           "id": "w2l5",
           "title": "Lesson 5: Programs",
           "video": "https://assets.stanwith.me/live/msc/28154850/y7bph/week25programs.mp4",
           "vimeo": "",
-          "desc": "Open Breaking Out of Your Box (it used to be called the Program Decoder) in the activity after this lesson.",
+          "desc": "When you’re done, I’ll take you back into Breaking Out of Your Box for Step 2: Programs.",
           "prompts": [],
           "res": [
             "box"
@@ -531,21 +546,6 @@
             ]
           ],
           "res": [],
-          "notes": false,
-          "optional": false,
-          "transcript": "",
-          "tip": ""
-        },
-        {
-          "id": "w2a1",
-          "title": "Activity: Breaking Out of Your Box",
-          "video": "",
-          "vimeo": "",
-          "desc": "Open Breaking Out of Your Box below. Your answers save to your account automatically.",
-          "prompts": [],
-          "res": [
-            "box"
-          ],
           "notes": false,
           "optional": false,
           "transcript": "",
@@ -895,6 +895,19 @@
           "res": [
             "blueprint"
           ],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": ""
+        },
+        {
+          "id": "w4l5",
+          "title": "Lesson 5: Emotional Change Technique",
+          "video": "",
+          "vimeo": "",
+          "desc": "ECT (the Emotional Change Technique) releases years of stored anger, sadness, fear, hurt, guilt, shame and grief at the root, so you’re only dealing with the feelings of now. Watch the video, then see what it changed for the people who’ve done it.",
+          "prompts": [],
+          "res": [],
           "notes": false,
           "optional": false,
           "transcript": "",

@@ -37,11 +37,13 @@ def tool_page(s):
         s = s.replace(f'"/{a}/', f'"../{a}/')
     s = s.replace('/tools/assets/', 'assets/').replace('/tools/', '')
     s = s.replace("'/#", "'../app.html#").replace('"/#', '"../app.html#')
+    s = s.replace("'/ect'", "'../ect.html'")
     return s
 
 wr(OUT + '/app.html', root_page(rd('public/index.html')))
 wr(OUT + '/admin.html', root_page(rd('public/admin.html')))
 wr(OUT + '/coach-book.html', root_page(rd('public/coach-book.html')))
+wr(OUT + '/ect.html', root_page(rd('public/ect.html')))
 shutil.copy('public/email-preview.html', OUT + '/email-preview.html')
 for f in ('email-journey.html', 'push-journey.html'):
     shutil.copy('playground-src/' + f, OUT + '/' + f)

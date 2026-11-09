@@ -370,9 +370,11 @@
   "watch": [
    "w1l6",
    "w1l7",
-   "w2s2"
+   "w2s2",
+   "w2a2"
   ],
   "res": [
+   "energy",
    "pause",
    "dose",
    "breathe",
@@ -979,6 +981,7 @@
    "overstimulated"
   ],
   "res": [
+   "energy",
    "pause",
    "dose",
    "vagal"

@@ -62,8 +62,8 @@ weeks = [
      ['Childhood conditioning: what sort of behaviour was or wasn’t modelled to you growing up?', 'Money, confidence, self-worth, love, communication, values, behaviour. What do you catch yourself thinking or doing and wonder why? Likely you picked it up from what was modelled to you.'],
      ['Reflect on the significant people you looked up to or grew up around. What behaviours did they pass to you? What was their upbringing like?', 'This isn’t about blame. They likely did the best they could with the resources they had. Just notice, note it down and leave it be for now.'],
      ['What limiting beliefs have you collected over your life from past “trauma”, negative memories or labels given to you?', 'Go gentle here. You don’t need to go to the depths of anything that doesn’t feel safe. Examples: “I’m not a confident person.” “Travelling isn’t safe.” “I’m socially awkward because I’m autistic.” “I’m ADHD, so I can’t focus.” Each of these is a choice of belief, and there are empowering ones you can hold instead.']]),
-   L('w2l5', 'Lesson 5: Programs', 'y7bph/week25programs.mp4', 'Open Breaking Out of Your Box (it used to be called the Program Decoder) in the activity after this lesson.', prompts=[], res=['box']),
    L('w2a1', 'Activity: Breaking Out of Your Box', '', 'Open Breaking Out of Your Box below. Your answers save to your account automatically.', prompts=[], res=['box']),
+   L('w2l5', 'Lesson 5: Programs', 'y7bph/week25programs.mp4', 'When you’re done, I’ll take you back into Breaking Out of Your Box for Step 2: Programs.', prompts=[], res=['box']),
    L('w2l6', 'Lesson 6: Thoughts + Feelings + Actions = Reality', 'wd6cb/week26thoughtsfeelingsactions.mp4', 'Map this across every area of your life: business or career, relationships, health, wealth, self-care. All of it.', prompts=[
      ['What do you not like about your reality right now? (Make a big list)', 'Example: I hate all the blackheads I have.'],
      ['What am I currently doing (thoughts, feelings, actions) that is contributing to the reality I don’t want?', 'Example: I’m not putting effort into my skincare routine. I’d need to wash my face twice a day.'],
@@ -96,6 +96,7 @@ weeks = [
      ['What do you need to be doing regularly to avoid meltdowns?', '']]),
    L('w4l4', 'Lesson 4: Processing Emotions', '', 'Stop: before you start this, complete the What am I feeling? activity first.', prompts=[]),
    L('w4a3', 'Activity: Emotional Blueprint', '', 'Map your emotional patterns and start rewriting them.', prompts=[], res=['blueprint']),
+   L('w4l5', 'Lesson 5: Emotional Change Technique', '', 'ECT (the Emotional Change Technique) releases years of stored anger, sadness, fear, hurt, guilt, shame and grief at the root, so you’re only dealing with the feelings of now. Watch the video, then see what it changed for the people who’ve done it.', prompts=[]),
  ]},
  {'week': 5, 'title': 'Coming soon', 'res': [], 'lessons': []},
  {'week': 6, 'title': 'Coming soon', 'res': [], 'lessons': []},

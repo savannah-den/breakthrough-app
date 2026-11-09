@@ -158,6 +158,19 @@
     }
   },
   {
+    "id": "energy",
+    "cover": "#DDF0D6",
+    "week": 2,
+    "title": "The Energy Audit",
+    "desc": "Log your day, see what drains and recharges your batteries, and spot your patterns.",
+    "href": "#Energy",
+    "target": "_self",
+    "intro": {
+      "from": "Week 3 · Embodiment: Energy Audit",
+      "text": "In the overstimulation side quest you learned your body and mind batteries drain and recharge in different ways. Here you track your days, so you can see your patterns and plan in the recharges you need."
+    }
+  },
+  {
     "id": "ub",
     "cover": "#F6EFEC",
     "week": 3,
