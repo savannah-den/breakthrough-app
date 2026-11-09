@@ -505,6 +505,7 @@ function BT_ASSET(id) { return '/tools/assets/' + (BT_ASSETS[id] || id); }
 var WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
 var ANY = /\{\{\s*([^}]+?)\s*\}\}/g;
 var SVGNS = 'http://www.w3.org/2000/svg';
+function WKD(n) { n = Number(n); return window.BT_WK ? window.BT_WK(n) : (n >= 1 ? n + 1 : n); }
 function lookup(path, scopes) {
   path = path.trim();
   if (path === 'true') return true; if (path === 'false') return false; if (path === 'null') return null;

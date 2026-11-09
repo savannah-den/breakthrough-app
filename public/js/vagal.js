@@ -1149,7 +1149,7 @@
       return box;
     }
     if (window.BT_COURSE && window.BT_COURSE.weekComplete && window.BT_COURSE.weekComplete(1) && !vw().repsUnlocked) { var du = vw(); du.repsUnlocked = Date.now(); wr(VK, du); }
-    var st = status(k), v = vday(k), wins = kit.winsOn(k), wl = waterLevel(k), wlY = waterLevel(dk(Date.now() - DAY));
+    var st = status(k), v = vday(k), wins = kit.winsOn(k), wl = waterLevel(k), wlY = waterLevel(dk(Date.now() - DAY)), nWins = wins.length;
     var done = { win: wins.length > 0 || !!(v.win || {}).done, dose: st.dose, breathe: st.breathe, pause: st.pause, move: st.move, water: wl > 0 };
     var n = PARTS6.filter(function (x) { return on[x] && done[x]; }).length;
     if ((v.filled && !vs.repsOpen) || (n === total && !vs.repsOpen)) {
@@ -1172,12 +1172,12 @@
         var on = done[q[0]];
         return h('button', { class: 'rp-qi' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', 'data-rp': q[0], onclick: function (e) {
           if (q[0] === 'water') { setV(k, 'water', on ? { level: '', n: 0, ml: null } : { level: 'good', n: 0, ml: null }); }
-          else if (q[0] === 'win') { if (!on) { vs.winOpen = true; redraw(); setTimeout(function () { var wi = document.getElementById('rp-win-in'); if (wi) wi.focus(); }, 60); return; } setV(k, 'win', { done: false }); vs.winOpen = false; }
+          else if (q[0] === 'win') { if (window.BT_COURSE && window.BT_COURSE.goAddProof && document.getElementById('bt-home-proof')) { window.BT_COURSE.goAddProof(); return; } vs.winOpen = true; redraw(); setTimeout(function () { var wi = document.getElementById('rp-win-in'); if (wi) wi.focus(); }, 60); return; }
           else { setV(k, q[0], { done: !on }); if (!on) tickLesson(q[0]); }
           if (!on) kit.sparkleBurst(e.currentTarget);
           var c = !on ? (cheerLine(q[0]) || CHEERS[q[0]]) : '';
           setTimeout(function () { redraw(c, 'all'); }, on ? 0 : 250);
-        } }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]), h('b', { text: q[2] }), h('span', { class: 'rp-tick', 'aria-hidden': 'true', text: on ? '✓' : '' })]);
+        } }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]), h('b', { text: q[0] === 'win' && nWins ? (nWins === 1 ? '1 win today' : nWins + ' wins today') : q[2] }), h('span', { class: 'rp-tick' + (q[0] === 'win' && nWins ? ' num' : ''), 'aria-hidden': 'true', text: q[0] === 'win' && nWins ? '+' : on ? '✓' : '' })]);
       })));
       // "Had a win": opens a little box right here to write it in (it becomes proof in their portfolio)
       if (vs.winOpen || (done.win && !wins.length)) {
@@ -1204,7 +1204,7 @@
     var winIn = h('input', { class: 'bt-in sm', placeholder: 'Today I…', 'aria-label': 'Your win today' });
     var addWin = function () { var t = kit.tx(winIn.value); if (!t) return; var ab = kit.addWin(t); setV(k, 'win', { done: true }); redraw('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.', 'win'); };
     winIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addWin(); });
-    box.appendChild(row('win', '✦', 'Wins: what went well today?', done.win, [wins.length ? h('ul', { class: 'rp-wins' }, wins.map(function (w) { return h('li', { text: '“' + w.text + '”' }); })) : null, h('div', { class: 'rp-inrow' }, [winIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: wins.length ? 'Add another' : 'Add', onclick: addWin })])]));
+    box.appendChild(row('win', '✦', nWins ? 'Wins today: ' + nWins + '. Got another?' : 'Wins: what went well today?', done.win, [wins.length ? h('ul', { class: 'rp-wins' }, wins.map(function (w) { return h('li', { text: '“' + w.text + '”' }); })) : null, h('div', { class: 'rp-inrow' }, [winIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: wins.length ? 'Add another' : 'Add', onclick: addWin })])]));
     // DOSE: bare minimum in one tap, or "I did something different" (pick from the menu or make a new option)
     var dd = doseData(), dts = dd.days[k] || {};
     function tickDose(ids, msg) { var d2 = doseData(), x = d2.days[k] = d2.days[k] || {}, p = { done: true }; ids.forEach(function (id) { x[id] = x[id] || Date.now(); var it = doseItem(id); if (it) it.letters.split('').forEach(function (L) { p[L] = true; }); }); wr(K.dose, d2); set('dose', p, msg); }

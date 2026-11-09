@@ -100,7 +100,6 @@ weeks = [
  {'week': 5, 'title': 'Coming soon', 'res': [], 'lessons': []},
  {'week': 6, 'title': 'Coming soon', 'res': [], 'lessons': []},
  {'week': 7, 'title': 'Coming soon', 'res': ['star'], 'lessons': []},
- {'week': 8, 'title': 'Coming soon', 'res': [], 'lessons': []},
 ]
 open('src/course-outline.json', 'w', encoding='utf-8').write(json.dumps({'weeks': weeks}, ensure_ascii=False, indent=1))
 print('wrote src/course-outline.json:', sum(len(w['lessons']) for w in weeks), 'lessons')

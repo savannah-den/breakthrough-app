@@ -1528,7 +1528,7 @@
   }
 
   function openClient(c) {
-    S.open = c; page(); window.scrollTo(0, 0);
+    S.open = c; S.ctab = 'all'; page(); window.scrollTo(0, 0);
     Promise.all([
       sb.from('client_data').select('*').eq('user_id', c.id),
       sb.from('coach_notes').select('*').eq('client_id', c.id).order('created_at', { ascending: false }),
@@ -1788,6 +1788,18 @@
 
     var all = {}, rowBy = {};
     d.rows.forEach(function (r) { all[r.key] = parse(r.value); rowBy[r.key] = r; });
+    // two views of a client: everything (default) and their Becoming Book, exactly as they see it
+    var ctab = S.ctab === 'book' ? 'book' : 'all';
+    var ctabs = h('div', { class: 'ad-ctabs', role: 'tablist' }, [['all', 'Their details'], ['book', '📖 Their Becoming Book']].map(function (t) {
+      return h('button', { class: 'ad-ctab' + (ctab === t[0] ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': ctab === t[0] ? 'true' : 'false', onclick: function () { S.ctab = t[0]; page(); window.scrollTo(0, 0); } }, [t[1]]);
+    }));
+    if (ctab === 'book') {
+      window.__BT_COACHBOOK = { data: all, opts: { id: c.id, name: (c.full_name || '').split(' ')[0], tier: c.tier, profile: c, course: (S.settings || {}).course || null } };
+      var src = window.BT_DEMO ? 'coach-book.html' : '/coach-book.html';
+      return h('section', { class: 'ad-sec' }, [back, h('div', { class: 'ad-card' }, [head]), ctabs,
+        h('p', { class: 'ad-muted', text: 'Read only. Their reflections, lesson notes, wins, proof, activities and milestones, just like they see it.' }),
+        h('iframe', { class: 'ad-bookframe', src: src + '?c=' + encodeURIComponent(c.id) + '&t=' + Date.now(), title: 'Their Becoming Book' })]);
+    }
     var avail = toolsFor(c);
     var extra = d.rows.filter(function (r) { return !TOOL_BY_KEY[r.key] && !HIDDEN_KEYS[r.key]; }).map(function (r) { return { key: r.key, name: human(r.key), note: 'Other saved answers', color: '#F6EFEC' }; });
 
@@ -1818,7 +1830,7 @@
 
     return h('section', { class: 'ad-sec' }, [back, h('div', { class: 'ad-cols' }, [
       h('div', { class: 'ad-main' }, [
-        h('div', { class: 'ad-card' }, [head]),
+        h('div', { class: 'ad-card' }, [head]), ctabs,
         c.is_admin ? null : tagsCard(c),
         c.is_admin ? null : mapCard(c, all),
         c.is_admin ? null : loopsCard(c),

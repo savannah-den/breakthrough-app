@@ -231,6 +231,7 @@
       if (!q) { chips(); return; }
       if (CRISIS.test(q)) { out.appendChild(h('div', { class: 'bt-find-care' }, [h('b', { text: 'You don’t have to hold this on your own.' }), h('span', { text: 'If you’re in danger right now, call 000. You can talk to someone any time at Lifeline on 13 11 14, or Beyond Blue on 1300 22 4636. Then let Sav know how you’re going.' }), h('a', { class: 'bt-btn lime', href: 'tel:131114', text: 'Call Lifeline 13 11 14' })])); return; }
       try { var pfm = proofForFeeling(q); if (pfm) out.appendChild(pfm); } catch (e) {}
+      try { var bf = boxBeliefsFor([], q); if (bf.length) { var bfe = h('div', { class: 'bt-find-box bt-light' }); boxNowResults(bf, bfe); out.appendChild(bfe); } } catch (e) {}
       var quick = FIND_INTENTS.filter(function (x) { return x.re.test(q); }).slice(0, 2).map(function (x) { var r = x.go(); r.big = true; return r; });
       group('Here you go', quick);
       // feelings + problems: what helps (tools, lessons, a tip)
@@ -497,6 +498,7 @@
     var tw = thisWeek(); if (tw) slot.appendChild(tw);
     try { slot.appendChild(notesBox({ home: true })); } catch (e) {}
     slot.appendChild(proofHome());
+    try { if (boxSaved()) { var bm = boxMapCard('home'); if (bm) slot.appendChild(bm); } } catch (e) {}
     // (the Becoming Book link card was removed from Home: it's in the top nav as My Book)
     if (r) slot.appendChild(r);
   }
@@ -642,8 +644,9 @@
       var d = new Date(start); d.setDate(start.getDate() + i); var k = wallKey(d), n = days[k] || 0, today = i === 13;
       grid.appendChild(h('span', { class: 'bt-sc-d' + (n ? ' on' : '') + (today ? ' today' : ''), role: 'listitem', 'aria-label': d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' }) + (n ? ': ' + n + ' piece' + (n === 1 ? '' : 's') + ' of proof' : today ? ': not yet' : ': none') }, [
         h('span', { class: 'bt-sc-w', 'aria-hidden': 'true', text: d.toLocaleDateString('en-AU', { weekday: 'narrow' }) }),
-        h('span', { class: 'bt-sc-c', 'aria-hidden': 'true', text: n ? '✦' : today ? '+' : String(d.getDate()) })]));
+        h('span', { class: 'bt-sc-c', 'aria-hidden': 'true', text: n ? (n > 1 ? '✦' + n : '✦') : today ? '+' : String(d.getDate()) })]));
     }
+    var nTd = days[wallKey(t0)] || 0;
     var lv = levelOf(st.current), nx = lv.next;
     var pct = nx ? Math.round((st.current - lv.cur[0]) / (nx[0] - lv.cur[0]) * 100) : 100;
     return h('div', { class: 'bt-sc-wrap' }, [
@@ -651,6 +654,7 @@
         h('span', { class: 'bt-lv' }, [h('span', { 'aria-hidden': 'true', text: '✦' }), lv.cur[1]]),
         h('span', { class: 'bt-sc-n' }, [h('b', { text: String(st.current) }), ' day streak' + (st.best > st.current ? ' · best ' + st.best : '')])]),
       grid,
+      h('p', { class: 'bt-sc-today' + (nTd ? ' on' : '') }, nTd ? [h('b', { text: '✦ ' + nTd + (nTd === 1 ? ' win' : ' wins') }), ' today'] : ['No wins yet today']),
       nx ? h('div', { class: 'bt-lv-next' }, [h('div', { class: 'bt-lv-bar', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(pct), 'aria-label': 'Progress to ' + nx[1] }, [h('span', { style: 'width:' + pct + '%' })]),
         h('span', { text: (nx[0] - st.current) + ' more day' + (nx[0] - st.current === 1 ? '' : 's') + ' in a row and you’re a ' + nx[1] + (st.today ? '' : '. Keep it alive today!') })]) : null
     ]);
@@ -735,6 +739,14 @@
   }
   var proofPhoto = '';
   function proofLocked() { return !(prog().done[PROOF_LESSON] || peek()); }
+  var PROOF_IDEAS = [['✦', 'A win', '(I finally sent that email)'], ['★', 'An achievement', '(I finished the course)'], ['♥', 'Something that made you smile', '(the sunset on my walk)'], ['✓', 'Proof you were wrong about yourself', '(a friend asked for my advice)']];
+  function sparkOf(v) { var t = String(v || '').toLowerCase(); if (/achiev|finish|complet|graduat|promot|award|\bwon\b|passed|qualif|bought|saved up|paid off|launched|certif/.test(t)) return 'ach'; if (/smil|joy|laugh|beautiful|grateful|happy|loved it|sunset|sunrise|cuddl|delicious|fun\b/.test(t)) return 'joy'; return 'win'; }
+  // keep "Had a win" in Today's reps showing today's count after adding proof on the same page
+  function refreshWinChip() {
+    var n = evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === dayKey(Date.now()); }).length; if (!n) return;
+    document.querySelectorAll('.rp-qi[data-rp="win"]').forEach(function (b) { b.classList.add('on'); var t = b.querySelector('b'); if (t) t.textContent = n === 1 ? '1 win today' : n + ' wins today'; var k = b.querySelector('.rp-tick'); if (k) { k.textContent = '+'; k.classList.add('num'); } });
+    document.querySelectorAll('.rp-row[data-rp="win"] .rp-q b').forEach(function (t) { t.textContent = 'Wins today: ' + n + '. Got another?'; });
+  }
   function proofHome(full, force, pp) {
     if (!force && proofLocked()) {
       var f = findLesson(PROOF_LESSON), lk = h('section', { class: 'bt-proof simple locked', 'aria-label': 'Proof portfolio, locked' });
@@ -743,7 +755,15 @@
         h('p', { class: 'bt-wins-t', text: 'This opens after ' + (f ? (f.w.week ? 'Week ' + wkN(f.w.week) + ': ' : '') + f.l.title.replace(/^Lesson \d+:\s*/, '“') + '”' : 'the Proof Portfolio lesson') + '. It’ll make so much more sense once you’ve watched it.' })]));
       return lk;
     }
-    var box = h('section', { class: 'bt-proof simple' + (pp ? ' pp' : ''), 'aria-labelledby': 'bt-proof-h' });
+    if (!force && !pp && !rd('bt-hunt-done') && !evidence().length) {
+      var lk2 = h('section', { class: 'bt-proof simple locked', 'aria-label': 'Daily proof, not open yet' });
+      var ic2 = h('span', { class: 'bt-proof-jar bt-ps-ic' }); ic2.innerHTML = proofScaleSvg({ icon: true });
+      lk2.appendChild(h('div', { class: 'bt-proof-in' }, [h('div', { class: 'bt-proof-top' }, [ic2, h('div', { class: 'bt-proof-tt' }, [h('span', { class: 'bt-wins-k', text: '🔒 Your daily proof' }), h('h2', { class: 'bt-wins-h', text: 'Opens after Step 1' })])]),
+        h('p', { class: 'bt-wins-t', text: 'Dig up the proof from your whole life first, in your proof portfolio. Then this opens here, ready for you to add proof every day.' }),
+        h('a', { class: 'bt-btn lime', href: '#Proof', onclick: function () { proofTabState = 'life'; }, text: 'Go to Step 1: Dig it up →' })]));
+      return lk2;
+    }
+    var box = h('section', { class: 'bt-proof simple' + (pp ? ' pp' : ''), id: pp ? null : 'bt-home-proof', 'aria-labelledby': 'bt-proof-h' });
     var glints = h('span', { class: 'bt-glints', 'aria-hidden': 'true' });
     [0, 1, 2].forEach(function (i) { var x = h('span', { class: 'bt-glint g' + i }); x.innerHTML = STAR; glints.appendChild(x); });
     var inner = h('div', { class: 'bt-proof-in' });
@@ -755,26 +775,24 @@
       inner.appendChild(h('div', { class: 'bt-proof-top' }, [jar, h('div', { class: 'bt-proof-tt' }, [
         h('span', { class: 'bt-wins-k', text: 'Train your brain to find the good' }),
         h('h2', { id: 'bt-proof-h', class: 'bt-wins-h', text: 'Add proof to your proof portfolio' })])]));
-      inner.appendChild(h('p', { class: 'bt-wins-t', text: 'One win a day trains your brain to find the good. Tiny counts.' }));
+      inner.appendChild(h('p', { class: 'bt-wins-t', text: 'Add as many as you like, every day. Tiny counts.' }));
+      var nToday = wins.filter(function (e) { var a = evAt(e); return a && dayKey(a) === dayKey(Date.now()); }).length;
+      inner.appendChild(h('span', { class: 'bt-proof-today' + (nToday ? ' on' : '') }, nToday ? [h('b', { text: '✦ ' + nToday }), nToday === 1 ? ' win today. Got another?' : ' wins today. Keep them coming!'] : ['No wins yet today. What went well?']));
       if (pp) { if (st.current) inner.appendChild(h('span', { class: 'bt-proof-streak' }, [h('span', { 'aria-hidden': 'true', text: '🔥 ' }), st.current + ' day streak' + (st.today ? '' : ' · add one today to keep it going')])); }
       else if (full) inner.appendChild(streakCal(st));
       else if (st.current) inner.appendChild(h('span', { class: 'bt-proof-streak' }, [h('span', { 'aria-hidden': 'true', text: '🔥 ' }), st.current + ' day streak' + (st.today ? '' : ' · add one today to keep it going')]));
-      var chips = h('div', { class: 'bt-proof-chips', role: 'radiogroup', 'aria-label': 'What kind is it?' }, ['win', 'ach', 'joy', 'proof'].map(function (k) {
-        return h('button', { class: 'bt-proof-chip' + (proofType === k ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': proofType === k ? 'true' : 'false', onclick: function () { proofType = k; draw(); var i = document.getElementById('bt-win-in'); if (i) i.focus(); } }, [h('span', { 'aria-hidden': 'true', text: SPARK[k][1] }), SPARK[k][0]]);
-      }));
-      inner.appendChild(chips);
-      var ph = { win: 'Today I…', ach: 'I achieved…', joy: 'This made me smile…', proof: 'This happened…' }[proofType];
-      var inp = h('input', { class: 'bt-in', id: 'bt-win-in', placeholder: ph, 'aria-label': SPARK[proofType][0] });
+      // no picking a type: these are just ideas. We sort it for them (win, achievement or joy) from what they wrote.
+      inner.appendChild(h('div', { class: 'bt-proof-ideas' }, [h('span', { class: 'bt-proof-ik', text: 'Anything counts, like:' })].concat(PROOF_IDEAS.map(function (x) { return h('span', { class: 'bt-proof-idea' }, [h('span', { 'aria-hidden': 'true', text: x[0] + ' ' }), h('b', { text: x[1] }), ' ' + x[2]]); }))));
+      var inp = h('input', { class: 'bt-in', id: 'bt-win-in', placeholder: 'Today I…', 'aria-label': 'Add a piece of proof' });
       var add = function () {
         var v = tx(inp.value); if (!v) return;
-        var truths = proofType === 'proof' ? Object.keys(proofSel).filter(function (k) { return proofSel[k]; }) : [];
-        if (proofType === 'proof' && !truths.length) truths = proofSuggest(v, pdData().customProves || []).slice(0, 3);
-        var ab = autoBeliefs(v, proofType, truths);
-        var newE = addEvidence(v, { spark: proofType, beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, photo: proofPhoto || null }); var vPhoto = proofPhoto; proofPhoto = '';
+        var kind = sparkOf(v), truths = proofSuggest(v, pdData().customProves || []).slice(0, 3);
+        var ab = autoBeliefs(v, kind, truths);
+        setTimeout(refreshWinChip, 50); var newE = addEvidence(v, { spark: kind, beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, photo: proofPhoto || null }); var vPhoto = proofPhoto; proofPhoto = '';
         var flipped = matchesMine(newE); aiMatch(newE, function () { if (location.hash === '#Proof') APP.reload(); });
         try { var pf = lessonForRes('proof'); if (pf && lessonOpen(pf.l.id) && !prog().done[pf.l.id]) markDone(pf.l.id, true); } catch (e) {}
         proofSel = {}; proofDraft = ''; sparkleBurst(box);
-        var vText = v, vType = proofType, shareNow = function () { shareProof(vText, vType, (ab.beliefs.length ?  'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : ''), vPhoto); }; if (flipped.length) { flipMoment(flipped, function () { if (location.hash === '#Proof') APP.reload(); setTimeout(shareNow, 300); }); } else if (!cheerProof(shareNow)) setTimeout(shareNow, 500); else if (0) APP.toast(ab.beliefs.length ? 'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : 'Added to your proof portfolio. Look at you!');
+        var vText = v, vType = kind, shareNow = function () { shareProof(vText, vType, (ab.beliefs.length ?  'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : ''), vPhoto); }; if (flipped.length) { flipMoment(flipped, function () { if (location.hash === '#Proof') APP.reload(); setTimeout(shareNow, 300); }); } else if (!cheerProof(shareNow)) setTimeout(shareNow, 500); else if (0) APP.toast(ab.beliefs.length ? 'Proof against ' + ab.beliefs.length + ' old belief' + (ab.beliefs.length === 1 ? '' : 's') + '. Look at you!' : 'Added to your proof portfolio. Look at you!');
         setTimeout(function () { draw(); pdChanged(); }, 650);
       };
       inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') add(); });
@@ -834,7 +852,7 @@
      Every piece of proof is checked against her old beliefs. When it disproves one, the belief gets crossed out
      and the new truth written over it. The search (magnifying glass) brings that proof back when she feels it. */
   var EXTRA_BELIEFS = ["I'm not smart", "I'm not worthy", "I'm not good enough", "I'm not enough", "I'm not capable", "I'm a failure"];
-  var FEEL_PID = [[/(dumb|stupid|idiot|not smart|thick|clueless|slow learner)/, 'smart', 'dumb'], [/(not good enough|useless|rubbish|hopeless|crap at|suck at|not good at)/, 'notgood', 'not good enough'],
+  var FEEL_PID = [[/(do(n'?t| not) (really )?like me|nobody likes me|no ?one likes me|people hate me|they hate me|everyone hates me)/, 'realme', 'like people don’t like you'], [/(dumb|stupid|idiot|not smart|thick|clueless|slow learner)/, 'smart', 'dumb'], [/(not good enough|useless|rubbish|hopeless|crap at|suck at|not good at)/, 'notgood', 'not good enough'],
     [/(worthless|not worthy|unworthy|don'?t deserve)/, 'worth', 'not worthy'], [/(failure|failed|fail at|messed up|stuffed up|screwed up)/, 'messup', 'like a failure'], [/(lazy|unmotivated|can'?t get started)/, 'lazy', 'lazy'],
     [/(too much|annoying|too loud|too intense)/, 'toomuch', 'too much'], [/(don'?t belong|left out|don'?t fit|outsider)/, 'dontbelong', 'like you don’t belong'], [/(not enough|behind everyone|behind)/, 'notenough', 'not enough'],
     [/(incapable|can'?t do (it|anything)|not capable)/, 'capable', 'not capable'], [/(can'?t trust myself|bad decision)/, 'canttrust', 'like you can’t trust yourself'], [/(unlovable|hard to love|nobody loves)/, 'love', 'unlovable']];
@@ -870,7 +888,7 @@
     var x2 = pidForText(e.text); if (x2) p[x2] = 1;
     return p;
   }
-  function isFor(e, b) { if ((e.notFor || []).indexOf(b) >= 0) return false; var pid = pidForText(b); return (e.mine || []).indexOf(b) >= 0 || !!(pid && evPids(e)[pid]); }
+  function isFor(e, b) { if ((e.notFor || []).indexOf(b) >= 0) return false; var pid = pidForText(b); return (e.mine || []).indexOf(b) >= 0 || !!(pid && evPids(e)[pid]) || !!(e.f5 && f5For(b) === e.f5); }
   function proofFor(b) { return evidence().filter(function (e) { return isFor(e, b); }); }
   // tell Breaking Out of Your Box (and any open portfolio page) that the proof changed
   function pdChanged() { try { window.dispatchEvent(new Event('bt-pd-changed')); } catch (e) {} }
@@ -900,6 +918,7 @@
       h('span', { class: 'bt-wel-k', text: 'Your proof just tipped the scales' }),
       h('div', { class: 'bt-flipm-l' }, list.slice(0, 3).map(function (b, i) { var f = flipEl(b, true); f.style.animationDelay = (i * 0.35) + 's'; return f; })),
       h('p', { class: 'bt-sub', text: 'Every piece of proof is a vote for the new truth. Your brain is keeping count.' }),
+      h('p', { class: 'hand bt-dis-tag', text: BOX_TAGS[Math.floor(Math.random() * BOX_TAGS.length)] }),
       h('button', { class: 'bt-btn lime', type: 'button', text: 'Hell yes', onclick: close })])]);
     document.body.appendChild(m);
   }
@@ -919,36 +938,423 @@
       '<g class="pw-peb"><circle cx="95" cy="54" r="4" class="s" fill="#F1F9A6"/><circle cx="104" cy="54" r="4" class="s" fill="#F4C2F7"/><circle cx="100" cy="47" r="4" class="s" fill="#E8338A"/></g><text class="t" x="90" y="76" style="font-size:9px">proof</text></g><circle cx="60" cy="40" r="3" fill="#4E0C08"/></svg>'
   };
   function whyRow(art, p) { var a = h('span', { class: 'bt-pw-art' }); a.innerHTML = WHY_ART[art]; return h('div', { class: 'bt-pw' }, [a, p]); }
+  /* ---------------- Your lifetime of proof (top of the proof portfolio) ----------------
+     A page of "Have you ever…?" sentence starters for each of the Fierce 5 (plus hard seasons).
+     Ticking one counts as proof straight away; finishing the sentence adds as many pieces as they like.
+     Everything is saved as proof tagged to that Fierce 5 root (e.f5), so when they tick their beliefs
+     in Breaking Out of Your Box, the proof against them is already waiting. */
+  var HUNT_PAGES = [
+    { k: 'good', dump: ['Anything else that proves I’m good enough', ['Awards', 'Qualifications', 'Achievements', 'Compliments', 'Great feedback', 'Things I’ve made', 'Skills I’m proud of', 'Goals I’ve hit', 'Times I nailed it']], truth: 'I am good enough', title: 'You are good enough. Let me prove it to you.', art: '★', items: [
+      ['g1', 'Someone noticed I did something really well', 'when', ['a friend said my spag bol is the best they’ve had', 'my manager said my work was spot on', 'I won an award or got promoted']],
+      ['g2', 'I learned something that didn’t come easily', ':', ['how to change a tyre', 'passing my driving test', 'finishing a qualification while juggling everything else']],
+      ['g3', 'I finished something I started', ':', ['a whole book', 'an online course', 'a degree, a renovation or a business plan']],
+      ['g5', 'People come to me for help with', ':', ['setting up their phone', 'fixing their CV or anything at work', 'the big life stuff, because they trust how I think']],
+      ['g8', 'I was chosen', 'when', ['I got picked for a team at school', 'I got the job over lots of other people', 'I was asked to be in a wedding party or to be a godparent']],
+      ['g10', 'I did something for the very first time', ':', ['tried a new food', 'spoke in front of a group', 'moved cities or countries']]
+    ] },
+    { k: 'worthy', dump: ['Anything else that proves I’m worthy', ['Times I put myself first', 'Boundaries I kept', 'Kind words about me', 'Things I let myself have', 'Times I backed myself', 'Times I was valued']], truth: 'I am worthy', title: 'You are worthy. Let me prove it to you.', art: '♛', items: [
+      ['w1', 'I rested without earning it first', 'when', ['I had a nap on a Sunday', 'I took a sick day without guilt', 'I took a whole holiday']],
+      ['w2', 'Someone celebrated me just for being me', 'when', ['I got a birthday message out of the blue', 'friends threw me a surprise', 'someone told me the world is better with me in it']],
+      ['w3', 'I said no and the world didn’t end', 'when', ['I skipped an event I didn’t want to go to', 'I turned down extra work', 'I ended something that wasn’t right for me']],
+      ['w4', 'I asked for what I needed', 'when', ['I asked for a glass of water', 'I asked for adjustments at work', 'I asked for a pay rise']],
+      ['w5', 'I took up space', 'when', ['I picked the restaurant', 'I spoke up in a meeting', 'I started my own thing']],
+      ['w9', 'A compliment stayed with me', ':', ['“you’ve got the best laugh”', '“you made my day”', '“you changed my life”']]
+    ] },
+    { k: 'loved', dump: ['Anything else that proves I’m loved', ['People in my corner', 'Kind messages', 'Friendships that lasted', 'Family moments', 'Pets who adore me', 'Hugs that mattered']], truth: 'I am loved', title: 'You are loved. Let me prove it to you.', art: '♥', items: [
+      ['l1', 'Someone showed up for me', 'when', ['a friend dropped off snacks', 'someone drove me to an appointment', 'people came running when I needed them most']],
+      ['l2', 'Someone remembered something small about me', ':', ['my coffee order', 'my favourite song', 'the date that’s hard for me every year']],
+      ['l4', 'I let someone see the real me and they stayed', 'when', ['I shared a weird interest', 'I told a friend I was struggling', 'I told someone something I’d never said out loud']],
+      ['l6', 'Someone lit up when they saw me', 'when', ['my dog lost their mind at the door', 'a little one ran to me', 'someone said I feel like home']],
+      ['l7', 'I was loved at my messiest', 'when', ['someone saw my messy house and didn’t care', 'someone sat with me while I cried', 'someone loved me through my lowest point']],
+      ['l9', 'Someone told me they were proud of me', 'when', ['a teacher wrote it on my report', 'a parent or a friend said it out loud', 'someone wrote me a letter about it']]
+    ] },
+    { k: 'safe', dump: ['Anything else that proves I’m safe', ['People I trust', 'Places I feel calm', 'Times I trusted myself', 'Scary things I did anyway', 'Times I was looked after']], truth: 'I am safe', title: 'You are safe. Let me prove it to you.', art: '⌂', items: [
+      ['s1', 'I spoke up and it was okay', 'when', ['I sent food back at a café', 'I said “that doesn’t work for me”', 'I told someone the truth about how I felt']],
+      ['s2', 'I trusted someone and they came through', 'when', ['a friend kept a secret', 'a colleague had my back', 'someone kept their promise for years']],
+      ['s3', 'I kept myself safe', 'when', ['I left a party early because it felt off', 'I built a savings buffer', 'I left a place that wasn’t safe for me']],
+      ['s5', 'I trusted myself and I was right', 'when', ['I took a different way home and missed the traffic', 'I said no to a job that felt off', 'I made a big call people doubted and it worked out']],
+      ['s6', 'I got through something I was scared of', ':', ['a phone call I’d been avoiding', 'a flight, an operation or an interview', 'a huge life change']],
+      ['s10', 'I felt my feelings and came out the other side', 'when', ['I had a good cry and felt lighter', 'I let myself be angry and it passed', 'I grieved and I’m still here']]
+    ] },
+    { k: 'capable', dump: ['Anything else that proves I’m capable', ['Problems I solved', 'Things I taught myself', 'Hard things I did', 'Money wins', 'People I cared for', 'Comebacks']], truth: 'I am capable', title: 'You are capable. Let me prove it to you.', art: '⚡', items: [
+      ['c1', 'I kept going on a day I wanted to quit', 'when', ['I finished my shift after no sleep', 'I got the kids to school on a hard morning', 'I finished something huge when I wanted to give up']],
+      ['c2', 'I figured it out on my own', 'when', ['I set up the new phone', 'I fixed something at home with a YouTube video', 'I worked out a whole new career or business']],
+      ['c4', 'I handled money', 'when', ['I paid a bill on time', 'I saved up for something I wanted', 'I paid off a debt or bought a car or a home']],
+      ['c5', 'I looked after someone', 'when', ['I fed a friend’s cat', 'I nursed someone through being sick', 'I raised a little human or cared for a family member']],
+      ['c9', 'I got back up after a setback', 'when', ['I didn’t get the job and applied again', 'a plan fell through and I made a new one', 'I rebuilt after everything fell apart']],
+      ['c10', 'I did something people said I couldn’t', 'when', ['I proved a teacher wrong', 'I got the qualification anyway', 'I built the life they said wasn’t possible']]
+    ] },
+    { k: 'hard', dump: ['Anything else I got through', ['Hard years', 'Big changes', 'Losses', 'Times I started again', 'Times I asked for help'], 'capable'], truth: 'I got through it', title: 'You got through every hard day so far. Let me prove it to you.', art: '☾', soft: true, items: [
+      ['h1', 'I got through a season I didn’t think I would', ':', ['a rough first year at a new school', 'a breakup that flattened me', 'a year I’d rather forget, and I’m still here'], 'capable'],
+      ['h2', 'I kept going while I was grieving', ':', ['I still fed the dog', 'I went back to work', 'I learned to live with a loss that changed everything'], 'capable'],
+      ['h3', 'I started again after things fell apart', 'when', ['I found a new routine', 'I moved and started fresh', 'I rebuilt my life from the ground up'], 'capable'],
+      ['h4', 'I reached out in a hard time', 'when', ['I texted a friend “can you call?”', 'I told someone the truth about how I was', 'I got professional support'], 'safe'],
+      ['h5', 'I protected myself when I needed to', ':', ['I muted someone', 'I set a boundary and kept it', 'I left'], 'safe'],
+      ['h7', 'I found a reason to smile in a hard time', 'when', ['a song came on at the right moment', 'a friend made me laugh', 'I found joy again after a long time without it'], 'loved']
+    ] }
+  ];
+  var HUNT_CHEERS = {
+    1: ['Your first piece of lifetime proof!', 'It was always there. Now your brain can see it too.'],
+    5: ['5 pieces of proof!', 'Look at that. You’ve been showing up for a long time.'],
+    10: ['10 pieces of proof!', 'Ten pieces of proof your old stories never told you about.'],
+    25: ['25 pieces of proof!', 'This is who you’ve always been. You just hadn’t written it down yet.'],
+    50: ['50 pieces of proof!', 'Fifty. Your old beliefs don’t stand a chance.'],
+    100: ['100 pieces of proof!', 'A hundred times you were enough, worthy, loved, safe and capable. Read this back on the hard days.']
+  };
+  var HUNT_JOGGERS = [
+    ['📸', 'Scroll your camera roll back 1, 5 and 10 years. What were you doing? Who were you with?'],
+    ['💌', 'Dig out old birthday cards, school reports, certificates or your CV.'],
+    ['💬', 'Search your messages for “thank you”, “proud of you” or “love you”.'],
+    ['🗺️', 'Think of every home, school and job you’ve had. What did you get through in each one?']
+  ];
+  var HUNT_ASK = 'Random question, but I’m doing an exercise about remembering my wins: what’s something you’ve seen me do or get through that you think I should be proud of? 💛';
+  function f5Truth(k) { var r = F5_ROOTS.filter(function (x) { return x[0] === k; })[0]; return r ? r[1] : ''; }
+  function huntRoot(page, it) { return it[4] || page.k; }
+  function huntItems() { return evidence().filter(function (e) { return e.hunt; }); }
+  var HUNT_STAR = function (n) { var s = [10, 14, 20][n]; return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.1 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>'; };
+  // the lolly jar: every piece they found pours in, one symbol per page, then a button straight back to the course
+  function huntCelebrate() {
+    var all = huntItems(), n = all.length, artOf = {}, counts = [];
+    HUNT_PAGES.forEach(function (p) { var c = 0; p.items.forEach(function (it) { artOf[it[0]] = p.art; }); artOf[p.k + '-all'] = p.art; all.forEach(function (e) { if (artOf[e.hunt] === p.art && (p.items.some(function (it) { return it[0] === e.hunt; }) || e.hunt === p.k + '-all')) c++; }); if (c) counts.push([p.art, p.truth, c]); });
+    var syms = all.map(function (e) { return artOf[e.hunt] || '★'; });
+    for (var i = syms.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = syms[i]; syms[i] = syms[j]; syms[j] = t; }
+    var shown = syms.slice(0, 63), pile = h('div', { class: 'bt-hj-pile', 'aria-hidden': 'true' });
+    shown.forEach(function (sy, i) {
+      var r = Math.floor(i / 7), c = i % 7, x = 14 + c * 18 + (r % 2 ? 8 : 0) + (Math.random() * 4 - 2), y = 14 + r * 18;
+      pile.appendChild(h('span', { class: 'bt-hj-s', style: 'left:' + x + 'px;bottom:' + y + 'px;--d:' + (0.35 + i * 0.07).toFixed(2) + 's;--r:' + Math.round(Math.random() * 60 - 30) + 'deg', text: sy }));
+    });
+    var jarArt = h('span', { class: 'bt-hj-glass', 'aria-hidden': 'true' });
+    jarArt.innerHTML = '<svg viewBox="0 0 200 240"><path class="lid" d="M58 8h84v26H58z"/><path class="glass" d="M62 34c-24 14-40 32-40 62v108c0 18 14 30 34 30h88c20 0 34-12 34-30V96c0-30-16-48-40-62z"/><path class="shine" d="M44 104v70"/></svg>';
+    var nx = null; try { nx = findLesson('w2l4') || upNext(); } catch (e) {}
+    var close = function () { m.remove(); var b = document.querySelector('.bt-hunt'); if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    var m = h('div', { class: 'bt-flipm bt-hj', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Look at all of that' }, [h('div', { class: 'bt-flipm-c bt-hj-c' }, [
+      h('span', { class: 'bt-wel-k', text: n ? 'Look at all of that' : 'Your jar is ready' }),
+      h('div', { class: 'bt-hj-jar' }, [pile, jarArt]),
+      h('h2', { class: 'bt-hj-h' }, n ? [h('b', { text: String(n) }), n === 1 ? ' piece of proof from your whole life' : ' pieces of proof from your whole life'] : ['Come back any time a memory pops up']),
+      syms.length > shown.length ? h('p', { class: 'bt-sub', text: '(The jar’s overflowing. Only ' + shown.length + ' fit in the picture.)' }) : null,
+      counts.length ? h('div', { class: 'bt-hj-counts' }, counts.map(function (c) { return h('span', { class: 'bt-hj-cnt' }, [h('span', { 'aria-hidden': 'true', text: c[0] + ' ' }), c[1] + ' · ', h('b', { text: String(c[2]) })]); })) : null,
+      h('p', { class: 'bt-sub', text: 'This is who you’ve always been. It’s all saved in your proof portfolio, ready for the days your brain forgets. Add more any time.' }),
+      h('button', { class: 'bt-btn lime', type: 'button', text: 'Next: how to add proof every day →', onclick: function () { m.remove(); collectTour(nx); } }),
+      null])]);
+    document.body.appendChild(m);
+  }
+  // Step 2 tour: how the Collect page works, then where it lives on Home as a daily rep
+  function collectTour(nx) {
+    var toMine = function () { proofTabState = 'mine'; };
+    runTour([
+      { route: '#Proof', before: toMine, sel: '.bt-pp-pane:not([hidden]) .bt-proof', title: 'Step 2: Collect', text: 'You’ve dug up your past. Now we keep it going. This is where you add proof as you go through life: something that went well today, something you found joy in, something you achieved.' },
+      { route: '#Proof', before: toMine, sel: '#pp-cal', title: 'Your proof calendar', text: 'Every day you add proof lights up here. Add a few in one day and it counts them all.' },
+      { route: '#Proof', before: toMine, sel: '#pp-find', title: 'Your proof, on tap', text: 'On the days your brain tells you you’re not good enough, worthy, loved, safe or capable, come here. Tap “Open this when…” or type how you feel, and your proof comes up.' },
+      { route: '#Proof', before: toMine, sel: '#pp-feed', title: 'Everything you’ve collected', text: 'All of it, in one place. Including everything you just dug up from your whole life.' },
+      { route: '#Dashboard', pick: function () { var el = document.getElementById('bt-home-proof') || document.querySelector('.bt-proof'); if (el) setTimeout(function () { el.scrollIntoView({ block: 'center' }); }, 600); return el; }, title: 'It lives on your Home page now', text: 'This is a daily rep. Come in every day and add something that went well, something you found joy in, or something you achieved. Even if it’s as small as “I didn’t snooze my alarm” or “I saw a cute dog”. Small still counts. My overachievers, you’re about to learn just how much you achieve every single day. Come in at least once a day, but more is always better. It will always live right here on your Home page.' },
+      { route: '#Dashboard', title: 'Back to the course', text: nx ? 'Next up: ' + nx.l.title + '.' : 'On to the next one.', last: true, cta: nx ? 'Watch ' + nx.l.title + ' →' : 'Back to the course →' }
+    ], { kicker: 'Your proof portfolio', label: 'Step 2: Collect', noSkip: false, last: function () { goHref(nx ? (isActivityCard(nx.l) ? lessonHref(nx.l) : '#Lesson-' + nx.l.id) : '#Course'); } });
+  }
+  function proofHunt() {
+    var done = !!rd('bt-hunt-done'), tab = rd('bt-hunt-tab') || 'good', drafts = {};
+    var box = h('details', { class: 'bt-card2 bt-hunt', open: done ? null : 'open' });
+    var sum = h('summary'), body = h('div', { class: 'bt-hunt-b' });
+    box.appendChild(sum); box.appendChild(body);
+    function save(fn) { var d = pdData(); d.evidence = d.evidence || []; fn(d); wr(PD, d); }
+    function cheer(before) {
+      var n = huntItems().length, m = rd(MEMK) || {}, cel = m.cel || {};
+      Object.keys(HUNT_CHEERS).forEach(function (k) { k = +k; if (before < k && n >= k && !cel['hunt' + k]) { cel['hunt' + k] = 1; m.cel = cel; wr(MEMK, m); var c = HUNT_CHEERS[k]; setTimeout(function () { party(c[0], c[1], 'Hell yes'); }, 500); } });
+    }
+    function jar(n) {
+      var stars = '', pts = [[30, 92], [48, 96], [66, 92], [38, 80], [58, 82], [28, 68], [48, 70], [68, 66], [36, 56], [58, 56], [46, 44], [30, 44], [66, 44]];
+      for (var i = 0; i < Math.min(n, pts.length); i++) stars += '<text x="' + pts[i][0] + '" y="' + pts[i][1] + '" class="st" style="animation-delay:' + (i * 0.23).toFixed(2) + 's">★</text>';
+      var el = h('span', { class: 'bt-hunt-jar', 'aria-hidden': 'true' });
+      el.innerHTML = '<svg viewBox="0 0 96 112"><path class="lid" d="M28 10h40v12H28z"/><path class="glass" d="M30 22c-10 6-16 14-16 28v40c0 10 8 16 18 16h32c10 0 18-6 18-16V50c0-14-6-22-16-28z"/>' + stars + '<path class="shine" d="M24 52v30"/></svg>';
+      return el;
+    }
+    function pageCount(p, all) { return all.filter(function (e) { return p.items.some(function (it) { return it[0] === e.hunt; }); }).length; }
+    function drawSum() {
+      var n = huntItems().length;
+      sum.innerHTML = '';
+      sum.appendChild(jar(n));
+      sum.appendChild(h('span', { class: 'bt-hunt-st' }, [h('span', { class: 'bt-wins-k', text: 'Your lifetime of proof' }), h('b', { class: 'bt-hunt-tag', text: 'The proof was always there. Let’s go find it.' }),
+        h('span', { class: 'bt-hunt-n' }, n ? [h('b', { text: String(n) }), n === 1 ? ' piece found so far' : ' pieces found so far'] : ['A brain dump game. Tiny counts.'])]));
+    }
+    function addFor(page, it, text, photo) {
+      var before = huntItems().length, root = huntRoot(page, it), bel = f5Truth(root);
+      if (!before) { var wy = document.querySelector('.bt-pp-why'); if (wy) wy.open = false; }
+      addEvidence(text, { spark: 'proof', hunt: it[0], f5: root, mine: bel ? [bel] : [], photo: photo || null, proves: [page.truth] });
+      pdChanged(); cheer(before);
+    }
+    function lead(it) { return it[1] + (it[2] === ':' ? ':' : ' ' + it[2] + '…'); }
+    function go(k) { tab = k; wr('bt-hunt-tab', tab); drawBody(); box.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    function drawBody() {
+      body.innerHTML = '';
+      var all = huntItems(), page = HUNT_PAGES.filter(function (p) { return p.k === tab; })[0] || HUNT_PAGES[0], pi = HUNT_PAGES.indexOf(page);
+      body.appendChild(h('div', { class: 'bt-hunt-how' }, [h('b', { text: 'It’s a brain dump. Add as many as you can remember.' }),
+        h('p', { text: 'Your brain kept the receipts for every time it went wrong. You just misplaced the ones that prove it went right. So let’s go collect them. Finish each sentence as many times as you like. Tiny counts just as much as huge.' })]));
+      // the levels: one page for each of the Fierce 5, plus hard seasons
+      body.appendChild(h('div', { class: 'bt-hunt-lv', role: 'tablist', 'aria-label': 'Pages' }, HUNT_PAGES.map(function (p, i) {
+        var c = pageCount(p, all), on = p.k === page.k;
+        return h('button', { class: 'bt-hunt-dot' + (on ? ' on' : '') + (c ? ' got' : '') + (p.soft ? ' soft' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', 'aria-label': 'Page ' + (i + 1) + ': ' + p.truth + (c ? ', ' + c + ' found' : ''), title: p.truth, onclick: function () { go(p.k); } },
+          [h('span', { class: 'bt-hunt-di', 'aria-hidden': 'true', text: p.art }), c ? h('span', { class: 'bt-hunt-dc', text: String(c) }) : null]);
+      })));
+      var pc = pageCount(page, all);
+      var pg = h('section', { class: 'bt-hunt-pg' + (page.soft ? ' soft' : ''), role: 'tabpanel' });
+      pg.appendChild(h('span', { class: 'bt-hunt-pk', text: 'Page ' + (pi + 1) + ' of ' + HUNT_PAGES.length + (pc ? ' · ' + pc + ' found' : '') }));
+      pg.appendChild(h('h3', { class: 'bt-hunt-h', text: page.title }));
+      if (page.soft) pg.appendChild(h('p', { class: 'bt-hunt-soft', text: 'Only if and when you want to. You never need to say what happened. Just that you got through it, because you did. If anything here feels heavy, skip it and come back another day, or bring it to a call with Sav.' }));
+      var dumpIt = page.dump ? [page.k + '-all', page.dump[0], ':', null, page.dump[2]] : null;
+      page.items.concat(dumpIt ? [dumpIt] : []).forEach(function (it) {
+        var isDump = it === dumpIt;
+        var mine = all.filter(function (e) { return e.hunt === it[0]; }).sort(function (a, b) { return Number(a.id) - Number(b.id); });
+        var q = h('div', { class: 'bt-hunt-q' + (mine.length ? ' on' : '') + (isDump ? ' dump' : ''), 'data-k': it[0] });
+        if (isDump) q.appendChild(h('span', { class: 'bt-hunt-dk', text: 'Free for all · go rogue' }));
+        q.appendChild(h('p', { class: 'bt-hunt-s', text: lead(it) }));
+        if (isDump) {
+          q.appendChild(h('p', { class: 'bt-hunt-exk', text: 'Ideas to get you going' }));
+          q.appendChild(h('div', { class: 'bt-hunt-cats' }, page.dump[1].map(function (c) { return h('span', { class: 'bt-hunt-cat', text: c }); })));
+        } else {
+          q.appendChild(h('p', { class: 'bt-hunt-exk', text: 'Examples' }));
+          var ex = h('ul', { class: 'bt-hunt-ex', 'aria-label': 'Examples, tiny to huge' });
+          it[3].forEach(function (x, i) { var li = h('li', { class: 'z' + i }); var st = h('span', { class: 'bt-hunt-star' }); st.innerHTML = HUNT_STAR(i); li.appendChild(st); li.appendChild(h('span', { class: 'sz', text: ['tiny', 'bigger', 'huge'][i] })); li.appendChild(h('span', { text: x })); ex.appendChild(li); });
+          q.appendChild(ex);
+        }
+        // what they've added, then the brain-dump lines
+        if (mine.length) q.appendChild(h('ul', { class: 'bt-hunt-list' }, mine.map(function (e) {
+          return h('li', null, [h('span', { class: 'bt-hunt-li', 'aria-hidden': 'true', text: page.art }), e.photo ? h('img', { src: e.photo, alt: '' }) : null, h('span', { class: 'bt-hunt-lt', text: e.text.indexOf(it[1]) === 0 ? e.text.slice(it[1].length).replace(/^\s*(when|:)?\s*/, '') || e.text : e.text }),
+            h('button', { class: 'bt-hunt-x', type: 'button', 'aria-label': 'Remove this one', text: '✕', onclick: function () { save(function (d) { d.evidence = d.evidence.filter(function (x) { return String(x.id) !== String(e.id); }); }); pdChanged(); drawSum(); drawBody(); } })]);
+        })));
+        var dr = drafts[it[0]] || (drafts[it[0]] = [{ t: '', p: '' }, { t: '', p: '' }]);
+        var rows = h('div', { class: 'bt-hunt-rows' });
+        dr.forEach(function (r, ri) {
+          var act = true;
+          var inp = h('input', { class: 'bt-in bt-hunt-in' + (ri ? ' more' : ''), type: 'text', value: r.t, placeholder: ri ? 'Add another…' : !mine.length && !isDump ? 'e.g. ' + it[3][1] : 'Type it here…', 'aria-label': lead(it) + (ri ? ' (add another)' : '') });
+          inp.addEventListener('input', function () { r.t = inp.value; });
+          var addIt = function (ev) {
+            var v = tx(r.t); if (!v && !r.p) { inp.focus(); return; }
+            var txt = isDump ? (v || 'A photo of proof') : v ? it[1] + (it[2] === ':' ? ': ' : ' ' + it[2] + ' ') + v : it[1] + ' (photo)';
+            var first = !mine.length;
+            addFor(page, it, txt, r.p); dr.splice(ri, 1); dr.push({ t: '', p: '' });
+            try { sparkleBurst(ev && ev.currentTarget ? ev.currentTarget : q); } catch (x) {}
+            drawSum(); drawBody();
+            var nq = body.querySelector('.bt-hunt-q[data-k="' + it[0] + '"] .bt-hunt-in'); if (nq) nq.focus();
+            
+          };
+          inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addIt(); } });
+          var fid = 'bt-hunt-ph-' + it[0] + '-' + ri, fin = h('input', { type: 'file', accept: 'image/*', class: 'bt-file', id: fid, onchange: function (e) { var f = e.target.files && e.target.files[0]; if (!f) return; resizeImage(f, 900).then(function (u) { r.p = u; drawBody(); }, function () { APP.toast('Couldn’t read that photo. Try another one.'); }); } });
+          var ph = r.p ? h('span', { class: 'bt-dis-ph has' }, [h('img', { src: r.p, alt: 'Your photo' }), h('button', { type: 'button', 'aria-label': 'Remove photo', text: '✕', onclick: function () { r.p = ''; drawBody(); } })])
+            : h('label', { class: 'bt-dis-ph', for: fid, title: 'Add a photo' }, [h('span', { 'aria-hidden': 'true', text: '📷' }), h('span', { class: 'bt-vh', text: 'Add a photo' }), fin]);
+          rows.appendChild(h('div', { class: 'bt-hunt-r' }, [inp, ph, h('button', { class: 'bt-btn lime sm bt-hunt-addb', type: 'button', text: 'Add', onclick: addIt })]));
+        });
+        q.appendChild(rows);
+        pg.appendChild(q);
+      });
+      // stuck? memory joggers + a message to send someone who loves them
+      var cp = h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Copy the message', onclick: function (e) { var b = e.currentTarget; (navigator.clipboard ? navigator.clipboard.writeText(HUNT_ASK) : Promise.reject()).then(function () { b.textContent = 'Copied ✓'; }, function () {}); } });
+      pg.appendChild(h('details', { class: 'bt-hunt-jog' }, [h('summary', { text: 'Stuck? Memory joggers' }),
+        h('ul', null, HUNT_JOGGERS.map(function (j) { return h('li', null, [h('span', { 'aria-hidden': 'true', text: j[0] + ' ' }), j[1]]); })),
+        h('div', { class: 'bt-hunt-askw' }, [h('b', { text: 'Ask someone who loves you' }), h('p', { class: 'bt-hunt-ask', text: HUNT_ASK }), cp])]));
+      var nxt = HUNT_PAGES[pi + 1], prv = HUNT_PAGES[pi - 1];
+      pg.appendChild(h('div', { class: 'bt-row bt-hunt-nav' }, [
+        prv ? h('button', { class: 'bt-btn ghost', type: 'button', text: '← Back', onclick: function () { go(prv.k); } }) : null,
+        nxt ? h('button', { class: 'bt-btn lime', type: 'button', text: 'Next page: ' + nxt.truth + ' →', onclick: function () { go(nxt.k); } })
+          : h('button', { class: 'bt-btn lime', type: 'button', text: 'I’m done for now ✓', onclick: function () {
+            wr('bt-hunt-done', 1); huntCelebrate();
+          } })]));
+      body.appendChild(pg);
+    }
+    drawSum(); drawBody();
+    var onCh = function () { if (!document.body.contains(box)) { window.removeEventListener('bt-pd-changed', onCh); return; } drawSum(); };
+    window.addEventListener('bt-pd-changed', onCh);
+    return box;
+  }
+  var proofTabState = null;
+  var PP_HAND = '<filter id="ppw" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>';
+  var PP_STEPS = [
+    ['life', 'Dig it up', 'Dig up the proof from your whole life,', '<svg viewBox="0 0 150 110">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 62h80v36H20z" fill="#F4C2F7"/><path d="M20 62l12-14h80l-12 14" fill="#FBE6FC"/><path d="M100 62l12-14v36l-12 14"/><rect x="34" y="40" width="22" height="26" rx="2" fill="#FFFFFF" transform="rotate(-10 45 53)"/><rect x="58" y="36" width="22" height="26" rx="2" fill="#FFFFFF" transform="rotate(8 69 49)"/><path d="M40 50h10M62 46h10" stroke-width="1.4"/><g class="pp-mag"><circle cx="110" cy="34" r="15" fill="#FFFFFF" fill-opacity=".7"/><path d="M121 45l14 14" stroke-width="4"/><path d="M104 30l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8z" fill="#F2B705" stroke-width="1.2"/></g></g></svg>'],
+    ['mine', 'Collect', 'collect a little more every day,', '<svg viewBox="0 0 150 110">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M58 30h34v10H58z" fill="#E8338A"/><path d="M60 40c-12 6-18 14-18 26v22c0 8 6 14 14 14h38c8 0 14-6 14-14V66c0-12-6-20-18-26z" fill="#FFFFFF"/><path d="M52 66v18" stroke="#BFD7F2" stroke-width="3"/><g fill="#F2B705" stroke-width="1.4"><path d="M70 82l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z"/><path d="M86 88l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z"/></g><path class="pp-drop" d="M75 6l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8z" fill="#F1F9A6" stroke-width="1.6"/></g></svg>'],
+    ['beliefs', 'Use it', 'and come back whenever a limiting belief pops up, to see the proof of the opposite.', '<svg viewBox="0 0 150 110">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M75 30l-14 70h28z" fill="#F4C2F7"/><path d="M58 102h34"/><g class="pp-tip"><path d="M25 32l100 8" stroke-width="4"/><path d="M25 32v12M125 40v12" stroke-width="1.4"/><path d="M8 44h34c-2 12-10 18-17 18S10 56 8 44z" fill="#FFF4EE"/><path d="M108 52h34c-2 12-10 18-17 18s-15-6-17-18z" fill="#FFF4EE"/><rect x="14" y="34" width="22" height="10" rx="3" fill="#BFD7F2" stroke-width="1.6"/><text x="25" y="42" font-size="7" text-anchor="middle" stroke="none" fill="#4E0C08">old</text><g fill="#F2B705" stroke-width="1.2"><path d="M116 44l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z"/><path d="M128 42l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z"/><path d="M122 34l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z"/></g></g><circle cx="75" cy="36" r="5" fill="#F1F9A6"/></g></svg>']
+  ];
+  var PP_FIND = [
+    { k: 'good', w: 'good enough', t: 'you are good enough', i: '★', c: '#F2B705' },
+    { k: 'worthy', w: 'worthy', t: 'you are worthy', i: '♛', c: '#E8338A' },
+    { k: 'loved', w: 'loved', t: 'you are loved', i: '♥', c: '#F2675A' },
+    { k: 'safe', w: 'safe', t: 'you are safe', i: '⌂', c: '#5B8DD9' },
+    { k: 'capable', w: 'capable', t: 'you are capable', i: '⚡', c: '#5FA052' }
+  ];
+  // words in how they're feeling -> which of the Fierce 5 they need proof for
+  var FIND_KEYS = {
+    good: ['good enough', 'not good', 'good at', 'failure', 'fail', 'useless', 'stupid', 'dumb', 'not smart', 'job', 'work', 'qualified', 'mess', 'wrong', 'mistake', 'compare', 'behind', 'better than me', 'not enough', 'criticis', 'feedback', 'won', 'award', 'promot', 'nailed', 'compliment'],
+    worthy: ['worthy', 'worth', 'deserve', 'burden', 'too much', 'selfish', 'lazy', 'rest', 'guilty', 'guilt', 'prove', 'space', 'ask for', 'needs', 'celebrat'],
+    loved: ['loved', 'love', 'alone', 'lonely', 'left out', 'reject', 'unwanted', 'ignored', 'nobody', 'no one', 'friend', 'sad', 'hurt', 'miss', 'broke up', 'breakup', 'family', 'partner', 'proud of me', 'hug'],
+    safe: ['safe', 'scared', 'afraid', 'anxious', 'anxiety', 'worried', 'worry', 'panic', 'overwhelm', 'nervous', 'fear', 'unsafe', 'risk', 'calm', 'spoke up', 'speak up', 'boundar'],
+    capable: ['capable', "can't", 'cant', 'cannot', 'cope', 'too hard', 'hard', 'give up', 'quit', 'trust myself', 'new job', 'learn', 'figure', 'handle', 'stuck', 'finished', 'solved', 'kept going', 'did it']
+  };
+  var FIND_ANYWAY = /anyway|warned|doubt|said i couldn|said i wouldn|proved|told me i|people said|they said/;
+  var FIND_TRUST = /trust(ed)? (myself|my gut|me)|gut|backed myself|instinct|i knew|my call|went with my/;
+  var FIND_STOP = ['that', 'this', 'with', 'have', 'they', 'them', 'what', 'when', 'feel', 'feeling', 'really', 'just', 'about', 'would', 'should', "shouldn't", 'someone', 'told', 'think', "don't", 'like', 'been', 'from', 'there', 'their', 'your', 'very', 'some', 'want', 'need', 'today', 'right', 'sort', 'proof'];
+  // learning their patterns: what they search for and tap, so the buttons become theirs
+  var PP_PAT = 'bt-pp-pat';
+  var PID_LABEL = { realme: 'People don’t like me', love: 'I’m hard to love', notgood: 'I’m not good enough', worth: 'I’m not worthy', messup: 'I’m a failure', toomuch: 'I’m too much', dontbelong: 'I don’t belong', capable: 'I’m not capable', canttrust: 'I can’t trust myself', smart: 'I’m not smart enough', notenough: 'I’m not enough', lazy: 'I’m lazy', burden: 'I’m a burden', needs: 'My needs are too much' };
+  var PP_COLS = ['#E8338A', '#7B5BA6', '#F2675A', '#2E8B84'];
+  function low1(t) { t = String(t || ''); return /^I[ ’']/.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1); }
+  // extra words that count as proof for the patterns people search for most
+  var PID_MORE = { realme: ['friend', 'invited', 'party', 'liked', 'likes me', 'wanted me', 'missed me', 'hug', 'loved', 'kind', 'checked in', 'reached out', 'thank'], dontbelong: ['invited', 'party', 'friend', 'welcomed', 'included'], love: ['hug', 'kind', 'thank', 'missed me'] };
+  var PID_TRUTH = { realme: 'Proof that people do like you', dontbelong: 'Proof that you belong', love: 'Proof that you’re easy to love' };
+  function ppLearn(q) {
+    q = String(q || '').trim(); if (q.length < 5) return;
+    var pat = rd(PP_PAT) || {}; pat.roots = pat.roots || {}; pat.pid = pat.pid || {}; pat.n = (pat.n || 0) + 1;
+    var low = q.toLowerCase().replace(/[’‘]/g, "'");
+    Object.keys(FIND_KEYS).forEach(function (k) { if (FIND_KEYS[k].some(function (w) { return low.indexOf(w) >= 0; })) pat.roots[k] = (pat.roots[k] || 0) + 1; });
+    var pid = pidForText(low); if (pid) pat.pid[pid] = (pat.pid[pid] || 0) + 1;
+    wr(PP_PAT, pat);
+  }
+  function ppLearnRoot(k) { var pat = rd(PP_PAT) || {}; pat.roots = pat.roots || {}; pat.roots[k] = (pat.roots[k] || 0) + 1; wr(PP_PAT, pat); }
+  function ppPersonal() {
+    var pat = rd(PP_PAT) || {}, pidN = pat.pid || {}, out = [], seen = {};
+    var d = pdData(), fq = d.freq || {}, core = [];
+    Object.keys(PD_TEXT).forEach(function (cid) { PD_TEXT[cid].forEach(function (b, i) { if (fq[cid + '-' + i] === 'all') core.push(b); }); });
+    (d.ownBeliefs || []).forEach(function (x) { if (x && x.b) core.push(x.b); });
+    // what they search for most comes first, then their core beliefs
+    Object.keys(pidN).sort(function (a, b) { return pidN[b] - pidN[a]; }).forEach(function (pid) {
+      var b = core.filter(function (x) { return pidForText(x) === pid; })[0] || null, label = PID_LABEL[pid] || b; if (!label || seen[pid]) return; seen[pid] = 1;
+      out.push({ key: 'p:' + pid, pid: pid, belief: b, label: label.replace(/'/g, '’'), w: pidN[pid] + 10 });
+    });
+    core.forEach(function (b) { var pid = pidForText(b) || b; if (seen[pid]) return; seen[pid] = 1; out.push({ key: 'b:' + b, pid: pidForText(b), belief: b, label: b.replace(/'/g, '’'), w: 1 }); });
+    return out.slice(0, 4).map(function (it, i) { it.root = f5For(it.belief || '') || F5_BY_PROG[it.pid] || ''; it.c = PP_COLS[i % PP_COLS.length]; return it; });
+  }
+  function ppScoreItem(e, it) {
+    var sc = 0;
+    if (it.belief && isFor(e, it.belief)) sc += 3;
+    if (it.pid && evPids(e)[it.pid]) sc += 3;
+    if (it.pid && PID_MORE[it.pid]) { var tl = String(e.text || '').toLowerCase(); if (PID_MORE[it.pid].some(function (w) { return tl.indexOf(w) >= 0; })) sc += 2; }
+    if (it.root && (e.f5 === it.root || isFor(e, f5RootText(it.root)))) sc += 1;
+    return sc;
+  }
+  function f5RootText(k) { var r = F5_ROOTS.filter(function (x) { return x[0] === k; })[0]; return r ? r[1] : ''; }
+  function proofScore(e, roots, extra, words) {
+    var t = String(e.text || '').toLowerCase(), sc = 0;
+    roots.forEach(function (k) { if (e.f5 === k || isFor(e, f5RootText(k)) || (FIND_KEYS[k] || []).some(function (w) { return t.indexOf(w) >= 0; })) sc += 2; });
+    if (extra.indexOf('anyway') >= 0 && FIND_ANYWAY.test(t)) sc += 3;
+    if (extra.indexOf('trust') >= 0 && (FIND_TRUST.test(t) || e.hunt === 's5')) sc += 3;
+    words.forEach(function (w) { if (t.indexOf(w) >= 0) sc += 1; });
+    return sc;
+  }
+  function findProof(all, st) {
+    if (st.item) {
+      var li = all.map(function (e) { return { e: e, sc: ppScoreItem(e, st.item) }; }).filter(function (x) { return x.sc > 0; }).sort(function (a, b) { return b.sc - a.sc || (evAt(b.e) || 0) - (evAt(a.e) || 0); }).map(function (x) { return x.e; });
+      var tr = truthFor(st.item.belief || st.item.label);
+      if (st.item.key.indexOf('p:') === 0 && PID_TRUTH[st.item.pid]) return { list: li, title: PID_TRUTH[st.item.pid] };
+      return { list: li, title: tr && tr !== 'That’s not the whole truth' ? 'Proof that ' + low1(tr) : 'Proof that “' + st.item.label + '” isn’t true' };
+    }
+    var q = String(st.q || '').toLowerCase().replace(/[’‘]/g, "'"), roots = st.root ? [st.root] : [], extra = [];
+    if (q) {
+      Object.keys(FIND_KEYS).forEach(function (k) { if (FIND_KEYS[k].some(function (w) { return q.indexOf(w) >= 0; }) && roots.indexOf(k) < 0) roots.push(k); });
+      if (/told me|said|warned|shouldn|should not|don't think|dont think|doubt|won't be|wouldn't be/.test(q)) { extra.push('anyway'); if (roots.indexOf('capable') < 0) roots.push('capable'); }
+      if (/trust|should|shouldn|decide|decision|gut|not sure|unsure/.test(q)) extra.push('trust');
+    }
+    var words = q ? q.split(/[^a-z']+/).filter(function (w) { return w.length > 3 && FIND_STOP.indexOf(w) < 0; }) : [];
+    var list = all.map(function (e) { return { e: e, sc: proofScore(e, roots, extra, words) }; }).filter(function (x) { return x.sc > 0; })
+      .sort(function (a, b) { return b.sc - a.sc || (evAt(b.e) || 0) - (evAt(a.e) || 0); }).map(function (x) { return x.e; });
+    var parts = roots.map(function (k) { var f = PP_FIND.filter(function (x) { return x.k === k; })[0]; return f ? f.t : ''; }).filter(Boolean);
+    if (extra.indexOf('anyway') >= 0) parts.push('the times you did it anyway');
+    if (extra.indexOf('trust') >= 0) parts.push('the times you trusted yourself');
+    var title = parts.length ? 'Proof ' + (parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0]) : 'Proof that matches';
+    return { list: list, title: title.charAt(0).toUpperCase() + title.slice(1) };
+  }
   function ProofView(root) {
-    root.appendChild(pageHead('Resource · Week ' + wkN(2), 'Your proof portfolio', 'Training your brain to find the good, on purpose.'));
-    var wrap = h('div', { class: 'bt-wrap bt-pp' }, [back('Home', '#Dashboard')]);
+    // same look as the other resources (Breaking Out of Your Box, the What If Workout): light page, header, three steps
+    root.classList.add('bt-light');
+    var wrap = h('div', { class: 'bt-wrap bt-pp' }, [back('Back to Breakthrough', '#Dashboard')]);
     root.appendChild(wrap);
-    var whyShut = rd('bt-pp-why') === 'closed';
+    var ic = emblem('proof'); ic.classList.add('bt-rh-ic');
+    wrap.appendChild(h('header', { class: 'bt-rh' }, [h('div', { class: 'bt-rh-k' }, [ic, h('span', { text: 'Breakthrough Program · resource' })]),
+      h('h1', { text: 'Your Proof Portfolio' }), h('p', { class: 'bt-rh-tag', text: 'The proof was always there.' }),
+      h('p', { class: 'bt-rh-lead', text: 'This is where you train your brain to find the good, on purpose, and to believe in you.' })]));
+    var stepsEl = h('div', { class: 'bt-rsteps' });
+    PP_STEPS.forEach(function (st, i) {
+      var art = h('span', { class: 'bt-rs-art', 'aria-hidden': 'true' }); art.innerHTML = st[3];
+      var lockd = st[0] === 'beliefs' && !l2Open();
+      stepsEl.appendChild(h('button', { class: 'bt-rs' + (lockd ? ' locked' : ''), type: 'button', onclick: function () { if (!tabsEl) return; ptab = proofTabState = st[0]; showTab(); try { tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} } },
+        [h('span', { class: 'bt-rs-h' }, [h('b', { text: lockd ? '🔒' : String(i + 1) }), h('span', { text: st[1] })]), art, h('span', { class: 'bt-rs-t', text: st[2] }), lockd ? h('span', { class: 'bt-rs-lock', text: 'Unlocks after Breaking Out of Your Box' }) : null]));
+    });
+    wrap.appendChild(stepsEl);
     // why, with a little drawing for each idea: open until she closes it herself, then it stays how she left it
-    var why = h('details', { class: 'bt-card2 bt-pp-why', open: whyShut ? null : 'open' }, [h('summary', null, [h('h2', { text: 'Why we collect proof' })]),
+    var why = h('details', { class: 'bt-card2 bt-pp-why', open: huntItems().length ? null : 'open' }, [h('summary', null, [h('h2', { text: 'Why we collect proof' })]),
       whyRow('velcro', h('p', { text: 'Your brain has a negativity bias. It’s wired to notice what went wrong, because back in the day, missing a threat could kill you. Missing a win never did. So the bad stuff sticks like velcro and the good stuff slides off like teflon.' })),
       whyRow('confirm', h('p', { text: 'Then there’s confirmation bias. Once you believe something, like “I’m not good enough”, your brain goes looking for evidence that it’s true. And it always finds some, because it’s ignoring everything that says otherwise.' })),
       whyRow('ras', h('p', { text: 'That’s where your reticular activating system (your RAS) comes in. It’s the filter that decides what you notice out of the millions of things happening around you. Right now it’s been trained to find proof for your old beliefs.' })),
       whyRow('scales', h('p', null, [h('b', { text: 'This portfolio retrains it. ' }), 'Every time you write down a win, a compliment, a thing you nailed, you’re teaching your RAS to look for the good stuff instead. And every piece is evidence that the old belief is outdated and simply not true. Enough proof, and the scales tip.'])),
+      h('div', { class: 'bt-pp-howuse' }, [h('span', { class: 'hand', text: 'How to use it' }),
+        h('p', { text: 'Whenever you don’t feel good enough, worthy, loved, safe or capable, come here and tell me how you’re feeling. Tap “Open this when…”, or type it in your own words, and I’ll find the proof you need to see right then.' }),
+        h('p', { text: 'The more proof you add from your past, and the more you keep adding as you go through life, the more you retrain your brain to believe in you, instead of believing it’s right to stop you. That’s how you become confident and empowered: one piece of proof at a time.' })]),
       h('p', { class: 'bt-pw-tiny', text: 'Tiny counts. One a day is plenty.' })]);
     why.addEventListener('toggle', function () { wr('bt-pp-why', why.open ? 'open' : 'closed'); wr('bt-pp-seen', 1); });
-    wrap.appendChild(why);
-    if (proofLocked()) { var f0 = findLesson(PROOF_LESSON); wrap.appendChild(h('div', { class: 'bt-card2' }, [h('p', { text: 'Your proof portfolio opens after the Proof Portfolio lesson.' }), f0 ? h('a', { class: 'bt-btn lime', href: lessonHref(f0.l), text: 'Go to the lesson →' }) : null])); return; }
+    if (proofLocked()) { wrap.appendChild(why); var f0 = findLesson(PROOF_LESSON); wrap.appendChild(h('div', { class: 'bt-card2' }, [h('p', { text: 'Your proof portfolio opens after the Proof Portfolio lesson.' }), f0 ? h('a', { class: 'bt-btn lime', href: lessonHref(f0.l), text: 'Go to the lesson →' }) : null])); return; }
     wr('bt-pp-seen', 1);
-    // layer 1: add proof (pink box), then the calendar, then the feed of everything
-    wrap.appendChild(proofHome(true, true, true));
-    var cal = h('section', { class: 'bt-card2 bt-pp-cal', id: 'pp-cal' }), feed = h('section', { class: 'bt-card2 bt-pp-feed', id: 'pp-feed' });
-    var l2 = h('section', { class: 'bt-card2 bt-pp-flips', id: 'pp-flips' }), tl = h('section', { class: 'bt-card2 bt-pp-tl', id: 'pp-timeline' });
-    wrap.appendChild(cal); wrap.appendChild(feed); wrap.appendChild(l2); wrap.appendChild(tl);
-    wrap.appendChild(h('div', { class: 'bt-row bt-pp-links' }, [h('a', { class: 'bt-btn ghost', href: '#Book', text: 'My Becoming Book' }), h('a', { class: 'bt-btn ghost', href: '#BreakingOut', onclick: function (e) { e.preventDefault(); APP.go('BreakingOut.dc.html'); }, text: 'Breaking Out of Your Box' })]));
-
+    // three tabs: My proof (add, calendar, find + everything), Lifetime proof (why + the brain-dump game), My old beliefs (after Breaking Out of Your Box)
+    // until they finish the lifetime proof game it opens on that tab; after that, always on My proof
+    var ptab = proofTabState || (rd('bt-hunt-done') ? 'mine' : 'life');
+    var tabsEl = h('div', { class: 'bt-pp-tabs', role: 'tablist', 'aria-label': 'Proof portfolio' });
+    var paneMine = h('div', { class: 'bt-pp-pane' }), paneLife = h('div', { class: 'bt-pp-pane' }), paneBel = h('div', { class: 'bt-pp-pane' });
+    function showTab() {
+      tabsEl.innerHTML = '';
+      [['life', '1', 'Dig it up'], ['mine', '2', 'Collect'], ['beliefs', l2Open() ? '3' : '🔒', 'Use it']].forEach(function (t) {
+        var on = ptab === t[0];
+        tabsEl.appendChild(h('button', { class: 'bt-pp-tab' + (on ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', onclick: function () { ptab = proofTabState = t[0]; showTab(); } }, [h('span', { class: 'bt-pp-tn', text: t[1] }), t[2]]));
+      });
+      paneMine.hidden = ptab !== 'mine'; paneLife.hidden = ptab !== 'life'; paneBel.hidden = ptab !== 'beliefs';
+    }
+    wrap.appendChild(why); wrap.appendChild(tabsEl); wrap.appendChild(paneLife); wrap.appendChild(paneMine); wrap.appendChild(paneBel);
+    paneLife.appendChild(proofHunt());
+    paneMine.appendChild(proofHome(true, true, true));
+    var cal = h('section', { class: 'bt-card2 bt-pp-cal', id: 'pp-cal' }), finder = h('section', { class: 'bt-card2 bt-pp-find', id: 'pp-find' }), feed = h('section', { class: 'bt-card2 bt-pp-feed', id: 'pp-feed' });
+    var l2 = h('section', { class: 'bt-card2 bt-pp-flips', id: 'pp-flips' });
+    paneMine.appendChild(cal); paneMine.appendChild(finder); paneMine.appendChild(feed);
+    paneMine.appendChild(h('div', { class: 'bt-row bt-pp-links' }, [h('a', { class: 'bt-btn ghost', href: '#Book', text: 'My Becoming Book' }), h('a', { class: 'bt-btn ghost', href: '#BreakingOut', onclick: function (e) { e.preventDefault(); APP.go('BreakingOut.dc.html'); }, text: 'Breaking Out of Your Box' })]));
+    paneBel.appendChild(l2);
+    showTab();
+    // find the proof you need right now: one tap for each of the Fierce 5, or say how you feel
+    var findState = {}, findTimer = null;
+    function drawFind() {
+      finder.innerHTML = '';
+      var all = evidence(), pat = rd(PP_PAT) || {}, rootN = pat.roots || {};
+      finder.appendChild(h('span', { class: 'bt-wins-k', text: 'Your proof, on tap' }));
+      finder.appendChild(h('h2', { text: 'What do you need to see right now?' }));
+      var q = h('input', { class: 'bt-in bt-pp-q', type: 'search', value: findState.q, placeholder: 'e.g. someone told me I wouldn’t be good at my new job', 'aria-label': 'How are you feeling, and what proof do you need to see right now?' });
+      q.addEventListener('input', function () { clearTimeout(findTimer); findTimer = setTimeout(function () { findState = { q: q.value }; drawFeed(); }, 350); });
+      q.addEventListener('change', function () { ppLearn(q.value); });
+      q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { ppLearn(q.value); try { feed.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) {} } });
+      finder.appendChild(h('label', { class: 'bt-pp-ql' }, [h('span', { text: 'How are you feeling, and what sort of proof do you need to see right now?' }), q]));
+      // made for them: the beliefs they've named in Breaking Out of Your Box + what they keep searching for
+      var mine = ppPersonal();
+      if (mine.length) {
+        finder.appendChild(h('span', { class: 'bt-pp-sub', text: 'Made for you' }));
+        finder.appendChild(h('div', { class: 'bt-pp-open mine' }, mine.map(function (it) {
+          var n = all.filter(function (e) { return ppScoreItem(e, it) > 0; }).length, on = findState.item && findState.item.key === it.key;
+          return h('button', { class: 'bt-pp-ob' + (on ? ' on' : ''), type: 'button', style: '--c:' + it.c, 'aria-pressed': on ? 'true' : 'false', onclick: function () { findState = on ? {} : { item: it }; drawFind(); drawFeed(); if (!on) setTimeout(function () { feed.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); } },
+            [h('span', { class: 'bt-pp-ok', text: 'Open this when you think' }), h('b', { text: '“' + it.label + '”' }), h('span', { class: 'bt-pp-on', text: n === 1 ? '1 piece of proof it’s not true' : n + ' pieces of proof it’s not true' })]);
+        })));
+      }
+      finder.appendChild(h('span', { class: 'bt-pp-sub', text: mine.length ? 'The big five' : 'Quick access' }));
+      finder.appendChild(h('div', { class: 'bt-pp-open' }, PP_FIND.slice().sort(function (x, y) { return (rootN[y.k] || 0) - (rootN[x.k] || 0); }).map(function (f) {
+        var n = all.filter(function (e) { return proofScore(e, [f.k], [], []) > 0; }).length, on = findState.root === f.k;
+        return h('button', { class: 'bt-pp-ob' + (on ? ' on' : ''), type: 'button', style: '--c:' + f.c, 'aria-pressed': on ? 'true' : 'false', onclick: function () { findState = on ? {} : { root: f.k }; if (!on) ppLearnRoot(f.k); drawFind(); drawFeed(); if (!on) setTimeout(function () { feed.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); } },
+          [h('span', { class: 'bt-pp-oi', 'aria-hidden': 'true', text: f.i }), h('span', { class: 'bt-pp-ok', text: 'Open this when' }), h('b', { text: 'you don’t feel ' + f.w }), h('span', { class: 'bt-pp-on', text: n === 1 ? '1 piece of proof' : n + ' pieces of proof' })]);
+      })));
+    }
     function drawCal() { cal.innerHTML = ''; cal.appendChild(h('h2', { text: 'Your proof calendar' })); cal.appendChild(streakCal(winStreak())); }
     var tagPick = null, feedN = 24;
     function drawFeed() {
       feed.innerHTML = '';
       var all = evidence().sort(function (a, b) { return (evAt(b) || 0) - (evAt(a) || 0); }), open = l2Open(), mine = open ? myBeliefs() : [];
-      feed.appendChild(h('span', { class: 'bt-wins-k', text: 'Everything you’ve collected' }));
-      feed.appendChild(h('h2', { text: 'All your proof · ' + all.length }));
+      var finding = !!(findState.root || findState.item || String(findState.q || '').trim()), fr = finding ? findProof(all, findState) : null;
+      if (finding) {
+        feed.appendChild(h('span', { class: 'bt-wins-k', text: 'Here’s what you need to see' }));
+        feed.appendChild(h('h2', { text: fr.title + ' · ' + fr.list.length }));
+        feed.appendChild(h('button', { class: 'bt-wins-link', type: 'button', text: '← Show everything', onclick: function () { findState = {}; drawFind(); drawFeed(); } }));
+        if (!fr.list.length) { feed.appendChild(h('p', { class: 'bt-sub', text: all.length ? 'Nothing matches that yet. Try different words, or tap one of the buttons above. And add this one when you get through it, because you will.' : 'Your proof shows up here as you collect it.' })); return; }
+        all = fr.list;
+      } else {
+        feed.appendChild(h('span', { class: 'bt-wins-k', text: 'Everything you’ve collected' }));
+        feed.appendChild(h('h2', { text: 'All your proof · ' + all.length }));
+      }
       if (!all.length) { feed.appendChild(h('p', { class: 'bt-sub', text: 'Your first piece of proof shows up here. A win, a compliment, a photo of something you’re proud of.' })); return; }
       var tagsOf = function (e) { return mine.filter(function (b) { return isFor(e, b); }).map(truthFor).filter(function (t, i, a) { return a.indexOf(t) === i; }); };
       if (open) {
@@ -1000,23 +1406,7 @@
       l2.appendChild(list);
       l2.appendChild(h('button', { class: 'bt-btn lime', type: 'button', text: 'Disprove another belief →', onclick: function () { openBoxProof(); } }));
     }
-    function drawTl() {
-      tl.innerHTML = '';
-      var items = evidence().filter(function (e) { return e.spark === 'ach' || e.when; }).sort(function (a, b) { return whenSort(a) - whenSort(b); });
-      tl.appendChild(h('span', { class: 'bt-wins-k', text: 'Your achievement timeline' }));
-      tl.appendChild(h('h2', { text: 'Look how far you’ve come' }));
-      tl.appendChild(h('p', { class: 'bt-sub', text: 'Every achievement in your portfolio, in order. Add to it any time, big or small, recent or years ago.' }));
-      var t = h('input', { class: 'bt-in', placeholder: 'I achieved…', 'aria-label': 'An achievement' }), w = h('input', { class: 'bt-in sm bt-pp-when', placeholder: 'When? e.g. 2021', 'aria-label': 'When (optional)' });
-      var add = function () { var v = tx(t.value); if (!v) return; var yr = /^\s*(\d{4})\s*$/.exec(w.value), ab = autoBeliefs(v, 'ach', []); var e = addEvidence(v, { spark: 'ach', beliefs: ab.beliefs, belief: ab.beliefs[0] || null, proves: ab.proves, when: yr ? yr[1] : tx(w.value) || null }); pdChanged(); var mm = l2Open() ? matchesMine(e) : []; if (mm.length) flipMoment(mm); aiMatch(e, function () { drawAll(); }); };
-      t.addEventListener('keydown', function (e) { if (e.key === 'Enter') add(); });
-      tl.appendChild(h('div', { class: 'bt-pp-row add' }, [t, w, h('button', { class: 'bt-btn lime', type: 'button', text: 'Add', onclick: add })]));
-      if (!items.length) { tl.appendChild(h('p', { class: 'bt-sub', text: 'Nothing here yet. Your first achievement goes here.' })); return; }
-      tl.appendChild(h('ol', { class: 'bt-tl' }, items.map(function (e) {
-        var a = evAt(e), lab = e.when ? whenLabel(e.when) : a ? new Date(a).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' }) : '';
-        return h('li', { class: 'bt-tl-i' }, [h('span', { class: 'bt-tl-d', text: lab }), h('span', { class: 'bt-tl-dot', 'aria-hidden': 'true', text: '★' }), h('div', { class: 'bt-tl-b' }, [h('p', { text: e.text }), l2Open() && (e.mine || []).length ? h('span', { class: 'bt-tl-p', text: 'Proof: ' + truthFor(e.mine[0]) }) : null])]);
-      })));
-    }
-    function drawAll() { drawCal(); drawFeed(); drawFlips(); drawTl(); }
+    function drawAll() { drawCal(); drawFind(); drawFeed(); drawFlips(); showTab(); }
     drawAll();
     var onCh = function () { if (!document.body.contains(feed)) { window.removeEventListener('bt-pd-changed', onCh); return; } drawAll(); };
     window.addEventListener('bt-pd-changed', onCh);
@@ -1041,6 +1431,7 @@
     'Being vulnerable is risky': 'safe', "I can't rely on anyone": 'safe', "People can't be trusted": 'safe', 'Asking for help is weakness': 'capable', 'If I try and fail, it\'ll prove something is wrong with me': 'good'
   };
   function f5For(b) { return F5_BY_BELIEF[b] || F5_BY_PROG[pidForText(b)] || ''; }
+  var BOX_TAGS = ['You’re not failing. You just forgot all the times you won.', 'It’s not that you’re not good enough. You just forgot all the proof that you are.'];
   function disproveActivity(el) {
     wr('bt-pp-l2', 1);
     var cur = null, rows = [{ t: '', w: '', p: '' }, { t: '', w: '', p: '' }, { t: '', w: '', p: '' }], showAll = false;
@@ -1053,7 +1444,7 @@
       box.innerHTML = '';
       var o = opts(); if (!cur || o.indexOf(cur) < 0) cur = o[0];
       var have = proofFor(cur).length;
-      box.appendChild(h('span', { class: 'hand bt-dis-k', text: 'Your turn · 2 · Activity · Disprove it' }));
+      box.appendChild(h('span', { class: 'hand bt-dis-k', text: 'Your turn · 1 · Disprove it' }));
       box.appendChild(h('h3', { class: 'bt-dis-h', text: 'Every reason it isn’t true' }));
       box.appendChild(h('p', { class: 'bt-dis-p', text: 'Take your time with this one. Pick a belief, then find every bit of proof that it’s wrong. Start with what’s already in your proof portfolio, then go digging: school, work, friendships, family, the hard years you got through. Every piece goes into your proof portfolio.' }));
       if (!o.length) { box.appendChild(h('p', { class: 'bt-dis-p' }, [h('b', { text: 'Tick your beliefs in Step 1 first. ' }), 'The ones you tick show up here, grouped under the Fierce 5, ready to disprove.'])); return; }
@@ -1062,7 +1453,7 @@
       F5_ROOTS.forEach(function (r) {
         var subs = mine.filter(function (b) { return b !== r[1] && f5For(b) === r[0]; });
         if (!subs.length && mine.indexOf(r[1]) < 0) return;
-        groups.appendChild(h('div', { class: 'bt-dis-grp' + (cur === r[1] || subs.indexOf(cur) >= 0 ? ' on' : '') }, [h('div', { class: 'bt-dis-root' }, [pick(r[1])]), subs.length ? h('div', { class: 'bt-dis-subs' }, subs.map(pick)) : null]));
+        groups.appendChild(h('div', { class: 'bt-dis-grp' + (cur === r[1] || subs.indexOf(cur) >= 0 ? ' on' : ''), style: '--c:' + boxF5(r[0]).c }, [h('div', { class: 'bt-dis-root' }, [pick(r[1])]), subs.length ? h('div', { class: 'bt-dis-subs' }, subs.map(pick)) : null]));
       });
       var loose = mine.filter(function (b) { return !f5For(b) && !F5_ROOTS.some(function (r) { return r[1] === b; }); });
       if (loose.length) groups.appendChild(h('div', { class: 'bt-dis-grp' }, [h('div', { class: 'bt-dis-root' }, [h('span', { class: 'bt-dis-own', text: 'Your own' })]), h('div', { class: 'bt-dis-subs' }, loose.map(pick))]));
@@ -1070,6 +1461,7 @@
       box.appendChild(groups);
       box.appendChild(flipEl(cur, true));
       box.appendChild(h('p', { class: 'bt-dis-n' }, [h('b', { text: String(have) }), have === 1 ? ' piece of proof against it so far' : ' pieces of proof against it so far']));
+      box.appendChild(h('div', { class: 'bt-dis-tags' }, BOX_TAGS.map(function (t) { return h('p', { class: 'hand bt-dis-tag', text: t }); })));
 
       // 1. what they already have
       var ev = evidence();
@@ -1876,6 +2268,7 @@
     draw();
     wrap.appendChild(h('div', { class: 'bt-les-actions bt-su-actions' }, [doneBtn, nextSlot]));
     if (!next) wrap.appendChild(suIntentCard(suStats()));
+    wrap.appendChild(notesBox({ lesson: id, title: l.title }));
     root.appendChild(wrap);
   }
   // "I am ready to change my world" inside lesson 8: that lesson's done
@@ -1887,7 +2280,7 @@
      Her whole journey, dated: milestones, activities she saved, journal answers, wins, proof she's
      collected, and "before vs now" where her answers have changed. */
   var KINDS = {
-    milestone: ['Milestone', '#6B1510', 'star'], activity: ['Activity', '#F4C2F7', 'tick'], journal: ['Notebook entry', '#FFF4EE', 'play'],
+    milestone: ['Milestone', '#6B1510', 'star'], activity: ['Activity', '#F4C2F7', 'tick'], journal: ['Reflection', '#FFF4EE', 'play'],
     win: ['Wins & joy', '#E4F27A', 'star'], proof: ['Proof', '#E4F27A', 'tick'], vagal: ['Vagal tone', '#BFE3D0', 'play'], change: ['Before & now', '#F28C3B', 'star'], note: ['My note', '#F1F9A6', 'play']
   };
   function parseDate(v) { if (!v) return null; var n = typeof v === 'number' ? v : Date.parse(v); return isNaN(n) ? null : n; }
@@ -1912,6 +2305,8 @@
       c.appendChild(h('p', { class: 'bt-sticky-x', text: n.text }));
       // where it was written: a link straight back to that video (or activity)
       var fw = showWhere && n.lesson ? findLesson(n.lesson) : null;
+      var suM = showWhere && /^su\d+$/.test(n.lesson || '') ? n.lesson.slice(2) : null, suL = suM !== null ? (suCourse().lessons || []).filter(function (x) { return String(x.n) === suM; })[0] : null;
+      if (suL) c.appendChild(h('a', { class: 'bt-sticky-w', href: '#Setup-' + suL.n }, [h('span', { class: 'bt-sticky-wi', 'aria-hidden': 'true', text: '▶' }), h('span', { text: 'Watch again: ' + suL.title + ' · Set yourself up for success →' })]));
       if (fw) { var act = isActivityCard(fw.l); c.appendChild(h('a', { class: 'bt-sticky-w', href: act ? lessonHref(fw.l) : '#Lesson-' + fw.l.id }, [h('span', { class: 'bt-sticky-wi', 'aria-hidden': 'true', text: act ? '◆' : '▶' }), h('span', { text: (act ? 'Activity: ' : 'Watch again: ') + fw.l.title + ' · ' + (fw.w.week === 0 ? 'Introduction' : 'Week ' + wkN(fw.w.week)) + ' →' })])); }
       var rm = h('button', { class: 'bt-sticky-b rm', type: 'button', text: 'Remove', onclick: function () { if (!rm.dataset.sure) { rm.dataset.sure = 1; rm.textContent = 'Tap again to remove'; return; } noteRemove(n.id); if (onChange) onChange(); } });
       c.appendChild(h('div', { class: 'bt-sticky-acts' }, [h('button', { class: 'bt-sticky-b', type: 'button', text: 'Edit ✎', onclick: edit }), rm]));
@@ -1946,7 +2341,7 @@
     var ta = h('textarea', { class: 'bt-in bt-note-ta', rows: '3', placeholder: 'Write anything you want to remember…', 'aria-label': 'Your note' });
     var post = h('button', { class: 'bt-btn lime', type: 'button', text: 'Post note', onclick: function (e) {
       var v = tx(ta.value); if (!v) { ta.focus(); APP.toast('Write your note first ✎'); return; }
-      var n = { id: String(Date.now()), at: Date.now(), lesson: opts.lesson || '', title: tx(ti.value) || (opts.lesson && findLesson(opts.lesson) ? findLesson(opts.lesson).l.title : 'A note to self'), text: v };
+      var n = { id: String(Date.now()), at: Date.now(), lesson: opts.lesson || '', title: tx(ti.value) || (opts.title || (opts.lesson && findLesson(opts.lesson) ? findLesson(opts.lesson).l.title : 'A note to self')), text: v };
       noteUpsert(n); ti.value = ''; ta.value = ''; try { sparkleBurst(e.currentTarget); } catch (x) {}
       APP.toast(opts.book ? 'Posted! It’s in your Becoming Book.' : 'Posted! It’s in your Becoming Book too.');
       drawWall(n.id); if (opts.onChange) opts.onChange();
@@ -1992,6 +2387,7 @@
     }
     if (window.BT_VAGAL && window.BT_VAGAL.bookEntries) { try { window.BT_VAGAL.bookEntries().forEach(push); } catch (e) {} }
     if (window.BT_SAVES) window.BT_SAVES.list().forEach(function (x) { push({ kind: 'activity', at: x.at, title: x.title, text: ((window.BT_SAVES.tools[x.tool] || {}).name || ''), item: x, img: x.img || '', res: { 'what-if-workout': 'whatif', 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'breaking-out': 'box' }[x.tool] || '' }); });
+    try { var bms = boxSaved(); if (bms && boxPicked().length) push({ kind: 'milestone', at: bms, title: 'My belief map & Fierce 5 jars', text: 'Where my limiting beliefs show up, and the roots they grow from.', boxMap: true }); } catch (e) {}
     notesAll().forEach(function (n) { push({ kind: 'note', at: n.at, title: tx(n.title) || 'A note to self', text: n.text, sub: noteWhere(n), note: n }); });
     var j = comp().j || {}, jl = rd(K.jlog) || {}, idx = {};
     allLessons().forEach(function (x) { idx[x.l.id] = x; });
@@ -2000,8 +2396,7 @@
       var m = /^(.*)_(\d+|n)$/.exec(key); if (!m) return;
       var f = idx[m[1]], q = m[2] === 'n' ? 'My notes' : f && f.l.prompts && f.l.prompts[+m[2]] ? f.l.prompts[+m[2]][0] : 'Becoming Notebook entry';
       var log = jl[key] || {};
-      push({ kind: 'journal', key: key, at: log.at || null, title: q, text: val, sub: f ? f.l.title : '', lesson: f ? f.l.id : '' });
-      if (log.first && tx(log.first) !== val && log.firstAt) push({ kind: 'change', key: key, at: log.at || null, title: q, before: log.first, beforeAt: log.firstAt, text: val, sub: f ? f.l.title : '' });
+      push({ kind: 'journal', key: key, at: log.at || null, title: q, text: val, sub: f ? f.l.title : '', lesson: f ? f.l.id : '', tag: m[2] === 'n' ? 'My note' : 'Reflection' });
     });
     var evIdx = {}; evidence().forEach(function (e) { evIdx[e.id] = e; });
     evidence().forEach(function (e) {
@@ -2022,6 +2417,16 @@
     var j = comp().j || {}, out = [];
     openLessons().forEach(function (x) { (x.l.prompts || []).forEach(function (p, i) { var k = x.l.id + '_' + i; if (!tx(j[k])) out.push({ key: k, q: p[0], lesson: x.l }); }); });
     return out;
+  }
+  // Sav's coach dashboard: show a client's Becoming Book exactly as they see it (read only).
+  // Runs inside public/coach-book.html, where localStorage reads come from the client's synced data.
+  var COACH = null;
+  function coachBook(root, opts) {
+    COACH = opts || {};
+    var mk = function (tag, attrs, kids) { var el = document.createElement(tag); if (attrs) Object.keys(attrs).forEach(function (k) { var v = attrs[k]; if (v == null || v === false) return; if (k === 'class') el.className = v; else if (k === 'text') el.textContent = v; else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v); else el.setAttribute(k, v); }); (kids || []).forEach(function (c) { if (c == null) return; el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); }); return el; };
+    APP = { h: mk, live: false, state: { settings: { course: COACH.course || null }, profile: COACH.profile || null, tier: COACH.tier || 'self_paced', user: { id: COACH.id }, isAdmin: false }, toast: function () {}, go: function () {}, reload: function () { root.innerHTML = ''; BookView(root); if (COACH.onDraw) COACH.onDraw(); } };
+    window.BT_APP = APP; h = mk;
+    root.innerHTML = ''; BookView(root); if (COACH.onDraw) COACH.onDraw();
   }
   var bookState = { tab: 'all', q: '', day: '', month: null, range: 'all', from: '', to: '' };
   /* ---------------- app tour: first time in, before the start-here steps ---------------- */
@@ -2163,7 +2568,7 @@
     if (!seen) try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
     return d;
   }
-  var INTRO_ROUTES = { Breathe: 'breathe', Dose: 'dose', Pause: 'pause', Move: 'move', Proof: 'proof', 'BreakingOut.dc.html': 'box', 'StarHome.dc.html': 'star' };
+  var INTRO_ROUTES = { Breathe: 'breathe', Dose: 'dose', Pause: 'pause', Move: 'move', 'BreakingOut.dc.html': 'box', 'StarHome.dc.html': 'star' };
   function addIntro(route) {
     var rid = INTRO_ROUTES[route], app = document.getElementById('app'); if (!rid || !app || app.querySelector('.bt-why')) return;
     var el = resIntro(rid); if (!el) return;
@@ -2256,10 +2661,10 @@
   function BookView(root) {
     var all = bookEntries();
     var count = function (k) { return all.filter(function (e) { return k === 'all' || e.kind === k || (k === 'proof' && e.kind === 'win'); }).length; };
-    root.appendChild(pageHead('Your story so far', 'The Becoming Book', 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + all.length + ' pages'));
-    var wrap = h('div', { class: 'bt-wrap bk' }, [back('Home', '#Dashboard'), h('p', { class: 'bt-bk-about', text: 'This is the story of who you’re becoming. Your Becoming Notebook entries, finished lessons and activities, wins and proof, workouts and milestones all land here by themselves, dated, so you can look back and see how far you’ve come.' }), bookHero()]);
+    root.appendChild(pageHead(COACH ? 'Their story so far' : 'Your story so far', 'The Becoming Book', 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + all.length + ' pages'));
+    var wrap = h('div', { class: 'bt-wrap bk' }, [COACH ? null : back('Home', '#Dashboard'), h('p', { class: 'bt-bk-about', text: COACH ? 'Exactly what ' + (COACH.name || 'they') + ' see' + (COACH.name ? 's' : '') + ' in their Becoming Book (read only).' : 'This is the story of who you’re becoming. Your reflections, finished lessons and activities, wins and proof, workouts and milestones all land here by themselves, dated, so you can look back and see how far you’ve come.' }), bookHero()]);
     // calendar: symbols on the days she moved forward + win streaks
-    var GLY = { milestone: '★', activity: '◆', journal: '✎', win: '✦', proof: '✓', change: '↻', vagal: '≈' };
+    var GLY = { milestone: '★', activity: '◆', journal: '✎', win: '✦', proof: '✓', vagal: '≈' };
     var byDay = {}; all.forEach(function (e) { if (!e.at) return; var k = dayKey(e.at); (byDay[k] = byDay[k] || {})[e.kind] = (byDay[k][e.kind] || 0) + 1; });
     var cal = h('section', { class: 'bk-cal', 'aria-label': 'Your progress calendar' });
     function drawCal() {
@@ -2299,16 +2704,16 @@
         var panel = h('div', { class: 'bk-daypanel' }, [h('div', { class: 'bk-dp-top' }, [h('b', { text: dt.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) }), h('button', { class: 'bk-cal-clear', type: 'button', text: '× Close', onclick: function () { bookState.day = ''; drawCal(); draw(); } })])]);
         if (mine.length) { panel.appendChild(h('span', { class: 'bk-dp-k', text: 'What you did' })); var dl = h('div', { class: 'bk-dp-list' }); mine.forEach(function (e) { dl.appendChild(card(e)); }); panel.appendChild(dl); }
         else panel.appendChild(h('p', { class: 'bk-dp-none', text: 'Nothing in your book for this day yet.' }));
-        if (window.BT_VAGAL && window.BT_VAGAL.workoutCard) panel.appendChild(window.BT_VAGAL.workoutCard(bookState.day, function () { setTimeout(function () { APP.reload(); }, 400); }));
+        if (!COACH && window.BT_VAGAL && window.BT_VAGAL.workoutCard) panel.appendChild(window.BT_VAGAL.workoutCard(bookState.day, function () { setTimeout(function () { APP.reload(); }, 400); }));
         cal.appendChild(panel);
       }
     }
     drawCal();
     wrap.appendChild(cal);
     // add proof: the same card as on Home
-    wrap.appendChild(proofHome());
+    if (!COACH) wrap.appendChild(proofHome());
     // tabs + search
-    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Becoming Notebook'], ['note', 'My notes'], ['vagal', 'Vagal tone'], ['activity', 'Activities'], ['milestone', 'Milestones'], ['change', 'Before & now']];
+    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Reflections'], ['note', 'My notes'], ['vagal', 'Vagal tone'], ['activity', 'Activities'], ['milestone', 'Milestones']];
     var list = h('div', { class: 'bk-pages' });
     var search = h('input', { class: 'bt-in bk-search', type: 'search', id: 'bk-q', placeholder: 'Search your book', value: bookState.q, 'aria-label': 'Search your book' });
     var tabRow = h('div', { class: 'bk-tabs', role: 'tablist' }, tabs.map(function (t) {
@@ -2328,7 +2733,7 @@
       }
     }
     drawRange();
-    wrap.appendChild(notesBox({ book: true, onChange: function () { APP.reload(); } }));
+    if (!COACH) wrap.appendChild(notesBox({ book: true, onChange: function () { APP.reload(); } }));
     wrap.appendChild(tabRow); wrap.appendChild(rangeBox); wrap.appendChild(search); wrap.appendChild(list);
     function card(e) {
       if (e.kind === 'note' && e.note) { var nw = h('div', { class: 'bk-e note' }); var d0 = new Date(e.at); nw.appendChild(h('div', { class: 'bk-date' }, [h('b', { text: String(d0.getDate()) }), h('span', { text: d0.toLocaleDateString('en-AU', { weekday: 'short' }) })])); nw.appendChild(stickyNote(e.note, function () { APP.reload(); }, true)); return nw; }
@@ -2336,7 +2741,7 @@
       var c = h('article', { class: 'bk-e ' + e.kind, style: '--kc:' + k[1] });
       var d = e.at ? new Date(e.at) : null;
       c.appendChild(h('div', { class: 'bk-date' }, d ? [h('b', { text: String(d.getDate()) }), h('span', { text: d.toLocaleDateString('en-AU', { weekday: 'short' }) })] : [h('span', { text: 'Earlier' })]));
-      var body = h('div', { class: 'bk-body' }, [h('span', { class: 'bk-tag' }, [icon(k[2]), e.kind === 'win' ? (SPARK[e.spark] || SPARK.win)[0] : k[0]]), h('b', { class: 'bk-t', text: e.title }), e.sub ? h('span', { class: 'bk-sub', text: e.sub }) : null]);
+      var body = h('div', { class: 'bk-body' }, [h('span', { class: 'bk-tag' }, [icon(k[2]), e.kind === 'win' ? (SPARK[e.spark] || SPARK.win)[0] : (e.tag || k[0])]), h('b', { class: 'bk-t', text: e.title }), e.sub ? h('span', { class: 'bk-sub', text: e.sub }) : null]);
       if (e.kind === 'change') {
         body.appendChild(h('div', { class: 'bk-bn' }, [
           h('div', { class: 'bk-before' }, [h('span', { text: 'Before · ' + new Date(e.beforeAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) }), h('p', { text: e.before })]),
@@ -2351,10 +2756,11 @@
       else if (e.text) body.appendChild(h('span', { class: 'bk-sub', text: e.text }));
       if (e.img && e.item) body.appendChild(h('button', { class: 'bk-shotbtn', type: 'button', 'aria-label': 'Open ' + e.title, onclick: function () { window.BT_SAVES.open(e.item, function () { APP.reload(); }); } }, [h('img', { class: 'bk-shot', src: e.img, alt: e.title + ', as saved' })]));
       else if (e.img) body.appendChild(h('img', { class: 'bk-img', src: e.img, alt: '' }));
+      if (e.boxMap) { try { var bmc = boxMapCard('book'); if (bmc) body.appendChild(bmc); } catch (x) {} }
       if (e.item) body.appendChild(h('button', { class: 'bk-open', type: 'button', text: 'Open it →', onclick: function () { window.BT_SAVES.open(e.item, function () { APP.reload(); }); } }));
       if (e.href) body.appendChild(h('a', { class: 'bk-open', href: e.href, text: 'Open it →' }));
-      if ((e.kind === 'journal' || e.kind === 'change') && e.key) { var eb = h('button', { class: 'bk-open', type: 'button', text: 'Edit ✎', onclick: function () { eb.replaceWith(journalEditor(e.key, e.text, function (cancel) { if (cancel) draw(); else APP.reload(); })); } }); body.appendChild(eb); }
-      if (e.kind === 'win' || e.kind === 'proof') { var del = h('button', { class: 'bk-del', type: 'button', text: 'Remove', onclick: function () { if (!del.dataset.sure) { del.dataset.sure = 1; del.textContent = 'Tap again to remove'; return; } removeEvidence(e.id); APP.reload(); } }); body.appendChild(del); }
+      if (!COACH && e.kind === 'journal' && e.key) { var eb = h('button', { class: 'bk-open', type: 'button', text: 'Edit ✎', onclick: function () { eb.replaceWith(journalEditor(e.key, e.text, function (cancel) { if (cancel) draw(); else APP.reload(); })); } }); body.appendChild(eb); }
+      if (!COACH && (e.kind === 'win' || e.kind === 'proof')) { var del = h('button', { class: 'bk-del', type: 'button', text: 'Remove', onclick: function () { if (!del.dataset.sure) { del.dataset.sure = 1; del.textContent = 'Tap again to remove'; return; } removeEvidence(e.id); APP.reload(); } }); body.appendChild(del); }
       if (e.res) { var lg = h('span', { class: 'bk-logo', title: (resource(e.res) || {}).title || '' }, [emblem(e.res)]); c.classList.add('has-logo'); body.appendChild(lg); }
       if (e.href && e.kind === 'vagal') c.classList.add('vagal');
       c.appendChild(body);
@@ -3121,10 +3527,790 @@
     try { sessionStorage.setItem('bt-focus-el', id || 'tests'); } catch (e) {}
     setTimeout(function () { goHref(needsStart() ? '#Start' : '#Profile'); }, 0);
   }
-  window.BT_NATIVE = { NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
+  /* ---------------- Breaking Out of Your Box · your results (#BoxResults) ----------------
+     Opens from "See my results" at the end of Step 1. Four stages, each revealed with a button:
+     1. the weight: every belief they picked drops onto a two-arm scale (core = bigger, heavier marbles)
+     2. the Fierce 5: five jars, then their pile sorts itself into the jars (colour = which root). Saveable as a picture.
+     3. the backpack: carrying all of that through life
+     4. what's next: proof shrinks the marbles; watch Lesson 5, then come back to Step 2 */
+  var BOX_F5 = [
+    { k: 'worthy', name: 'I’m not worthy', c: '#E8338A', d: 'The belief that you have to earn your place: your rest, your needs, even love. It shows up as proving yourself, overworking and feeling guilty for needing anything.' },
+    { k: 'good', name: 'I’m not good enough', c: '#F2B705', d: 'The belief that whatever you do is never quite enough. It shows up as perfectionism, comparison and a fear of getting it wrong.' },
+    { k: 'loved', name: 'I’m not loved', c: '#F2675A', d: 'The belief that people will leave if they see the real you. It shows up as people pleasing, masking and worrying you’re too much.' },
+    { k: 'safe', name: 'I’m not safe', c: '#5B8DD9', d: 'The belief that the world, other people or your own feelings are dangerous. It shows up as needing control, staying on high alert and expecting the worst.' },
+    { k: 'capable', name: 'I’m not capable', c: '#5FA052', d: 'The belief that you can’t cope or can’t trust yourself. It shows up as doing it all alone, avoiding challenges and second-guessing every decision.' }
+  ];
+  function boxPicked() {
+    var d = pdData(), fq = d.freq || {}, tk = d.ticked || {}, seen = {}, out = [];
+    Object.keys(PD_TEXT).forEach(function (cid) { PD_TEXT[cid].forEach(function (b, i) {
+      var k = cid + '-' + i, v = fq[k] || (tk[k] ? 'some' : '');
+      if (v !== 'all' && v !== 'some') return;
+      if (seen[b]) { if (v === 'all') seen[b].core = true; return; }
+      var root = f5For(b); if (!BOX_F5.some(function (x) { return x.k === root; })) root = 'worthy';
+      seen[b] = { b: b, core: v === 'all', f5: root }; out.push(seen[b]);
+    }); });
+    return out;
+  }
+  function boxF5(k) { return BOX_F5.filter(function (x) { return x.k === k; })[0] || BOX_F5[0]; }
+  function svgEl(markup) { var s = h('span', { class: 'bx-svg' }); s.innerHTML = markup; return s; }
+  // the scale: core marbles in the left pan, part-time ones in the right; it tips towards the heavier side
+  function boxScale(list) {
+    var core = list.filter(function (x) { return x.core; }), part = list.filter(function (x) { return !x.core; });
+    var pile = function (arr, r, cx, maxN) {
+      var out = '', per = Math.max(3, Math.floor(100 / (r * 2 + 1))), shown = arr.slice(0, maxN);
+      shown.forEach(function (x, i) {
+        var row = Math.floor(i / per), col = i % per, inRow = Math.min(per, shown.length - row * per);
+        var x0 = cx - (inRow - 1) * (r + 0.6) + col * (2 * r + 1.2) + (row % 2 ? r * 0.5 : 0), y0 = 150 - r - row * (2 * r - 1);
+        out += '<circle class="bx-m" cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="' + r + '" fill="' + boxF5(x.f5).c + '" style="animation-delay:' + (0.25 + i * 0.045).toFixed(2) + 's"/>';
+      });
+      return out;
+    };
+    var wCore = core.length * 3, wPart = part.length, ang = wCore + wPart ? Math.max(-14, Math.min(14, (wPart - wCore) / Math.max(wCore + wPart, 1) * 18)) : 0;
+    var dyL = (-120 * Math.sin(ang * Math.PI / 180)).toFixed(1), dyR = (120 * Math.sin(ang * Math.PI / 180)).toFixed(1);
+    var panL = '<g class="bx-pan" style="--dy:' + dyL + 'px"><path d="M60 62v52M60 62L30 114M60 62l30 52" stroke-width="1.6"/><path d="M8 114h104c-4 26-24 40-52 40S12 140 8 114z" fill="#FFF4EE"/>' + pile(core, 6.5, 60, 60) + '<text x="60" y="174" text-anchor="middle" class="bx-lab" stroke="none" fill="#4E0C08">All the time</text></g>';
+    var panR = '<g class="bx-pan" style="--dy:' + dyR + 'px"><path d="M300 62v52M300 62l-30 52M300 62l30 52" stroke-width="1.6"/><path d="M248 114h104c-4 26-24 40-52 40s-48-14-52-40z" fill="#FFF4EE"/>' + pile(part, 4, 300, 90) + '<text x="300" y="174" text-anchor="middle" class="bx-lab" stroke="none" fill="#4E0C08">Sometimes</text></g>';
+    var svg = '<svg viewBox="0 -40 360 290" role="img" aria-label="A scale. ' + core.length + ' core beliefs on one side, ' + part.length + ' part-time beliefs on the other."><g fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M180 62l-26 170h52z" fill="#F4C2F7"/><path d="M128 236h104" stroke-width="3"/>'
+      + '<g class="bx-beam" style="--a:' + ang.toFixed(1) + 'deg"><path d="M60 62h240" stroke-width="5"/></g>'
+      + panL + panR + '<circle cx="180" cy="62" r="7" fill="#F1F9A6"/>'
+      + '</g></svg>';
+    var el = svgEl(svg); el.classList.add('bx-scale');
+    return { el: el, core: core.length, part: part.length };
+  }
+  // a jar for one of the Fierce 5 (balls land in .bx-jfill)
+  function boxJar(f) {
+    var j = h('div', { class: 'bx-jar', 'data-k': f.k, style: '--c:' + f.c });
+    j.appendChild(svgEl('<svg viewBox="0 0 100 120" aria-hidden="true"><path d="M30 6h40v14H30z" fill="' + f.c + '" stroke="#4E0C08" stroke-width="2.6"/><path d="M32 20c-14 8-22 18-22 34v46c0 10 8 16 18 16h44c10 0 18-6 18-16V54c0-16-8-26-22-34z" fill="rgba(255,255,255,.55)" stroke="#4E0C08" stroke-width="2.6" stroke-linejoin="round"/><path d="M22 60v34" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/></svg>'));
+    j.appendChild(h('div', { class: 'bx-jfill' }));
+    return j;
+  }
+  // save the jars + lists as one picture
+  function boxSavePic(list) {
+    var W = 1080, pad = 60, rows = BOX_F5.map(function (f) { return { f: f, items: list.filter(function (x) { return x.f5 === f.k; }) }; }).filter(function (r) { return r.items.length; });
+    var cv = document.createElement('canvas'), ctx = cv.getContext('2d'), lineH = 34;
+    var hRow = function (r) { return Math.max(260, 120 + r.items.length * lineH); };
+    var H = 260 + rows.reduce(function (a, r) { return a + hRow(r) + 30; }, 0) + 80;
+    cv.width = W; cv.height = H;
+    ctx.fillStyle = '#4E0C08'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#F4C2F7'; ctx.font = '32px "Patrick Hand SC", cursive'; ctx.fillText('Breaking Out of Your Box', pad, 90);
+    ctx.fillStyle = '#FFF4EE'; ctx.font = 'bold 64px "Playfair Display", Georgia, serif'; ctx.fillText('My limiting beliefs', pad, 170);
+    ctx.fillStyle = '#F1F9A6'; ctx.font = '26px Poppins, sans-serif';
+    var nc = list.filter(function (x) { return x.core; }).length; ctx.fillText(nc + ' core (all the time) · ' + (list.length - nc) + ' part-time (sometimes)', pad, 215);
+    var y = 260;
+    rows.forEach(function (r) {
+      var hh = hRow(r);
+      ctx.fillStyle = '#FFF4EE'; roundRect(ctx, pad, y, W - pad * 2, hh, 28); ctx.fill();
+      // jar
+      var jx = pad + 30, jy = y + 40, jw = 170, jh = 200;
+      ctx.fillStyle = r.f.c; ctx.fillRect(jx + 45, jy, 80, 24); ctx.strokeStyle = '#4E0C08'; ctx.lineWidth = 4; ctx.strokeRect(jx + 45, jy, 80, 24);
+      ctx.fillStyle = '#FFFFFF'; roundRect(ctx, jx, jy + 24, jw, jh - 24, 30); ctx.fill(); ctx.stroke();
+      var per = 6, bi = 0;
+      r.items.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).slice(0, 36).forEach(function (x) {
+        var rr = x.core ? 12 : 7, row = Math.floor(bi / per), col = bi % per; bi++;
+        ctx.beginPath(); ctx.arc(jx + 22 + col * 25 + (row % 2 ? 6 : 0), jy + jh - 20 - row * 22, rr, 0, Math.PI * 2); ctx.fillStyle = r.f.c; ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+      });
+      // list
+      var tx0 = jx + jw + 40;
+      ctx.fillStyle = '#4E0C08'; ctx.font = 'bold 36px "Playfair Display", Georgia, serif'; ctx.fillText(r.f.name, tx0, y + 70);
+      var yy = y + 120;
+      r.items.sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) {
+        ctx.beginPath(); ctx.arc(tx0 + 10, yy - 9, x.core ? 9 : 5, 0, Math.PI * 2); ctx.fillStyle = r.f.c; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#4E0C08'; ctx.stroke();
+        ctx.fillStyle = '#1F1412'; ctx.font = (x.core ? 'bold ' : '') + '24px Poppins, sans-serif'; ctx.fillText(fitText(ctx, x.b, W - pad - 40 - tx0 - 30), tx0 + 30, yy); yy += lineH;
+      });
+      y += hh + 30;
+    });
+    ctx.fillStyle = '#F6D6CF'; ctx.font = '22px Poppins, sans-serif'; ctx.fillText('Big marbles: all the time. Small marbles: sometimes.', pad, H - 40);
+    var done = function (url) { var a = document.createElement('a'); a.href = url; a.download = 'my-limiting-beliefs.png'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 100); };
+    try { cv.toBlob(function (b) { if (b) done(URL.createObjectURL(b)); else done(cv.toDataURL('image/png')); }, 'image/png'); } catch (e) { done(cv.toDataURL('image/png')); }
+    function roundRect(c, x, y0, w, hh2, rad) { c.beginPath(); c.moveTo(x + rad, y0); c.arcTo(x + w, y0, x + w, y0 + hh2, rad); c.arcTo(x + w, y0 + hh2, x, y0 + hh2, rad); c.arcTo(x, y0 + hh2, x, y0, rad); c.arcTo(x, y0, x + w, y0, rad); c.closePath(); }
+    function fitText(c, t, max) { if (c.measureText(t).width <= max) return t; while (t.length > 4 && c.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; }
+  }
+  // the backpack scenes
+  var BOX_PACK = [
+    ['coaster', 'Going on a rollercoaster? Much harder with a backpack on.'],
+    ['sleep', 'Trying to sleep? Lying on it all night isn’t comfy.'],
+    ['work', 'Working? It sits on your shoulders at your desk, every single day.'],
+    ['friends', 'Catching up with friends? It comes along too.']
+  ];
+  function packPerson(x, y, big) {
+    var s = big || 1;
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-22 -30c-10 0-16 8-16 18v26c0 6 4 10 10 10h12z" fill="#A8231F"/><circle cx="-26" cy="-4" r="3" fill="#E8338A"/><circle cx="-31" cy="4" r="3" fill="#F2B705"/><circle cx="-24" cy="8" r="2.5" fill="#5B8DD9"/>'
+      + '<path d="M-16 24c0-30 6-44 16-44s16 14 16 44z" fill="#F4C2F7"/><circle cx="0" cy="-32" r="12" fill="#FFF4EE"/><circle cx="-4" cy="-33" r="1.4" fill="#4E0C08"/><circle cx="4" cy="-33" r="1.4" fill="#4E0C08"/><path d="M-4 -26q4-3 8 0"/></g>';
+  }
+  var BOX_SCENES = {
+    coaster: '<path d="M10 120c30-80 60-80 90-40s60 40 100-50" stroke-width="2"/><path d="M10 128c30-80 60-80 90-40s60 40 100-50" stroke-width="1.4" stroke-dasharray="3 6"/><g class="bx-ride"><rect x="70" y="58" width="56" height="22" rx="8" fill="#F1F9A6"/>' + packPerson(98, 48, .8) + '</g>',
+    sleep: '<rect x="20" y="86" width="170" height="24" rx="8" fill="#BFD7F2"/><path d="M20 110v14M190 110v14"/><rect x="26" y="74" width="34" height="14" rx="6" fill="#fff"/><g class="bx-toss"><path d="M60 82c10-14 60-14 90-10l10 14H60z" fill="#F4C2F7"/><circle cx="56" cy="70" r="11" fill="#FFF4EE"/><path d="M52 69h3M59 69h3"/><path d="M98 62c-6-12 22-16 22-2z" fill="#A8231F"/></g><text x="150" y="40" class="bx-z" stroke="none" fill="#4E0C08">z z</text>',
+    work: '<rect x="96" y="80" width="100" height="8" rx="3" fill="#F1F9A6"/><path d="M110 88v36M182 88v36"/><rect x="128" y="56" width="44" height="26" rx="4" fill="#BFD7F2"/><path d="M122 82h56"/>' + '<g class="bx-hunch">' + packPerson(80, 98, .9) + '</g><path class="bx-sweat" d="M64 50c0 4-3 6-3 6s-3-2-3-6 3-6 3-6 3 2 3 6z" fill="#BFD7F2"/>',
+    friends: packPerson(70, 100, .85) + '<g class="bx-bob2"><path d="M128 120c0-26 5-38 14-38s14 12 14 38z" fill="#BFD7F2"/><circle cx="142" cy="72" r="10" fill="#FFF4EE"/><circle cx="139" cy="71" r="1.2" fill="#4E0C08"/><circle cx="145" cy="71" r="1.2" fill="#4E0C08"/><path d="M138 77q4 3 8 0"/></g><path d="M92 46c6-10 22-10 28 0" stroke-dasharray="3 4"/><text x="104" y="40" stroke="none" fill="#E8338A" font-size="16">♥</text>'
+  };
+  // opts.embed: drawn inside the Breaking Out of Your Box resource (its "Your results" page), opts.go(tab) moves between its pages
+  function BoxResultsView(root, opts) {
+    opts = opts || {}; var EMB = !!opts.embed;
+    var goTab = function (tab) { if (EMB && opts.go) { opts.go(tab); return; } try { localStorage.setItem('cmn-open-tab', tab); } catch (e) {} APP.go('BreakingOut.dc.html'); };
+    if (!EMB) root.appendChild(pageHead('Breaking Out of Your Box · Step 1', 'Your results', 'Here’s what you found, and why it matters.'));
+    var wrap = h('div', { class: 'bt-wrap bx' + (EMB ? ' bx-emb' : '') }, EMB ? [] : [back('Back to Breaking Out of Your Box', '#BreakingOut')]);
+    root.appendChild(wrap);
+    var list = boxPicked();
+    if (!list.length) {
+      wrap.appendChild(h('section', { class: 'bt-card2' }, [h('h2', { text: 'Nothing picked yet' }), h('p', { class: 'bt-sub', text: 'Go through the six levels in Step 1 first. Your results show up here.' }),
+        h('a', { class: 'bt-btn lime', href: '#BreakingOut', onclick: function (e) { e.preventDefault(); goTab('audit'); }, text: 'Go to Step 1 →' })]));
+      return;
+    }
+    var scrollTo = function (el) { setTimeout(function () { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }, 60); };
+    var nextBtn = function (label, fn) { var b = h('button', { class: 'bt-btn lime bx-next', type: 'button', text: label, onclick: function () { b.remove(); fn(); } }); return b; };
+
+    // 1. the weight
+    var sc = boxScale(list), s1 = h('section', { class: 'bt-card2 bx-sec' });
+    s1.appendChild(h('span', { class: 'bt-wins-k', text: 'All of it, in one place' }));
+    s1.appendChild(h('h2', { class: 'bx-h', text: 'Every belief you picked is a marble' }));
+    s1.appendChild(sc.el);
+    s1.appendChild(h('p', { class: 'bx-big' }, ['You picked ', h('b', { class: 'core', text: String(sc.core) }), sc.core === 1 ? ' core belief and ' : ' core beliefs and ', h('b', { class: 'part', text: String(sc.part) }), sc.part === 1 ? ' part-time one.' : ' part-time ones.']));
+    s1.appendChild(h('div', { class: 'bx-two' }, [
+      h('div', { class: 'bx-k core' }, [h('span', { class: 'bx-dot big', 'aria-hidden': 'true' }), h('div', null, [h('b', { text: 'Core beliefs · all the time' }), h('p', { text: 'These feel true almost all the time. They’re running the show in the background, so they’re the heavy ones.' })])]),
+      h('div', { class: 'bx-k part' }, [h('span', { class: 'bx-dot', 'aria-hidden': 'true' }), h('div', null, [h('b', { text: 'Part-time beliefs · sometimes' }), h('p', { text: 'These pop up in certain moments, with certain people. Lighter, but you still carry them.' })])])]));
+    s1.appendChild(h('p', { class: 'bx-woah', text: 'Woah. That’s a heavy load to carry around your whole life.' }));
+    wrap.appendChild(s1);
+    s1.appendChild(nextBtn('Where do they all come from? →', stage2));
+
+    // 2. the Fierce 5
+    function stage2() {
+      var s2 = h('section', { class: 'bt-card2 bx-sec bx-f5' });
+      s2.appendChild(h('span', { class: 'bt-wins-k', text: 'The Fierce 5' }));
+      s2.appendChild(h('h2', { class: 'bx-h', text: 'It all comes back to five roots' }));
+      s2.appendChild(h('p', { class: 'bt-sub', text: 'Every limiting belief grows from one of five deep roots. We call them the Fierce 5. They’re the core fears your brain decided to protect you from, usually when you were little, and every belief you picked fits into one of them. Each colour is one root.' }));
+      var heap = h('div', { class: 'bx-heap', 'aria-hidden': 'true' });
+      list.slice().sort(function () { return Math.random() - 0.5; }).forEach(function (x) { heap.appendChild(h('span', { class: 'bx-ball' + (x.core ? ' core' : ''), style: '--c:' + boxF5(x.f5).c, 'data-k': x.f5 })); });
+      s2.appendChild(heap);
+      var grid = h('div', { class: 'bx-jars' });
+      BOX_F5.forEach(function (f) {
+        var mine = list.filter(function (x) { return x.f5 === f.k; }).sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); });
+        var nc = mine.filter(function (x) { return x.core; }).length;
+        var card = h('div', { class: 'bx-jc', style: '--c:' + f.c });
+        card.appendChild(boxJar(f));
+        card.appendChild(h('b', { class: 'bx-jn', text: f.name }));
+        card.appendChild(h('span', { class: 'bx-jcount', text: mine.length ? nc + ' core · ' + (mine.length - nc) + ' part-time' : 'None picked' }));
+        card.appendChild(h('p', { class: 'bx-jd', text: f.d }));
+        if (mine.length) card.appendChild(h('ul', { class: 'bx-jl' }, mine.map(function (x) { return h('li', { class: x.core ? 'core' : '' }, [h('span', { class: 'bx-dot' + (x.core ? ' big' : ''), 'aria-hidden': 'true' }), x.b]); })));
+        grid.appendChild(card);
+      });
+      s2.appendChild(grid);
+      var sortBtn = h('button', { class: 'bt-btn lime', type: 'button', text: 'Sort my beliefs into their jars ✨', onclick: function () { sortBtn.disabled = true; sortThem(); } });
+      s2.appendChild(h('div', { class: 'bt-row bx-sortrow' }, [sortBtn]));
+      wrap.appendChild(s2); scrollTo(s2);
+      function sortThem() {
+        var balls = Array.prototype.slice.call(heap.querySelectorAll('.bx-ball')), stage = s2, sr = stage.getBoundingClientRect();
+        balls.forEach(function (b, i) {
+          var jar = grid.querySelector('.bx-jar[data-k="' + b.getAttribute('data-k') + '"] .bx-jfill'); if (!jar) return;
+          setTimeout(function () {
+            var a = b.getBoundingClientRect(), sr2 = stage.getBoundingClientRect();
+            var ghost = h('span', { class: b.className + ' fly', style: '--c:' + b.style.getPropertyValue('--c') + ';left:' + (a.left - sr2.left) + 'px;top:' + (a.top - sr2.top) + 'px' });
+            stage.appendChild(ghost); b.style.visibility = 'hidden';
+            var put = h('span', { class: b.className + ' in', style: '--c:' + b.style.getPropertyValue('--c') });
+            jar.appendChild(put); put.style.visibility = 'hidden';
+            var t = put.getBoundingClientRect();
+            requestAnimationFrame(function () { ghost.style.transform = 'translate(' + (t.left - a.left) + 'px,' + (t.top - a.top) + 'px)'; });
+            setTimeout(function () { ghost.remove(); put.style.visibility = ''; }, 720);
+          }, i * 55);
+        });
+        setTimeout(function () {
+          heap.classList.add('gone'); grid.classList.add('sorted');
+          sortBtn.parentNode.replaceChild(h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn ghost', type: 'button', text: '⬇ Save my jars as a picture', onclick: function () { boxSavePic(list); APP.toast('Saved. Check your downloads.'); } })]), sortBtn);
+          s2.appendChild(nextBtn('So what does this mean for me? →', stage3));
+        }, balls.length * 55 + 900);
+      }
+    }
+
+    // 3. the backpack
+    function stage3() {
+      var s3 = h('section', { class: 'bt-card2 bx-sec bx-pack' });
+      s3.appendChild(h('span', { class: 'bt-wins-k', text: 'Now imagine this' }));
+      s3.appendChild(h('h2', { class: 'bx-h', text: 'You pick them all up and put them in a backpack' }));
+      s3.appendChild(h('p', { class: 'bt-sub', text: 'Every marble, every jar. Then you carry that backpack everywhere you go, every day of your life.' }));
+      var stage = h('div', { class: 'bx-scene' }), cap = h('p', { class: 'bx-cap', 'aria-live': 'polite' }), dots = h('div', { class: 'bx-dots' });
+      s3.appendChild(stage); s3.appendChild(cap); s3.appendChild(dots);
+      var fillIn = '<svg viewBox="0 0 220 140" aria-hidden="true"><g fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + packPerson(110, 108, 1.2)
+        + list.slice(0, 18).map(function (x, i) { return '<circle class="bx-into" cx="' + (60 + (i % 6) * 8) + '" cy="20" r="' + (x.core ? 4 : 2.6) + '" fill="' + boxF5(x.f5).c + '" style="animation-delay:' + (i * 0.12).toFixed(2) + 's"/>'; }).join('') + '</g></svg>';
+      var i = -1, timer = null;
+      function show(n) {
+        stage.innerHTML = n < 0 ? fillIn : '<svg viewBox="0 0 220 140" aria-hidden="true"><g fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + BOX_SCENES[BOX_PACK[n][0]] + '</g></svg>';
+        cap.textContent = n < 0 ? 'Into the backpack they go…' : BOX_PACK[n][1];
+        dots.innerHTML = ''; BOX_PACK.forEach(function (p, j) { dots.appendChild(h('button', { class: 'bx-d' + (j === n ? ' on' : ''), type: 'button', 'aria-label': 'Scene ' + (j + 1), onclick: function () { clearInterval(timer); i = j; show(j); } })); });
+      }
+      show(-1);
+      setTimeout(function () { i = 0; show(0); timer = setInterval(function () { if (!document.body.contains(stage)) { clearInterval(timer); return; } i = (i + 1) % BOX_PACK.length; show(i); }, 3400); }, 2600);
+      s3.appendChild(h('p', { class: 'bx-big', text: 'Putting the backpack down would be a lot easier, right?' }));
+      s3.appendChild(h('p', { class: 'bt-sub', text: 'We’re going to start learning how to do that.' }));
+      wrap.appendChild(s3); scrollTo(s3);
+      s3.appendChild(nextBtn('How do I put it down? →', stage4));
+    }
+
+    // 4. what's next
+    function stage4() {
+      var s4 = h('section', { class: 'bt-card2 bx-sec bx-nextup' });
+      s4.appendChild(h('span', { class: 'bt-wins-k', text: 'Lightening the load' }));
+      s4.appendChild(h('h2', { class: 'bx-h', text: 'Proof makes the marbles smaller' }));
+      s4.appendChild(svgEl('<svg viewBox="0 0 240 90" aria-hidden="true" class="bx-shrink"><g stroke="#4E0C08" stroke-width="2.2"><circle class="m1" cx="50" cy="50" r="26" fill="#E8338A"/><circle class="m2" cx="120" cy="50" r="26" fill="#F2B705"/><circle class="m3" cx="190" cy="50" r="26" fill="#5B8DD9"/></g><g fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"><path class="s1" d="M50 6l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/><path class="s2" d="M120 6l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/><path class="s3" d="M190 6l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></g></svg>'));
+      s4.appendChild(h('p', { class: 'bt-sub', text: 'The first step is adding proof from your proof portfolio that contradicts these core beliefs. The more proof you add, the smaller the marbles get and the lighter your backpack becomes, until one day you can take it off completely.' }));
+      s4.appendChild(h('p', { class: 'bt-sub', text: 'We’ll do that a bit later. First, head back to the course and watch the next video, all about programs. Then come back for Step 2, where we uncover the programs these beliefs created to keep you safe.' }));
+      s4.appendChild(h('p', { class: 'bx-note', text: 'You’ll learn more about your backpack in Week 5.' }));
+      var nx = null; try { nx = findLesson('w2l5'); } catch (e) {}
+      s4.appendChild(h('div', { class: 'bt-row bx-end' }, [
+        nx ? h('a', { class: 'bt-btn lime', href: isActivityCard(nx.l) ? lessonHref(nx.l) : '#Lesson-' + nx.l.id, text: 'Watch ' + nx.l.title + ' →' }) : h('a', { class: 'bt-btn lime', href: '#Course', text: 'Back to the course →' }),
+        h('button', { class: 'bt-btn ghost', type: 'button', text: 'Go to Step 2: Programs', onclick: function () { goTab('decoder'); } })]));
+      wrap.appendChild(s4); scrollTo(s4);
+      try { sparkleBurst(s4); } catch (e) {}
+    }
+  }
+  /* ---------------- Breaking Out of Your Box · Your results (Nov 2026) ----------------
+     The "Your results" page inside the resource, straight after Step 1:
+     1. the belief wheel: like a wheel of life, one slice per area of life, filled by how much they believe in that area
+     2. the Fierce 5: their beliefs sort into five jars, with what each root is, where it comes from and what it protects them from
+     3. save the map + jars to their Becoming Book (and it lives on Home)
+     4. watch the Programs video, then come back for Step 2 */
+  var BOX_AREAS = [
+    { id: 'self', name: 'Self-worth', full: 'Self-worth & identity', c: '#E8338A' },
+    { id: 'rel', name: 'Relationships', full: 'Relationships', c: '#F2675A' },
+    { id: 'ach', name: 'Achievement', full: 'Achievement & productivity', c: '#F2B705' },
+    { id: 'perf', name: 'Perfectionism', full: 'Perfectionism & failure', c: '#7B5BA6' },
+    { id: 'vis', name: 'Being seen', full: 'Visibility & being seen', c: '#2E8B84' },
+    { id: 'safe', name: 'Safety', full: 'Safety & control', c: '#5B8DD9' }
+  ];
+  var BOX_F5_MORE = {
+    worthy: { from: 'It often starts when love, attention or approval seemed to depend on what you did, how good you were, or how little you needed.', protect: 'Being a burden, being left out, or being seen as “too much”.', sounds: 'I have to earn it. I don’t deserve a break. Who am I to ask for that?' },
+    good: { from: 'It often starts with high expectations, criticism or being compared, so your brain decided the safest thing was to be perfect.', protect: 'Criticism, embarrassment and being “found out”.', sounds: 'It’s not good enough yet. Anyone could have done that. I should be better by now.' },
+    loved: { from: 'It often starts when your feelings or the real you got pushed away, so you learned to become who other people needed.', protect: 'Rejection, and people leaving.', sounds: 'They’ll leave if they really knew me. I need to keep everyone happy. I’m too much.' },
+    safe: { from: 'It often starts when life felt unpredictable, chaotic or scary, so your brain learned to stay on guard.', protect: 'Being caught off guard, or getting hurt again.', sounds: 'What if something goes wrong? I need to stay in control. Don’t get your hopes up.' },
+    capable: { from: 'It often starts when you had to cope alone too young, or when others did things for you instead of trusting you to.', protect: 'Failing, being exposed, or relying on someone who lets you down.', sounds: 'I can’t do this. I’ll just do it myself. I’d be shit at that.' }
+  };
+  function boxAreaScores() {
+    var d = pdData(), fq = d.freq || {}, tk = d.ticked || {};
+    return BOX_AREAS.map(function (a) {
+      var items = PD_TEXT[a.id] || [], core = 0, part = 0;
+      items.forEach(function (b, i) { var k = a.id + '-' + i, v = fq[k] || (tk[k] ? 'some' : ''); if (v === 'all') core++; else if (v === 'some') part++; });
+      var pct = items.length ? Math.round((core * 2 + part) / (items.length * 2) * 100) : 0;
+      return { a: a, core: core, part: part, n: items.length, pct: pct };
+    });
+  }
+  // the wheel, as svg markup. anim: slices grow in
+  // opts.vb: viewBox, opts.label: aria label start. s.fill (0-1) sets how far a slice reaches, else s.pct / 100
+  function boxWheel(scores, anim, opts) {
+    opts = opts || {}; var cx = 200, cy = 190, R = 130, r0 = 16, out = '', lab = '', st = 360 / scores.length;
+    var pt = function (r, deg) { var t = (deg - 90) * Math.PI / 180; return [(cx + r * Math.cos(t)).toFixed(1), (cy + r * Math.sin(t)).toFixed(1)]; };
+    var wedge = function (r, d0, d1) { var a = pt(r, d0), b = pt(r, d1), c0 = pt(r0, d0), c1 = pt(r0, d1); return 'M' + c0 + 'L' + a + 'A' + r + ' ' + r + ' 0 0 1 ' + b + 'L' + c1 + 'A' + r0 + ' ' + r0 + ' 0 0 0 ' + c0 + 'Z'; };
+    scores.forEach(function (s, i) {
+      var d0 = i * st + 1.5, d1 = (i + 1) * st - 1.5, fl = s.fill != null ? s.fill : s.pct / 100, rr = s.pct ? r0 + (R - r0) * Math.max(0.08, fl) : 0;
+      out += '<path d="' + wedge(R, d0, d1) + '" fill="#FFFFFF" stroke="#EAD9D4" stroke-width="1.2"/>';
+      [0.25, 0.5, 0.75].forEach(function (f) { var rq = r0 + (R - r0) * f, a = pt(rq, d0), b = pt(rq, d1); out += '<path d="M' + a + 'A' + rq + ' ' + rq + ' 0 0 1 ' + b + '" fill="none" stroke="#EAD9D4" stroke-width="1" stroke-dasharray="3 4"/>'; });
+      if (rr) out += '<path class="bx-wslice" d="' + wedge(rr, d0, d1) + '" fill="' + s.a.c + '" stroke="#4E0C08" stroke-width="2.2" stroke-linejoin="round" style="transform-origin:' + cx + 'px ' + cy + 'px;' + (anim ? 'animation-delay:' + (0.2 + i * 0.18).toFixed(2) + 's' : 'animation:none') + '"/>';
+      var mid = (d0 + d1) / 2, lp = pt(R + 30, mid), anchor = mid > 20 && mid < 160 ? 'start' : mid > 200 && mid < 340 ? 'end' : 'middle';
+      var dy = mid > 100 && mid < 260 ? 12 : 0;
+      var nm = s.a.name, two = opts.split && /^I’m not /.test(nm); lab += '<text x="' + lp[0] + '" y="' + (+lp[1] + dy - (two ? 24 : 8)).toFixed(1) + '" text-anchor="' + anchor + '" class="bx-wl">' + (two ? '<tspan>I’m not</tspan><tspan x="' + lp[0] + '" dy="16">' + nm.replace(/^I’m not /, '') + '</tspan>' : nm) + '</text><text x="' + lp[0] + '" y="' + (+lp[1] + dy + 10).toFixed(1) + '" text-anchor="' + anchor + '" class="bx-wp" fill="' + (s.a.id === 'ach' || s.a.id === 'good' ? '#B07D00' : s.a.c) + '">' + s.pct + '%</text>';
+    });
+    out += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r0 + '" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2.2"/>';
+    return '<svg viewBox="' + (opts.vb || '-50 0 500 390') + '" role="img" aria-label="' + (opts.label || 'Your belief wheel.') + ' ' + scores.map(function (s) { return s.a.full + ' ' + s.pct + ' percent'; }).join(', ') + '">' + out + lab + '</svg>';
+  }
+  function boxWheelBlock(anim, compact) {
+    var sc = boxAreaScores(), ranked = sc.slice().sort(function (a, b) { return b.pct - a.pct; }), top = ranked[0];
+    var el = h('div', { class: 'bx-wheelwrap' });
+    var w = svgEl(boxWheel(sc, anim)); w.classList.add('bx-wheel'); el.appendChild(w);
+    if (top && top.pct) {
+      var tied = ranked.filter(function (x) { return x.pct === top.pct; });
+      el.appendChild(h('p', { class: 'bx-big bx-wtop' }, ['Your beliefs hit hardest in ', h('b', { style: 'color:' + top.a.c, text: tied.map(function (x) { return x.a.full.toLowerCase(); }).join(' and ') }), '.']));
+    }
+    if (!compact) el.appendChild(h('ul', { class: 'bx-wlist' }, ranked.map(function (s) {
+      return h('li', null, [h('span', { class: 'bx-wn', text: s.a.full }), h('span', { class: 'bx-wbar' }, [h('i', { style: 'width:' + s.pct + '%;background:' + s.a.c })]), h('span', { class: 'bx-wc', text: s.core + ' core · ' + s.part + ' part-time' })]);
+    })));
+    return el;
+  }
+  // the jars, with their beliefs listed underneath (titled All the time / Sometimes). fill: put the balls in now
+  function boxJarGrid(list, fill, small) {
+    var grid = h('div', { class: 'bx-jars' + (fill ? ' sorted' : '') + (small ? ' mini' : '') });
+    BOX_F5.forEach(function (f) {
+      var mine = list.filter(function (x) { return x.f5 === f.k; }), core = mine.filter(function (x) { return x.core; }), part = mine.filter(function (x) { return !x.core; });
+      var card = h('div', { class: 'bx-jc', style: '--c:' + f.c, 'data-k': f.k }), jar = boxJar(f);
+      if (fill) mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ''), style: '--c:' + f.c })); });
+      card.appendChild(jar); card.appendChild(h('b', { class: 'bx-jn', text: f.name }));
+      if (small) { card.appendChild(h('span', { class: 'bx-jcount', text: String(mine.length) })); grid.appendChild(card); return; }
+      // six rows per card, so "All the time" and "Sometimes" line up across the cards
+      [['All the time', core, true], ['Sometimes', part, false]].forEach(function (g) {
+        card.appendChild(h('span', { class: 'bx-jlt' + (g[1].length ? '' : ' none'), text: g[0] }));
+        card.appendChild(g[1].length ? h('ul', { class: 'bx-jl' }, g[1].map(function (x) { return h('li', { class: g[2] ? 'core' : '' }, [h('span', { class: 'bx-dot' + (g[2] ? ' big' : ''), 'aria-hidden': 'true' }), x.b]); })) : h('span', { class: 'bx-jnone', text: 'None' }));
+      });
+      grid.appendChild(card);
+    });
+    return grid;
+  }
+  function boxJarsStatic(list, small) { return boxJarGrid(list, true, small); }
+  // the root that weighs the most (core counts double)
+  function boxTopRoot(list) {
+    return BOX_F5.map(function (f) { var m = list.filter(function (x) { return x.f5 === f.k; }); return { f: f, w: m.filter(function (x) { return x.core; }).length * 2 + m.filter(function (x) { return !x.core; }).length, mine: m }; }).sort(function (a, b) { return b.w - a.w; });
+  }
+  // a hand-drawn circle round the jar that impacts them most
+  function boxCircleJar(grid, k) {
+    var card = grid.querySelector('.bx-jc[data-k="' + k + '"]'); if (!card) return;
+    card.classList.add('top');
+    var ring = svgEl('<svg class="bx-ring" viewBox="0 0 200 160" preserveAspectRatio="none" aria-hidden="true"><path d="M100 8C46 6 8 34 8 78s40 74 94 74 92-30 90-76S150 10 92 12c-30 1-50 8-62 18" fill="none" stroke="#E8338A" stroke-width="4" stroke-linecap="round" pathLength="1"/></svg>');
+    card.appendChild(ring);
+  }
+  // the scale: their beliefs on one side, their proof that the opposite is true on the other
+  function boxProofScale(list, nProof) {
+    var wB = list.filter(function (x) { return x.core; }).length * 2 + list.filter(function (x) { return !x.core; }).length, wP = nProof;
+    var ang = wB + wP ? Math.max(-14, Math.min(14, (wP - wB) / Math.max(wB + wP, 1) * 18)) : 0;
+    var dyL = (-120 * Math.sin(ang * Math.PI / 180)).toFixed(1), dyR = (120 * Math.sin(ang * Math.PI / 180)).toFixed(1);
+    var marbles = '', stars = '';
+    list.slice(0, 40).forEach(function (x, i) { var r = x.core ? 5.5 : 3.8, per = 9, row = Math.floor(i / per), col = i % per; marbles += '<circle class="bx-m" cx="' + (24 + col * 9 + (row % 2 ? 4 : 0)).toFixed(1) + '" cy="' + (108 - row * 8).toFixed(1) + '" r="' + r + '" fill="' + boxF5(x.f5).c + '" style="animation-delay:' + (0.2 + i * 0.03).toFixed(2) + 's"/>'; });
+    for (var i = 0; i < Math.min(nProof, 30); i++) { var per = 6, row = Math.floor(i / per), col = i % per, cx = 262 + col * 15 + (row % 2 ? 7 : 0), cy = 104 - row * 13; stars += '<path class="bx-m" d="M' + cx + ' ' + (cy - 7) + 'l2.3 4.7 5.2.8-3.8 3.6.9 5.2-4.6-2.4-4.6 2.4.9-5.2-3.8-3.6 5.2-.8z" fill="#F2B705" stroke-width="1.2" style="animation-delay:' + (0.4 + i * 0.04).toFixed(2) + 's"/>'; }
+    var svg = '<svg viewBox="0 -30 360 270" role="img" aria-label="A scale. Your limiting beliefs on one side, ' + nProof + ' pieces of proof on the other."><g fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M180 50l-24 160h48z" fill="#F4C2F7"/><path d="M130 214h100" stroke-width="3"/>'
+      + '<g class="bx-beam" style="--a:' + ang.toFixed(1) + 'deg"><path d="M60 50h240" stroke-width="5"/></g>'
+      + '<g class="bx-pan" style="--dy:' + dyL + 'px"><path d="M60 50v40M60 50L28 90M60 50l32 40" stroke-width="1.6"/><path d="M10 90h100c-4 26-24 38-50 38S14 116 10 90z" fill="#FFF4EE"/>' + marbles + '<text x="60" y="150" text-anchor="middle" class="bx-lab" stroke="none" fill="#4E0C08">Your beliefs</text></g>'
+      + '<g class="bx-pan" style="--dy:' + dyR + 'px"><path d="M300 50v40M300 50l-32 40M300 50l32 40" stroke-width="1.6"/><path d="M250 90h100c-4 26-24 38-50 38s-46-12-50-38z" fill="#FFF4EE"/>' + stars + '<text x="300" y="150" text-anchor="middle" class="bx-lab" stroke="none" fill="#4E0C08">Your proof</text></g>'
+      + '<circle cx="180" cy="50" r="7" fill="#F1F9A6"/></g></svg>';
+    var el = svgEl(svg); el.classList.add('bx-scale'); return el;
+  }
+  // little hand-drawn pictures, in the same style as the step cards
+  // a stick person, same as the front page drawings of Breaking Out of Your Box
+  function boxBoxPerson(x, y, face) {
+    var f = face === 'wow' ? '<circle cx="' + (x - 2.5) + '" cy="' + (y - 1) + '" r="1.1" fill="#4E0C08" stroke="none"/><circle cx="' + (x + 2.5) + '" cy="' + (y - 1) + '" r="1.1" fill="#4E0C08" stroke="none"/><circle cx="' + x + '" cy="' + (y + 3) + '" r="1.6" stroke-width="1.3"/>'
+      : face === 'sleep' ? '<path d="M' + (x - 4) + ' ' + (y - 1) + 'h2.6M' + (x + 1.4) + ' ' + (y - 1) + 'h2.6M' + (x - 2) + ' ' + (y + 3) + 'h4" stroke-width="1.4"/>'
+      : '<circle cx="' + (x - 2.5) + '" cy="' + (y - 1) + '" r="1.1" fill="#4E0C08" stroke="none"/><circle cx="' + (x + 2.5) + '" cy="' + (y - 1) + '" r="1.1" fill="#4E0C08" stroke="none"/><path d="M' + (x - 2.6) + ' ' + (y + 2.6) + 'q2.6 2.2 5.2 0" stroke-width="1.4"/>';
+    return '<g stroke="#4E0C08" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="' + x + '" cy="' + y + '" r="7" fill="#FFFFFF" stroke-width="2"/>' + f
+      + '<path d="M' + x + ' ' + (y + 7) + 'L' + x + ' ' + (y + 21) + '" stroke-width="2.6"/><path d="M' + (x - 8) + ' ' + (y + 17) + 'L' + x + ' ' + (y + 12) + 'L' + (x + 8) + ' ' + (y + 17) + '" stroke-width="2.4"/><path d="M' + (x - 6) + ' ' + (y + 31) + 'L' + x + ' ' + (y + 21) + 'L' + (x + 6) + ' ' + (y + 31) + '" stroke-width="2.4"/></g>';
+  }
+  var BOX_PROGS_ART = '<svg viewBox="0 0 200 150" aria-hidden="true">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M78 112h44V72H78z" fill="#FBE6FC"/><path d="M78 72l-8-10M122 72l8-10"/>' + boxBoxPerson(100, 86).replace(/ r="9"/, ' r="7"')
+    + '<path d="M100 92m-70 0a70 50 0 1 0 140 0a70 50 0 1 0 -140 0" stroke-dasharray="4 6" stroke-width="1.6" stroke="#A8231F"/>'
+    + '<g class="pp-orbit"><g font-family="Poppins,sans-serif" font-size="8" font-weight="600" stroke="none" fill="#4E0C08">'
+    + '<rect x="14" y="20" width="70" height="18" rx="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="49" y="32" text-anchor="middle">people pleasing</text>'
+    + '<rect x="114" y="18" width="66" height="18" rx="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="147" y="30" text-anchor="middle">perfectionism</text>'
+    + '<rect x="4" y="80" width="60" height="18" rx="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="34" y="92" text-anchor="middle">overthinking</text>'
+    + '<rect x="138" y="82" width="58" height="18" rx="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="167" y="94" text-anchor="middle">overworking</text>'
+    + '<rect x="70" y="128" width="60" height="18" rx="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="100" y="140" text-anchor="middle">avoiding</text></g></g>'
+    + '</g></svg>';
+  var BOX_AWARE = [
+    ['Unaware', 'You didn’t know the box was there.', '<svg viewBox="0 0 150 110">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M35 98h80V40H35z" stroke="#C9A39B" stroke-dasharray="2 7" stroke-width="1.6"/>' + boxBoxPerson(75, 66, 'sleep') + '<path class="pp-zz" d="M95 30h8l-8 8h8M108 18h6l-6 6h6" stroke-width="1.6"/><path d="M20 98h110" stroke-width="1.6"/></g></svg>'],
+    ['Aware', 'Then you realise you’re in a box, and its walls are made of your limiting beliefs.', '<svg viewBox="0 0 150 110">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 100h94V30H28z" fill="#FBE6FC"/><path d="M28 30l-12-14M122 30l12-14"/><path d="M28 30v70M44 30v70M106 30v70M122 30v70" stroke-width="1.4" stroke="#C9A39B"/><g stroke="none" fill="#4E0C08" font-size="8.5" font-weight="700" font-family="Poppins,sans-serif" text-anchor="middle"><text transform="translate(39 65) rotate(-90)">not enough</text><text transform="translate(111 65) rotate(90)">too much</text></g>' + boxBoxPerson(75, 64, 'wow') + '<path class="pp-bang" d="M75 38v8M75 50v1" stroke="#E8338A" stroke-width="3"/><path d="M8 100h134" stroke-width="1.6"/></g></svg>'],
+    ['The programs', 'Around it sit the programs that keep you from stepping out. We’ll get to those soon.', BOX_PROGS_ART]
+  ];
+  // stepping out of the box, with the proof lighting the way, into the bigger box it was inside all along
+  var BOX_BIGGER = '<svg viewBox="0 0 320 190">' + PP_HAND + '<g filter="url(#ppw)" fill="none" stroke="#4E0C08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<rect x="8" y="8" width="304" height="174" rx="10" fill="#FFFBEA" stroke-dasharray="7 6" stroke="#A8231F"/>'
+    + '<text x="160" y="28" text-anchor="middle" stroke="none" fill="#A8231F" font-family="Poppins,sans-serif" font-size="11" font-weight="700" letter-spacing="1">THE BIGGER BOX</text>'
+    + '<path d="M30 168h76v-56H30z" fill="#FBE6FC"/><path d="M30 112l-10-12M106 112l8-14"/><text x="68" y="146" text-anchor="middle" stroke="none" fill="#4E0C08" font-family="Poppins,sans-serif" font-size="9" font-weight="700">old box</text>'
+    + '<g class="bx-stepout">' + boxBoxPerson(130, 132) + '</g>'
+    + '<g class="bx-trail" fill="#F2B705" stroke-width="1.4">'
+    + [[162, 150], [188, 132], [214, 116], [240, 102], [264, 86], [288, 70]].map(function (p, i) { var x = p[0], y = p[1], r = 5 + i * 0.8; return '<path style="animation-delay:' + (i * 0.25).toFixed(2) + 's" d="M' + x + ' ' + (y - r) + 'l' + (r * .3).toFixed(1) + ' ' + (r * .65).toFixed(1) + ' ' + (r * .7).toFixed(1) + ' ' + (r * .1).toFixed(1) + '-' + (r * .52).toFixed(1) + ' ' + (r * .5).toFixed(1) + ' ' + (r * .12).toFixed(1) + ' ' + (r * .72).toFixed(1) + '-' + (r * .62).toFixed(1) + '-' + (r * .33).toFixed(1) + '-' + (r * .62).toFixed(1) + ' ' + (r * .33).toFixed(1) + ' ' + (r * .12).toFixed(1) + '-' + (r * .72).toFixed(1) + '-' + (r * .52).toFixed(1) + '-' + (r * .5).toFixed(1) + ' ' + (r * .7).toFixed(1) + '-' + (r * .1).toFixed(1) + 'z"/>'; }).join('')
+    + '</g><text x="232" y="174" text-anchor="middle" stroke="none" fill="#4E0C08" font-family="Poppins,sans-serif" font-size="10" font-weight="600">your proof lights the way</text>'
+    + '</g></svg>';
+  // the box, drawn out in detail with their own beliefs on the walls
+  function boxDiagram(list) {
+    var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/'/g, '’'); };
+    var cut = function (t, n) { t = String(t).replace(/'/g, '’'); return t.length > n ? t.slice(0, n - 1).replace(/[ ,]+$/, '') + '…' : t; };
+    var pick = list.filter(function (x) { return x.core; }).concat(list.filter(function (x) { return !x.core; })).map(function (x) { return x.b; });
+    pick = pick.slice(0, 8).sort(function (a, b) { return a.length - b.length; });
+    var def = ['I’m not good enough', 'I’m too much', 'I’m not safe', 'I can’t cope'];
+    for (var i = 0; pick.length < 4; i++) pick.push(def[i]);
+    var w = pick.slice(0, 4).map(function (t) { return esc(cut(t, 24)); });
+    var g = '<g stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">';
+    var svg = '<svg viewBox="0 0 360 300" role="img" aria-label="Your box. The walls are your limiting beliefs: ' + w.join(', ') + '. Around it are your programs.">' + PP_HAND + '<g filter="url(#ppw)">'
+      // programs ring + bubbles
+      + '<ellipse cx="180" cy="168" rx="166" ry="122" fill="none" stroke="#A8231F" stroke-width="1.6" stroke-dasharray="5 7"/>'
+      + g + '<path d="M96 86h168v170H96z" fill="#FBE6FC"/><path d="M96 86l-20-26M264 86l20-26"/><path d="M118 108h124v126H118z" fill="#FFF9F6" stroke-width="1.6"/><path d="M96 86l22 22M264 86l-22 22M96 256l22-22M264 256l-22-22" stroke-width="1.6"/></g>'
+      + '<g font-family="Poppins,sans-serif" font-weight="700" fill="#4E0C08" text-anchor="middle" font-size="9.5">'
+      + '<text transform="translate(109 171) rotate(-90)">' + w[0] + '</text><text transform="translate(251 171) rotate(90)">' + w[1] + '</text>'
+      + '<text x="180" y="101">' + w[2] + '</text><text x="180" y="249">' + w[3] + '</text></g>'
+      + boxBoxPerson(180, 158, 'wow')
+      + '<g font-family="Poppins,sans-serif" font-size="9" font-weight="600" fill="#4E0C08" stroke="#4E0C08" stroke-width="1.5">'
+      + '<rect x="18" y="26" width="86" height="20" rx="10" fill="#F1F9A6"/><text x="61" y="40" text-anchor="middle" stroke="none">people pleasing</text>'
+      + '<rect x="262" y="26" width="80" height="20" rx="10" fill="#F1F9A6"/><text x="302" y="40" text-anchor="middle" stroke="none">perfectionism</text>'
+      + '<rect x="8" y="232" width="76" height="20" rx="10" fill="#F1F9A6"/><text x="46" y="246" text-anchor="middle" stroke="none">overthinking</text>'
+      + '<rect x="278" y="232" width="74" height="20" rx="10" fill="#F1F9A6"/><text x="315" y="246" text-anchor="middle" stroke="none">overworking</text></g>'
+      // numbered markers
+      + [[136, 126, 1], [204, 150, 2], [32, 82, 3], [180, 278, 4]].map(function (m) { return '<g><circle cx="' + m[0] + '" cy="' + m[1] + '" r="10" fill="#E8338A" stroke="#4E0C08" stroke-width="2"/><text x="' + m[0] + '" y="' + (m[1] + 4) + '" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">' + m[2] + '</text></g>'; }).join('')
+      + '<g fill="#F2B705" stroke="#4E0C08" stroke-width="1.2" class="bx-trail"><path d="M206 268l2 4 4.4.6-3.2 3 .8 4.4-4-2.1-4 2.1.8-4.4-3.2-3 4.4-.6z"/><path d="M224 272l2 4 4.4.6-3.2 3 .8 4.4-4-2.1-4 2.1.8-4.4-3.2-3 4.4-.6z" style="animation-delay:.4s"/><path d="M242 268l2 4 4.4.6-3.2 3 .8 4.4-4-2.1-4 2.1.8-4.4-3.2-3 4.4-.6z" style="animation-delay:.8s"/></g>'
+      + '</g></svg>';
+    var el = h('div', { class: 'bx-diagram' });
+    var art = svgEl(svg); art.classList.add('bx-diagart'); el.appendChild(art);
+    var key = [
+      ['The walls', 'Each wall is one of your limiting beliefs. These ones are yours, straight from your answers. Your brain built them when you were little, out of what you went through and what you were told, and it built them to keep you safe.'],
+      ['You, inside', 'From the inside, you can’t see the walls. They don’t feel like beliefs, they feel like facts: “just how life is” or “just who I am”. That’s why you can feel stuck without being able to put your finger on why.'],
+      ['The programs', 'Around the outside are your programs, like people pleasing, perfectionism and overthinking. They’re the habits your brain installed to guard the walls. Every time you go to step out, they pull you back in. More on these in Step 2.'],
+      ['The way out', 'Your proof is how you get out. Each piece is evidence that a wall isn’t true. The more you collect, the thinner the walls get, until one day you can step right through them.']
+    ];
+    el.appendChild(h('ol', { class: 'bx-key' }, key.map(function (k) { return h('li', null, [h('b', { text: k[0] }), h('span', { text: k[1] })]); })));
+    return el;
+  }
+  function boxCards(items) {
+    var el = h('div', { class: 'bt-rsteps bx-rsteps' });
+    items.forEach(function (st, i) { var art = h('span', { class: 'bt-rs-art', 'aria-hidden': 'true' }); art.innerHTML = st[2]; el.appendChild(h('div', { class: 'bt-rs' }, [h('span', { class: 'bt-rs-h' }, [h('b', { text: String(i + 1) }), h('span', { text: st[0] })]), art, h('span', { class: 'bt-rs-t', text: st[1] })])); });
+    return el;
+  }
+  // the video for the learning hierarchy bit (paste the embed link in here when it's ready)
+  var BOX_LEARN_VIDEO = 'https://player.vimeo.com/video/1245020790?title=0&byline=0&portrait=0&dnt=1';
+  var BOX_STAGES = [
+    ['Unconsciously incompetent', 'You don’t know what you don’t know.'],
+    ['Consciously incompetent', 'You can see it now, but you don’t know how to change it yet.'],
+    ['Consciously competent', 'You can do it, but it takes effort and thought.'],
+    ['Unconsciously competent', 'It’s just who you are now. No thinking needed.']
+  ];
+  var BOX_LADDER = '<svg class="bx-ladder" viewBox="0 0 340 150" aria-hidden="true"><g fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M10 140h320" stroke-width="2"/>'
+    + '<path d="M14 140v-24h76v24z" fill="#F3E7E3"/><path d="M90 140v-50h78v50z" fill="#F4C2F7"/><path d="M168 140v-76h78v76z" fill="#FFFFFF"/><path d="M246 140v-102h80v102z" fill="#FFFFFF"/>'
+    + '<text x="52" y="134" text-anchor="middle" font-size="16" font-weight="700" fill="#4E0C08" stroke="none">1</text><text x="129" y="122" text-anchor="middle" font-size="16" font-weight="700" fill="#4E0C08" stroke="none">2</text><text x="207" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="#4E0C08" stroke="none">3</text><text x="286" y="96" text-anchor="middle" font-size="16" font-weight="700" fill="#4E0C08" stroke="none">4</text>'
+    + '<g class="bx-climber">' + '<circle cx="129" cy="52" r="8" fill="#FFFFFF" stroke-width="2"/><circle cx="126" cy="51" r="1.2" fill="#4E0C08" stroke="none"/><circle cx="132" cy="51" r="1.2" fill="#4E0C08" stroke="none"/><path d="M126 55q3 2.4 6 0" stroke-width="1.4"/><path d="M129 60v16" stroke-width="2.6"/><path d="M120 70l9-5 9-3" stroke-width="2.4"/><path d="M122 89l7-13 7 13" stroke-width="2.4"/>' + '</g>'
+    + '<path class="bx-twinkle" d="M286 14l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8z" fill="#F2B705" stroke-width="1.4"/>'
+    + '<path d="M152 52c10-8 20-10 30-8" stroke-dasharray="3 5" stroke-width="1.6"/><path d="M178 40l5 4-6 3" stroke-width="1.6"/>'
+    + '</g></svg>';
+  function boxSaved() { var d = pdData(); return d.mapSaved || 0; }
+  function boxSaveToBook() { var d = pdData(); d.mapSaved = Date.now(); wr(PD, d); }
+  // Home + Becoming Book: the map and jars, small
+  function boxMapCard(where) {
+    var list = boxPicked(); if (!list.length) return null;
+    var c = h('section', { class: 'bt-card2 bx-mapcard' + (where === 'book' ? ' inbook' : '') });
+    if (where !== 'book') { c.appendChild(h('span', { class: 'bt-wins-k', text: 'Breaking Out of Your Box' })); c.appendChild(h('h2', { text: 'Your belief map' })); }
+    c.appendChild(boxWheelBlock(false, where !== 'book'));
+    c.appendChild(h('h3', { class: 'bx-h3', text: 'Your Fierce 5 jars' }));
+    c.appendChild(boxJarsStatic(list, true));
+    if (where !== 'book' && !COACH) c.appendChild(h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn ghost', type: 'button', text: 'See my full results', onclick: function () { try { localStorage.setItem('cmn-open-tab', 'results'); } catch (e) {} APP.go('BreakingOut.dc.html'); } })]));
+    return c;
+  }
+  function BoxMapView(root, opts) {
+    opts = opts || {}; var EMB = !!opts.embed;
+    var goTab = function (tab) { if (EMB && opts.go) { opts.go(tab); return; } try { localStorage.setItem('cmn-open-tab', tab); } catch (e) {} APP.go('BreakingOut.dc.html'); };
+    root.classList.add('bt-light');
+    var wrap = h('div', { class: 'bt-wrap bx bx-res' + (EMB ? ' bx-emb' : '') }, EMB ? [] : [back('Back to Breaking Out of Your Box', '#BreakingOut')]);
+    root.appendChild(wrap);
+    var list = boxPicked();
+    if (!list.length) {
+      wrap.appendChild(h('section', { class: 'bx-lsec' }, [h('h2', { class: 'bx-h', text: 'Nothing picked yet' }), h('p', { class: 'bt-sub', text: 'Go through the six levels in Step 1 first. Your results show up here.' }),
+        h('button', { class: 'bt-btn lime', type: 'button', onclick: function () { goTab('audit'); }, text: 'Go to Step 1 →' })]));
+      return;
+    }
+    var back2 = !!pdData().jarsSorted2, P = function (t, c) { return h('p', { class: c || 'bt-sub', text: t }); };
+
+    // 0. the learning: laid out like the front page of the resource
+    var ic = emblem('box'); if (ic) ic.classList.add('bt-rh-ic');
+    wrap.appendChild(h('header', { class: 'bt-rh' }, [h('div', { class: 'bt-rh-k' }, [ic, h('span', { text: 'Breaking Out of Your Box · your results' })]),
+      h('h1', { text: 'You just levelled up' }), h('p', { class: 'bt-rh-tag', text: 'Even if it doesn’t feel like it.' }),
+      h('p', { class: 'bt-rh-lead', text: 'Before we look at your results, let’s talk about what just happened in your brain. There’s something called the learning hierarchy: the four stages we all move through whenever we learn something new.' })]));
+    var s0 = h('section', { class: 'bx-lsec' });
+    s0.appendChild(svgEl(BOX_LADDER));
+    s0.appendChild(h('ol', { class: 'bx-stages' }, BOX_STAGES.map(function (st, i) { return h('li', { class: i === 1 ? 'here' : i === 0 ? 'past' : '' }, [h('b', { text: st[0] }), h('span', { text: st[1] }), i === 1 ? h('em', { class: 'bx-here', text: 'You are here' }) : null]); })));
+    s0.appendChild(P('Before this test, you were unconsciously incompetent. Your limiting beliefs were there, running in the background, but you couldn’t see them.'));
+    s0.appendChild(P('Now you’re consciously incompetent. You can see the limits that have made up your box, and all the reasons you’ve been feeling stuck. You just don’t know how to change them yet. That’s exactly where you’re meant to be.'));
+    s0.appendChild(P('This stage can feel destabilising. Suddenly you can see why your reality isn’t how you want it to be. It’s like taking the red pill in The Matrix: the world you knew dissolves, and you realise you’ve been living in a box of your own making, one you never even knew was there. Or like Truman realising his whole life has been a TV show. (Both great movies. I highly recommend watching them!)'));
+    s0.appendChild(P('So don’t be surprised if you’re feeling a little tender right now. Your box hasn’t changed. You’re just aware you’ve been living inside one.', 'bx-big'));
+    s0.appendChild(h('h2', { class: 'bx-h', text: 'Why we needed to see the box' }));
+    s0.appendChild(P('The whole point of this program is to step out of the box and finally live life the way you want to, not the way you always have.'));
+    s0.appendChild(P('To do that, you first needed to know exactly what your box is made of. And if you haven’t picked up what I’m putting down: it’s made of your limiting beliefs.'));
+    s0.appendChild(P('Now we can start tearing it down, wall by wall, and taking our first steps out.', 'bx-big'));
+    s0.appendChild(h('h2', { class: 'bx-h', text: 'Your box, drawn out' }));
+    s0.appendChild(P('Let’s look at your box properly, because once you can see how it works, you can start taking it apart.'));
+    s0.appendChild(boxDiagram(list));
+    s0.appendChild(h('h2', { class: 'bx-h', text: 'Where you are right now' }));
+    s0.appendChild(P('Here’s the journey in three steps. You’ve just moved from step 1 to step 2.'));
+    s0.appendChild(boxCards(BOX_AWARE));
+    if (BOX_LEARN_VIDEO) s0.appendChild(h('div', { class: 'bx-vid' }, [h('iframe', { src: BOX_LEARN_VIDEO, title: 'The learning hierarchy', allow: 'autoplay; fullscreen; picture-in-picture', allowfullscreen: 'true', loading: 'lazy' })]));
+    else if (window.BT_DEMO || (window.BT_COURSE && BT_COURSE.isCoach && BT_COURSE.isCoach())) s0.appendChild(h('div', { class: 'bx-vidph' }, [h('b', { text: '🎬 Video goes here' }), h('span', { text: 'Only you can see this box. Send Claude the link when it’s ready.' })]));
+    wrap.appendChild(s0);
+
+    // 1. the wheel
+    var s1 = h('section', { class: 'bx-lsec' });
+    s1.appendChild(h('span', { class: 'bt-wins-k', text: 'Your belief map' }));
+    s1.appendChild(h('h2', { class: 'bx-h', text: 'Where do your beliefs show up most?' }));
+    s1.appendChild(P('Think of this as a wheel of life, but for your limiting beliefs. Each slice is an area of life. The fuller the slice, the more your beliefs are running the show there. (Beliefs you feel all the time count double.)'));
+    s1.appendChild(boxWheelBlock(true));
+    s1.appendChild(P('Your fullest slices are probably where life feels hardest right now. That isn’t a flaw in you. It’s where your brain has been working hardest to keep you safe.', 'bx-note'));
+    wrap.appendChild(s1);
+
+    // 2. the Fierce 5
+    var nc = list.filter(function (x) { return x.core; }).length, ranked = boxTopRoot(list), big = ranked[0];
+    var s2 = h('section', { class: 'bx-lsec bx-f5' });
+    s2.appendChild(h('span', { class: 'bt-wins-k', text: 'The Fierce 5' }));
+    s2.appendChild(h('h2', { class: 'bx-h', text: 'It all comes back to five roots' }));
+    s2.appendChild(P('Every limiting belief grows from one of five deep roots. We call them the Fierce 5.'));
+    s2.appendChild(P('They’re the core beliefs your brain created to protect you, and they’re built between the ages of 0 and 7, long before you had the words for them.'));
+    s2.appendChild(P('Can you see the problem? We’re still living by them now, and we’re not 7 anymore.', 'bx-big'));
+    s2.appendChild(P('No one taught us how to let go of them, or how to build new beliefs that actually help us get what we want in life.'));
+    s2.appendChild(P('So step one is to disprove the old ones: show your brain that you’re not 7 anymore and these beliefs aren’t actually true. That’s where your proof portfolio comes in. And guess what? The proof you’ve already added is disproving some of these right now.'));
+    s2.appendChild(h('p', { class: 'bt-sub' }, ['You picked ', h('b', { text: String(nc) }), nc === 1 ? ' belief you feel all the time and ' : ' beliefs you feel all the time and ', h('b', { text: String(list.length - nc) }), ' you feel sometimes. Big marbles are the all-the-time ones, small marbles are the sometimes ones.' + (back2 ? '' : ' Hit the button to sort them into their roots.')]));
+    // the box: every belief as a coloured bubble, with its marble at the start (big = all the time, small = sometimes)
+    var heap = h('div', { class: 'bx-heapbox' });
+    heap.appendChild(h('span', { class: 'bx-heapk', text: 'Your box' }));
+    var wl = list.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0) || BOX_F5.indexOf(boxF5(a.f5)) - BOX_F5.indexOf(boxF5(b.f5)); });
+    heap.appendChild(h('div', { class: 'bx-pills' }, wl.map(function (x) {
+      var f = boxF5(x.f5);
+      return h('span', { class: 'bx-pill' + (x.core ? ' core' : '') + (f.k === 'good' ? ' bx-dk' : ''), style: '--c:' + f.c }, [h('span', { class: 'bx-ball' + (x.core ? ' core' : ''), style: '--c:' + f.c, 'data-k': f.k, 'aria-hidden': 'true' }), x.b.replace(/'/g, '’')]);
+    })));
+    s2.appendChild(heap);
+    // once sorted, the box turns into coloured sections, one per root, sized by how much of the box it makes up
+    function boxSegs() {
+      var tot = ranked.reduce(function (a, x) { return a + x.w; }, 0) || 1, mx = Math.max.apply(null, ranked.map(function (x) { return x.w; })) || 1;
+      var sc = BOX_F5.map(function (f) { var x = ranked.filter(function (z) { return z.f.k === f.k; })[0]; var pc = Math.round(x.w / tot * 100); return { a: { name: f.name.replace(/’/g, '’'), full: f.name, c: f.c, id: f.k }, pct: pc, fill: x.w / mx }; });
+      var el = h('div', { class: 'bx-f5wheel' });
+      var w = svgEl(boxWheel(sc, true, { vb: '-60 -6 520 400', label: 'Your box, by root.', split: true })); w.classList.add('bx-wheel'); el.appendChild(w);
+      el.appendChild(P('Each slice is one of the Fierce 5. The bigger the slice, the more of your box it makes up.', 'bx-wcap'));
+      return el;
+    }
+    function regroup(anim) {
+      var pills = heap.querySelector('.bx-pills'), seg = boxSegs();
+      if (!anim) { heap.replaceWith(seg); heap = seg; return; }
+      heap.classList.add('regroup');
+      setTimeout(function () { heap.replaceWith(seg); heap = seg; seg.classList.add('segin'); }, 650);
+    }
+    if (back2) regroup(false);
+    // the five jars, side by side in a line
+    var row = h('div', { class: 'bx-jarrow' + (back2 ? ' sorted' : '') });
+    BOX_F5.forEach(function (f) {
+      var jc = h('div', { class: 'bx-jc', style: '--c:' + f.c, 'data-k': f.k }), jar = boxJar(f);
+      if (back2) list.filter(function (x) { return x.f5 === f.k; }).sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (x) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (x.core ? ' core' : ''), style: '--c:' + f.c })); });
+      jc.appendChild(jar); jc.appendChild(h('b', { class: 'bx-jn', text: f.name }));
+      row.appendChild(jc);
+    });
+    if (!back2) {
+      var sortBtn = h('button', { class: 'bt-btn lime', type: 'button', text: 'Sort my beliefs into their jars ✨', onclick: function () { sortBtn.disabled = true; sortThem(); } });
+      s2.appendChild(h('div', { class: 'bt-row bx-sortrow' }, [h('span', { class: 'bx-arrow', 'aria-hidden': 'true', text: '↓' }), sortBtn, h('span', { class: 'bx-arrow', 'aria-hidden': 'true', text: '↓' })]));
+    }
+    s2.appendChild(row);
+    var grid = row;
+    var after = h('div', { class: 'bx-after' });
+    s2.appendChild(after);
+    wrap.appendChild(s2);
+    var restEl = h('div', { class: 'bx-rest' });
+    wrap.appendChild(restEl);
+    if (back2) showAfter();
+    if (back2 && (window.BT_DEMO || (window.BT_COURSE && BT_COURSE.isCoach && BT_COURSE.isCoach()))) s2.insertBefore(h('button', { class: 'bt-btn ghost bx-replay', type: 'button', text: '↺ Replay the jar sort (only you see this)', onclick: function () { var dd = pdData(); delete dd.jarsSorted2; wr(PD, dd); root.innerHTML = ''; BoxMapView(root, opts); setTimeout(function () { try { root.querySelector('.bx-heapbox').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }, 100); } }), heap);
+    // copies of each marble funnel down into the jars; the box keeps its own, so they can still see what it's made of
+    function sortThem() {
+      var bs = Array.prototype.slice.call(heap.querySelectorAll('.bx-ball'));
+      try { row.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+      setTimeout(function () {
+        bs.forEach(function (b, i) {
+          var jar = row.querySelector('.bx-jc[data-k="' + b.getAttribute('data-k') + '"] .bx-jfill'); if (!jar) return;
+          setTimeout(function () {
+            var a = b.getBoundingClientRect(), sr2 = s2.getBoundingClientRect();
+            var ghost = h('span', { class: 'bx-ball fly' + (b.classList.contains('core') ? ' core' : ''), style: '--c:' + b.style.getPropertyValue('--c') + ';left:' + (a.left - sr2.left) + 'px;top:' + (a.top - sr2.top) + 'px' });
+            s2.appendChild(ghost); b.classList.add('sent');
+            var put = h('span', { class: 'bx-ball in' + (b.classList.contains('core') ? ' core' : ''), style: '--c:' + b.style.getPropertyValue('--c') });
+            jar.appendChild(put); put.style.visibility = 'hidden';
+            var t = put.getBoundingClientRect();
+            requestAnimationFrame(function () { ghost.style.transform = 'translate(' + (t.left - a.left) + 'px,' + (t.top - a.top) + 'px)'; });
+            setTimeout(function () { ghost.remove(); put.style.visibility = ''; }, 820);
+          }, i * 70);
+        });
+        setTimeout(function () { try { var dd = pdData(); dd.jarsSorted2 = Date.now(); wr(PD, dd); } catch (e) {} row.classList.add('sorted'); var sr = s2.querySelector('.bx-sortrow'); if (sr) sr.remove(); try { heap.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {} setTimeout(function () { regroup(true); }, 700); setTimeout(function () { showAfter(true); }, 1500); }, bs.length * 70 + 1100);
+      }, 500);
+    }
+    function showAfter(fresh) {
+      if (big && big.w) {
+        boxCircleJar(row, big.f.k);
+        after.appendChild(h('div', { class: 'bx-bigroot', style: '--c:' + big.f.c }, [h('span', { class: 'bt-wins-k', text: 'The Fierce 5 that impacts you most' }), h('b', { text: '“' + big.f.name + '”' }), h('p', { text: big.f.d })]));
+      }
+      // the breakdown: one card per root, worst first. Jar | All the time | Sometimes, and a bar to compare them
+      var total = ranked.reduce(function (a, x) { return a + x.w; }, 0) || 1;
+      after.appendChild(h('h3', { class: 'bx-h3', text: 'Your Fierce 5, broken down' }));
+      after.appendChild(P('Here’s how much of your box each root makes up, with the beliefs that grew from it.'));
+      after.appendChild(h('div', { class: 'bx-bds' }, ranked.map(function (x, i) {
+        var f = x.f, m = BOX_F5_MORE[f.k] || {}, pc = Math.round(x.w / total * 100);
+        var core = x.mine.filter(function (y) { return y.core; }), part = x.mine.filter(function (y) { return !y.core; });
+        var card = h('div', { class: 'bx-bd' + (i === 0 && x.w ? ' top' : ''), style: '--c:' + f.c });
+        card.appendChild(h('div', { class: 'bx-bdh' }, [h('b', { text: f.name }), h('span', { class: 'bx-bdp', text: pc + '% of your box' })]));
+        card.appendChild(h('span', { class: 'bx-bdbar stack', role: 'img', 'aria-label': f.name + ' is ' + pc + ' percent of your box' }, ranked.filter(function (z) { return z.w; }).map(function (z) { return h('i', { class: z.f.k === f.k ? 'on' : '', style: 'flex:' + z.w + ' 1 0;background:' + z.f.c, title: z.f.name }); })));
+        var jar = boxJar(f); x.mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (y) { jar.querySelector('.bx-jfill').appendChild(h('span', { class: 'bx-ball in' + (y.core ? ' core' : ''), style: '--c:' + f.c })); });
+        var col = function (title, arr, big2) { return h('div', { class: 'bx-bdc' }, [h('span', { class: 'bx-jlt', text: title }), arr.length ? h('ul', { class: 'bx-jl' }, arr.map(function (y) { return h('li', { class: big2 ? 'core' : '' }, [h('span', { class: 'bx-dot' + (big2 ? ' big' : ''), 'aria-hidden': 'true' }), y.b.replace(/'/g, '’')]); })) : h('span', { class: 'bx-jnone', text: 'None' })]); };
+        card.appendChild(h('div', { class: 'bx-bdrow' }, [h('div', { class: 'bx-bdj' }, [jar]), col('All the time', core, true), col('Sometimes', part, false)]));
+        var more = h('details', { class: 'bx-bdmore' }, [h('summary', { text: 'More about this root' }), h('p', { text: f.d })]);
+        if (m.from) more.appendChild(h('p', null, [h('b', { text: 'Where it comes from: ' }), m.from]));
+        if (m.protect) more.appendChild(h('p', null, [h('b', { text: 'What it’s trying to protect you from: ' }), m.protect]));
+        if (m.sounds) more.appendChild(h('p', { class: 'bx-fmq' }, [h('b', { text: 'It can sound like: ' }), m.sounds]));
+        card.appendChild(more);
+        return card;
+      })));
+      // 3. the scale of proof
+      var nProof = 0; try { nProof = evidence().length; } catch (e) {}
+      var s3 = h('section', { class: 'bx-lsec' });
+      s3.appendChild(h('span', { class: 'bt-wins-k', text: 'Tipping the scales' }));
+      s3.appendChild(h('h2', { class: 'bx-h', text: nProof ? 'You’ve already got ' + nProof + (nProof === 1 ? ' piece' : ' pieces') + ' of proof' : 'Start adding proof' }));
+      s3.appendChild(boxProofScale(list, nProof));
+      s3.appendChild(P('Every piece of proof in your proof portfolio supports the opposite of these beliefs. Each one shows your brain that an old belief isn’t actually true, and that’s what lets you start letting go of it. The more proof you add, the more the scale tips.'));
+      s3.appendChild(P('Now that you understand this consciously, it’s going to take your brain a hot minute to catch up unconsciously.', 'bx-big'));
+      s3.appendChild(P('Remember the well-worn groove? Your brain has run these beliefs for most of your life, so we need to keep reminding it, over and over.'));
+      s3.appendChild(P('Even after 18 months of focused work on my own beliefs, they still pop up from time to time. We’re rewiring a groove our brain has run all day, every day, since we were 7. It’s not going to happen overnight, and that’s okay.'));
+      s3.appendChild(P('Here’s how it works. Your brain created the box to protect you. Then it installed programs to keep you inside it, where it thinks you’re safe. So before it lets you step out, it needs proof that the opposite is true. Once you’ve collected enough, your brain can relax and let you move forward, because you’ll have the proof that you’re going to be fine out there.'));
+      var bb = h('span', { class: 'bx-biggerbox', 'aria-hidden': 'true' }); bb.innerHTML = BOX_BIGGER; s3.appendChild(bb);
+      s3.appendChild(P('All that proof lights the way. And when you step out, you’ll find you were never in danger. You’re just in the next, bigger box: the one your old box was sitting inside all along.', 'bx-note'));
+      restEl.appendChild(s3);
+      // 4. save it
+      var s4 = h('section', { class: 'bx-lsec bx-savebox' });
+      var saveBtn = h('button', { class: 'bt-btn lime', type: 'button', text: boxSaved() ? '✓ Saved to your Becoming Book' : '♥ Save my map & jars to my Becoming Book', onclick: function () { boxSaveToBook(); saveBtn.textContent = '✓ Saved to your Becoming Book'; APP.toast('Saved to your Becoming Book. It’s on your Home page too.'); try { sparkleBurst(s4); } catch (e) {} } });
+      s4.appendChild(h('span', { class: 'bt-wins-k', text: 'Keep it' }));
+      s4.appendChild(h('h2', { class: 'bx-h', text: 'Save your results' }));
+      s4.appendChild(P('Your belief map and jars will be saved in your Becoming Book and on your Home page, so you can watch them change as you go.'));
+      s4.appendChild(h('div', { class: 'bt-row' }, [saveBtn, h('button', { class: 'bt-btn ghost', type: 'button', text: '⬇ Save my jars as a picture', onclick: function () { boxSavePic(list); APP.toast('Saved. Check your downloads.'); } })]));
+      restEl.appendChild(s4);
+      // 5. what's next: the programs, the second line of defence
+      var nx = null; try { nx = findLesson('w2l5'); } catch (e) {}
+      var s5 = h('section', { class: 'bx-lsec bx-nextup' });
+      s5.appendChild(h('span', { class: 'bt-wins-k', text: 'What’s next' }));
+      s5.appendChild(h('h2', { class: 'bx-h', text: 'The second line of defence' }));
+      var pa = h('span', { class: 'bx-progart', 'aria-hidden': 'true' }); pa.innerHTML = BOX_PROGS_ART; s5.appendChild(pa);
+      s5.appendChild(P('Now that you know what your box is made of, it’s time to meet what guards it. Watch the next video, all about programs: the habits and patterns that surround your box to keep you inside it, like a second line of defence.'));
+      s5.appendChild(P('Then come back here for Step 2, where we’ll uncover yours.'));
+      s5.appendChild(h('div', { class: 'bt-row bx-end' }, [
+        nx ? h('a', { class: 'bt-btn lime', href: isActivityCard(nx.l) ? lessonHref(nx.l) : '#Lesson-' + nx.l.id, text: 'Watch ' + nx.l.title + ' →' }) : h('a', { class: 'bt-btn lime', href: '#Course', text: 'Back to the course →' }),
+        h('button', { class: 'bt-btn ghost', type: 'button', text: 'I’ve watched it: go to Step 2', onclick: function () { goTab('decoder'); } })]));
+      restEl.appendChild(s5);
+      if (fresh) { try { sparkleBurst(heap); } catch (e) {} }
+    }
+  }
+  /* What's showing up right now? Programs -> the beliefs behind them -> the proof that they're not true.
+     Lives on the front of Breaking Out of Your Box, and in the find bubble. Data comes from course-data.js (BT_BOX_DATA). */
+  function boxData() { return window.BT_BOX_DATA || { cats: [], progs: [] }; }
+  function boxProgIndex() {
+    var D = boxData(), byText = {}, progById = {};
+    D.cats.forEach(function (c) { c.items.forEach(function (it) { byText[it[0]] = it[1]; }); });
+    D.progs.forEach(function (p) { progById[p.id] = p; });
+    return { byText: byText, progById: progById };
+  }
+  // their programs: the ones they picked first, then the rest that grow from their beliefs
+  function boxMyProgs() {
+    var X = boxProgIndex(), d = pdData(), noted = d.noted || {}, list = boxPicked(), seen = {}, all = [];
+    list.forEach(function (y) { var pid = X.byText[y.b], pr = pid && X.progById[pid]; if (!pr) return; pr.c.forEach(function (c, i) { var k = c.toLowerCase(); if (!seen[k]) { seen[k] = { t: c, on: false }; all.push(seen[k]); } if (noted[pid + '-' + i]) seen[k].on = true; }); });
+    return { mine: all.filter(function (m) { return m.on; }), rest: all.filter(function (m) { return !m.on; }) };
+  }
+
+  // which of their beliefs grew these programs (or matched these words)
+  function boxBeliefsFor(progNames, q) {
+    var X = boxProgIndex(), list = boxPicked(), out = [], low = (q || '').toLowerCase().replace(/[’‘]/g, "'");
+    var words = low.split(/[^a-z']+/).filter(function (w) { return w.length > 3 && ['feel', 'feeling', 'really', 'myself', 'always', 'never', 'like', 'just', 'what', 'when', 'with', 'that', 'this', 'keep', 'about', 'being', 'have', 'people', 'things', 'everyone', 'other', 'others', 'your', 'from'].indexOf(w) < 0; });
+    list.forEach(function (y) {
+      var pid = X.byText[y.b], pr = pid && X.progById[pid]; if (!pr) return;
+      var sc = 0, hits = pr.c.filter(function (c) {
+        var cl = c.toLowerCase(), x = 0;
+        if (progNames.some(function (n) { return n.toLowerCase() === cl; })) x += 4;
+        if (low && low.indexOf(cl) >= 0) x += 4;
+        else words.forEach(function (w) { var st = w.replace(/(ing|ed|s)$/, ''); if (st.length > 3 && cl.indexOf(st) >= 0) x += 1; });
+        sc += x; return x > 0;
+      });
+      if (!hits.length && low && (y.b.toLowerCase().replace(/[’‘]/g, "'").indexOf(low) >= 0)) { hits = ['what you typed']; sc = 3; }
+      if (hits.length) out.push({ b: y.b, f: boxF5(y.f5), core: y.core, hits: hits, sc: sc });
+    });
+    return out.sort(function (a, b) { return b.sc - a.sc || (b.core ? 1 : 0) - (a.core ? 1 : 0); });
+  }
+  function boxNowResults(found, el) {
+    el.innerHTML = '';
+    if (!found.length) { el.appendChild(h('p', { class: 'bt-sub', text: 'Nothing linked to your beliefs yet. Try different words, or tap one of your programs.' })); return; }
+    el.appendChild(h('p', { class: 'bx-now-lead', text: found.length === 1 ? 'This might be the limiting belief you’re bumping up against:' : 'These might be the limiting beliefs you’re bumping up against:' }));
+    found.slice(0, 4).forEach(function (x) {
+      var pr = proofFor(x.b);
+      var card = h('div', { class: 'bx-now-b', style: '--c:' + x.f.c }, [
+        h('span', { class: 'bx-now-root', text: x.f.name }),
+        h('b', { text: '“' + x.b.replace(/'/g, '’') + '”' }),
+        h('span', { class: 'bx-now-why', text: 'Programs: ' + x.hits.slice(0, 3).join(', ') })]);
+      if (pr.length) {
+        card.appendChild(h('span', { class: 'bx-now-pk', text: 'Your proof it’s not true' }));
+        card.appendChild(h('ul', { class: 'bx-now-pf' }, pr.slice(0, 3).map(function (e) { return h('li', { text: e.text }); })));
+      } else card.appendChild(h('span', { class: 'bx-now-pk', text: 'No proof tagged to this one yet. Add some to your proof portfolio, it all counts.' }));
+      el.appendChild(card);
+    });
+    el.appendChild(h('p', { class: 'bx-now-tip', text: 'Remind yourself: the opposite is true. You’ve got the proof.' }));
+  }
+  function BoxNowView(root, nopts) {
+    nopts = nopts || {}; root.innerHTML = '';
+    root.classList.add('bt-light');
+    var list = boxPicked();
+    if (!list.length) {
+      root.appendChild(h('section', { class: 'bx-now' }, [h('span', { class: 'bt-wins-k', text: 'Home' }), h('h2', { class: 'bx-h', text: 'This is where you’ll come back to' }),
+        h('p', { class: 'bt-sub', text: 'Once you’ve been through the steps, this page is your go-to: tap what’s showing up for you and see the limiting belief behind it, plus the proof that it isn’t true. Start with Step 1: Beliefs.' }),
+        h('button', { class: 'bt-btn lime', type: 'button', text: 'Start Step 1: Beliefs →', onclick: function () { if (window.__PD_GO) window.__PD_GO('audit'); } })]));
+      return;
+    }
+    var sel = {}, P2 = boxMyProgs(), showAll = false;
+    var card = h('section', { class: 'bx-now' });
+    card.appendChild(h('span', { class: 'bt-wins-k', text: 'Right now' }));
+    card.appendChild(h('h2', { class: 'bx-h', text: 'What’s showing up for you?' }));
+    card.appendChild(h('p', { class: 'bt-sub', text: 'Tap what you’re noticing, or write a bit about what’s happening. I’ll find the limiting belief that program grew from, and the proof that it isn’t true.' }));
+    var q = h('input', { class: 'bt-in bx-now-q', type: 'search', placeholder: 'e.g. I keep saying yes when I mean no', 'aria-label': 'What’s happening?' });
+    var chipsEl = h('div', { class: 'bx-now-chips' }), res = h('div', { class: 'bx-now-res', 'aria-live': 'polite' });
+    function chips() {
+      chipsEl.innerHTML = '';
+      var base = P2.mine.length ? P2.mine : P2.rest.slice(0, 8), all = P2.mine.concat(P2.rest), show = showAll ? all : base;
+      if (P2.mine.length) chipsEl.appendChild(h('span', { class: 'bx-now-ck', text: showAll ? 'All your programs' : 'Your programs' }));
+      show.forEach(function (m) { var on = !!sel[m.t]; chipsEl.appendChild(h('button', { class: 'bx-now-c' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', text: m.t, onclick: function () { if (on) delete sel[m.t]; else sel[m.t] = 1; chips(); run(); } })); });
+      if (all.length > show.length || showAll) chipsEl.appendChild(h('button', { class: 'bx-now-more', type: 'button', text: showAll ? 'Show fewer' : 'Show more', onclick: function () { showAll = !showAll; chips(); } }));
+    }
+    function run() {
+      var names = Object.keys(sel), t = tx(q.value);
+      if (!names.length && t.length < 4) { res.innerHTML = ''; return; }
+      boxNowResults(boxBeliefsFor(names, t), res);
+    }
+    var tm; q.addEventListener('input', function () { clearTimeout(tm); tm = setTimeout(run, 250); });
+    card.appendChild(q); card.appendChild(chipsEl); card.appendChild(res);
+    chips();
+    root.appendChild(card);
+    if (!nopts.searchOnly) { try { var ph = proofHome(false, true); if (ph) { ph.removeAttribute('id'); root.appendChild(ph); } } catch (e) {} }
+  }
+  // the map page: how to use the search, in three steps, with an example and the real thing to try
+  function MapHowView(root) {
+    root.innerHTML = '';
+    root.appendChild(h('span', { class: 'hand pd-mh-k', text: 'Feeling a bit much?' }));
+    root.appendChild(h('p', { text: 'This might feel overwhelming to look at, and that’s okay. You don’t need to keep looking at it if you don’t want to. The real purpose of all this is the search. Here’s how it works.' }));
+    var c = '#F2675A';
+    var steps = [
+      ['You notice it', 'You catch yourself abandoning your needs again, and you start people pleasing.', h('div', { class: 'pd-mh-ex' }, [h('span', { class: 'pd-mh-think', text: '“Sure, I can do that too…” 😮‍💨' })])],
+      ['Search it', 'Come in and type what’s happening. It finds the limiting beliefs those programs are connected to.', h('div', { class: 'pd-mh-ex' }, [h('span', { class: 'pd-mh-search', text: 'abandoning my needs, people pleasing' }), h('span', { class: 'pd-mh-chips' }, [h('span', { class: 'on', text: 'People pleasing' }), h('span', { class: 'on', text: 'Suppressing your needs' })])])],
+      ['Remind yourself', 'It shows you those beliefs, and all the proof attached to them, so you can remind yourself the opposite is true.', h('div', { class: 'pd-mh-ex' }, [h('div', { class: 'bx-now-b', style: '--c:' + c }, [h('span', { class: 'bx-now-root', text: 'I’m not loved' }), h('b', { text: '“If I disappoint people, they’ll leave me”' }), h('span', { class: 'bx-now-pk', text: 'Your proof it’s not true' }), h('ul', { class: 'bx-now-pf' }, [h('li', { text: 'I said no to a catch-up and my friend just rescheduled' }), h('li', { text: 'My partner thanked me for being honest' })])])])]
+    ];
+    root.appendChild(h('div', { class: 'pd-mh-steps' }, steps.map(function (st, i) { return h('div', { class: 'pd-mh-step' }, [h('span', { class: 'pd-mh-n', text: String(i + 1) }), h('div', { class: 'pd-mh-t' }, [h('b', { text: st[0] }), h('span', { text: st[1] })]), st[2]]); })));
+    root.appendChild(h('span', { class: 'hand pd-mh-k', text: 'Try it now' }));
+    var live = h('div', { class: 'pd-mh-live' }); root.appendChild(live);
+    BoxNowView(live, { searchOnly: true });
+    root.appendChild(h('p', { text: 'You can do this any time from the search bubble in the bottom right (it’s always there), or from the Home tab of Breaking Out of Your Box. In later weeks, you’ll learn how to rewire this in more depth.' }));
+    root.appendChild(h('p', { class: 'pd-mh-map' }, [h('b', { text: 'And the map below? ' }), 'That’s the full view of it all. Scroll through it whenever you like to spot your patterns.']));
+  }
+  /* Breaking Out Step 2 map as a flow chart: Fierce 5 across the top, the beliefs they picked under each,
+     and the programs under each belief. Drawn into the resource's "My map" page (opts from the canvas). */
+  var PF_MORE = {};
+  function ProgFlowView(root, opts) {
+    opts = opts || {};
+    var list = boxPicked(), byText = {}, progById = {}, noted = opts.noted || {};
+    (opts.cats || []).forEach(function (c) { c.items.forEach(function (it) { byText[it[0]] = it[1]; }); });
+    (opts.progs || []).forEach(function (p) { progById[p.id] = p; });
+    var old = root.querySelector('.pf-scroll'), x0 = old ? old.scrollLeft : (window.__pfX || 0);
+    root.innerHTML = ''; root.classList.add('bt-light');
+    if (!list.length) { root.appendChild(h('p', { class: 'bt-sub', text: 'Pick your beliefs in Step 1 and your map will grow here.' })); return; }
+    var ranked = boxTopRoot(list).filter(function (x) { return x.w; });
+    var sc = h('div', { class: 'pf-scroll' }), row = h('div', { class: 'pf-row' });
+    sc.addEventListener('scroll', function () { window.__pfX = sc.scrollLeft; });
+    var shownProg = {};
+    ranked.forEach(function (x) {
+      var f = x.f, col = h('div', { class: 'pf-col', style: '--c:' + f.c });
+      col.appendChild(h('div', { class: 'pf-root' + (f.k === 'good' ? ' bx-dk' : '') }, [h('b', { text: f.name }), h('span', { text: x.mine.length + (x.mine.length === 1 ? ' belief' : ' beliefs') })]));
+      var tree = h('div', { class: 'pf-tree' });
+      x.mine.slice().sort(function (a, b) { return (b.core ? 1 : 0) - (a.core ? 1 : 0); }).forEach(function (y) {
+        var pid = byText[y.b], pr = pid && progById[pid];
+        var node = h('div', { class: 'pf-node' });
+        node.appendChild(h('div', { class: 'pf-bel' + (y.core ? ' core' : '') }, [h('span', { class: 'bx-ball' + (y.core ? ' core' : ''), style: '--c:' + f.c, 'aria-hidden': 'true' }), y.b.replace(/'/g, '’')]));
+        if (pr && shownProg[pid]) node.appendChild(h('span', { class: 'pf-same', text: 'Same programs as “' + shownProg[pid].replace(/'/g, '’') + '”' }));
+        else if (pr) {
+          shownProg[pid] = y.b;
+          var picked = pr.c.filter(function (c, i) { return !!noted[pid + '-' + i]; });
+          if (picked.length) node.appendChild(h('ul', { class: 'pf-plist' }, picked.map(function (c) { return h('li', { text: c }); })));
+        }
+        tree.appendChild(node);
+      });
+      col.appendChild(tree);
+      row.appendChild(col);
+    });
+    sc.appendChild(row); root.appendChild(sc);
+    setTimeout(function () { sc.scrollLeft = x0; }, 0);
+  }
+  window.BT_NATIVE = { MapHow: MapHowView, BoxNow: BoxNowView, ProgFlow: ProgFlowView, BoxResults: BoxMapView, BoxResultsOld: BoxResultsView, NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
     init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
     ensureFooter: ensureFooter,
+    coachBook: coachBook,
+    isCoach: function () { return !!(APP && APP.state && APP.state.isAdmin && !asClient()); },
     afterShow: function (route) {
       ensureFooter();
       try { refreshContract(false); } catch (e) {}
@@ -3168,6 +4354,8 @@
     introBlocked: function (route) { return APP ? introStage() && !introAllowed(String(route).replace('.dc.html', '')) : false; },
     tour: function () { if (APP) appTour(); },
     runTour: function (steps, o) { if (APP) runTour(steps, o); },
+    winsToday: function () { return evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === dayKey(Date.now()); }).length; },
+    goAddProof: function () { var el = document.getElementById('bt-home-proof'); if (!el) { proofTabState = 'mine'; goHref('#Proof'); return; } el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(function () { var i = document.getElementById('bt-win-in'); if (i) { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } } el.classList.add('bt-flash'); setTimeout(function () { el.classList.remove('bt-flash'); }, 1600); }, 450); },
     resIntro: resIntro,
     contractPdf: function (ct, hh) { if (!h && hh) h = hh; contractPdf(ct); },
     find: function () { findSheet(); },

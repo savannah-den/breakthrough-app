@@ -22,6 +22,7 @@
   function curNow() { var c = ''; try { if (window.BW_CCY) c = BW_CCY.fromCountry(A.country || A.location || ''); } catch (e) {} CUR = (c && FX[c] !== undefined) ? c : (c || TZCUR); if (FX[CUR] === undefined) CUR = TZCUR; return CUR; }
   try { if (window.BW_CCY) BW_CCY.rates(function (r) { if (r) for (var k in r) FX[k] = r[k]; }); } catch (e) {}
   function money(n) { var v = n * (FX[CUR] || 1); if (CUR !== 'AUD') v = Math.round(v / 10) * 10; try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: CUR, maximumFractionDigits: 0 }).format(v); } catch (e) { return CUR + ' ' + Math.round(v); } }
+  function curName(c) { var n = ''; try { n = new Intl.DisplayNames(['en'], { type: 'currency' }).of(c); } catch (e) {} return (n && n !== c ? n + ' (' + c + ')' : c); }
   function worthLabel(i) { curNow(); if (i === 3) return 'Priceless: I’m ready to invest whatever it takes to become them';
     var a = [1000, 2000, 3000][i], b = a + 1000;
     return CUR === 'AUD' ? '$' + a.toLocaleString('en-AU') + ' – $' + b.toLocaleString('en-AU') + ' AUD' : money(a) + ' – ' + money(b) + ' ' + CUR + '  (A$' + (a / 1000) + '–' + (b / 1000) + 'K)'; }
@@ -49,7 +50,7 @@
     { kick: 'Real talk', h: 'What have you tried so far?', fields: [['tried', 'What have you tried to overcome your challenges?', 'textarea', false, 'Therapy, psychology, other programs, Instagram hacks, medication, etc.', '']] },
     { kick: '🪄 Magic wand time', h: 'If you could master one thing in this program, what would it be?', fields: [['wand', '', 'textarea', true, '', 'The one thing…']] },
     { kick: 'Future you', h: 'When you picture your ideal future self, how do they feel?', fields: [['future', '', 'textarea', true, '', 'Calm? Confident? Free?']] },
-    { kick: 'Worth it?', h: 'What is becoming that person worth to you?', p: 'In your currency. You’re charged in Australian dollars.', fields: [['worth', '', 'radio', true, '', '', '', WORTH]] },
+    { kick: 'Worth it?', h: 'What is becoming that person worth to you?', p: function () { return 'Currency in ' + curName(curNow()); }, fields: [['worth', '', 'radio', true, '', '', '', WORTH]] },
     { kick: 'Last one!', h: 'What does it mean to you to be given a chance to change?', p: 'Sav gets a lot of applications, so if you want to be seriously considered, here is where you tell her how badly you want this.',
       small: 'She reads all the applications and hand picks the people she knows she can create the biggest transformations for. That requires a level of commitment to changing from your end that she can’t create for you. You need to want it for her to be able to support you getting it.',
       fields: [['commitment', '', 'textarea', true, '', 'Tell her how badly you want this…']] },
@@ -157,7 +158,7 @@
           el('div', { class: 'links' }, [el('a', { href: 'https://colourmeneurospicy.com.au/products/love-your-adhd', target: '_blank', rel: 'noopener', text: 'Love your ADHD →' })])]),
         el('div', { class: 'next' }, [el('h3', { text: '🎧 Or listen to the FREE podcast' }), el('p', { text: 'Where I talk about some of what you’ll learn inside the program.' }), pod])]));
     } else {
-      var kids = [artEl(i), sayEl(i), el('p', { class: 'kick', text: s.kick }), el('h2', { text: s.h }), s.p ? el('p', { text: s.p }) : null, s.small ? el('p', { class: 'note small', text: s.small }) : null].concat(s.fields.map(field));
+      var kids = [artEl(i), sayEl(i), el('p', { class: 'kick', text: s.kick }), el('h2', { text: s.h }), s.p ? el('p', { text: typeof s.p === 'function' ? s.p() : s.p }) : null, s.small ? el('p', { class: 'note small', text: s.small }) : null].concat(s.fields.map(field));
       kids.push(el('input', { class: 'hp', name: 'website', tabindex: '-1', autocomplete: 'off', 'aria-hidden': 'true' }));
       kids.push(el('p', { class: 'err', id: 'err', role: 'alert' }));
       var last = i === STEPS.length - 2;

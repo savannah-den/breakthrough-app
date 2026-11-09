@@ -41,6 +41,7 @@ def tool_page(s):
 
 wr(OUT + '/app.html', root_page(rd('public/index.html')))
 wr(OUT + '/admin.html', root_page(rd('public/admin.html')))
+wr(OUT + '/coach-book.html', root_page(rd('public/coach-book.html')))
 shutil.copy('public/email-preview.html', OUT + '/email-preview.html')
 for f in ('email-journey.html', 'push-journey.html'):
     shutil.copy('playground-src/' + f, OUT + '/' + f)

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Their Becoming Book · coach view</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&family=Playfair+Display:ital,wght@0,700;0,800;1,800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shell.css">
+<link rel="stylesheet" href="/css/app.css">
+<style>html,body{margin:0;background:#4E0C08}#app{padding-bottom:30px}.bt-native{min-height:0}</style>
+<script>
+/* Coach view of a client's Becoming Book. Opened by the coach dashboard (admin.js) in an iframe.
+   Everything the book reads from storage comes from the client's synced data that the dashboard hands over,
+   and nothing is ever written (Sav's own saved data is never touched). */
+(function () {
+  var cb = null; try { cb = window.parent && window.parent.__BT_COACHBOOK; } catch (e) {}
+  window.__CB = cb;
+  var data = (cb && cb.data) || {};
+  var get = function (k) { if (!Object.prototype.hasOwnProperty.call(data, k)) return null; var v = data[k]; return v == null ? null : typeof v === 'string' ? v : JSON.stringify(v); };
+  try {
+    Storage.prototype.getItem = function (k) { return get(k); };
+    Storage.prototype.setItem = function () {};
+    Storage.prototype.removeItem = function () {};
+  } catch (e) {}
+})();
+</script>
+<script src="/js/course-data.js"></script>
+<script src="/js/time.js"></script>
+<script src="/js/saves.js"></script>
+<script src="/js/course.js"></script>
+<script src="/js/vagal.js"></script>
+</head>
+<body>
+<div id="app" class="bt-native"></div>
+<script>
+(function () {
+  var cb = window.__CB, root = document.getElementById('app');
+  if (!cb || !window.BT_COURSE || !window.BT_COURSE.coachBook) { root.innerHTML = '<p style="color:#fff;padding:20px">Open this from the coach dashboard.</p>'; return; }
+  var fit = function () { try { var f = window.frameElement; if (f) f.style.height = Math.max(600, document.documentElement.scrollHeight) + 'px'; } catch (e) {} };
+  window.BT_COURSE.coachBook(root, Object.assign({}, cb.opts || {}, { onDraw: function () { setTimeout(fit, 50); } }));
+  try { new ResizeObserver(fit).observe(document.body); } catch (e) { setInterval(fit, 1000); }
+  fit();
+})();
+</script>
+</body>
+</html>
