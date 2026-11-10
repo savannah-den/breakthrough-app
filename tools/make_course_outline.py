@@ -15,9 +15,9 @@ src = open('src/companion.html', encoding='utf-8').read()
 J = json.loads(re.search(r'var JOURNAL = (\[.*?\]);?\n', src).group(1))
 JQ = {l['id']: l for w in J for l in w.get('lessons', [])}
 
-def L(id, title, video='', desc='', prompts=None, res=None, optional=False, notes=False):
+def L(id, title, video='', desc='', prompts=None, res=None, optional=False, notes=False, vimeo=''):
     j = JQ.get(id, {})
-    return {'id': id, 'title': title, 'video': (STAN + video) if video else '', 'vimeo': '', 'desc': desc.strip(),
+    return {'id': id, 'title': title, 'video': (STAN + video) if video else '', 'vimeo': vimeo, 'desc': desc.strip(),
             'prompts': prompts if prompts is not None else j.get('qs', []), 'res': res if res is not None else ([j['res']] if j.get('res') else []),
             'notes': notes or bool(j.get('notes')), 'optional': optional, 'transcript': '', 'tip': j.get('tip', '')}
 
@@ -54,7 +54,8 @@ weeks = [
      ['Can you recall more “negative” memories than positive ones?', 'The heavier emotions like anger, fear and sadness feel more important to our survival than joy or love, so the brain saves them to protect us, and then ends up looking for more of them.']]),
    L('w2s1', 'Side Quest: Synaptic Pruning (our super computer brain)', '19f6r/week2sidequestsynapticpruning.mp4', prompts=[
      ['What information has your brain kept? And what synapses did it prune?', 'Remember how, if you don’t ride a bike for a few years, it only takes a few minutes to feel confident again? Your brain re-opened a weaker pathway and strengthened it back up now it knows you need it.']]),
-   L('w2s2', 'Side Quest: Overstimulation (introducing the energy audit)', 'l1m9z/week2sidequestoverstimulation.mp4', 'You’ll find the energy audit in the Energy Audit lesson later this week.', prompts=[]),
+   L('w2s2', 'Side Quest: Overstimulation (introducing the energy audit)', 'l1m9z/week2sidequestoverstimulation.mp4', 'You’ll find the energy audit in the Energy Audit lesson later this week.', prompts=[
+     ['What tends to tip you into overstimulation right now, and what could you put in place to take the edge off?', 'Think about the people, places, sounds, tasks and times of day that leave you wired, frazzled or flat. Then name one or two small, doable changes: a quieter spot to work, headphones, a buffer between meetings, a recharge planned straight after the big drains, or saying no to one thing.']]),
    L('w2l3', 'Lesson 3: Proof Portfolio', 'zqhxc/week23proofportfolio.mp4', 'Your RAS filter is what you use to collect “proof”, and you can train it to see the positive instead of the negative. For now, start noticing when you’re seeing the negative frame, and how you could see the positive intention instead.\n\n⭐️ Start a journal of daily wins: something you enjoyed, something beautiful you saw, something you’re grateful for. Watch how much more of the good stuff you begin to notice.', prompts=[
      ['Are you a glass-half-full or glass-half-empty person naturally? (Be honest with yourself)', 'Example: “That day was shit, EVERYTHING went wrong. I spilled my coffee, my boss was rude, I got a parking ticket”, completely forgetting you finished a big project, got a free gift voucher, and your partner made a beautiful dinner.']]),
    L('w2a0', 'Activity: Start your proof portfolio', '', 'Add your first piece of proof, then have a look around the proof part of your Becoming Book.', res=['proof']),
@@ -68,8 +69,8 @@ weeks = [
      ['What do you not like about your reality right now? (Make a big list)', 'Example: I hate all the blackheads I have.'],
      ['What am I currently doing (thoughts, feelings, actions) that is contributing to the reality I don’t want?', 'Example: I’m not putting effort into my skincare routine. I’d need to wash my face twice a day.'],
      ['What small action can I take toward the reality I want that feels manageable right now?', 'Example: wash my face once a day to start.']]),
-   L('w2q', 'Bonus: Live Q+A replay', '9qb8e/week2qa.mp4', 'A replay of this week’s live group Q+A call.', prompts=[], optional=True),
-   L('w2a2', 'Embodiment: Energy Audit', 'qhgio/energyaudit.mp4', 'Week 1: track your energy and activities for one week, so you collect data and spot patterns.\n\nWeek 2: look at the patterns, find your likely energy lows and highs, and plan your week to support more sustained energy.\n\nChange your state, change your life. To feel joy, put yourself in the state of joy. To break an overthinking loop, change your state. If you take one thing from this course, make it this: practise changing your state.', prompts=[]),
+   L('w2q', 'Bonus: Live Q+A replay', '9qb8e/week2qa.mp4', 'A replay of this week’s live group Q+A call.', prompts=[]),
+   L('w2a2', 'Embodiment: Energy Audit', 'qhgio/energyaudit.mp4', 'Week 1: track your energy and activities for one week, so you collect data and spot patterns.\n\nWeek 2: look at the patterns, find your likely energy lows and highs, and plan your week to support more sustained energy.\n\nChange your state, change your life. To feel joy, put yourself in the state of joy. To break an overthinking loop, change your state. If you take one thing from this course, make it this: practise changing your state.', prompts=[], res=['energy']),
  ]},
  {'week': 3, 'title': 'Looking Deeper', 'res': ['ub', 'rewind'], 'lessons': [
    L('w3l0', 'Intro', 'djc52/week3intro.mp4', prompts=[]),
@@ -81,8 +82,8 @@ weeks = [
    L('w3l6', 'Lesson 6: Cause and Effect', 't7wxo/week36causeandeffect.mp4'),
    L('w3a1', 'Activity: The Understanding Bridge', '', 'A bridge between your perspective, their perspective, and a new understanding that lets you move forward.', res=['ub']),
    L('w3a2', 'Activity: Pause and Rewind', '', 'Reach for REWIND when you realise you reacted in a way you wish you could take back or do differently next time. Maybe you got defensive, reacted overly emotionally, or it happened so fast on autopilot you barely noticed.', res=['rewind']),
-   L('w3b1', 'Bonus: Nervous System Regulation (RSD edition)', '', 'My reset steps for RSD or big-emotion moments. You don’t need a fancy device.\n\n1. Breathe 5 seconds in, 5 seconds out. Slow belly breathing, reminding your body “hey babe, we’re safe”.\n2. Sway and check in with your body. Jaw tight? Shoulders up? Consciously relax them.\n3. Hand flapping. Stimming releases energy instead of bottling it up.\n4. Left and right arm tapping.\n5. Ground yourself: lie down and let your body feel supported.\n6. Weight on your chest: a weighted blanket (or a pet!). Deep pressure helps your body feel safe.\n7. Gratitude and reality checking: I am here. I am safe. I am in control of what I do next.\n8. Reconnect with your purpose.\n9. Somatic dancing to move leftover emotion out of your body.\n10. More swaying and movement.\n\nMusic matters too. Find songs that remind you who you are. Take what works, leave what doesn’t.', optional=True),
-   L('w3q', 'Bonus: Live Q+A replay', 'viqfl/week3qa.mp4', 'A replay of this week’s live group Q+A call.', prompts=[], optional=True),
+   L('w3b1', 'Bonus: Nervous System Regulation (RSD edition)', '', '', vimeo='https://vimeo.com/1245262770'),
+   L('w3q', 'Bonus: Live Q+A replay', 'viqfl/week3qa.mp4', 'A replay of this week’s live group Q+A call.', prompts=[]),
  ]},
  {'week': 4, 'title': 'Emotions', 'res': ['comehome', 'blueprint'], 'lessons': [
    L('w4l1', 'Lesson 1: Association vs Disassociation', '', 'If you’re in your head, you’re dead!', prompts=[

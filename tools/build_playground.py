@@ -55,6 +55,7 @@ for f in os.listdir('public/tools/assets'):
 for f in os.listdir('public/icons'):
     shutil.copy(f'public/icons/{f}', f'{OUT}/icons/{f}')
 shutil.copytree('public/img', OUT + '/img', dirs_exist_ok=True)
+if os.path.isdir('public/files'): shutil.copytree('public/files', OUT + '/files', dirs_exist_ok=True)
 for f in os.listdir('public/css'):
     shutil.copy(f'public/css/{f}', f'{OUT}/css/{f}')
 

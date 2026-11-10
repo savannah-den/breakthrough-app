@@ -4690,7 +4690,7 @@ class Component extends DCLogic {
     var hasIntent = !!(tx(d.intention) && tx(d.nsToward));
     var resCard = function (id) { var r = RESOURCES.filter(function (x) { return x.id === id; })[0]; if (!r) return null; var op = r.week <= (window.BT_COURSE ? unlocked : Math.max(1, unlocked)), isI = id === 'intent';
       return { title: r.title, sub: op ? ('Week ' + (r.week ? WKD(r.week) : 1) + ' resource') : ((window.BT_COURSE ? window.BT_COURSE.unlockText(r.week) : 'Unlocks after Week ' + WKD(r.week - 1))), bg: op ? r.cover : '#74140E', isLink: op && !isI, isBtn: op && isI, isLocked: !op, href: r.href || '#', target: r.target || '_self', go: function () { self.openIntent(); },
-        isLogo: id === 'rewind', isStar: id === 'star', isWhatIf: id === 'whatif', isBox: id === 'box', isUb: id === 'ub', isOther: ['intent', 'setup', 'comehome', 'blueprint', 'vagal', 'breathe', 'dose', 'pause', 'move', 'proof'].indexOf(id) >= 0, resId: id, arrow: op ? '→' : '' }; };
+        isLogo: id === 'rewind', isStar: id === 'star', isWhatIf: id === 'whatif', isBox: id === 'box', isUb: id === 'ub', isOther: ['intent', 'setup', 'comehome', 'blueprint', 'vagal', 'breathe', 'dose', 'pause', 'move', 'proof', 'energy'].indexOf(id) >= 0, resId: id, arrow: op ? '→' : '' }; };
     var cl = this.props.courseLink || 'https://stan.store/ColourMeNeurospicy/p/breakthroughonlinecourse';
     var found = tx(st.q) ? kbSearch(st.q).concat(window.BT_COURSE ? window.BT_COURSE.search(st.q) : []) : [];
     var results = found.map(function (e) {
@@ -4811,7 +4811,7 @@ class Component extends DCLogic {
       hasWp: !!st.wpUrl, noWp: !st.wpUrl, wpUrl: st.wpUrl || '',
       saveWp: function () { self.downloadWp(); }, shareWp: function () { self.shareWp(); },
       hasWpMsg: !!st.wpMsg, wpMsg: st.wpMsg,
-      resources: RESOURCES.filter(function (r) { return ['dose', 'pause', 'move'].indexOf(r.id) < 0; /* these live as mini cards inside the Vagal Tone Workout card */ }).map(function (r) { var open = r.week <= unlocked, isI = r.id === 'intent'; return { isIntent: isI, isLogo: r.id === 'rewind', isStar: r.id === 'star', isWhatIf: r.id === 'whatif', isBox: r.id === 'box', isUb: r.id === 'ub', isOther: ['intent', 'setup', 'comehome', 'blueprint', 'vagal', 'breathe', 'dose', 'pause', 'move', 'proof'].indexOf(r.id) >= 0, resId: r.id, week: r.week, weekLabel: 'Week ' + (r.week ? WKD(r.week) : 1) + ' resource', wkLabel: r.week ? WKD(r.week) : 1, title: r.title, desc: r.desc, href: r.href || '#', target: r.target || '_self', openLink: open && !isI, openBtn: open && isI, go: function () { self.openIntent(); }, locked: !open, unlockAfter: !window.BT_COURSE && r.week === unlocked && unlocked < maxWeek && !RESOURCES.some(function (x) { return x.week === r.week && RESOURCES.indexOf(x) > RESOURCES.indexOf(r); }), cls: 'rs rs-' + r.id + (open ? '' : ' lock'), coverBg: open ? r.cover : '#8E1D14', tagColor: open ? '#A8231F' : '#E8B9AE', note: (window.BT_COURSE ? window.BT_COURSE.unlockText(r.week) : 'Unlocks when you finish Week ' + (r.week - 1)) }; }),
+      resources: RESOURCES.filter(function (r) { return ['dose', 'pause', 'move'].indexOf(r.id) < 0; /* these live as mini cards inside the Vagal Tone Workout card */ }).map(function (r) { var open = r.week <= unlocked, isI = r.id === 'intent'; return { isIntent: isI, isLogo: r.id === 'rewind', isStar: r.id === 'star', isWhatIf: r.id === 'whatif', isBox: r.id === 'box', isUb: r.id === 'ub', isOther: ['intent', 'setup', 'comehome', 'blueprint', 'vagal', 'breathe', 'dose', 'pause', 'move', 'proof', 'energy'].indexOf(r.id) >= 0, resId: r.id, week: r.week, weekLabel: 'Week ' + (r.week ? WKD(r.week) : 1) + ' resource', wkLabel: r.week ? WKD(r.week) : 1, title: r.title, desc: r.desc, href: r.href || '#', target: r.target || '_self', openLink: open && !isI, openBtn: open && isI, go: function () { self.openIntent(); }, locked: !open, unlockAfter: !window.BT_COURSE && r.week === unlocked && unlocked < maxWeek && !RESOURCES.some(function (x) { return x.week === r.week && RESOURCES.indexOf(x) > RESOURCES.indexOf(r); }), cls: 'rs rs-' + r.id + (open ? '' : ' lock'), coverBg: open ? r.cover : '#8E1D14', tagColor: open ? '#A8231F' : '#E8B9AE', note: (window.BT_COURSE ? window.BT_COURSE.unlockText(r.week) : 'Unlocks when you finish Week ' + (r.week - 1)) }; }),
       unlockLabel: 'I’ve finished Week ' + WKD(unlocked) + ' · unlock Week ' + WKD(unlocked + 1),
       unlockNext: function () { self.save({ unlocked: Math.min(maxWeek, unlocked + 1) }); }
     };
@@ -5262,7 +5262,7 @@ class Component extends DCLogic {
       window.addEventListener('bt-pd-changed', this._pdSync);
       // PD_RES_V3 open straight to a page from elsewhere in the app
       if (openTab === 'home' || openTab === 'audit' || openTab === 'decoder' || openTab === 'results') { var me = this; setTimeout(function () { me.go(openTab); }, 0); }
-      if (openTab === 'now') { this.setState({ tab: 'now' }); try { window.scrollTo(0, 0); } catch (e) {} }
+      if (openTab === 'now' && window.BT_COURSE && window.BT_COURSE.openSeeProof) { setTimeout(function () { window.BT_COURSE.openSeeProof(); }, 0); } else if (openTab === 'now') { this.setState({ tab: 'now' }); try { window.scrollTo(0, 0); } catch (e) {} }
       if (openTab === 'portfolio') { if (window.BT_COURSE && window.BT_COURSE.openProofPortfolio) { window.BT_COURSE.openProofPortfolio(); return; } this.setState({ tab: 'portfolio' }); try { window.scrollTo(0, 0); } catch (e) {} }
   }
 
@@ -5798,7 +5798,7 @@ class Component extends DCLogic {
     var PD_HAS_RES = !!(window.BT_NATIVE && window.BT_NATIVE.BoxResults);
     var tabs = [['home', '', 'Home'], ['audit', '1', 'Beliefs']].concat(PD_HAS_RES ? [['results', '', 'Your results']] : []).concat((PD_HAS_RES ? [] : [['pause', '', 'Draft · Save my beliefs']]).concat([['decoder', '2', 'Programs'], ['map', '', 'My map'], ['now', '3', 'Proof']])).filter(function (t) { return PD_DRAFTS() || DRAFT_TABS.indexOf(t[0]) < 0; }).map(function (t) {
       var on = s.tab === t[0];
-      return { num: t[1], label: t[2], cls: on ? 'tab on' : 'tab', pressed: on ? 'true' : 'false', go: function () { self.go(t[0]); } };
+      return { num: t[1], label: t[2], cls: on ? 'tab on' : 'tab', pressed: on ? 'true' : 'false', go: function () { if (t[0] === 'now' && window.BT_COURSE && window.BT_COURSE.openSeeProof) { window.BT_COURSE.openSeeProof(); return; } self.go(t[0]); } };
     });
 
     var proofTotal = (s.evidence || []).length + Object.keys(newProof).reduce(function (a, k) { return a + lines(newProof[k]).length; }, 0);
@@ -5826,7 +5826,7 @@ class Component extends DCLogic {
       goPause: function () { if (PD_HAS_RES) pdResults(); else self.go('pause'); },
       goDecoder: function () { self.go('decoder'); },
       goMap: function () { self.go('map'); },
-      goNow: function () { self.go('now'); },
+      goNow: function () { if (window.BT_COURSE && window.BT_COURSE.openSeeProof) { window.BT_COURSE.openSeeProof(); return; } self.go('now'); },
       goPortfolio: function () { self.go('portfolio'); },
       openDisprove: function () { if (window.BT_COURSE && window.BT_COURSE.openProofPortfolio) window.BT_COURSE.openProofPortfolio('pp-disprove'); else self.go('portfolio'); },
       tickSummary: total ? total + (total === 1 ? ' belief ticked' : ' beliefs ticked') + (proofTotal ? ' · ' + proofTotal + (proofTotal === 1 ? ' piece of proof' : ' pieces of proof') : '') : '',

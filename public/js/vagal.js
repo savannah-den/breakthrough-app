@@ -1129,7 +1129,9 @@
     return { dose: doseData().plan.length > 0 || done('dose'), breathe: done('breathe'), pause: done('pause'), move: done('move'), water: false, win: false };
   }
   function lockedPart(part, ic, label) { return h('div', { class: 'rp-row rp-lockrow', 'data-rp': part }, [h('div', { class: 'rp-q' }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof ic === 'string' ? document.createTextNode(ic) : ic]), h('b', { text: label }), h('span', { class: 'rp-lk', 'aria-hidden': 'true', text: '🔒' })]), h('span', { class: 'rp-lk-t', text: PART_LOCK[part] })]); }
-  function repsCard() {
+  // other parts of the app can add to Today's reps for a while (e.g. the Energy Audit week)
+  function repsCard() { var b = repsCard0(); try { if (window.BT_REPS_EXTRA) window.BT_REPS_EXTRA(b); } catch (e) {} return b; }
+  function repsCard0() {
     boot();
     var box = h('section', { class: 'rp', 'aria-labelledby': 'rp-h' });
     var k = dk(), mode = vw().repsMode || 'quick';
@@ -1167,7 +1169,7 @@
     var CHEERS = { win: 'Logged. Another piece of proof.', dose: 'Feel-good chemicals: delivered.', breathe: 'Your vagus nerve thanks you.', pause: 'Quiet moments count.', move: 'Moving your body, even a little, is progress.', water: 'Hydrated brain, happier brain.' };
     if (mode === 'quick') {
       var Q = [['win', '✦', 'Had a win'], ['dose', kit.emblem('dose'), 'Got my DOSE'], ['breathe', kit.emblem('breathe'), 'Did some breathwork'], ['pause', kit.emblem('pause'), 'Took a pause'], ['move', kit.emblem('move'), 'Moved my body'], ['water', '💧', 'Drank water']];
-      box.appendChild(h('div', { class: 'rp-quick' }, Q.map(function (q) {
+      var qTile = function (q) {
         if (!partsOn()[q[0]]) return h('div', { class: 'rp-qi rp-qlock', 'data-rp': q[0], title: PART_LOCK[q[0]] }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]), h('b', { text: q[2] }), h('span', { class: 'rp-lk-t', text: '🔒 ' + PART_LOCK[q[0]].replace('Switches on with ', '').replace('Switches on when ', 'When ') })]);
         var on = done[q[0]];
         return h('button', { class: 'rp-qi' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', 'data-rp': q[0], onclick: function (e) {
@@ -1178,16 +1180,21 @@
           var c = !on ? (cheerLine(q[0]) || CHEERS[q[0]]) : '';
           setTimeout(function () { redraw(c, 'all'); }, on ? 0 : 250);
         } }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]), h('b', { text: q[0] === 'win' && nWins ? (nWins === 1 ? '1 win today' : nWins + ' wins today') : q[2] }), h('span', { class: 'rp-tick' + (q[0] === 'win' && nWins ? ' num' : ''), 'aria-hidden': 'true', text: q[0] === 'win' && nWins ? '+' : on ? '✓' : '' })]);
-      })));
+      };
+      // your win sits on its own at the top, then the vagus nerve workout
+      box.appendChild(h('div', { class: 'rp-quick rp-qwin' }, [qTile(Q[0])]));
+      var winSlot = h('div'); box.appendChild(winSlot);
+      box.appendChild(h('div', { class: 'rp-sec-h vn' }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true', text: '〰️' }), h('div', null, [h('h3', { text: 'Vagus nerve workout' }), h('span', { text: 'Your DOSE, breathe, pause, move and water' })])]));
+      box.appendChild(h('div', { class: 'rp-quick' }, Q.slice(1).map(qTile)));
       // "Had a win": opens a little box right here to write it in (it becomes proof in their portfolio)
       if (vs.winOpen || (done.win && !wins.length)) {
         var qwIn = h('input', { class: 'bt-in sm', id: 'rp-win-in', placeholder: 'Today I…', 'aria-label': 'Your win today' });
         var qwAdd = function () { var t = kit.tx(qwIn.value); if (!t) { qwIn.focus(); return; } var ab = kit.addWin(t); setV(k, 'win', { done: true }); vs.winOpen = false; redraw('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.', 'all'); };
         qwIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') qwAdd(); });
-        box.appendChild(h('div', { class: 'rp-winbox' }, [h('b', { text: '✦ What was your win?' }), h('span', { class: 'rp-sub', text: 'Big or tiny, it all counts. It goes into your proof portfolio.' }),
+        winSlot.appendChild(h('div', { class: 'rp-winbox' }, [h('b', { text: '✦ What was your win?' }), h('span', { class: 'rp-sub', text: 'Big or tiny, it all counts. It goes into your proof portfolio.' }),
           h('div', { class: 'rp-inrow' }, [qwIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: qwAdd })]),
           h('button', { class: 'rp-more', type: 'button', text: done.win ? 'Close' : 'Just tick it for now', onclick: function (e) { if (!done.win) { setV(k, 'win', { done: true }); kit.sparkleBurst(e.currentTarget); } vs.winOpen = false; setTimeout(function () { redraw(done.win ? '' : CHEERS.win, 'all'); }, done.win ? 0 : 250); } })]));
-      } else if (wins.length) box.appendChild(h('ul', { class: 'rp-wins' }, wins.map(function (w) { return h('li', { text: '“' + w.text + '”' }); })));
+      }
       box.appendChild(dayDone());
       return box;
     }
@@ -1204,7 +1211,8 @@
     var winIn = h('input', { class: 'bt-in sm', placeholder: 'Today I…', 'aria-label': 'Your win today' });
     var addWin = function () { var t = kit.tx(winIn.value); if (!t) return; var ab = kit.addWin(t); setV(k, 'win', { done: true }); redraw('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.', 'win'); };
     winIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addWin(); });
-    box.appendChild(row('win', '✦', nWins ? 'Wins today: ' + nWins + '. Got another?' : 'Wins: what went well today?', done.win, [wins.length ? h('ul', { class: 'rp-wins' }, wins.map(function (w) { return h('li', { text: '“' + w.text + '”' }); })) : null, h('div', { class: 'rp-inrow' }, [winIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: wins.length ? 'Add another' : 'Add', onclick: addWin })])]));
+    box.appendChild(row('win', '✦', nWins ? 'Wins today: ' + nWins + '. Got another?' : 'Wins: what went well today?', done.win, [h('div', { class: 'rp-inrow' }, [winIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: wins.length ? 'Add another' : 'Add', onclick: addWin })])]));
+    box.appendChild(h('div', { class: 'rp-sec-h vn' }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true', text: '〰️' }), h('div', null, [h('h3', { text: 'Vagus nerve workout' }), h('span', { text: 'Your DOSE, breathe, pause, move and water' })])]));
     // DOSE: bare minimum in one tap, or "I did something different" (pick from the menu or make a new option)
     var dd = doseData(), dts = dd.days[k] || {};
     function tickDose(ids, msg) { var d2 = doseData(), x = d2.days[k] = d2.days[k] || {}, p = { done: true }; ids.forEach(function (id) { x[id] = x[id] || Date.now(); var it = doseItem(id); if (it) it.letters.split('').forEach(function (L) { p[L] = true; }); }); wr(K.dose, d2); set('dose', p, msg); }

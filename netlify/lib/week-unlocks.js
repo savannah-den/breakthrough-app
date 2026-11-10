@@ -1,3 +1,4 @@
+// Founding Members get every week up to the Energy Audit (Week 2 in the data) straight away, then each week Sav opens for her 1:1 clients.
 // Self-paced clients get a new week every 7 days from their start date, but never past the week Sav has
 // opened for her 1:1 clients (app setting "spCap", Week 1 until she opens Week 2 for a 1:1 client). When a week opens for someone
 // (by date, or because Sav just opened it for her 1:1 clients) they get a phone notification and an email, once.
@@ -13,7 +14,11 @@ async function setting(key) { const r = await push.svc('app_settings?select=valu
 async function run(opts) {
   opts = opts || {};
   const cap = Number(await setting('spCap')) || 1, unlocks = (await setting('unlocks')) || {}, course = (await setting('course')) || null;
-  const profs = (await push.svc('profiles?select=id,email,full_name,tier,status,program_start,created_at,is_admin&tier=eq.self_paced').then(j) || []).filter(p => !p.is_admin && p.status !== 'past' && p.email);
+  // self-paced clients, plus Founding Members (tag on their client profile) on any tier, current or past
+  const isFounder = p => Array.isArray(p.tags) && p.tags.some(t => /founding/i.test(String((t && t.t) || t || '')));
+  let all = await push.svc('profiles?select=id,email,full_name,tier,status,program_start,created_at,is_admin,tags').then(j);
+  if (!Array.isArray(all)) all = (await push.svc('profiles?select=id,email,full_name,tier,status,program_start,created_at,is_admin&tier=eq.self_paced').then(j)) || [];
+  const profs = all.filter(p => !p.is_admin && p.email && (isFounder(p) || (p.tier === 'self_paced' && p.status !== 'past')));
   if (!profs.length) return { cap, checked: 0, told: [] };
   const ids = profs.map(p => p.id);
   const [rows, subs] = await Promise.all([
@@ -24,9 +29,9 @@ async function run(opts) {
   const out = [];
   for (const p of profs) {
     const ov = unlocks[p.id]; if (ov === 'all') continue;
-    const byDate = 1 + Math.floor((Date.now() - startOf(p)) / (7 * DAY));
-    let open = Math.min(byDate, cap); if (typeof ov === 'number') open = Math.max(open, ov);
-    const last = told[p.id] || 1;
+    const byDate = 1 + Math.floor((Date.now() - startOf(p)) / (7 * DAY)), fo = isFounder(p);
+    let open = fo ? Math.max(2, cap) : Math.min(byDate, cap); if (typeof ov === 'number') open = Math.max(open, ov);
+    const last = told[p.id] || (fo ? 2 : 1); // founders start with everything up to the Energy Audit open: only tell them about weeks after that
     if (open < 2 || open <= last) continue;
     const wk = ((course && course.weeks) || []).filter(w => w.week === open)[0] || {};
     const first = String(p.full_name || '').split(' ')[0];

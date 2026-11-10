@@ -1039,6 +1039,29 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 .ectfoot img{width:72px;height:72px;border-radius:20px;flex:none}
 .ectfoot strong{font-family:'Playfair Display',Georgia,serif;font-size:24px;color:#FFFFFF}
 /* EB_V3 */
+.eblock{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:26px;background:#FFF4EE;border:2px solid #1F1412;box-shadow:5px 5px 0 #F4C2F7}
+.eblock-art{width:84px;height:84px}
+.eblock-s{animation:ebTw 3.2s ease-in-out infinite;transform-origin:98px 32px}
+@keyframes ebTw{0%,100%{transform:scale(.85) rotate(0)}50%{transform:scale(1.12) rotate(18deg)}}
+.tab.lockt{opacity:.62}
+.tab.lockt .tnum{background:#FFFFFF;color:#4E0C08;border:1px solid #EDE3DF;font-size:9px}
+.pathb.lockd{opacity:.7;cursor:not-allowed;background:#F6F1EF;border-style:dashed}
+.ebsteps{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:26px;background:#FFFFFF;border:2px solid #1F1412;box-shadow:5px 5px 0 #F1F9A6;margin-bottom:16px}
+.ebs-l{display:flex;flex-direction:column;gap:12px}
+.ebs-c{position:relative;display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;padding:14px;border-radius:20px;background:#FAF7F5;border:1.5px solid #EDE3DF}
+.ebs-n{position:absolute;top:-10px;left:-8px;width:30px;height:30px;border-radius:50%;background:#4E0C08;color:#F1F9A6;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ebs-a svg{width:96px;height:80px;display:block}
+.ebs-t{display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.5;color:#463A38}
+.ebs-t strong{font-family:'Playfair Display',Georgia,serif;font-size:18px;color:#1F1412}
+.ebs-pen{animation:ebPen 2.6s ease-in-out infinite;transform-origin:100px 60px}
+@keyframes ebPen{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-4px,3px) rotate(-6deg)}}
+.ebs-wheel{animation:ebSpin 9s linear infinite}
+@keyframes ebSpin{to{transform:rotate(360deg)}}
+.ebs-glow{animation:ebGlow 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.ebs-glow.g2{animation-delay:.6s}
+@keyframes ebGlow{0%,100%{transform:scale(.8);opacity:.35}50%{transform:scale(1.35);opacity:.7}}
+@media (prefers-reduced-motion:reduce){.ebs-pen,.ebs-wheel,.ebs-glow,.eblock-s{animation:none}}
+@media (max-width:420px){.ebs-c{grid-template-columns:72px 1fr}.ebs-a svg{width:72px;height:60px}}
 .ftpick{display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:26px;background:#FFF4EE;border:2px solid #1F1412;box-shadow:5px 5px 0 #F4C2F7;margin-bottom:16px}
 .ftpick .big,.ftpick .lead{margin:0}
 .ftcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
@@ -1129,6 +1152,16 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </sc-for>
 </div>
 </nav>
+<!-- EB_LOCK1 -->
+<sc-if value="{{tabLock}}" hint-placeholder-val="{{ false }}">
+<section class="eblock">
+<svg class="eblock-art" viewBox="0 0 120 120" aria-hidden="true"><rect x="24" y="52" width="72" height="54" rx="14" fill="#F4C2F7" stroke="#4E0C08" stroke-width="3"/><path d="M40 52 V38 a20 20 0 0 1 40 0 V52" fill="none" stroke="#4E0C08" stroke-width="3.4" stroke-linecap="round"/><circle cx="60" cy="74" r="7" fill="#4E0C08"/><path d="M60 80 v10" stroke="#4E0C08" stroke-width="4" stroke-linecap="round"/><path class="eblock-s" d="M98 22 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8" stroke-linejoin="round"/></svg>
+<span class="hand" style="font-size: 16px; color: #A8231F">Not quite yet</span>
+<p class="big">This part opens with your full Emotional Blueprint</p>
+<p class="lead">For now you’ve got <strong>What am I feeling?</strong>, so you can start naming your emotions straight away. Processing, your blueprints, the body map, the emotion mixer and everything else open when you reach the Emotional Blueprint activity, after Lesson 4: Processing Emotions.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><button class="primary" onClick="{{lockGoTune}}">Go to What am I feeling? →</button><sc-if value="{{lockDemo}}" hint-placeholder-val="{{ false }}"><button class="ghost" onClick="{{lockDemoGo}}">Playground: unlock everything</button></sc-if></div>
+</section>
+</sc-if>
 
 <!-- ================= START HERE ================= -->
 <sc-if value="{{tabHome}}" hint-placeholder-val="{{ true }}">
@@ -1892,6 +1925,19 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </sc-if>
 <sc-if value="{{lx.tune.closed}}" hint-placeholder-val="{{ false }}"><div class="lbar"><span class="lbadge sm">✦</span><span class="lbt"><strong>What am I feeling?</strong> · lesson done</span><button class="ghost" onClick="{{lx.tune.toggle}}">Read the lesson again</button></div></sc-if>
 <div class="toolsec" id="tool-tune">
+<!-- EB_LOCK1: the three steps -->
+<sc-if value="{{tShowSteps}}" hint-placeholder-val="{{ true }}">
+<section class="ebsteps">
+<span class="hand" style="font-size: 17px; color: #A8231F">How it works</span>
+<p class="big">Three steps to name what you’re feeling</p>
+<p class="lead">If you move fast through life, feelings tend to catch up with you later. The moment’s already passed before you realise you were feeling something at all, or it takes a hot minute to land. These three steps slow you down just enough to catch it.</p>
+<div class="ebs-l">
+<div class="ebs-c"><span class="ebs-n">1</span><div class="ebs-a"><svg viewBox="0 0 120 100" aria-hidden="true"><path d="M22 14 L92 10 L96 88 L26 92 Z" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 30 q14 -4 26 0 t24 -2 M34 44 q10 4 22 0 t28 2 M34 58 q16 -5 30 0 t18 -1 M34 72 q8 3 18 0" fill="none" stroke="#B5281E" stroke-width="2.2" stroke-linecap="round"/><path class="ebs-pen" d="M86 74 L108 38 L114 42 L92 78 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 74 L84 84 L92 78" fill="#F28C3B" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="ebs-t"><strong>Write it out</strong><span>Brain dump everything swirling around: what happened, what you’re thinking, what you wish you’d said. Messy is perfect. Getting it out of your head makes room to feel it.</span></div></div>
+<div class="ebs-c"><span class="ebs-n">2</span><div class="ebs-a"><svg viewBox="0 0 120 100" aria-hidden="true"><g class="ebs-wheel" style="transform-origin:60px 50px"><path d="M60 50 L60 12 A38 38 0 0 1 93 31 Z" fill="#E5534B" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L93 31 A38 38 0 0 1 93 69 Z" fill="#F2994A" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L93 69 A38 38 0 0 1 60 88 Z" fill="#F2C94C" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L60 88 A38 38 0 0 1 27 69 Z" fill="#7CC46A" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L27 69 A38 38 0 0 1 27 31 Z" fill="#7B7FC4" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L27 31 A38 38 0 0 1 60 12 Z" fill="#E8338A" stroke="#4E0C08" stroke-width="2"/><circle cx="60" cy="50" r="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"/></g><path d="M98 82 l-12 -14 m0 0 l2 9 m-2 -9 l9 1" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="83" cy="35" r="6" fill="none" stroke="#FFFFFF" stroke-width="3"/></svg></div><div class="ebs-t"><strong>Pick it on the wheel</strong><span>Look at the feelings wheel and tap the word your eyes go to first. Don’t overthink it. If a few fit, pick them all. Feelings often come in blends.</span></div></div>
+<div class="ebs-c"><span class="ebs-n">3</span><div class="ebs-a"><svg viewBox="0 0 120 100" aria-hidden="true"><circle cx="60" cy="18" r="11" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 29 V66 M60 66 L48 92 M60 66 L72 92 M60 40 L40 56 M60 40 L80 56" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="ebs-glow" cx="60" cy="44" r="9" fill="#E5534B" opacity=".55"/><circle class="ebs-glow g2" cx="60" cy="32" r="5" fill="#F2994A" opacity=".55"/><path d="M20 30 q-6 10 0 20 M100 30 q6 10 0 20" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-linecap="round"/></svg></div><div class="ebs-t"><strong>Feel it in your body</strong><span>Now drop into your body and scan from your head to your toes. Where is it? A tight chest, a lump in your throat, your stomach dropping when a message comes in? You might only have “I don’t know… bad? I just feel tight in my chest and a lump in my throat.” That’s a perfect place to start. Your body usually knows before your brain does.</span></div></div>
+</div>
+</section>
+</sc-if>
 <sc-if value="{{ftShowPick}}" hint-placeholder-val="{{ false }}">
 <section class="ftpick" id="ft-pick">
 <span class="hand" style="font-size: 17px; color: #A8231F">Before you start · how do you feel your feelings?</span>
@@ -3287,6 +3333,9 @@ var FT = {
 var FTORDER = ['body', 'see', 'think'];
 function tStepName(ph) { if (ph === 'w') return 'name it on the wheel'; if (ph === 'd' || ph === 'dw') return 'the brain dump'; return low(TSTEPS[ph][1]); }
 
+// EB_LOCK1: is the whole resource open yet? (Processing Emotions done, a Founding Member, or unlocked in the playground)
+function EB_FULL(st) { try { var p = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); if (p && ((p.done && p.done.w4l4) || p.founder)) return true; } catch (e) {} return !!(st && st.demoUnlock); }
+var EB_TK = { d: 'Step 1 · Write it out', w: 'Step 2 · Pick it on the wheel', 1: 'Step 3 · Feel it in your body', 2: 'Step 3 · Feel it in your body', 3: 'Step 3 · Feel it in your body', 4: 'Step 4 · Does the name fit?', 5: 'Step 5 · What do you need?', 6: 'Step 5 · What do you need?', 7: 'Step 6 · An intentional pause' };
 function CMODS_ALL(s) { var ld = s.lessonsDone || {}; for (var i = 0; i < 6; i++) if (!ld['mod' + i]) return false; return true; }
 
 class Component extends DCLogic {
@@ -3466,6 +3515,7 @@ class Component extends DCLogic {
         blueprints: s.blueprints || {}, history: Array.isArray(s.history) ? s.history : [], sessions: Array.isArray(s.sessions) ? s.sessions : [], open: s.open || null, lessonsDone: migDone(s.lessonsDone), l4: Object.assign({ t: '', f: '', d: '' }, s.l4 || {})
       });
     }
+    if (!EB_FULL(this.state)) this.setState({ tab: 'tune' }); /* EB_LOCK1 */
   }
 
   componentDidUpdate() {
@@ -3569,12 +3619,13 @@ class Component extends DCLogic {
 
   renderVals() {
     var self = this, s = this.state, c = s.cur, pr = s.proc, ps = s.pStep;
-    var tSeq = TSEQ[s.feelType] || TSEQ.def, tPos = Math.max(0, Math.min(s.tStep || 0, tSeq.length - 1)), tPh = tSeq[tPos], ts = typeof tPh === 'number' ? tPh : 0;
+    var tSeq = TSEQ.think, tPos = Math.max(0, Math.min(s.tStep || 0, tSeq.length - 1)), tPh = tSeq[tPos], ts = typeof tPh === 'number' ? tPh : 0;
     var tm = tPh === 'w' ? TW_STEP : TSTEPS[ts], pm = PSTEPS[ps];
     var allJ = JOURNEY.every(function (J) { return (s.lessonsDone || {})[J[0]]; });
     // EB_V2: where they're up to in Week 4, and which blueprints exist
     var ebProg = null; try { ebProg = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); } catch (e) {}
-    var ebDone = (ebProg && ebProg.done) || {}, ebVid = !!ebDone.w4l4 || !!s.demoUnlock;
+    var ebDone = (ebProg && ebProg.done) || {}, ebVid = !!ebDone.w4l4 || !!s.demoUnlock || !!(ebProg && ebProg.founder);
+    var rLocked = !ebVid, lockView = rLocked && s.tab !== 'tune', vt = lockView ? '__locked' : s.tab;
     var ebHas = function (k) { return (s.history || []).some(function (hh) { return (hh.emos || []).some(function (e) { return e.id === k; }); }); };
     var ebLeft = ['anger', 'sadness', 'fear'].filter(function (k) { return !ebHas(k); });
     var ebLocked = s.demoUnlock ? false : (!ebVid || ebLeft.length > 0);
@@ -3588,8 +3639,8 @@ class Component extends DCLogic {
       var best = EMO.map(function (e) { return { k: e[0], n: e[1], h: matches(c, e).length }; }).sort(function (a, b) { return b.h - a.h; })[0];
       if (best && best.h >= 2 && picked.indexOf(best.k) < 0) tMis = 'You picked ' + join(picked.map(function (k) { return low(EMOBY[k] ? EMOBY[k][1] : k); })) + ' on the wheel, but what you described in your body sounds a lot like ' + low(best.n) + '. You might have had the wrong label for it, which is really common. Have a look at ' + low(best.n) + ' below, and pick whatever feels true.';
     })();
-    var ftShow = s.tab === 'tune' && (!FT[s.feelType] || !!s.typeOpen);
-    var tabs = MENUTABS.map(function (tb) { var on = s.tab === tb[0]; return { l: tb[1], img: IMG[tb[2]], num: '', hasNum: false, cls: on ? 'tab on' : 'tab', current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } }; });
+    var ftShow = false;
+    var tabs = MENUTABS.map(function (tb) { var on = s.tab === tb[0], lk = rLocked && tb[0] !== 'tune' && tb[0] !== 'ect'; return { l: tb[1], img: IMG[tb[2]], num: lk ? '🔒' : '', hasNum: lk, cls: (on ? 'tab on' : 'tab') + (lk ? ' lockt' : ''), current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } }; });
     var multi = function (which, field, list) {
       var src = s[which];
       return list.map(function (l) { var on = !!(src[field] || {})[l]; return { l: l, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.flipIn(which, field, l); } }; });
@@ -3610,7 +3661,7 @@ class Component extends DCLogic {
     var cKeys = curEmoKeys(c);
     var firstKey = c.first && cKeys.indexOf(c.first) >= 0 ? c.first : cKeys[0];
     var firstChips = cKeys.map(function (k) { var on = k === firstKey; return { l: emoName(k), img: emoImg(k), cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ first: k }); } }; });
-    var pathBtns = TPATHS.map(function (p) { var on = c.path === p[0]; return { img: IMG[p[1]], t: p[2], s: p[3], cls: on ? 'pathb on' : 'pathb', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ path: on ? null : p[0] }); } }; });
+    var pathBtns = TPATHS.map(function (p) { if (rLocked && p[0] === 'process') return { img: IMG[p[1]], t: '🔒 ' + p[2], s: 'This opens with your full Emotional Blueprint, after Lesson 4: Processing Emotions. For now, pick one of the other two. Naming it is already doing the work.', cls: 'pathb lockd', pressed: 'false', pick: function () {} }; var on = c.path === p[0]; return { img: IMG[p[1]], t: p[2], s: p[3], cls: on ? 'pathb on' : 'pathb', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ path: on ? null : p[0] }); } }; });
     var picked = keys(c.emos).filter(function (k) { return NEEDS[k]; });
     var needSrc = [];
     picked.forEach(function (k) { needSrc = needSrc.concat(NEEDS[k]); });
@@ -4239,25 +4290,25 @@ class Component extends DCLogic {
     })();
     return Object.assign(flags, eflags, {
       journey: journey, jPct: Math.round(nDone / JOURNEY.length * 100), jDoneText: nDone + ' of ' + JOURNEY.length + ' lessons done', jNotDone: nDone < JOURNEY.length, jAllDone: nDone >= JOURNEY.length,
-      lx: lx, go: go, tool: tool, b7n: b7n, tabEim: s.tab === 'eim', eSegLearn: eView === 'learn' ? 'segb on' : 'segb', eSegWheel: eView === 'wheel' ? 'segb on' : 'segb', eGoLearn: function () { self.setState({ eView: 'learn' }); eScrollTo('eim-course'); }, eGoWheel: function () { self.setState({ eView: 'wheel' }); }, eIsLearn: eView === 'learn', eIsWheel: eView === 'wheel',
+      lx: lx, go: go, tool: tool, b7n: b7n, tabEim: vt === 'eim', eSegLearn: eView === 'learn' ? 'segb on' : 'segb', eSegWheel: eView === 'wheel' ? 'segb on' : 'segb', eGoLearn: function () { self.setState({ eView: 'learn' }); eScrollTo('eim-course'); }, eGoWheel: function () { self.setState({ eView: 'wheel' }); }, eIsLearn: eView === 'learn', eIsWheel: eView === 'wheel',
       eStepNum: String(eStep + 1), eStepTotal: String(ESTEPS.length), eStepTitle: ESTEPS[eStep], eDots: ESTEPS.map(function (x, i) { return { cls: i === eStep ? 'cdot on' : i < eStep ? 'cdot done' : 'cdot' }; }),
       eHasPrev: eStep > 0, eNoPrev: eStep === 0, eHasNext: eStep < ESTEPS.length - 1, eIsLast: eStep === ESTEPS.length - 1, ePrev: function () { self.setState({ eStep: Math.max(0, eStep - 1) }); eScrollTo('eim-course'); }, eNext: function () { self.setState({ eStep: Math.min(ESTEPS.length - 1, eStep + 1) }); eScrollTo('eim-course'); },
       eFinish: function () { var o = Object.assign({}, self.state.lessonsDone || {}); o.eimCourse = true; self.setState({ lessonsDone: o, eView: 'wheel' }); self.scrollTool('eim'); },
       eHomeWheel: function () { self.setState({ eView: 'wheel' }); self.goTool('eim'); }, eHomeCourse: function () { self.setState({ eView: 'learn', eStep: 0 }); self.goTab('eim'); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} },
-      eDirs: eDirs, eStageInfo: eStageInfo, eQ: s.eQ || '', onEQ: function (e) { self.setState({ eQ: e && e.target ? e.target.value : '' }); }, eHasHits: eHits.length > 0, eHits: eHits, eHasSit: !!(ef && ef.sit), eSit: eSit, eSitWhy: ef && ef.sitWhy ? ef.sitWhy : '', eHl: eHl, eBtns: eBtns, eNoSel: !fc, eHasSel: !!fc, fc: fc || {serSub: '', wordLow: '', keptText: '', word: '', col: '', bg: '', root: '', rootLow: '', dir: '', gift: '', giftLow: '', ringLabel: '', rootLine: '', isWin: false, notWin: false, winImg: '', winLine: '', means: '', slice: '', sliceAlt: '', slx: '', sly: '', slw: '', slh: '', sliceBtns: [], sliceText: '', thoughts: [], areas: [], syms: [], symOwn: '', onSymOwn: null, dos: [], doOwn: '', onDoOwn: null, towardCls: '', awayCls: '', toward: null, away: null, hasTa: false, taMsg: '', chDots: [], chakras: [], fRows: [], levelText: '', relH: '', relmot: '', hasSeries: false, serHead: '', series: [], ints: [], bands: [], showBind: false, isKept: false, isGo: false, bindQ: '', keep: null, processIt: null, nextCls: '', nextK: '', nextT: '', nextD: '', hasPrompt: false, promptH: '', prompt: '', hasPrompt2: false, prompt2: '', acts: [], hasTools: false, tools: [], canSave: false, saved: false, notSaved: false, save: null, showHeading: false, headingText: ''}, tabMenu: s.tab === 'menu', mnBtns: mnBtns, mnChips: mnChips, mn: mn || { col: '#FFFFFF', name: '', low: '', kicker: '', dir: '', hasFl: false, flLine: '', flSub: '', hasFlState: false, openFlState: null, flStateName: '', food: '', foodSub: '', openLevel: null, levelCol: '#FFFFFF', levelLabel: '', isB7: false, isUp: false, openEmo: null, escT: '', serHead: '', unH: '', unT: '', un: '', lineName: '', intH: '', intT: '', int: '', belH: '', giftLow: '', chakras: [], loud: [], quiet: [], esc: [], series: [], spec: [], rungs: [], beliefs: [] }, mnHas: !!mn, mnNone: !mn, mfQ: s.mfQ || '', onMfQ: function (e) { self.setState({ mfQ: e && e.target ? e.target.value : '' }); }, mfRes: mfRes, mfHas: mfRes.length > 0, mfNone: !!mfr && mfr.length === 0, rfQ: s.rfQ || '', onRfQ: function (e) { self.setState({ rfQ: e && e.target ? e.target.value : '' }); }, rfEx: rfEx, rfRes: rfRes, rfHas: rfRes.length > 0, rfNone: !!rfr && rfr.length === 0, rfBlend: rfRes.length > 1, rfBlendT: rfRes.length > 1 ? 'You’ve got ' + rfRes.map(function (r) { return r.low; }).join(' and ') + ' in there.' : '', enChips: enChips, enLevels: enLevels, enWheelBtns: enWheelBtns, enSeries: enSeries, enDir: CORE[ee].dir.charAt(0).toLowerCase() + CORE[ee].dir.slice(1), enLow: EMOBY[ee][1].toLowerCase(), enIsFear: ee === 'fear', enBeliefs: BELIEFS[ee], whatIfUrl: String(self.props.whatIfUrl || 'https://claude.ai/artifact/QqJyzMdLBPxAYAqEF75ZLU'), boxUrl: String(self.props.boxUrl || 'https://claude.ai/artifact/9EmLZhKxht5gpVt2Vzi2by'), anxietyUrl: String(self.props.anxietyVideoUrl || 'https://youtu.be/CG_dZlyKHGk'), enEsc: [2, 1, 0].map(function (j) { return { n: EN.lv[j][0], bg: CORE[ee].col + ['FF', '99', '55'][j], fg: j === 0 && ['anger', 'sadness', 'fear', 'grief'].indexOf(ee) >= 0 ? '#FFFFFF' : '#1F1412' }; }), enEscT: EN.lv[2][0] + ' that isn’t processed can turn into ' + EN.lv[1][0].toLowerCase() + ', and ' + EN.lv[1][0].toLowerCase() + ' left unresolved can turn into ' + EN.lv[0][0].toLowerCase() + '. Processing it while it’s small makes sure it doesn’t grow into something bigger.', enSerHead: SERIES[ee][0] + ' Watch the energy move from stuck to useful.', angerSeries: seriesOf('anger'), enName: EMOBY[ee][1], enCol: CORE[ee].col, enUn: EN.un, enInt: EN.int, enSpec: EN.spec, enGiftLow: EN.lv[3][0].toLowerCase(), foods: foods, mapTop: mapTop, mapBottom: mapBottom, rises: rises, l4Labels: l4Labels, hasL4Labels: l4Labels.length > 0,
-      tabEnergy: s.tab === 'energy', tabRoots: s.tab === 'roots', tabWheel: s.tab === 'wheel', tabBlends: s.tab === 'blends', tabLevels: s.tab === 'levels',
+      eDirs: eDirs, eStageInfo: eStageInfo, eQ: s.eQ || '', onEQ: function (e) { self.setState({ eQ: e && e.target ? e.target.value : '' }); }, eHasHits: eHits.length > 0, eHits: eHits, eHasSit: !!(ef && ef.sit), eSit: eSit, eSitWhy: ef && ef.sitWhy ? ef.sitWhy : '', eHl: eHl, eBtns: eBtns, eNoSel: !fc, eHasSel: !!fc, fc: fc || {serSub: '', wordLow: '', keptText: '', word: '', col: '', bg: '', root: '', rootLow: '', dir: '', gift: '', giftLow: '', ringLabel: '', rootLine: '', isWin: false, notWin: false, winImg: '', winLine: '', means: '', slice: '', sliceAlt: '', slx: '', sly: '', slw: '', slh: '', sliceBtns: [], sliceText: '', thoughts: [], areas: [], syms: [], symOwn: '', onSymOwn: null, dos: [], doOwn: '', onDoOwn: null, towardCls: '', awayCls: '', toward: null, away: null, hasTa: false, taMsg: '', chDots: [], chakras: [], fRows: [], levelText: '', relH: '', relmot: '', hasSeries: false, serHead: '', series: [], ints: [], bands: [], showBind: false, isKept: false, isGo: false, bindQ: '', keep: null, processIt: null, nextCls: '', nextK: '', nextT: '', nextD: '', hasPrompt: false, promptH: '', prompt: '', hasPrompt2: false, prompt2: '', acts: [], hasTools: false, tools: [], canSave: false, saved: false, notSaved: false, save: null, showHeading: false, headingText: ''}, tabMenu: vt === 'menu', mnBtns: mnBtns, mnChips: mnChips, mn: mn || { col: '#FFFFFF', name: '', low: '', kicker: '', dir: '', hasFl: false, flLine: '', flSub: '', hasFlState: false, openFlState: null, flStateName: '', food: '', foodSub: '', openLevel: null, levelCol: '#FFFFFF', levelLabel: '', isB7: false, isUp: false, openEmo: null, escT: '', serHead: '', unH: '', unT: '', un: '', lineName: '', intH: '', intT: '', int: '', belH: '', giftLow: '', chakras: [], loud: [], quiet: [], esc: [], series: [], spec: [], rungs: [], beliefs: [] }, mnHas: !!mn, mnNone: !mn, mfQ: s.mfQ || '', onMfQ: function (e) { self.setState({ mfQ: e && e.target ? e.target.value : '' }); }, mfRes: mfRes, mfHas: mfRes.length > 0, mfNone: !!mfr && mfr.length === 0, rfQ: s.rfQ || '', onRfQ: function (e) { self.setState({ rfQ: e && e.target ? e.target.value : '' }); }, rfEx: rfEx, rfRes: rfRes, rfHas: rfRes.length > 0, rfNone: !!rfr && rfr.length === 0, rfBlend: rfRes.length > 1, rfBlendT: rfRes.length > 1 ? 'You’ve got ' + rfRes.map(function (r) { return r.low; }).join(' and ') + ' in there.' : '', enChips: enChips, enLevels: enLevels, enWheelBtns: enWheelBtns, enSeries: enSeries, enDir: CORE[ee].dir.charAt(0).toLowerCase() + CORE[ee].dir.slice(1), enLow: EMOBY[ee][1].toLowerCase(), enIsFear: ee === 'fear', enBeliefs: BELIEFS[ee], whatIfUrl: String(self.props.whatIfUrl || 'https://claude.ai/artifact/QqJyzMdLBPxAYAqEF75ZLU'), boxUrl: String(self.props.boxUrl || 'https://claude.ai/artifact/9EmLZhKxht5gpVt2Vzi2by'), anxietyUrl: String(self.props.anxietyVideoUrl || 'https://youtu.be/CG_dZlyKHGk'), enEsc: [2, 1, 0].map(function (j) { return { n: EN.lv[j][0], bg: CORE[ee].col + ['FF', '99', '55'][j], fg: j === 0 && ['anger', 'sadness', 'fear', 'grief'].indexOf(ee) >= 0 ? '#FFFFFF' : '#1F1412' }; }), enEscT: EN.lv[2][0] + ' that isn’t processed can turn into ' + EN.lv[1][0].toLowerCase() + ', and ' + EN.lv[1][0].toLowerCase() + ' left unresolved can turn into ' + EN.lv[0][0].toLowerCase() + '. Processing it while it’s small makes sure it doesn’t grow into something bigger.', enSerHead: SERIES[ee][0] + ' Watch the energy move from stuck to useful.', angerSeries: seriesOf('anger'), enName: EMOBY[ee][1], enCol: CORE[ee].col, enUn: EN.un, enInt: EN.int, enSpec: EN.spec, enGiftLow: EN.lv[3][0].toLowerCase(), foods: foods, mapTop: mapTop, mapBottom: mapBottom, rises: rises, l4Labels: l4Labels, hasL4Labels: l4Labels.length > 0,
+      tabEnergy: vt === 'energy', tabRoots: vt === 'roots', tabWheel: vt === 'wheel', tabBlends: vt === 'blends', tabLevels: vt === 'levels',
       l4T: l4.t || '', l4F: l4.f || '', l4D: l4.d || '', onL4T: l4set('t'), onL4F: l4set('f'), onL4D: l4set('d'), l4Done: l4Done,
       l4Loop: l4Done ? 'You thought “' + trim(l4.t) + '”, felt ' + low(trim(l4.f)) + ', and ' + low(trim(l4.d)) + '. Next time, where could you step in? Question the thought, breathe into the feeling, or choose a different action.' : '',
       l7Note: nChecks ? 'You’ve already done ' + nChecks + (nChecks === 1 ? ' check-in' : ' check-ins') + '. Your blueprints are building. Do another whenever something knocks.' : 'Next time something knocks, use What am I feeling? to name it. Every check-in adds to your blueprint automatically.',
       releaseRows: releaseRows, releaseRowsEct: releaseRowsEct, cgHead: cgHead, cgRows: cgRows,
       goMega: function () { self.goTab('levels'); }, goBody: function () { self.goTab('body'); }, goGuide: function () { self.goTab('wheel'); }, goTune: function () { self.goTab('tune'); }, goProcess: function () { self.startProcess(null, null); }, goEct: function () { self.openEct(); }, ectPageUrl: String(self.props.ectPageUrl || '/ect'),
-      tabEct: s.tab === 'ect', eEmos: eEmos, mailHref: mailHref, ectVideo: ectVideo, hasEctVideo: /^https?:\/\//.test(ectVideo), noEctVideo: !/^https?:\/\//.test(ectVideo),
+      tabEct: vt === 'ect', eEmos: eEmos, mailHref: mailHref, ectVideo: ectVideo, hasEctVideo: /^https?:\/\//.test(ectVideo), noEctVideo: !/^https?:\/\//.test(ectVideo),
       f: { name: F.name || '', email: F.email || '', phone: F.phone || '', where: F.where || '', now: F.now || '', why: F.why || '', other: F.other || '' }, fset: fset,
       fContact: radio('fContact', ['Email', 'Phone call', 'Text message']), fHowLong: radio('fHowLong', ['A few months', 'A few years', 'Most of my life', 'Not sure']), fWhen: radio('fWhen', ['As soon as possible', 'In the next month', 'In a few months', 'Just exploring']),
       fBefore: befores.map(function (x) { var on = !!fb[x]; return { l: x, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { var o = Object.assign({}, self.state.fBefore || {}); if (o[x]) delete o[x]; else o[x] = 1; self.setState({ fBefore: o }); } }; }),
       fAgreeCls: s.fAgree ? 'chip on' : 'chip', fAgreePressed: s.fAgree ? 'true' : 'false', fAgreeToggle: function () { self.setState({ fAgree: !self.state.fAgree }); },
       fValid: errs.length === 0, fInvalid: errs.length > 0, fTry: function () { self.setState({ fTried: true }); }, fShowErr: !!s.fTried && errs.length > 0, fErr: 'Please add ' + join(errs) + '.',
-      tabMega: s.tab === 'mega', megaBtns: megaBtns, megaLevels: megaLevels,
+      tabMega: vt === 'mega', megaBtns: megaBtns, megaLevels: megaLevels,
       mmA: mmChips('mmA', mA), mmB: mmChips('mmB', mB), mmColA: MEGA[MIDX[mA]].col, mmColB: MEGA[MIDX[mB]].col,
       mmKicker: mA === mB ? MEGA[MIDX[mA]].n + ', turned all the way up' : MEGA[MIDX[mA]].n + ' (' + MEGA[MIDX[mA]].hz + ') + ' + MEGA[MIDX[mB]].n + ' (' + MEGA[MIDX[mB]].hz + ')', mmName: mbl[0], mmDesc: mbl[1], mmThought: mbl[2],
       mgHead: mgHead, mgRows: mgRows,
@@ -4278,7 +4329,7 @@ class Component extends DCLogic {
       closeModal: function () { self.setState({ modal: null }); },
       q: s.q || '', onQ: function (e) { self.setState({ q: e && e.target ? e.target.value : '' }); },
       results: results, hasResults: results.length > 0, noResults: String(s.q || '').trim().length >= 2 && results.length === 0,
-      tabGuide: s.tab === 'guide', tabBody: s.tab === 'body',
+      tabGuide: vt === 'guide', tabBody: vt === 'body',
       wheelBtns: wheelBtns, b7Cards: b7Cards,
       quizState: qs[0], quizBtns: quizBtns, quizAnswered: !!s.quizAns,
       quizVerdict: s.quizAns === qs[1] ? 'Yes!' : 'Close.', quizExplain: qs[0] + ' is a state of ' + EMOBY[qs[1]][1].toLowerCase() + '. ' + qs[2],
@@ -4294,13 +4345,15 @@ class Component extends DCLogic {
       pDemo: (function () { try { return !!(window.BT_DEMO || window.localStorage.getItem('__bt_demo_db')); } catch (e) { return false; } })() && ebLocked, pDemoUnlock: function () { self.setState({ demoUnlock: true }); },
       goMakeBp: function () { self.setState({ tab: 'mine', confirm: null }); setTimeout(function () { var el = document.getElementById('bp-make'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); },
       goEimTab: function () { self.goTab('eim'); },
-      tabHome: s.tab === 'home', tabTune: s.tab === 'tune', tabProcess: s.tab === 'process', tabMine: s.tab === 'mine', tabLearn: s.tab === 'learn',
+      tabLock: lockView, lockGoTune: function () { self.goTab('tune'); }, lockDemo: (function () { try { return !!(window.BT_DEMO || window.localStorage.getItem('__bt_demo_db')); } catch (e) { return false; } })(), lockDemoGo: function () { self.setState({ demoUnlock: true }); },
+      tShowSteps: s.tab === 'tune' && tPos === 0 && !s.tuneDone,
+      tabHome: vt === 'home', tabTune: vt === 'tune', tabProcess: vt === 'process', tabMine: vt === 'mine', tabLearn: vt === 'learn',
       goHome: function () { self.goTab('home'); }, goLearn: function () { self.goTab('energy'); }, goMine: function () { self.goTab('mine'); },
       startTune: function () { self.goTool('tune'); }, startProcess: function () { self.startProcess(null, null); },
       hasLater: later.length > 0, laterText: later.length === 1 ? '1 feeling is waiting for you to come back to it.' : later.length + ' feelings are waiting for you to come back to them.',
 
       tuneDone: !!s.tuneDone && !ftShow, tuneFlow: !s.tuneDone && !ftShow,
-      ftShowPick: ftShow, ftShowBar: !ftShow && !!FT[s.feelType], ftHasPick: !!FT[s.feelType], ftName: FT[s.feelType] ? FT[s.feelType].name : '', ftSeqText: FT[s.feelType] ? FT[s.feelType].seq.join(' → ') : '',
+      ftShowPick: ftShow, ftShowBar: false, ftHasPick: !!FT[s.feelType], ftName: FT[s.feelType] ? FT[s.feelType].name : '', ftSeqText: FT[s.feelType] ? FT[s.feelType].seq.join(' → ') : '',
       ftCards: FTORDER.map(function (k) { var f = FT[k], on = s.feelType === k; return { n: f.n, t: f.t, s: f.s, e1: f.e1, e2: f.e2, cls: on ? 'ftc on' : 'ftc', on: on ? 'true' : 'false', pick: function () { self.setState({ feelType: k, typeOpen: true, tStep: 0 }); setTimeout(function () { var el = document.querySelector('.ftrec'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); } }; }),
       ftRecT: FT[s.feelType] ? FT[s.feelType].recT : '', ftRecD: FT[s.feelType] ? FT[s.feelType].recD + ' This is now your default, so every time you open the Emotional Blueprint, this is the order we’ll use.' : '',
       ftSeq: FT[s.feelType] ? FT[s.feelType].seq.map(function (t, i) { return { n: String(i + 1), t: t }; }) : [], ftRecNote: FT[s.feelType] ? FT[s.feelType].note + ' Then you can choose to process it.' : '',
@@ -4309,8 +4362,8 @@ class Component extends DCLogic {
       tShowDump: tPh === 'd' || tPh === 'dw', tShowWheel: tPh === 'w' || tPh === 'dw', tBpFirst: !!(s.cur && s.cur.bp) && tPos === 0, tBpHow: FT[s.feelType] ? FT[s.feelType].how : 'Now notice what was happening in your body. Write it all down, then we’ll map it, step by step.',
       tMis: !!tMis, tMisText: tMis, tuneDoneText: s.tuneDone || '', newTune: function () { self.setState({ tuneDone: null, tStep: 0 }); self.top(); },
       tHasBack: tPos > 0, tNoBack: tPos === 0, tPrev: function () { self.setState({ tStep: Math.max(0, tPos - 1), confirm: null }); self.top(); },
-      tDots: dotsOf(tSeq.length, tPos), tStepLabel: 'Step ' + (tPos + 1) + ' of ' + tSeq.length, tKicker: (tBpK ? tBpK + ' · ' : '') + (s.feelType ? 'Step ' + (tPos + 1) : tm[0]), tTitle: tm[1], tImg: IMG[tm[2]], tDrop: tm[4],
-      tShowNext: tShowNext, tNextLabel: s.feelType && tPos < tSeq.indexOf(4) ? 'Next: ' + tStepName(tSeq[tPos + 1]) : tm[3], tNext: function () { self.setState({ tStep: Math.min(tSeq.length - 1, tPos + 1), confirm: null }); self.top(); },
+      tDots: dotsOf(tSeq.length, tPos), tStepLabel: 'Step ' + (tPos + 1) + ' of ' + tSeq.length, tKicker: (tBpK ? tBpK + ' · ' : '') + (EB_TK[tPh] || tm[0]), tTitle: tm[1], tImg: IMG[tm[2]], tDrop: tm[4],
+      tShowNext: tShowNext, tNextLabel: tPos < tSeq.indexOf(4) ? 'Next: ' + tStepName(tSeq[tPos + 1]) : tm[3], tNext: function () { self.setState({ tStep: Math.min(tSeq.length - 1, tPos + 1), confirm: null }); self.top(); },
       tShowSave: tShowSave, tSaveLabel: tSaveLabel, tSave: tSave,
       tResetCls: s.confirm === 'tune' ? 'ghost warn' : 'ghost', tResetLabel: s.confirm === 'tune' ? 'Tap again to start over' : 'Start over',
       tReset: function () { if (self.state.confirm === 'tune') { self.setState({ cur: emptyCur(), tStep: 0, confirm: null }); self.top(); } else self.setState({ confirm: 'tune' }); },

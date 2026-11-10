@@ -23,5 +23,60 @@
     "id": "w2l5",
     "field": "desc",
     "from": "Open Breaking Out of Your Box (it used to be called the Program Decoder) in the activity after this lesson."
+  },
+  {
+    "id": "w2s2",
+    "field": "prompts",
+    "from": []
+  },
+  {
+    "id": "w3b1",
+    "field": "desc",
+    "from": "My reset steps for RSD or big-emotion moments. You don’t need a fancy device.\n\n1. Breathe 5 seconds in, 5 seconds out. Slow belly breathing, reminding your body “hey babe, we’re safe”.\n2. Sway and check in with your body. Jaw tight? Shoulders up? Consciously relax them.\n3. Hand flapping. Stimming releases energy instead of bottling it up.\n4. Left and right arm tapping.\n5. Ground yourself: lie down and let your body feel supported.\n6. Weight on your chest: a weighted blanket (or a pet!). Deep pressure helps your body feel safe.\n7. Gratitude and reality checking: I am here. I am safe. I am in control of what I do next.\n8. Reconnect with your purpose.\n9. Somatic dancing to move leftover emotion out of your body.\n10. More swaying and movement.\n\nMusic matters too. Find songs that remind you who you are. Take what works, leave what doesn’t."
+  },
+  {
+    "id": "w2q",
+    "field": "optional",
+    "from": true
+  },
+  {
+    "id": "w2a2",
+    "field": "res",
+    "from": []
+  },
+  {
+    "id": "w3b1",
+    "field": "optional",
+    "from": true
+  },
+  {
+    "id": "w3b1",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w3q",
+    "field": "optional",
+    "from": true
+  },
+  {
+    "id": "w4l3",
+    "field": "title",
+    "from": "Lesson 3: Meltdowns"
+  },
+  {
+    "id": "w4a2",
+    "field": "title",
+    "from": "Activity: What am I feeling?"
+  },
+  {
+    "id": "w4a2",
+    "field": "desc",
+    "from": "Do this one before Lesson 4."
+  },
+  {
+    "id": "w4l4",
+    "field": "desc",
+    "from": "Stop: before you start this, complete the What am I feeling? activity first."
   }
 ]

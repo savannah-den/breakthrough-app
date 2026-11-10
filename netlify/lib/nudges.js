@@ -1,9 +1,12 @@
 // What each client gets at their reminder hour: ONE notification a day at most, chosen kindly.
 //   1. Come back to the course: only on day 3, 7, 14, 21 and 30 since they last opened a lesson,
 //      then every 15 days. Uses their own why, North Star and anchor word, so it feels like a hug, not a nag.
-//   2. Otherwise, Today's reps: once their reps have switched on and they haven't ticked any off today.
+//   2. In their Energy Audit week (the 7 days after they finish the Energy Audit lesson, w2a2): if they haven't
+//      logged at least 3 blocks today, a reminder to add their day in. Tapping it opens the Energy Audit.
+//   2b. New patterns in their Energy Audit they haven't looked at: a nudge that opens the Audit tab.
+//   3. Otherwise, Today's reps: once their reps have switched on and they haven't ticked any off today.
 //      Tapping it opens Home at the reps card.
-//   3. Otherwise (reps not switched on yet, early Week 1): a gentle 1% nudge, unless they've already been in a lesson today.
+//   4. Otherwise (reps not switched on yet, early Week 1): a gentle 1% nudge, unless they've already been in a lesson today.
 // Shared by the hourly sender and the coach dashboard preview, so what Sav sees is what clients get.
 const COMEBACK_DAYS = [3, 7, 14, 21, 30];
 const REPS = [
@@ -12,6 +15,12 @@ const REPS = [
   ['Little reps, big change 🌱', 'Even one counts. Open your reps and tick off what you did today.'],
   ['Your daily evidence 💛', 'Tick today’s reps and watch your calendar fill up. You’re doing the work.']
 ];
+const ENERGY = [
+  ['Add your day in 🔋', 'Day {d} of your Energy Audit. What drained you and what filled you back up? Log your blocks, then see if you can balance your day.'],
+  ['How’s your battery? 🔋', 'Day {d} of 7. Pop today’s blocks into your Energy Audit. Every day you log makes your patterns sharper.'],
+  ['Can you balance your day? ⚖️', 'Day {d} of your Energy Audit. Log what you did, and I’ll suggest a 20-minute recharge if you need one.']
+];
+function padKey(t, tz) { try { const p = new Intl.DateTimeFormat('en-CA', { timeZone: tz || 'Australia/Brisbane', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(t)); const g = k => p.find(x => x.type === k).value; return g('year') + '-' + g('month') + '-' + g('day'); } catch (e) { return new Date(t).toISOString().slice(0, 10); } }
 const GENTLE = [
   ['Your 1% for today 💛', 'Five minutes counts. Open Breakthrough and do one small thing.'],
   ['Hey you ✨', 'Small and done beats big and someday. Your next step is waiting.'],
@@ -38,6 +47,16 @@ function pick(data, opts) {
   const n = Math.floor(now / 864e5);
   if (comebackDue(days)) { const m = comeback(days, who); return { kind: 'comeback', days, title: m.title, body: m.body, url: '/#Course' }; }
   const done = prog.done || {};
+  // Energy Audit week: the 7 days after they finish the Energy Audit lesson
+  const eaAt = Number((prog.doneAt || {}).w2a2) || 0;
+  if (eaAt) {
+    const eDay = Math.round((Date.parse(padKey(now, tz)) - Date.parse(padKey(eaAt, tz))) / 864e5) + 1;
+    const ea = parse(data['bt-energy-v1']) || {}, eToday = (((ea.days || {})[padKey(now, tz)] || {}).blocks || []).length;
+    if (eDay >= 1 && eDay <= 7 && eToday < 3) { const l = ENERGY[n % ENERGY.length]; return { kind: 'energy', title: l[0], body: l[1].replace('{d}', eDay), url: '/#Energy' }; }
+  }
+  // new patterns in their Energy Audit they haven't looked at yet: opens straight onto the Audit tab
+  { const ea = parse(data['bt-energy-v1']) || {}, logged = Object.keys(ea.days || {}).filter(k => ((ea.days[k] || {}).blocks || []).length >= 3).length;
+    if (logged >= 3 && (Number(ea.patSeen) || 0) < logged) return { kind: 'energy-patterns', title: 'I found patterns in your energy 👀', body: 'Your Energy Audit has something to show you: what drains you, what fills you up, and where your nervous system spent the week.', url: '/?go=ea-audit#Energy' }; }
   const repsOn = !!(vw.repsUnlocked || (dose.plan || []).length || done.w1a4 || done.w1a3 || done.w1a5 || done.w1a6);
   const today = (vw.days || {})[dayKey(now, tz)] || {};
   const ticked = ['dose', 'breathe', 'pause', 'move', 'water', 'win'].some(p => today[p] && (today[p].done || today[p].ml || today[p].level)) || !!today.filled;
@@ -46,4 +65,4 @@ function pick(data, opts) {
   if (days === 0) return null; // already opened a lesson today: nothing to nudge
   const g = GENTLE[n % GENTLE.length]; return { kind: 'gentle', title: g[0], body: g[1], url: '/#Course' };
 }
-module.exports = { pick, comeback, comebackDue, REPS, GENTLE, COMEBACK_DAYS };
+module.exports = { pick, comeback, comebackDue, REPS, ENERGY, GENTLE, COMEBACK_DAYS };

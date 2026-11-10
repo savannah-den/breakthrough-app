@@ -429,7 +429,12 @@
           "video": "https://assets.stanwith.me/live/msc/28154850/l1m9z/week2sidequestoverstimulation.mp4",
           "vimeo": "",
           "desc": "You’ll find the energy audit in the Energy Audit lesson later this week.",
-          "prompts": [],
+          "prompts": [
+            [
+              "What tends to tip you into overstimulation right now, and what could you put in place to take the edge off?",
+              "Think about the people, places, sounds, tasks and times of day that leave you wired, frazzled or flat. Then name one or two small, doable changes: a quieter spot to work, headphones, a buffer between meetings, a recharge planned straight after the big drains, or saying no to one thing."
+            ]
+          ],
           "res": [],
           "notes": false,
           "optional": false,
@@ -560,7 +565,7 @@
           "prompts": [],
           "res": [],
           "notes": false,
-          "optional": true,
+          "optional": false,
           "transcript": "",
           "tip": ""
         },
@@ -571,7 +576,9 @@
           "vimeo": "",
           "desc": "Week 1: track your energy and activities for one week, so you collect data and spot patterns.\n\nWeek 2: look at the patterns, find your likely energy lows and highs, and plan your week to support more sustained energy.\n\nChange your state, change your life. To feel joy, put yourself in the state of joy. To break an overthinking loop, change your state. If you take one thing from this course, make it this: practise changing your state.",
           "prompts": [],
-          "res": [],
+          "res": [
+            "energy"
+          ],
           "notes": false,
           "optional": false,
           "transcript": "",
@@ -641,6 +648,21 @@
           "tip": ""
         },
         {
+          "id": "w3a1",
+          "title": "Activity: The Understanding Bridge",
+          "video": "",
+          "vimeo": "",
+          "desc": "A bridge between your perspective, their perspective, and a new understanding that lets you move forward.",
+          "prompts": [],
+          "res": [
+            "ub"
+          ],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": "A bridge between your perspective, their perspective, and a new understanding that lets you move forward."
+        },
+        {
           "id": "w3l3",
           "title": "Lesson 3: Resources + Behaviour",
           "video": "https://assets.stanwith.me/live/msc/28154850/xzn7i/week33resourcesandbehaviour.mp4",
@@ -685,6 +707,21 @@
           "tip": ""
         },
         {
+          "id": "w3a2",
+          "title": "Activity: Pause and Rewind",
+          "video": "",
+          "vimeo": "",
+          "desc": "Reach for REWIND when you realise you reacted in a way you wish you could take back or do differently next time. Maybe you got defensive, reacted overly emotionally, or it happened so fast on autopilot you barely noticed.",
+          "prompts": [],
+          "res": [
+            "rewind"
+          ],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": "Reach for Rewind when you’ve reacted in a way you wish you could take back or do differently next time."
+        },
+        {
           "id": "w3l5",
           "title": "Lesson 5: Perception is Projection",
           "video": "https://assets.stanwith.me/live/msc/28154850/6tjo1/week35perceptionisprojection.mp4",
@@ -721,45 +758,41 @@
           "tip": ""
         },
         {
-          "id": "w3a1",
-          "title": "Activity: The Understanding Bridge",
+          "id": "w3a3",
+          "title": "Embodiment: Energy Audit, part 2: Plan your week",
           "video": "",
           "vimeo": "",
-          "desc": "A bridge between your perspective, their perspective, and a new understanding that lets you move forward.",
-          "prompts": [],
-          "res": [
-            "ub"
+          "desc": "",
+          "prompts": [
+            [
+              "What did you lock in that can’t move, and how much space does that leave you?",
+              ""
+            ],
+            [
+              "Which day are you most worried about, and what recharge have you protected on it?",
+              ""
+            ],
+            [
+              "At the end of the week: what did you notice when you followed your plan, and what will you change next week?",
+              ""
+            ]
           ],
+          "res": [],
           "notes": false,
           "optional": false,
           "transcript": "",
-          "tip": "A bridge between your perspective, their perspective, and a new understanding that lets you move forward."
-        },
-        {
-          "id": "w3a2",
-          "title": "Activity: Pause and Rewind",
-          "video": "",
-          "vimeo": "",
-          "desc": "Reach for REWIND when you realise you reacted in a way you wish you could take back or do differently next time. Maybe you got defensive, reacted overly emotionally, or it happened so fast on autopilot you barely noticed.",
-          "prompts": [],
-          "res": [
-            "rewind"
-          ],
-          "notes": false,
-          "optional": false,
-          "transcript": "",
-          "tip": "Reach for Rewind when you’ve reacted in a way you wish you could take back or do differently next time."
+          "tip": "Use what your Energy Audit showed you to plan a week that works with your energy."
         },
         {
           "id": "w3b1",
           "title": "Bonus: Nervous System Regulation (RSD edition)",
           "video": "",
-          "vimeo": "",
-          "desc": "My reset steps for RSD or big-emotion moments. You don’t need a fancy device.\n\n1. Breathe 5 seconds in, 5 seconds out. Slow belly breathing, reminding your body “hey babe, we’re safe”.\n2. Sway and check in with your body. Jaw tight? Shoulders up? Consciously relax them.\n3. Hand flapping. Stimming releases energy instead of bottling it up.\n4. Left and right arm tapping.\n5. Ground yourself: lie down and let your body feel supported.\n6. Weight on your chest: a weighted blanket (or a pet!). Deep pressure helps your body feel safe.\n7. Gratitude and reality checking: I am here. I am safe. I am in control of what I do next.\n8. Reconnect with your purpose.\n9. Somatic dancing to move leftover emotion out of your body.\n10. More swaying and movement.\n\nMusic matters too. Find songs that remind you who you are. Take what works, leave what doesn’t.",
+          "vimeo": "https://vimeo.com/1245262770",
+          "desc": "",
           "prompts": [],
           "res": [],
           "notes": true,
-          "optional": true,
+          "optional": false,
           "transcript": "",
           "tip": "Breathe 5 in, 5 out. Sway and soften your jaw and shoulders. Stim, tap left and right, ground, add weight on your chest, reality-check, reconnect with your purpose and move it out. Take what works, leave what doesn’t."
         },
@@ -772,7 +805,7 @@
           "prompts": [],
           "res": [],
           "notes": false,
-          "optional": true,
+          "optional": false,
           "transcript": "",
           "tip": ""
         }
@@ -839,33 +872,11 @@
         },
         {
           "id": "w4a2",
-          "title": "Activity: What am I feeling?",
+          "title": "Lesson 3: Naming Emotions",
           "video": "",
           "vimeo": "",
-          "desc": "Do this one before Lesson 4.",
+          "desc": "Name it to move it. Use the What am I feeling? check-in in your Emotional Blueprint: write it out, pick it on the wheel, then find it in your body. Do this one before Lesson 4.",
           "prompts": [],
-          "res": [],
-          "notes": false,
-          "optional": false,
-          "transcript": "",
-          "tip": ""
-        },
-        {
-          "id": "w4l3",
-          "title": "Lesson 3: Meltdowns",
-          "video": "",
-          "vimeo": "",
-          "desc": "",
-          "prompts": [
-            [
-              "What are the key signs you’re weeks, days, hours or minutes away from a meltdown?",
-              "Becoming aware helps you, and the people who love you, release the emotions before the unplanned, potentially messy explosion."
-            ],
-            [
-              "What do you need to be doing regularly to avoid meltdowns?",
-              ""
-            ]
-          ],
           "res": [],
           "notes": false,
           "optional": false,
@@ -877,7 +888,7 @@
           "title": "Lesson 4: Processing Emotions",
           "video": "",
           "vimeo": "",
-          "desc": "Stop: before you start this, complete the What am I feeling? activity first.",
+          "desc": "Before you start this one, do Lesson 3: Naming Emotions (the What am I feeling? check-in) first.",
           "prompts": [],
           "res": [],
           "notes": false,
@@ -907,6 +918,28 @@
           "vimeo": "",
           "desc": "ECT (the Emotional Change Technique) releases years of stored anger, sadness, fear, hurt, guilt, shame and grief at the root, so you’re only dealing with the feelings of now. Watch the video, then see what it changed for the people who’ve done it.",
           "prompts": [],
+          "res": [],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": ""
+        },
+        {
+          "id": "w4l3",
+          "title": "Side Quest: Meltdowns",
+          "video": "",
+          "vimeo": "",
+          "desc": "",
+          "prompts": [
+            [
+              "What are the key signs you’re weeks, days, hours or minutes away from a meltdown?",
+              "Becoming aware helps you, and the people who love you, release the emotions before the unplanned, potentially messy explosion."
+            ],
+            [
+              "What do you need to be doing regularly to avoid meltdowns?",
+              ""
+            ]
+          ],
           "res": [],
           "notes": false,
           "optional": false,

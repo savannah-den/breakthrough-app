@@ -108,6 +108,24 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 .uselist li{position:relative;padding-left:18px;font-size:14px;line-height:1.45;color:#1F1412}
 .uselist li::before{content:'';position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:999px;background:#F4C2F7;box-shadow:0 0 0 1.5px #4E0C08}
 .primary.open{margin-top:auto;align-self:stretch}
+.ub-pick{gap:12px}
+.ub-pick-h{display:flex;flex-direction:column;gap:2px}
+.ub-rule{font-size:20px;font-family:'Playfair Display',Georgia,serif;color:#1F1412}
+.ub-rule b{color:#A8231F;font-style:italic}
+.ub-search{display:flex;align-items:center;gap:10px;padding:4px 6px 4px 14px;border-radius:999px;background:#FFFFFF;border:1.5px solid #4E0C08}
+.ub-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:15px;padding:10px 4px;color:#1F1412}
+.ub-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.ub-trio{grid-template-columns:1fr}}
+.ub-t{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px;border-radius:20px;border:2px solid transparent;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;font:inherit;transition:transform .2s,opacity .2s,border-color .2s}
+.ub-t.quick{background:#E9F2FB}.ub-t.deep{background:#FDE8EC}.ub-t.release{background:#F0E4F5}
+.ub-t.on{border-color:#4E0C08;transform:translateY(-2px);box-shadow:4px 4px 0 #4E0C08}
+.ub-t.dim{opacity:.5}
+.ub-ic{font-size:26px;line-height:1}
+.ub-when{font-family:'Patrick Hand SC',cursive;font-size:20px;letter-spacing:.12em;color:#A8231F}
+.ub-tn{font-size:16px}
+.ub-what{font-size:14px;line-height:1.4;color:#463A38}
+.ub-eg{font-size:13px;line-height:1.4;font-style:italic;color:#4E0C08;background:rgba(255,255,255,.7);padding:6px 8px;border-radius:10px}
+.ub-unsure{margin:0;font-size:14px;color:#463A38}
 .helper{display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:24px;background:#FBE6FC;border:1.5px solid #F4C2F7}
 .recnote{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;background:#FFFFFF;border:1.5px solid #1F1412}
 .pic{position:relative;margin:0;border-radius:20px;overflow:hidden;border:1.5px solid #EDE3DF}
@@ -204,20 +222,20 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </header>
 
 <section style="display: flex; flex-direction: column; gap: 18px">
-<div style="display: flex; flex-direction: column; gap: 6px">
-<div class="hand" style="font-size: 17px; color: #A8231F">Which bridge do I need?</div>
-<p style="margin: 0; max-width: 680px; font-size: 15px; line-height: 1.6; color: #463A38">Not every situation needs the same level of processing. Sometimes you need to heal an old wound. Sometimes you just need a quick perspective shift. Sometimes you need to stop thinking and let it out.</p>
-</div>
 
-<div class="helper">
-<div style="display: flex; flex-direction: column; gap: 4px">
-<span class="hand" style="font-size: 16px; color: #4E0C08">Need help deciding?</span>
-<span style="font-size: 15px; line-height: 1.5">Tap what feels most true right now and we’ll guide you to the right bridge.</span>
+
+<div class="helper ub-pick">
+<div class="ub-pick-h"><span class="hand" style="font-size: 18px; color: #4E0C08">Which one do I need?</span><span class="ub-rule">Is it about <b>now</b>, <b>then</b> or <b>them</b>?</span></div>
+<label class="ub-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="What’s going on? e.g. my co-worker was rude to me today" aria-label="What’s going on? Type it and we’ll point you to the right bridge"></label>
+<div class="ub-trio" role="group" aria-label="Pick the one that fits">
+<sc-for list="{{trio}}" as="t" hint-placeholder-count="3">
+<button class="{{t.cls}}" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}"><span class="ub-ic" aria-hidden="true">{{t.ic}}</span><span class="ub-when">{{t.when}}</span><b class="ub-tn">{{t.name}}</b><span class="ub-what">{{t.what}}</span><span class="ub-eg">“{{t.eg}}”</span></button>
+</sc-for>
 </div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px" role="group" aria-label="What feels most true right now"><sc-for list="{{helpOpts}}" as="o" hint-placeholder-count="6"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div>
 <sc-if value="{{hasRec}}" hint-placeholder-val="{{ false }}">
 <div class="recnote" role="status"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span style="flex: 1 1 220px; font-size: 15px; line-height: 1.5">{{recText}}</span><button class="primary" onClick="{{openRec}}">{{recBtn}}</button></div>
 </sc-if>
+<sc-if value="{{qUnsure}}" hint-placeholder-val="{{ false }}"><p class="ub-unsure">Not sure yet. Did it happen today, years ago, or is it about one person? Add a few more words, or tap the one that fits.</p></sc-if>
 </div>
 
 <div class="cards">
@@ -715,9 +733,21 @@ class Component extends DCLogic {
       ['person', 'It’s not one moment, it’s a person I keep carrying', 'release'],
       ['out', 'I’ve analysed it to death. I just need to let it out', 'release']
     ];
+    // the search: what's going on, in their words → now (Quick), then (Deep) or them (Release)
+    var UB_KW = {
+      quick: [[/\btoday|\bjust now|this (morning|arvo|afternoon|week)|yesterday|last night|\bjust\b/, 3], [/text|messag|repl|left on read|ignor|ghost|cancel|annoyed|snapp|rude|dick|bitch|feedback|comment|email|meeting|judg|spiral|assum|story|stories|overthink|seemed|look(ed)? at me|tone/, 2], [/co.?worker|colleague|boss|manager|client|friend|partner|husband|wife|boyfriend|girlfriend/, 1]],
+      deep: [[/memor|remember|resurfac|keeps coming (back|up)|flashback|can.?t (seem to )?let (it )?go|can.?t stop thinking about (that|when)|years? ago|when i was|as a (kid|child|teen)|childhood|growing up|at school|high school|that time/, 3], [/bull(y|ied)|break.?up|broke up|cheat|divorce|trauma|accident|fired|lost my job|humiliat|embarrass|wedding|funeral|birth|event|moment/, 2], [/\bpast\b|old wound|belief|still hurts/, 2]],
+      release: [[/\bmum|\bmom|\bmother|\bdad|\bfather|\bparent|step.?(mum|mom|dad)|grandma|grandpa|nan\b|sister|brother|sibling|\bex\b|ex.?(husband|wife|partner|boyfriend|girlfriend)|in.?law/, 3], [/relationship (with|between)|strained|always|never|every time|again and again|for years|whole life|still angry at|resent|betray|abandon|passed away|died|unsaid|let me down/, 2], [/\bthem\b|\bhim\b|\bher\b|person|family/, 1]]
+    };
+    var qv = String(s.q || '').toLowerCase().replace(/[’']/g, '');
+    var qScore = { quick: 0, deep: 0, release: 0 };
+    if (qv.trim().length > 3) Object.keys(UB_KW).forEach(function (k) { UB_KW[k].forEach(function (r) { if (r[0].test(qv)) qScore[k] += r[1]; }); });
+    var qBest = Object.keys(qScore).sort(function (a, b) { return qScore[b] - qScore[a]; })[0], qRec = qScore[qBest] >= 2 ? qBest : null;
+    // a person + "relationship/always/strained" is Release even if a time word sneaks in; a person + "today" is Quick
+    if (qRec && qScore.release >= 4 && qScore.release >= qScore.quick) qRec = 'release';
     var picked = HELP.filter(function (h) { return h[0] === s.helpPick; })[0];
-    var rec = picked ? picked[2] : null;
-    var REC = { quick: ['Sounds like the Quick Bridge. A 3-minute perspective shift to change the meaning, so you change the feeling.', 'Open the Quick Bridge'], deep: ['Sounds like the Deep Bridge. Take one specific event and walk all the way across it.', 'Open the Deep Bridge'], release: ['Sounds like the Bridge Release. Less thinking, more letting it move through your body.', 'Open the Bridge Release'] };
+    var rec = s.trioPick || (picked ? picked[2] : null) || qRec;
+    var REC = { quick: ['It’s about now: the Quick Bridge. 3 minutes to change the story, so you change the feeling.', 'Open the Quick Bridge'], deep: ['It’s about then: the Deep Bridge. Walk all the way across that one moment.', 'Open the Deep Bridge'], release: ['Sounds like the Bridge Release. Less thinking, more letting it move through your body.', 'Open the Bridge Release'] };
     var PAGES = { quick: ['The Quick Bridge', 'A 3-minute perspective shift.'], deep: ['The Deep Bridge', 'Your side, their side, and a new understanding in the middle.'], release: ['The Bridge Release', 'When the hurt is attached to a person, not one moment.'] };
     var t = function (val) { return String(val || '').trim(); };
     var any = function (o) { return Object.keys(o || {}).some(function (k) { return o[k]; }); };
@@ -850,6 +880,8 @@ class Component extends DCLogic {
       helpOpts: HELP.map(function (h) { var isOn = s.helpPick === h[0]; return { label: h[1], cls: isOn ? 'pick on' : 'pick', pressed: isOn ? 'true' : 'false', pick: function () { self.setState({ helpPick: isOn ? null : h[0] }); } }; }),
       hasRec: !!rec, recText: rec ? REC[rec][0] : '', recBtn: rec ? REC[rec][1] : '',
       openRec: function () { if (rec) go(rec); },
+      q: s.q || '', onQ: function (e) { self.setState({ q: e.target.value, trioPick: null, helpPick: null }); }, qUnsure: qv.trim().length > 12 && !rec,
+      trio: [['quick', '⚡', 'NOW', 'The Quick Bridge', 'It just happened. My brain is telling a story.', 'My co-worker was rude to me today'], ['deep', '🕰️', 'THEN', 'The Deep Bridge', 'One moment from the past still hurts.', 'This memory keeps resurfacing and I can’t let it go'], ['release', '🫂', 'THEM', 'The Bridge Release', 'It’s a whole person, not one moment.', 'I have a strained relationship with my mum']].map(function (t) { var on = rec === t[0]; return { cls: 'ub-t ' + t[0] + (on ? ' on' : rec ? ' dim' : ''), pressed: on ? 'true' : 'false', ic: t[1], when: t[2], name: t[3], what: t[4], eg: t[5], pick: function () { self.setState({ trioPick: on ? null : t[0], helpPick: null }); } }; }),
       cards: { quick: { cls: rec === 'quick' ? 'bcard rec' : 'bcard', rec: rec === 'quick' }, deep: { cls: rec === 'deep' ? 'bcard rec' : 'bcard', rec: rec === 'deep' }, release: { cls: rec === 'release' ? 'bcard rec' : 'bcard', rec: rec === 'release' } },
       modes: UB_MODES.map(function (m) {
         var isOn = mode === m[0];

@@ -84,6 +84,6 @@ function occurrences(ics, from, to) {
   });
   return out.sort((a, b) => a.ms - b.ms);
 }
-function pack(ev, ms) { return { id: ev.uid + '@' + ms, uid: ev.uid, ms, start: new Date(ms).toISOString(), title: ev.title, attendees: ev.attendees, zoom: ev.zoom }; }
+function pack(ev, ms) { return { id: ev.uid + '@' + ms, uid: ev.uid, ms, dur: ev.dur, start: new Date(ms).toISOString(), title: ev.title, attendees: ev.attendees, zoom: ev.zoom }; }
 
 module.exports = { occurrences, findZoom, parseDT, expand };

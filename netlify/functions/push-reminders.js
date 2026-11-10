@@ -1,10 +1,10 @@
 // Runs every hour (see netlify.toml). At the hour each client picked (in their own timezone) it sends
-// at most ONE kind notification: come back to the course, today's reps, or a gentle 1% nudge.
+// at most ONE kind notification: come back to the course, add your day to the Energy Audit (in that week), today's reps, or a gentle 1% nudge.
 // The rules live in netlify/lib/nudges.js. Scheduled runs only happen on the live site, not on previews.
 const push = require('../lib/push');
 const { pick } = require('../lib/nudges');
 function hourIn(tz) { try { return Number(new Intl.DateTimeFormat('en-AU', { timeZone: tz || 'Australia/Brisbane', hour: 'numeric', hourCycle: 'h23' }).format(new Date())); } catch (e) { return -1; } }
-const KEYS = ['bt-course', 'bt-vwork', 'bt-dose', 'cmn-companion'];
+const KEYS = ['bt-course', 'bt-vwork', 'bt-dose', 'cmn-companion', 'bt-energy-v1'];
 
 exports.handler = async () => {
   if (!push.ready()) return { statusCode: 200, body: 'not set up' };
