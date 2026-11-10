@@ -2361,6 +2361,85 @@
     ['et-halfway.jpg', 'I’m half way through ECT and it has eased many knots.']
   ];
   // Week 3 embodiment: the Energy Audit, part 2. Why plan with your energy, and how, step by step. Then off to the Plan tab.
+  /* ---------------- Lesson 3: Naming Emotions. The video is also an activity: build your anger or sadness blueprint underneath it.
+     Answers save straight into the Emotional Blueprint (same place the resource keeps them). ---------------- */
+  var EBK = 'emotional-blueprint-v1';
+  var BP_Q = [
+    ['body', 'What happens in your body when you feel this emotion?', 'How do you know you’re experiencing it? What changes?', 'I clench my jaw, furrow my brows, squint my eyes and ball my fists. My whole body tightens and my breathing gets shallow, sometimes I hold my breath. I get hot, my heart races, sometimes I shake, and my head can throb. It feels like pressure building inside me.'],
+    ['triggers', 'What tends to trigger it?', 'Think about the times you’ve felt it before. What happened beforehand?', 'Feeling disrespected or treated unfairly, being misunderstood, feeling trapped, having my boundaries crossed, seeing an injustice, people being cruel to animals or vulnerable people. Sometimes it’s lots of little things building up over time.'],
+    ['signs', 'What are the signs it’s building?', 'What happens between the trigger and it getting really intense? What tells you it’s time to release before the jar overflows?', 'I get irritable, snap at people, get sarcastic and resentful. Everything starts to annoy me. I hold a lot of tension in my body, I’m less patient, and I feel like I’m carrying pressure around all day.'],
+    ['express', 'When you express it, what does it look like?', 'Not suppress. Express. What does your body naturally want to do?', 'Yelling or screaming, throwing things, tensing my whole body and letting out a big frustrated grunt, or moving the energy, like bouncing around ready to fight someone. It feels like a pressure cooker finally letting off steam.']
+  ];
+  var BP_CHIPS = {
+    anger: { body: ['Clenched jaw', 'Furrowed brows', 'Balled fists', 'Whole body tightens', 'Shallow breathing', 'Holding my breath', 'Getting hot', 'Racing heart', 'Shaking', 'Throbbing head', 'Pressure building'],
+      triggers: ['Feeling disrespected', 'Being treated unfairly', 'Being misunderstood', 'Feeling trapped', 'Boundaries crossed', 'Seeing an injustice', 'Cruelty to animals or vulnerable people', 'Little things building up'],
+      signs: ['Irritable', 'Snapping at people', 'Sarcastic', 'Resentful', 'Everything annoys me', 'Constantly triggered', 'Tension in my body', 'Less patient', 'Carrying pressure all day'],
+      express: ['Yelling or screaming', 'Throwing things', 'A big frustrated grunt', 'Tensing my whole body', 'Moving the energy', 'Stomping', 'Hitting a pillow', 'Ripping paper'] },
+    sadness: { body: ['Heavy chest', 'Lump in my throat', 'Tears welling up', 'Tight throat', 'Drooping shoulders', 'Heavy arms and legs', 'Tired all over', 'A hollow feeling', 'Slow, sighing breaths', 'Wanting to curl up'],
+      triggers: ['Feeling left out', 'Loss or change', 'Feeling unseen', 'Being let down', 'Disappointment', 'Missing someone', 'Rejection', 'Feeling alone'],
+      signs: ['Withdrawing', 'Quieter than usual', 'Low energy', 'Teary at little things', 'Not wanting to talk', 'Scrolling to numb out', 'Sleeping more', 'Nothing feels fun'],
+      express: ['Crying', 'Sobbing', 'Curling up', 'Rocking or swaying', 'Wanting a hug', 'Writing it out', 'Sad music', 'Wrapping up in a blanket'] }
+  };
+  var BP_EMO = { anger: ['Anger', '#D3302B', '#FBE1DF', '🔥', 'Quicker to lash out?'], sadness: ['Sadness', '#3B6FB6', '#DFEAF8', '💧', 'Quicker to cry?'] };
+  var bpPick = null;
+  function bpData() { var d = rd(EBK) || {}; d.blueprints = d.blueprints || {}; return d; }
+  function bpHasAny(k) { var b = bpData().blueprints[k] || {}; return BP_Q.some(function (q) { return tx(b[q[0]] || ''); }); }
+  function bpVideoPop() {
+    if (bpHasAny('anger') || bpHasAny('sadness')) return;
+    setTimeout(function () {
+      if (document.getElementById('bt-bppop')) return;
+      var close = function () { var m = document.getElementById('bt-bppop'); if (m) m.remove(); };
+      document.body.appendChild(h('div', { id: 'bt-bppop', class: 'bt-party', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'This video is also an activity' }, [h('div', { class: 'bt-party-card bt-vdone-card' }, [
+        h('button', { class: 'bt-vdone-x', type: 'button', 'aria-label': 'Close', text: '✕', onclick: close }),
+        h('span', { class: 'bt-vdone-ic', 'aria-hidden': 'true', text: '✍️' }),
+        h('h2', { text: 'Heads up: this video is also an activity' }),
+        h('p', { text: 'Pick anger or sadness underneath the video. As I go through each question, write your answers below it, or tap the ones that fit. They save straight into your Emotional Blueprint.' }),
+        h('div', { class: 'bt-row bt-nbn-btns' }, [h('button', { class: 'bt-btn lime', type: 'button', text: 'Got it, let’s go', onclick: function () { close(); var el = document.querySelector('.bpb'); if (el) try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) {} } })])])]));
+    }, 700);
+  }
+  function bpBuilder() {
+    var sec = h('section', { class: 'bt-card2 bpb' });
+    var draw = function () {
+      sec.innerHTML = '';
+      var d = bpData(), k = bpPick || (bpHasAny('anger') ? 'anger' : bpHasAny('sadness') ? 'sadness' : null);
+      sec.appendChild(h('span', { class: 'bt-wins-k', text: 'Build it as you watch' }));
+      sec.appendChild(h('h2', { text: 'Your first emotional blueprint' }));
+      sec.appendChild(h('p', { class: 'bt-sub', text: 'Every emotion has a pattern: how it shows up in your body, what sets it off, the signs it’s building, and how it wants to come out. There are no right or wrong answers. You’re not writing a textbook definition, you’re mapping how it shows up for you.' }));
+      sec.appendChild(h('p', { class: 'bpb-q0', text: 'Start with anger or sadness, whichever comes more naturally to you right now.' }));
+      sec.appendChild(h('div', { class: 'bpb-pick', role: 'radiogroup', 'aria-label': 'Which blueprint?' }, ['anger', 'sadness'].map(function (e) {
+        var E = BP_EMO[e], on = k === e, has = bpHasAny(e);
+        return h('button', { class: 'bpb-emo' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', style: '--c:' + E[1] + ';--l:' + E[2], onclick: function () { bpPick = e; draw(); } }, [h('span', { class: 'bpb-emo-i', 'aria-hidden': 'true', text: E[3] }), h('b', { text: E[0] }), h('span', { text: has ? '✓ Started' : E[4] })]);
+      })));
+      if (!k) return;
+      var E = BP_EMO[k], bp = d.blueprints[k] || {};
+      var box = h('div', { class: 'bpb-qs', style: '--c:' + E[1] + ';--l:' + E[2] });
+      BP_Q.forEach(function (q, i) {
+        var ta = h('textarea', { class: 'bt-in bpb-ta', rows: '3', placeholder: 'Write it your way…', 'aria-label': q[1] }); ta.value = bp[q[0]] || '';
+        var st = h('span', { class: 'bpb-saved', 'aria-live': 'polite' }), t = null;
+        var save = function () { var d2 = bpData(); d2.blueprints[k] = Object.assign({}, d2.blueprints[k] || {}); d2.blueprints[k][q[0]] = ta.value; wr(EBK, d2); st.textContent = '✓ Saved'; clearTimeout(t); t = setTimeout(function () { st.textContent = ''; }, 1600); };
+        ta.addEventListener('input', function () { clearTimeout(ta.__t); ta.__t = setTimeout(save, 500); }); ta.addEventListener('blur', save);
+        var chips = h('div', { class: 'bpb-chips' }, (BP_CHIPS[k][q[0]] || []).map(function (c) {
+          var on0 = function () { return ta.value.toLowerCase().indexOf(c.toLowerCase()) >= 0; };
+          var b = h('button', { class: 'bpb-chip' + (on0() ? ' on' : ''), type: 'button', 'aria-pressed': on0() ? 'true' : 'false', text: c, onclick: function () {
+            if (on0()) { ta.value = ta.value.replace(new RegExp('(^|[,.]\\s*)' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[,.]|$)', 'i'), '$1').replace(/^[,.\s]+|[,\s]+$/g, '').replace(/,\s*,/g, ','); }
+            else ta.value = tx(ta.value) ? ta.value.replace(/[\s.]+$/, '') + ', ' + c.toLowerCase() : c;
+            b.classList.toggle('on', on0()); b.setAttribute('aria-pressed', on0() ? 'true' : 'false'); save();
+          } });
+          return b;
+        }));
+        box.appendChild(h('div', { class: 'bpb-q' }, [h('div', { class: 'bpb-qh' }, [h('span', { class: 'bpb-n', text: String(i + 1) }), h('div', null, [h('b', { text: q[1] }), h('span', { text: q[2] })])]),
+          h('span', { class: 'bpb-tap', text: 'Tap any that fit, then add your own:' }), chips, ta, st,
+          h('details', { class: 'bpb-ex' }, [h('summary', { text: 'Sav’s example (anger)' }), h('p', { text: q[3] })])]));
+      });
+      sec.appendChild(box);
+      var other = k === 'anger' ? 'sadness' : 'anger';
+      sec.appendChild(h('div', { class: 'bpb-end' }, [h('p', null, [h('b', { text: '✓ It all saves to your ' + E[0].toLowerCase() + ' blueprint as you go. ' }), 'Next, make your ' + other + ' one too, so you’ve got both.']),
+        h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn lime', type: 'button', text: (bpHasAny(other) ? 'Back to my ' : 'Now make my ') + other + ' blueprint', onclick: function () { bpPick = other; draw(); try { sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) {} } }),
+          h('a', { class: 'bt-btn ghost', href: '/tools/emotional-blueprint.html?tab=mine', text: 'See my blueprints →' })])]));
+    };
+    draw();
+    return sec;
+  }
   function eaPlanLesson() {
     var goPlan = function (cls) { return h('a', { class: 'bt-btn lime' + (cls || ''), href: '#Energy', onclick: function () { try { sessionStorage.setItem('bt-ea-tab', 'plan'); } catch (e) {} }, text: '🗓️ Open my Plan →' }); };
     var logged = 0; try { logged = eaLoggedDays(eaData()).length; } catch (e) {}
@@ -2377,7 +2456,7 @@
     sec.appendChild(h('h3', { text: 'Why plan your energy, not just your time?' }));
     sec.appendChild(box('🔋', 'Your capacity is a battery, not a bottomless tank', [P('Every day starts with a certain amount of charge, and everything you do either drains it or fills it back up. When you only plan your time, you fill every gap with more drain and hope the battery holds. It doesn’t. That’s the 3pm crash, the snapping at the people you love, the whole weekend lost to recovering.')]));
     sec.appendChild(box('🧠', 'Your brain is bad at guessing, so give it the data', [P('Time blindness, overstimulation that sneaks up on you, the “I’ll be fine” before a big day: neurodivergent brains are notoriously bad at predicting how much something will take out of them. Your log isn’t a guess. It’s what actually happened. Planning from it means you stop being ambushed by your own week.')]));
-    sec.appendChild(box('⚖️', 'Recharge before you crash', [P('A rough rule from your audit: about 20 minutes of real recharge for every 90 minutes of drain, and a bit more after the things that drain you fast. Twenty minutes after a big meeting costs you far less than the half day you lose when you hit empty.')]));
+    sec.appendChild(box('⚖️', 'Recharge before you crash', [P('A rough rule from the research on focus and recovery: about 20 minutes of real recharge for every hour that drains you slowly, and about 30 for every hour that drains you fast. Twenty minutes after a big meeting costs you far less than the half day you lose when you hit empty.')]));
     sec.appendChild(box('🛡️', 'Fewer decisions, less overwhelm', [P('When your recharges are already in the plan, you don’t have to decide in the moment, while you’re fried, whether you’re “allowed” to stop. It’s already decided. You just follow it.')]));
     sec.appendChild(box('🌱', 'Your capacity grows', [P('When you recharge regularly, with your DOSE, breathwork, pauses, movement and all the vagus nerve work you’re doing, your nervous system gets stronger. Things that used to flatten you start taking less out of you. Your plan grows with you.')]));
 
@@ -2418,7 +2497,11 @@
     ]);
   }
   var LESSON_FILES = {};
+  // course cards that open one part of a resource straight away (the Emotional Blueprint's Start here, blueprints, What am I feeling?, Process it)
+  var RES_TAB = {};
+  function resTab(l) { return l.restab || RES_TAB[l.id] || ''; }
   function lessonHref(l) {
+    if (resTab(l) && (l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var rt = resource(l.res[0]); if (rt && rt.href) return rt.href + (rt.href.indexOf('?') >= 0 ? '&' : '?') + 'tab=' + resTab(l); }
     if ((l.res || []).length && IN_PAGE[l.res[0]]) { var ri = resource(l.res[0]); if (ri) return resHref(ri); }
     if ((l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var r = resource(l.res[0]); if (r) return resHref(r); }
     // activities and embodiments always open the activity itself, never an in-between lesson page
@@ -2443,8 +2526,8 @@
     card.appendChild(h('span', { class: 'bt-act-art' }, [emblem(r.id)]));
     card.appendChild(h('span', { class: 'bt-act-b' }, [
       h('span', { class: 'bt-act-k', text: r.id === 'setup' ? 'Week 1 · ' + ((suCourse().time || '2 hours') + ' to complete lessons + videos') : l.title.replace(/:.*/, '') + (r.id === 'intent' && APP && APP.state.tier === 'private' ? ' · Must do before your first 1:1 call' : '') }),
-      h('b', { text: r.title }),
-      h('span', { class: 'bt-act-d', text: li.open ? (hasVid && !IN_PAGE[r.id] && lessonHref(l).indexOf('#Lesson-') === 0 ? 'Watch the video, then open ' + r.title + '.' : (r.desc || '')) : li.why }),
+      h('b', { text: resTab(l) && /:/.test(l.title) ? l.title.replace(/^[^:]*:\s*/, '') : r.title }),
+      h('span', { class: 'bt-act-d', text: li.open && resTab(l) && tx(l.desc) ? l.desc : li.open ? (hasVid && !IN_PAGE[r.id] && lessonHref(l).indexOf('#Lesson-') === 0 ? 'Watch the video, then open ' + r.title + '.' : (r.desc || '')) : li.why }),
       li.open && !dn && skippedActs().some(function (x) { return x.l.id === l.id; }) ? h('span', { class: 'bt-act-wait', text: 'Keep coming back to this one. The doing creates the change.' }) : null
     ]));
     if (hasVid) { var at = timeTag(l), ab = card.querySelector('.bt-act-b'); if (at && ab) { at.className += ' on-card'; ab.appendChild(at); } }
@@ -5029,22 +5112,52 @@
     };
     return { drains: mk(L.drains, ['red', 'yellow']), fills: mk(L.fills, ['green']) };
   }
-  // the balancing game: about 20 minutes of green for every 90 minutes of drain (red counts a bit heavier)
+  // the balancing game. From the research on focus and recovery (52/17, 90/20 and the micro-break studies):
+  // about 20 minutes of recharge for every hour that drains you slowly, about 30 for every hour that drains you fast
+  // (more stimulation needs more recovery). Neutral doesn't count either way.
+  var EA_RATE = { yellow: 20, red: 30 };
   function eaBalanceGame(bl) {
-    var drain = 0, green = 0, real = 0;
-    bl.forEach(function (b) { var m = Math.max(15, eaMins(b.end) - eaMins(b.start)); if (b.kind === 'red') { drain += m * 1.5; real += m; } else if (b.kind === 'yellow') { drain += m; real += m; } else if (b.kind === 'green') green += m; });
-    var need = Math.round(drain / 90 * 20 / 5) * 5, short = Math.max(0, need - green);
-    return { drain: drain, real: real, green: green, need: need, short: short, ok: bl.length > 0 && short <= 0, tilt: need ? Math.max(-14, Math.min(14, (need - green) / Math.max(need, 20) * 14)) : (green ? -6 : 0) };
+    var drain = 0, green = 0, real = 0, needRaw = 0;
+    bl.forEach(function (b) { var m = Math.max(15, eaMins(b.end) - eaMins(b.start)); if (EA_RATE[b.kind]) { needRaw += m / 60 * EA_RATE[b.kind]; drain += m; real += m; } else if (b.kind === 'green') green += m; });
+    var need = Math.round(needRaw / 5) * 5, short = Math.max(0, need - green);
+    // even = balanced (level); drain = red side heavier (not enough recharge); extra = green side heavier (plenty of recharge)
+    var state = !bl.length || (!need && !green) ? 'empty' : short > 0 ? 'drain' : (green >= need * 1.5 + 15 || (!need && green)) ? 'extra' : 'even';
+    var tilt = state === 'drain' ? Math.min(14, 5 + short / Math.max(need, 20) * 10) : state === 'extra' ? -Math.min(11, 4 + (green - need) / Math.max(green, 20) * 8) : 0;
+    return { drain: drain, real: real, green: green, need: need, short: short, state: state, ok: bl.length > 0 && short <= 0, tilt: tilt };
   }
   function eaSeesaw(g) {
     var a = g.tilt.toFixed(1), fm = function (m) { m = Math.round(m); return m >= 120 ? (Math.round(m / 6) / 10).toString().replace(/\.0$/, '') + 'h' : m + 'm'; };
-    return '<svg viewBox="0 0 240 110" role="img" aria-label="' + (g.ok ? 'Balanced: your recharge matches your drain' : 'Tipping towards drain') + '">' +
+    var st = g.state || (g.ok ? 'even' : 'drain');
+    var lab = st === 'drain' ? 'Tipping towards drain: not enough recharge yet' : st === 'extra' ? 'Recharge is heavier: plenty of recharge' : st === 'even' ? 'Balanced: your recharge matches your drain' : 'Nothing logged yet';
+    var INK = 'stroke="#4E0C08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"';
+    // the little stick person under the drain side: squished when it's too heavy, happy when it's level, jumping when recharge wins
+    var guy = st === 'drain'
+      ? '<g class="ea-guy squish" transform="translate(160 98)"><g transform="scale(1.35 0.5)"><circle cx="0" cy="-17" r="4.5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="1.8"/><path d="M-2.5 -18 l1.5 1 l-1.5 1 M2.5 -18 l-1.5 1 l1.5 1" ' + INK + ' stroke-width="1.2"/><path d="M0 -12 V-5 M0 -5 L-4 0 M0 -5 L4 0 M0 -10 L-6 -20 M0 -10 L6 -20" ' + INK + '/></g><path d="M-14 -16 q-3 -3 0 -6 M14 -16 q3 -3 0 -6" stroke="#C0392B" stroke-width="1.4" fill="none" stroke-linecap="round"/></g>'
+      : st === 'extra'
+      ? '<g transform="translate(187 98)"><g class="ea-guy jump"><circle cx="0" cy="-19" r="4.5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="1.8"/><path d="M-2 -20 h0.1 M2 -20 h0.1" stroke="#4E0C08" stroke-width="2" stroke-linecap="round"/><path d="M-2.5 -17.5 q2.5 3 5 0" ' + INK + ' stroke-width="1.4"/><path d="M0 -14 V-6 M0 -6 L-4 -1 M0 -6 L4 -1 M0 -12 L-6 -20 M0 -12 L6 -20" ' + INK + '/></g><path class="ea-guy-sp" d="M-14 -24 l1.5 3 3 1 -3 1 -1.5 3 -1.5 -3 -3 -1 3 -1 z M14 -28 l1.2 2.4 2.4 0.8 -2.4 0.8 -1.2 2.4 -1.2 -2.4 -2.4 -0.8 2.4 -0.8 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1"/></g>'
+      : '<g class="ea-guy" transform="translate(187 98)"><circle cx="0" cy="-17" r="4.5" fill="#FFFFFF" stroke="#4E0C08" stroke-width="1.8"/><path d="M-2 -18 h0.1 M2 -18 h0.1" stroke="#4E0C08" stroke-width="2" stroke-linecap="round"/><path d="M-2.5 -15.5 q2.5 2.5 5 0" ' + INK + ' stroke-width="1.4"/><path d="M0 -12 V-5 M0 -5 L-4 0 M0 -5 L4 0 M0 -10 L-6 -7 M0 -10 L6 -7" ' + INK + '/></g>';
+    return '<svg viewBox="0 0 240 118" role="img" aria-label="' + lab + '">' +
+      '<path d="M8 98 H232" stroke="#E3D3CE" stroke-width="1.5"/>' + (st === 'drain' ? '' : guy) +
       '<path d="M108 98 L120 74 L132 98 Z" fill="#E9C9E8" stroke="#4E0C08" stroke-width="2" stroke-linejoin="round"/>' +
       '<g class="ea-beam" style="transform:rotate(' + a + 'deg)">' +
       '<rect x="22" y="68" width="196" height="7" rx="3.5" fill="#4E0C08"/>' +
       '<g><rect x="30" y="38" width="46" height="30" rx="10" fill="#DDF0D6" stroke="#5FA052" stroke-width="2"/><text x="53" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#2F6B27">' + fm(g.green) + '</text></g>' +
       '<g><rect x="164" y="38" width="46" height="30" rx="10" fill="#F6D3CF" stroke="#C0392B" stroke-width="2"/><text x="187" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#8E2A1F">' + fm(g.real) + '</text></g>' +
-      '</g><text x="53" y="106" text-anchor="middle" font-size="10" fill="#4A3A38">recharge</text><text x="187" y="106" text-anchor="middle" font-size="10" fill="#4A3A38">drain</text></svg>';
+      '</g>' + (st === 'drain' ? guy : '') + '<text x="53" y="113" text-anchor="middle" font-size="10" fill="#4A3A38">recharge</text><text x="187" y="113" text-anchor="middle" font-size="10" fill="#4A3A38">drain</text></svg>';
+  }
+  // under every see-saw: where you're at, and how it's worked out
+  function eaSawNote(g) {
+    var fm = function (m) { m = Math.round(m); return m >= 90 ? (Math.round(m / 30) / 2) + ' hours' : m + ' minutes'; };
+    var st = g.state || (g.ok ? 'even' : 'drain');
+    var line = st === 'drain' ? ['😣 ', 'Tipping to drain. ', 'Your drain needs about ' + fm(g.need) + ' of recharge and you’ve had ' + fm(g.green) + '. About ' + fm(g.short) + ' more would level it out.']
+      : st === 'extra' ? ['🎉 ', 'Recharge is winning. ', 'Your drain needs about ' + fm(g.need) + ' of recharge and you’ve had ' + fm(g.green) + '. Plenty of room to breathe.']
+      : st === 'even' ? ['😊 ', 'Balanced. ', 'Your drain needs about ' + fm(g.need) + ' of recharge and you’ve had ' + fm(g.green) + '. Nice and level.']
+      : ['', '', 'Log what drains you and what recharges you, and the see-saw will balance itself.'];
+    return h('div', { class: 'ea-sawnote ' + st }, [h('p', { class: 'ea-sawnote-l' }, [line[0], h('b', { text: line[1] }), line[2]]),
+      h('details', { class: 'ea-sawhow' }, [h('summary', { text: 'How is this worked out?' }),
+        h('p', { text: 'It isn’t 50/50. Research on focus and recovery (people working in 52-minute or 90-minute stretches, and the studies on short breaks) points to about 1 part recharge for every 3 parts drain. Things that drain you fast need more, because more stimulation takes more recovery.' }),
+        h('ul', null, [h('li', { text: 'Every hour that drains you slowly needs about 20 minutes of recharge.' }), h('li', { text: 'Every hour that drains you fast needs about 30 minutes.' }), h('li', { text: 'Neutral time doesn’t count either way.' })]),
+        h('p', { text: 'So 2 hours of slow drain needs about 40 minutes of recharge. When the see-saw is level, you’ve balanced it. When the red side goes down, the little person underneath gets squished: you need more recharge. When the green side is heavier, they get to jump around. It’s a starting point: your battery ratings will show you what you actually need.' })])]);
   }
   // smooth line through points (Catmull-Rom → bezier), so the battery rises and falls gradually
   function eaCurve(pts) {
@@ -5157,7 +5270,7 @@
     // where you're at
     var fm = function (m) { return m >= 90 ? (Math.round(m / 30) / 2) + ' hours' : m + ' minutes'; };
     if (bl.length) {
-      var sw = h('div', { class: 'rp-ea-saw' }); sw.innerHTML = eaSeesaw(g); sec.appendChild(sw);
+      var sw = h('div', { class: 'rp-ea-saw' }); sw.innerHTML = eaSeesaw(g); sec.appendChild(sw); sec.appendChild(eaSawNote(g));
       var fills = lists.fills.map(function (x) { return x.t; }); if (!fills.length) fills = ['A walk outside', 'Music you love', 'Slow breathing'];
       sec.appendChild(h('p', { class: 'rp-ea-v' + (g.ok ? ' ok' : '') }, g.ok ? [h('b', { text: '⚖️ Your battery’s balanced. ' }), 'Your recharge is keeping up with your drain today.'] : [h('b', { text: 'You’re tipping towards drain. ' }), 'About ' + fm(g.short) + ' of recharge would balance it. Try one now:']));
       if (!g.ok) sec.appendChild(h('div', { class: 'rp-ea-sug' }, fills.slice(0, 3).map(function (f) { return h('button', { class: 'rp-ea-chip g', type: 'button', onclick: function (e) { var d2 = eaData(), day2 = d2.days[eaKey()] = d2.days[eaKey()] || { blocks: [] }, now = new Date(), m = now.getHours() * 60 + Math.floor(now.getMinutes() / 5) * 5; day2.blocks = (day2.blocks || []).concat([{ id: String(Date.now()), start: eaT24(m), end: eaT24(Math.min(24 * 60 - 5, m + 20)), what: f, kind: 'green' }]); eaSave(d2); try { sparkleBurst(e.currentTarget); } catch (x) {} APP.toast('Planned: 20 minutes of ' + f.toLowerCase() + ', starting now.'); setTimeout(redraw, 300); } }, ['＋ ' + f, h('span', { text: ' 20m' })]); })));
@@ -5705,8 +5818,8 @@
       pick = pick.slice(0, 3);
       var card = h('section', { class: 'ea-card ea-game' + (g.ok ? ' ok' : '') });
       card.appendChild(h('span', { class: 'bt-wins-k', text: 'Can you balance your day?' }));
-      var sw = h('div', { class: 'ea-saw' }); sw.innerHTML = eaSeesaw(g); card.appendChild(sw);
-      if (!bl.length) { card.appendChild(h('h2', { text: 'Start logging and I’ll keep score' })); card.appendChild(h('p', { class: 'bt-sub', text: 'For every hour and a half of drain, aim for about 20 minutes of green. Red counts a bit heavier.' })); return card; }
+      var sw = h('div', { class: 'ea-saw' }); sw.innerHTML = eaSeesaw(g); card.appendChild(sw); if (bl.length) card.appendChild(eaSawNote(g));
+      if (!bl.length) { card.appendChild(h('h2', { text: 'Start logging and I’ll keep score' })); card.appendChild(h('p', { class: 'bt-sub', text: 'For every hour that drains you slowly, aim for about 20 minutes of recharge. Every hour that drains you fast needs about 30.' })); return card; }
       if (g.ok) {
         card.appendChild(h('h2', { text: g.green ? 'Balanced! Look at you 🎉' : 'Nothing draining yet' }));
         card.appendChild(h('p', { class: 'bt-sub', text: g.green ? 'You’ve matched your drain with ' + g.green + ' minutes of green today. Your battery thanks you.' : 'Keep going. I’ll tell you when it’s time for some green.' }));
@@ -5789,7 +5902,7 @@
       var wks = h('div', { class: 'ea-wk-scroll', tabindex: '0', 'aria-label': 'Your week as a calendar, scroll sideways' }, [wk.el]); wc.appendChild(wks); setTimeout(function () { wks.scrollLeft = wks.scrollWidth; }, 0);
       if (wk.n) {
         var wg = {}; wk.bal.forEach(function (x) { wg[x.k.k] = x.pc; });
-        var wsaw = h('div', { class: 'ea-saw' }); wsaw.innerHTML = eaSeesaw(wk.g);
+        var wsaw = h('div', { class: 'ea-saw' }); wsaw.innerHTML = eaSeesaw(wk.g); wsaw.appendChild(eaSawNote(wk.g));
         wc.appendChild(h('div', { class: 'ea-wkbal' }, [h('div', { class: 'ea-wkbal-h' }, [h('b', { text: 'Your week’s balance' }), h('span', { text: (wg.green || 0) + '% recharge · ' + ((wg.red || 0) + (wg.yellow || 0)) + '% drain' })]), wsaw,
           h('p', { class: 'ea-wk-verdict', text: wk.g.ok ? '⚖️ Balanced week. Your green is keeping up with your drain.' : 'Tipping towards drain: about ' + (wk.g.short >= 120 ? Math.round(wk.g.short / 60) + ' hours' : wk.g.short + ' minutes') + ' more green across the week would balance it.' }),
           h('div', { class: 'ea-bal big', role: 'img', 'aria-label': wk.bal.map(function (x) { return x.k.name + ' ' + x.pc + '%'; }).join(', ') }, wk.bal.filter(function (x) { return x.pc; }).map(function (x) { return h('i', { style: 'flex:' + x.pc + ' 1 0;background:' + x.k.light + ';border-color:' + x.k.c, title: x.k.name + ' ' + x.pc + '%' }, [x.pc >= 9 ? h('span', { text: x.pc + '%' }) : null]); })),
@@ -5878,7 +5991,7 @@
       var plan = eaPlan(d), all = []; for (var i = 0; i < 7; i++) all = all.concat(eaPlanBlocks(d, i));
       var pg = eaBalanceGame(all);
       if (all.length) {
-        var sw = h('div', { class: 'ea-saw' }); sw.innerHTML = eaSeesaw(pg); card.appendChild(sw);
+        var sw = h('div', { class: 'ea-saw' }); sw.innerHTML = eaSeesaw(pg); card.appendChild(sw); card.appendChild(eaSawNote(pg));
         card.appendChild(h('p', { class: 'ea-wk-verdict', text: pg.ok ? '⚖️ Your planned week is balanced.' : 'Your plan is tipping towards drain: add about ' + (pg.short >= 120 ? Math.round(pg.short / 60) + ' hours' : pg.short + ' minutes') + ' of recharge across the week.' }));
       }
       var remove = function (wd, id) { var d2 = data(), p2 = eaPlan(d2); p2.days[wd] = (p2.days[wd] || []).filter(function (x) { return x.id !== id; }); if (EA_PE && EA_PE.id === id) EA_PE = null; save(d2); draw(); };

@@ -3554,3 +3554,39 @@ button.ea-wk-b.ed:hover{filter:brightness(.97);box-shadow:0 0 0 2px #4E0C08}
 .bx-now-fold.opened .pf-f-peek i:nth-child(2){transform:rotate(7deg) translate(8px,-18px)}
 .bx-now-pile{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .bx-now-pile .pf-paper{padding:0}
+/* see-saw: the little person under the drain side, and how it's worked out */
+.ea-guy.jump{animation:eaJump .9s cubic-bezier(.3,0,.5,1) infinite}
+@keyframes eaJump{0%,100%{transform:translateY(0)}45%{transform:translateY(-7px)}}
+.ea-guy-sp{animation:eaSp 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes eaSp{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.ea-guy.jump,.ea-guy-sp{animation:none}}
+.ea-sawnote{max-width:440px;margin:4px auto 10px;text-align:center}
+.ea-sawnote-l{margin:0 0 6px;font-size:13.5px;line-height:1.5;color:#3A2A28}
+.ea-sawnote.drain .ea-sawnote-l b{color:#B5281E}.ea-sawnote.even .ea-sawnote-l b{color:#2F6B27}.ea-sawnote.extra .ea-sawnote-l b{color:#2F6B27}
+.ea-sawhow{text-align:left;font-size:13px;line-height:1.55;color:#4A3A38;background:#FFF9F6;border:1.5px dashed #E3D3CE;border-radius:14px;padding:8px 12px}
+.ea-sawhow summary{cursor:pointer;font-weight:700;color:#4E0C08;text-align:center}
+.ea-sawhow p{margin:8px 0 0}.ea-sawhow ul{margin:6px 0 0;padding-left:18px}
+/* Lesson 3: build your first blueprint under the video */
+.bpb{display:flex;flex-direction:column;gap:12px}
+.bpb-q0{margin:0;font-weight:600;color:#1F1412}
+.bpb-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bpb-emo{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 10px;border-radius:20px;border:2px solid color-mix(in srgb,var(--c) 45%,#fff);background:#fff;font:inherit;color:#1F1412;cursor:pointer}
+.bpb-emo b{font-family:'Playfair Display',Georgia,serif;font-size:20px}
+.bpb-emo span:last-child{font-size:12.5px;color:#6b4a45}
+.bpb-emo-i{font-size:30px;line-height:1}
+.bpb-emo.on{background:var(--l);border-color:var(--c);box-shadow:4px 4px 0 var(--c)}
+.bpb-qs{display:flex;flex-direction:column;gap:14px}
+.bpb-q{padding:14px;border-radius:20px;background:#FFFFFF;border:1.5px solid #EDE3DF;border-left:5px solid var(--c);display:flex;flex-direction:column;gap:8px}
+.bpb-qh{display:flex;gap:10px;align-items:flex-start}
+.bpb-qh b{display:block;font-size:15.5px;color:#1F1412}.bpb-qh span{font-size:13px;color:#6b4a45}
+.bpb-n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px}
+.bpb-tap{font-size:12.5px;font-weight:600;color:#4E0C08}
+.bpb-chips{display:flex;flex-wrap:wrap;gap:6px}
+.bpb-chip{border:1.5px solid color-mix(in srgb,var(--c) 50%,#fff);border-radius:999px;background:#fff;font:inherit;font-size:12.5px;padding:6px 11px;cursor:pointer;color:#1F1412}
+.bpb-chip.on{background:var(--l);border-color:var(--c);font-weight:600}
+.bpb-ta{width:100%;border-radius:14px}
+.bpb-saved{font-size:12px;color:#2F6B27;min-height:14px}
+.bpb-ex{font-size:13px;color:#463A38}.bpb-ex summary{cursor:pointer;font-weight:600;color:#A8231F}.bpb-ex p{margin:6px 0 0;font-style:italic}
+.bpb-end{padding:14px;border-radius:18px;background:#F1F9A6;border:2px solid #1F1412}
+.bpb-end p{margin:0 0 10px;font-size:14px}
+.bpb-qh .bpb-n{color:#fff;font-size:13px}
