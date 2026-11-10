@@ -14,6 +14,9 @@ const { reminderEmail, whenText, SITE } = require('../lib/emails');
 // Sav's group coaching room (used for every "CMS group" call in her calendar)
 const GROUP_ROOM = '2567750438';
 const GROUP_ZOOM = 'https://us06web.zoom.us/j/2567750438?pwd=pSXpuUGvDMULpFCMsaymxX3aywhMZ5.1&omn=86104303435';
+// Group call reminders are still a draft in Sav's email journey (#10): none go out (email or phone) until she approves them.
+// When she does, set this to true. They only ever go to clients tagged "Group" in the coach dashboard.
+const GROUP_REMINDERS_ON = false;
 const LEADS = [
   { k: '24h', ms: 24 * 3600e3, win: 40 * 60e3, email: true },
   { k: '2h', ms: 2 * 3600e3, win: 30 * 60e3, email: true },
@@ -36,12 +39,13 @@ async function calls(from, to) {
   const people = (profs || []).filter(p => !p.is_admin && p.status !== 'past' && p.email);
   // which clients are in the group calls: a Group or 1:1 program that's on now, or an agreement that includes group calls
   const termsOf = {}; (contracts || []).forEach(c => { termsOf[c.user_id] = (c.signed && c.signed.terms) || c.terms || {}; });
-  const inGroup = p => (Array.isArray(p.tags) && p.tags.some(x => x && x.on && /^(group|1:1)$/i.test(String(x.t || '')))) || Number(((termsOf[p.id] || {}).group || {}).n) > 0;
+  // only the clients Sav has tagged "Group" in the coach dashboard
+  const inGroup = p => Array.isArray(p.tags) && p.tags.some(x => x && x.on && /^group$/i.test(String(x.t || '').trim()));
   return evs.map(ev => {
     const t = ev.title.toLowerCase();
     // the CMS group call: "CMS group" in the title, or Sav's group Zoom room
     if (/cms\s*group/.test(t) || (ev.zoom || '').indexOf(GROUP_ROOM) >= 0) {
-      const who = people.filter(p => ev.attendees.indexOf(p.email.toLowerCase()) >= 0 || inGroup(p));
+      const who = GROUP_REMINDERS_ON ? people.filter(inGroup) : [];
       return { ev, who, kind: 'Group', zoom: ev.zoom || GROUP_ZOOM, zoomOf: {} };
     }
     const who = people.filter(p => {
@@ -50,6 +54,7 @@ async function calls(from, to) {
       return ev.attendees.indexOf(em) >= 0 || (name.indexOf(' ') > 0 && t.indexOf(name) >= 0);
     });
     const kind = who.length > 1 || /group/.test(t) ? 'Group' : '1:1';
+    if (/group/.test(t)) return { ev, who: GROUP_REMINDERS_ON ? people.filter(inGroup) : [], kind, zoom: ev.zoom || GROUP_ZOOM, zoomOf: {} };
     return { ev, who, kind, zoom: ev.zoom || (who[0] && zoomOf[who[0].id]) || '', zoomOf };
   }).filter(c => c.who.length);
 }
