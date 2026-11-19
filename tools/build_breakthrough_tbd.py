@@ -21,6 +21,7 @@ must('</head>', '''<script>window.BW_TBD = true;</script>
 s, n = re.subn(r'(<span class="bw-cur" data-aud="\d+"(?: data-aud2="\d+")?>)[^<]*(</span>)', r'\1TBD\2', s)
 assert n >= 9, n
 s = re.sub(r'(<span class="bw-cur-c">)[^<]*(</span>)', r'\1\2', s)
+s = s.replace('<span>from <span class="bw-cur"', '<span><span class="bw-cur"')  # comparison table: no "from" before TBD
 # 3. the currency script redraws prices: keep them TBD
 must("document.querySelectorAll('.bw-cur').forEach(function (el) {",
      "document.querySelectorAll('.bw-cur').forEach(function (el) {\n      if (window.BW_TBD) { el.textContent = 'TBD'; var c0 = el.nextElementSibling; if (c0 && c0.classList.contains('bw-cur-c')) c0.textContent = ''; return; }")
