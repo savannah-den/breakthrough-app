@@ -95,6 +95,10 @@ wr(OUT + '/apply.html', ap)
 # Private coaching packages page (public, no login), built from the Design canvas by tools/build_coaching.py
 cp = rd('public/coaching.html').replace('src="/img/', 'src="img/').replace('href="/icons/', 'href="icons/').replace('href="/" aria-label="Back to the app"', 'href="index.html" aria-label="Back to the app"')
 wr(OUT + '/coaching.html', cp)
+# Breakthrough landing page, with prices and with prices as TBD (public pages, no login)
+for lp in ('breakthrough.html', 'breakthrough-tbd.html'):
+    t = rd('public/' + lp).replace('"/img/', '"img/').replace('"/icons/', '"icons/').replace("'/apply.html'", "'apply.html'")
+    wr(OUT + '/' + lp, t)
 # Launcher: the tools, in the order they come up in the program, with their logos (like the course cards)
 import subprocess, html as _h
 EMB = json.loads(subprocess.check_output(['node', 'tools/emblems.js']))
