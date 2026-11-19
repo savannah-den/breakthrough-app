@@ -69,16 +69,30 @@
     var skip = window.BT_DEMO.skip || '';
     if (skip) { try { localStorage.setItem('bt-profile', JSON.stringify({ onboarded: Date.now(), tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000' })); if (skip === 'contract') localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true }));
       // straight to step 5, the welcome module: app saved, agreement signed, WhatsApp joined, tests left for later
-      if (skip === 'welcome' || skip === 'ready') {
+      if (skip === 'welcome' || skip === 'ready' || skip === 'box') {
         localStorage.setItem('bt-profile', JSON.stringify({ onboarded: Date.now(), tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000', startDone: Date.now() }));
         localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true, wa: true }));
         var c0 = D.contracts[D.contracts.length - 1], cl = { name: 'Sav (playground)', email: 'you@playground', phone: '0400 000 000', address: '12 Example St, Noosa QLD', consent: 'anon', notesAgreed: true, termsAgreed: true, signedName: 'Sav (playground)', tz: 'Australia/Brisbane' };
         c0.status = 'signed'; c0.signed_at = new Date().toISOString(); c0.signed = { client: cl, terms: c0.terms };
         // all set up: tests done and the welcome module finished, so everything's unlocked
-        if (skip === 'ready') {
+        if (skip === 'ready' || skip === 'box') {
           var dd = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
           localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true, wa: true, repDone: true, repSent: true, hd: { type: 'sent', sent: true, date: dd }, disc: { type: 'sent', sent: true, date: dd } }));
           localStorage.setItem('bt-course', JSON.stringify({ done: { i1: Date.now(), i3: Date.now(), i2: Date.now() }, pct: {} }));
+        }
+        // "Breaking Out of Your Box" walkthrough: a client who has done everything up to Week 3 Lesson 4 (Beliefs), sitting on that lesson.
+        // Marking it done is the moment Breaking Out of Your Box unlocks. Weeks are open up to Week 3 for this view only (BT_DEMO.openTo).
+        if (skip === 'box') {
+          var now0 = Date.now(), doneB = {};
+          ['i1', 'i3', 'i2', 'w1l1', 'w1l2', 'w1l3', 'w1l4', 'w1a4', 'w1l5', 'w1a1', 'w1l6', 'w1a5', 'w1l7', 'w1a6', 'w1l8', 'w1l9', 'w1a3', 'w1a2', 'w2l0', 'w2l1', 'w2l2', 'w2s1', 'w2s2', 'w2l3', 'w2a0'].forEach(function (id, n) { doneB[id] = now0 - (30 - n) * 3600 * 1000; });
+          localStorage.setItem('bt-course', JSON.stringify({ done: doneB, pct: {}, cheered: { 0: true, 1: true } }));
+          localStorage.setItem('bt-profile', JSON.stringify({ onboarded: now0, tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000', startDone: now0, termsAt: now0, tourDone: now0, nbTour: now0 }));
+          localStorage.setItem('bt-hunt-done', '1');
+          var day = function (n) { var t = now0 - n * 86400000; return { at: t, date: new Date(t).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }) }; };
+          var ev = [['Finished a whole work week without cancelling on anyone', 'win', 1], ['My friend said I was the calmest person in the room', 'compliment', 2], ['Spoke up in the team meeting', 'win', 3], ['Paid off my car early', 'achievement', 5], ['Made it to the gym three times this week', 'win', 6]].map(function (x, n) { var dd2 = day(x[2]); return { id: String(dd2.at + n), date: dd2.date, at: dd2.at, text: x[0], spark: x[1], photo: null, belief: null, win: true }; });
+          localStorage.setItem('program-decoder-v1', JSON.stringify({ evidence: ev }));
+          window.BT_DEMO.openTo = 2;
+          try { history.replaceState(null, '', location.pathname + location.search + '#Lesson-w2l4'); } catch (e2) { location.hash = '#Lesson-w2l4'; }
         }
       } } catch (e) {} }
   }

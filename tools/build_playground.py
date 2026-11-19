@@ -92,6 +92,9 @@ ap = rd('public/apply.html').replace('href="/icons/', 'href="icons/').replace('s
 ap = must(ap, '<script src="/js/apply.js"></script>', '<script src="js/lead-score.js"></script>\n<script src="js/demo-backend.js"></script>\n<script src="js/apply.js"></script>', 'apply.html')
 ap = must(ap, '<script src="/js/ccy.js"></script>', '<script src="js/ccy.js"></script>', 'apply.html ccy')
 wr(OUT + '/apply.html', ap)
+# Private coaching packages page (public, no login), built from the Design canvas by tools/build_coaching.py
+cp = rd('public/coaching.html').replace('src="/img/', 'src="img/').replace('href="/icons/', 'href="icons/').replace('href="/" aria-label="Back to the app"', 'href="index.html" aria-label="Back to the app"')
+wr(OUT + '/coaching.html', cp)
 # Launcher: the tools, in the order they come up in the program, with their logos (like the course cards)
 import subprocess, html as _h
 EMB = json.loads(subprocess.check_output(['node', 'tools/emblems.js']))

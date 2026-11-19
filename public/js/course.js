@@ -46,6 +46,9 @@
     return out;
   }
   function findLesson(id) { return allLessons().filter(function (x) { return x.l.id === id; })[0] || null; }
+  // a resource opens with its week, or (if it has "after") only once that lesson is done, e.g. the Energy Audit after Week 3 Lesson 6
+  function resOpen(r) { if (!r) return false; var wk = !r.week || isOpen(r.week); if (r.after && !peek()) return wk && !!prog().done[r.after]; return wk; }
+  function resWhy(r) { if (r && r.after && !peek() && (!r.week || isOpen(r.week)) && !prog().done[r.after]) { var f = findLesson(r.after); return 'Unlocks when you finish ' + (f ? 'Week ' + wkN(f.w.week) + ', ' + f.l.title.replace(/^Lesson (\d+):.*/, 'Lesson $1') : 'the lesson before it'); } return r ? unlockText(r.week) : ''; }
   function resource(id) { return (window.BT_RESOURCES || []).filter(function (r) { return r.id === id; })[0] || null; }
 
   /* ---------------- unlocking ----------------
@@ -66,7 +69,7 @@
   function wkN(n) { n = Number(n); return n >= 1 ? n + 1 : n; }
   window.BT_WK = wkN;
   function peek() { return !!(window.BT_DEMO && window.BT_DEMO.peek) || !!(APP && APP.state && APP.state.isAdmin && !asClient()); }
-  function override() { if ((window.BT_DEMO && window.BT_DEMO.unlock) || (APP && APP.state && APP.state.isAdmin && !asClient())) return 'all'; /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
+  function override() { if ((window.BT_DEMO && window.BT_DEMO.unlock) || (APP && APP.state && APP.state.isAdmin && !asClient())) return 'all'; if (window.BT_DEMO && window.BT_DEMO.openTo) return window.BT_DEMO.openTo; /* playground walkthroughs: weeks open up to here */ /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
   function bypass(week) { var ov = override(); if (founder()) { var fc = founderCap(); return fc == null || week <= fc; } return ov === 'all' || (typeof ov === 'number' && week <= ov); }
   function dripped(week) { return true; } // no drip: everything opens at her own pace, in order
   // Founding Members (the 'Founding Member' tag on their client profile): they've done Breakthrough before, so they can explore
@@ -252,13 +255,13 @@
       kb.forEach(function (x) {
         var e = x.e, rows = [];
         out.appendChild(h('div', { class: 'bt-find-kb' }, [h('b', { text: e.label }), h('span', { text: e.line }), e.tip ? h('span', { class: 'bt-find-tip', text: 'Right now: ' + e.tip }) : null]));
-        (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = !r.week || isOpen(r.week); rows.push(op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }); });
+        (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = resOpen(r); rows.push(op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }); });
         (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { kind: 'video', t: 'Rewatch: ' + f.l.title, s: 'Week ' + wkN(f.w.week) + ' · ' + f.w.title, href: lessonHref(f.l) } : { kind: 'video', t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
         rows.forEach(function (r) { out.appendChild(link(r)); });
       });
       // lessons and tools by name
       var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { var kd = isActivityCard(x.l) ? 'act' : 'video', em = kd === 'act' ? (x.l.res || [])[0] : null; return lessonOpen(x.l.id) ? { kind: kd, emb: em, t: x.l.title, s: x.w.week === 0 ? 'Introduction' : 'Week ' + wkN(x.w.week) + ' · ' + x.w.title, href: lessonHref(x.l) } : { kind: kd, emb: em, t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
-      var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = !r.week || isOpen(r.week); return op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }; });
+      var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = resOpen(r); return op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }; });
       group('In the course', ls); group('Tools', rs);
       // from inside the videos (transcripts)
       var tr = search(q).filter(function (e) { return !ls.some(function (l) { return e.watch && l.href === lessonHref(findLesson(e.watch[0]).l); }); }).map(function (e) { var f = findLesson(e.watch[0]); return { kind: 'video', t: e.label, s: e.line, href: lessonHref(f.l) }; });
@@ -952,9 +955,9 @@
   function proofFor(b) { return evidence().filter(function (e) { return isFor(e, b); }); }
   // tell Breaking Out of Your Box (and any open portfolio page) that the proof changed
   function pdChanged() { try { window.dispatchEvent(new Event('bt-pd-changed')); } catch (e) {} }
-  function l2Open() { return !!(rd('bt-pp-l2') || peek() || evidence().some(function (e) { return e.disprove; })); }
+  function l2Open() { return !!(rd('bt-pp-l2') || peek() || evidence().some(function (e) { return e.disprove; }) || myBeliefs().length); } // named beliefs in Breaking Out of Your Box = unlocked
   // Breaking Out of Your Box's Proof step now lives in the proof portfolio: See the proof
-  function openBoxProof(b) { try { if (b) sessionStorage.setItem('bt-pp-add', b); } catch (e) {} proofTabNext = proofTabState = 'beliefs'; goHref('#Proof'); }
+  function openBoxProof(b) { try { if (b) sessionStorage.setItem('bt-pp-add', b); } catch (e) {} wr('bt-pp-l2', 1); try { var pd = rd(PD) || {}; if (!pd.stepsDone) { pd.stepsDone = Date.now(); wr(PD, pd); } } catch (e) {} proofTabNext = proofTabState = 'beliefs'; goHref('#Proof'); }
   function matchesMine(e) { return myBeliefs().filter(function (b) { return isFor(e, b); }); }
   // smarter matching on the live app: ask the AI which of her beliefs this proof disproves
   function aiMatch(e, done) {
@@ -1446,7 +1449,7 @@
       var art = h('span', { class: 'bt-rs-art', 'aria-hidden': 'true' }); art.innerHTML = st[3];
       var lockd = st[0] === 'beliefs' && !l2Open();
       stepsEl.appendChild(h('button', { class: 'bt-rs' + (lockd ? ' locked' : ''), type: 'button', onclick: function () { if (!tabsEl) return; ptab = proofTabState = st[0]; showTab(); try { tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} } },
-        [h('span', { class: 'bt-rs-h' }, [h('b', { text: lockd ? '🔒' : String(i + 1) }), h('span', { text: st[1] })]), art, h('span', { class: 'bt-rs-t', text: st[2] }), lockd ? h('span', { class: 'bt-rs-lock', text: 'Unlocks after Breaking Out of Your Box' }) : null]));
+        [h('span', { class: 'bt-rs-h' }, [h('b', { text: lockd ? '🔒' : String(i + 1) }), h('span', { text: st[1] })]), art, h('span', { class: 'bt-rs-t', text: st[2] }), lockd ? h('span', { class: 'bt-rs-lock', text: 'Unlocks once you’ve picked your beliefs in Breaking Out of Your Box' }) : null]));
     });
     wrap.appendChild(stepsEl);
     // why, with a little drawing for each idea: open until she closes it herself, then it stays how she left it
@@ -1691,7 +1694,7 @@
       l2.className = 'bt-card2 bt-pp-flips' + (l2Open() ? '' : ' locked');
       if (!l2Open()) {
         l2.appendChild(h('div', { class: 'bt-pp-lock' }, [h('span', { class: 'bt-pp-lock-i', 'aria-hidden': 'true', text: '🔒' }), h('div', null, [h('span', { class: 'bt-wins-k', text: 'Next layer' }), h('h2', { text: 'Your old beliefs, flipped' }),
-          h('p', { class: 'bt-sub', text: 'Opens in Breaking Out of Your Box, after Lesson 6. You’ll name your old beliefs there, then disprove them with the proof you’ve already collected here.' })])]));
+          h('p', { class: 'bt-sub', text: 'Opens as soon as you’ve picked your beliefs in Breaking Out of Your Box. Then you can disprove them with the proof you’ve already collected here.' }), lessonOpen('w2a1') ? h('a', { class: 'bt-btn lime', href: '#BreakingOut', text: 'Pick my beliefs →' }) : null])]));
         return;
       }
       var mine = myBeliefs();
@@ -2498,7 +2501,7 @@
   }
   var LESSON_FILES = {};
   // course cards that open one part of a resource straight away (the Emotional Blueprint's Start here, blueprints, What am I feeling?, Process it)
-  var RES_TAB = {};
+  var RES_TAB = { w4s1: 'home', w4b1: 'mine', w4b2: 'tune', w4a3: 'process' };
   function resTab(l) { return l.restab || RES_TAB[l.id] || ''; }
   function lessonHref(l) {
     if (resTab(l) && (l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var rt = resource(l.res[0]); if (rt && rt.href) return rt.href + (rt.href.indexOf('?') >= 0 ? '&' : '?') + 'tab=' + resTab(l); }
@@ -2676,7 +2679,7 @@
     if (id === 'w3b1') wrap.appendChild(rsdSteps());
     // an in-app version of this lesson's activity goes right at the top, under the video, so it doesn't get missed
     // Lesson 3: Naming Emotions: the What am I feeling? check-in lives in the Emotional Blueprint
-    if (id === 'w4a2') wrap.appendChild(h('a', { class: 'bt-lfile-app top eb-name', href: '/tools/emotional-blueprint.html' }, [emblem('blueprint') || h('span', { text: '🎡' }), h('span', { class: 'bt-lfa-t' }, [h('span', { class: 'bt-lfa-k', text: 'Do this one in your Emotional Blueprint' }), h('b', { text: 'Open What am I feeling? →' }), h('span', { text: 'Write it out, pick it on the wheel, then find it in your body. It saves to your Emotional Blueprint.' })])]));
+    if (id === 'w4a2') { wrap.appendChild(bpBuilder()); bpVideoPop(); }
     (LESSON_FILES[id] || []).forEach(function (fl) { if (fl.app) wrap.appendChild(h('a', { class: 'bt-lfile-app top', href: fl.app }, [emblem('energy') || h('span', { text: '🔋' }), h('span', { class: 'bt-lfa-t' }, [h('span', { class: 'bt-lfa-k', text: 'Do this one in the app' }), h('b', { text: 'Start your Energy Audit →' }), h('span', { text: 'Make your lists, log your day in blocks, see it as a chart, and after 3 days I’ll show you your patterns.' })])])); });
     if (tx(l.desc) || tx(l.tip)) wrap.appendChild(h('div', { class: 'bt-desc' }, [h('p', { text: tx(l.desc) || tx(l.tip) })]));
     (LESSON_FILES[id] || []).forEach(function (fl) {
@@ -5238,6 +5241,7 @@
   var EA_SEEDV = 'bt-ea-example-v3';
   function eaSeedPlayground(force) {
     if (!playground()) return;
+    if (window.BT_DEMO && window.BT_DEMO.skip === 'box') return; // the Box walkthrough starts before the Energy Audit
     try {
       // once per version (or when asked), the example week replaces whatever's in the log, exactly as if Sav had typed it in herself
       var cur = null; try { cur = JSON.parse(localStorage.getItem(EA_K) || 'null'); } catch (e) {}
@@ -5737,6 +5741,9 @@
     var ic = emblem('energy'); if (ic) ic.classList.add('bt-rh-ic');
     wrap.appendChild(h('header', { class: 'bt-rh' }, [h('div', { class: 'bt-rh-k' }, [ic, h('span', { text: 'Breakthrough Program · embodiment' })]), h('h1', { text: 'The Energy Audit' }), h('p', { class: 'bt-rh-tag', text: 'Balancing your batteries.' }),
       h('p', { class: 'bt-rh-lead', text: 'First, make your lists: what drains you and what fills you back up. Then log your day in blocks. I’ll help you keep it balanced as you go, and after 3 days I’ll start showing you your patterns.' })]));
+    // locked until Week 3 Lesson 6 is done (resources.json "after"), even if someone lands here from a link
+    var eaR = resource('energy');
+    if (eaR && !resOpen(eaR)) { var fL = findLesson(eaR.after); wrap.appendChild(h('section', { class: 'bt-card2 ea-locked' }, [h('h2', { text: '🔒 ' + resWhy(eaR) }), h('p', { class: 'bt-sub', text: 'The Energy Audit is the embodiment for the end of this week. It’ll make so much more sense once you’ve finished the lessons before it.' }), fL ? h('a', { class: 'bt-btn lime', href: lessonHref(fL.l), text: 'Go to ' + fL.l.title.replace(/:.*/, '') + ' →' }) : null])); return; }
     // three tabs: Home (how it works, the video, the guide, your lists, how to recharge), Tracker (log your day), Audit (your patterns + your ideal week)
     var tabsEl = h('div', { class: 'ea-tabs', role: 'tablist', 'aria-label': 'Energy Audit' }); wrap.appendChild(tabsEl);
     var homePane = h('div', { class: 'ea-pane' }), homeDyn = h('div', { class: 'ea-body' });
@@ -6169,7 +6176,7 @@
       document.body.classList.toggle('bt-intro', introStage());
 
       document.body.classList.toggle('bt-on-res', /^Resources/.test(route));
-      if (/^Resources/.test(route)) { var appEl = document.getElementById('app'), first0 = appEl && appEl.querySelector('div'); if (first0 && !appEl.querySelector('.bt-ph.res')) { var rs0 = (window.BT_RESOURCES || []).filter(function (r) { return r.id !== 'dose' && r.id !== 'pause' && r.id !== 'move'; }), op0 = rs0.filter(function (r) { return !r.week || isOpen(r.week); }).length; var ph0 = pageHead('Every tool in one place', 'Resources', op0 + ' of ' + rs0.length + ' open · more unlock as you go'); ph0.classList.add('res'); appEl.insertBefore(ph0, appEl.firstChild); waves(appEl); } }
+      if (/^Resources/.test(route)) { var appEl = document.getElementById('app'), first0 = appEl && appEl.querySelector('div'); if (first0 && !appEl.querySelector('.bt-ph.res')) { var rs0 = (window.BT_RESOURCES || []).filter(function (r) { return r.id !== 'dose' && r.id !== 'pause' && r.id !== 'move'; }), op0 = rs0.filter(function (r) { return resOpen(r); }).length; var ph0 = pageHead('Every tool in one place', 'Resources', op0 + ' of ' + rs0.length + ' open · more unlock as you go'); ph0.classList.add('res'); appEl.insertBefore(ph0, appEl.firstChild); waves(appEl); } }
       var oldPt = document.getElementById('bt-point'); if (oldPt) oldPt.remove();
       try { asYouGo(route); } catch (e) {}
       if (introStage() && /^Course/.test(route)) { var host0 = document.querySelector('#app .bt-wrap'); if (host0 && !host0.querySelector('.bt-fc')) { host0.insertBefore(firstCallSteps(), host0.firstChild); } setTimeout(pointNext, 500); }
@@ -6220,6 +6227,7 @@
     doneLabel: function (r, d) { return APP ? doneLabel(r, d) : d; }, backLabel: function (r, d) { return APP ? backLabel(r, d) : d; }, returnKind: function (r) { return retKind(retGet(r)); },
     suReady: suReady, suStats: suStats,
     allOpen: function () { return peek(); },
+    resOpen: function (r) { return APP ? resOpen(r) : true; }, resWhy: function (r) { return APP ? resWhy(r) : ''; },
     weekOpen: function (n) { if (peek()) return true; return APP ? isOpen(n) : true; },
     unlockText: function (n) { return APP ? unlockText(n) : ''; },
     journal: function (J) { return APP ? journalFor(J) : J; },

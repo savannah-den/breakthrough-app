@@ -78,5 +78,45 @@
     "id": "w4l4",
     "field": "desc",
     "from": "Stop: before you start this, complete the What am I feeling? activity first."
+  },
+  {
+    "id": "w4l1",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w4l2",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w4l3",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w4l5",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w4a2",
+    "field": "vimeo",
+    "from": ""
+  },
+  {
+    "id": "w4a2",
+    "field": "desc",
+    "from": "Name it to move it. Use the What am I feeling? check-in in your Emotional Blueprint: write it out, pick it on the wheel, then find it in your body. Do this one before Lesson 4."
+  },
+  {
+    "id": "w4a3",
+    "field": "title",
+    "from": "Activity: Emotional Blueprint"
+  },
+  {
+    "id": "w4a3",
+    "field": "desc",
+    "from": "Map your emotional patterns and start rewriting them."
   }
 ]

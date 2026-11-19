@@ -1066,6 +1066,41 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 @keyframes ebGlow{0%,100%{transform:scale(.8);opacity:.35}50%{transform:scale(1.35);opacity:.7}}
 @media (prefers-reduced-motion:reduce){.ebs-pen,.ebs-wheel,.ebs-glow,.eblock-s{animation:none}}
 @media (max-width:420px){.ebs-c{grid-template-columns:72px 1fr}.ebs-a svg{width:72px;height:60px}}
+.way button.primary.maroon{align-self:flex-start}
+.doorcard{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:18px;border-radius:24px;background:#FFF4EE;border:2px solid #1F1412;box-shadow:5px 5px 0 var(--dc,#F4C2F7)}
+.doorart{flex:none;width:96px;height:120px}
+.doorleaf{transform-origin:28px 77px;animation:ebDoor 5s ease-in-out infinite}
+@keyframes ebDoor{0%,70%,100%{transform:perspective(200px) rotateY(0)}80%,90%{transform:perspective(200px) rotateY(-28deg)}}
+.doorglow{animation:ebTw 3s ease-in-out infinite;transform-origin:60px 13px}
+.doorcard-t{display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:0}
+.doorcard-t strong{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:#1F1412}
+.doorcard-t p{margin:0;font-size:14px;line-height:1.55;color:#463A38}
+.tinside{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.tin{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:18px;background:#FFFFFF;border:1.5px solid #EDE3DF;font-size:13.5px;line-height:1.5;color:#463A38}
+.tin strong{font-family:'Playfair Display',Georgia,serif;font-size:18px;color:#1F1412}
+.tin-w{color:#1F1412;font-weight:600}
+.fsx{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:4px}
+.fsx-c{position:relative;display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:22px;background:#FFFFFF;border:2px solid #1F1412;box-shadow:4px 4px 0 var(--fc)}
+.fsx-n{position:absolute;top:-12px;left:-10px;width:34px;height:34px;border-radius:50%;background:#4E0C08;color:#F1F9A6;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:16px}
+.fsx-a{width:100%;height:84px;background:color-mix(in srgb,var(--fc) 45%,#fff);border-radius:16px}
+.fsx-t{display:flex;flex-direction:column;gap:6px;flex:1}
+.fsx-t strong{font-family:'Playfair Display',Georgia,serif;font-size:19px;color:#1F1412;line-height:1.2}
+.fsx-t span{font-size:13.5px;line-height:1.5;color:#463A38;flex:1}
+.fsx-t .primary.sm,.fsx-t .ghost.sm{align-self:flex-start;text-decoration:none}
+.fsx-b{display:flex;flex-wrap:wrap;gap:8px}
+.fsx-t .sm{padding:9px 16px;font-size:13.5px;min-height:0}
+.fsx-play{animation:fsxPulse 2s ease-in-out infinite;transform-origin:62px 43px}
+@keyframes fsxPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.fsx-cardL{animation:fsxTilt 3s ease-in-out infinite;transform-origin:37px 70px}
+.fsx-cardR{animation:fsxTilt 3s ease-in-out infinite reverse;transform-origin:83px 70px}
+@keyframes fsxTilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+.fsx-heart{animation:fsxPulse 1.6s ease-in-out infinite;transform-origin:52px 42px}
+.fsx-rise{animation:fsxRise 2.6s ease-in-out infinite}
+@keyframes fsxRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.fsx-play,.fsx-cardL,.fsx-cardR,.fsx-heart,.fsx-rise{animation:none}}
+.firststeps{padding:22px;border-radius:26px;background:#FFFFFF;border:2px solid #1F1412;box-shadow:5px 5px 0 #F1F9A6;display:flex;flex-direction:column;gap:10px}
+.fsteps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.55;color:#463A38}
+@media (prefers-reduced-motion:reduce){.doorleaf,.doorglow{animation:none}}
 .ftpick{display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:26px;background:#FFF4EE;border:2px solid #1F1412;box-shadow:5px 5px 0 #F4C2F7;margin-bottom:16px}
 .ftpick .big,.ftpick .lead{margin:0}
 .ftcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
@@ -1167,14 +1202,30 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <section class="eblock">
 <svg class="eblock-art" viewBox="0 0 120 120" aria-hidden="true"><rect x="24" y="52" width="72" height="54" rx="14" fill="#F4C2F7" stroke="#4E0C08" stroke-width="3"/><path d="M40 52 V38 a20 20 0 0 1 40 0 V52" fill="none" stroke="#4E0C08" stroke-width="3.4" stroke-linecap="round"/><circle cx="60" cy="74" r="7" fill="#4E0C08"/><path d="M60 80 v10" stroke="#4E0C08" stroke-width="4" stroke-linecap="round"/><path class="eblock-s" d="M98 22 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8" stroke-linejoin="round"/></svg>
 <span class="hand" style="font-size: 16px; color: #A8231F">Not quite yet</span>
-<p class="big">This part opens with your full Emotional Blueprint</p>
-<p class="lead">For now you’ve got <strong>What am I feeling?</strong>, so you can start naming your emotions straight away. Processing, your blueprints, the body map, the emotion mixer and everything else open when you reach the Emotional Blueprint activity, after Lesson 4: Processing Emotions.</p>
+<p class="big">This part opens after Lesson 2: Emotions</p>
+<p class="lead">For now you’ve got <strong>What am I feeling?</strong>, so you can start naming your emotions straight away. Start here, your blueprints, the body map, the emotion mixer and the rest open once you’ve watched Lesson 2: Emotions. Process it opens after Lesson 4: Processing Emotions.</p>
 <div style="display: flex; flex-wrap: wrap; gap: 10px"><button class="primary" onClick="{{lockGoTune}}">Go to What am I feeling? →</button><sc-if value="{{lockDemo}}" hint-placeholder-val="{{ false }}"><button class="ghost" onClick="{{lockDemoGo}}">Playground: unlock everything</button></sc-if></div>
 </section>
 </sc-if>
 
 <!-- ================= START HERE ================= -->
 <sc-if value="{{tabHome}}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{homeToolsTop}}" hint-placeholder-val="{{ false }}">
+<section class="sec">
+<div class="eyebrow">Shortcuts</div>
+<h2 class="h2">Jump straight into a tool.</h2>
+<div class="tools">
+<button class="tooltile" onClick="{{tool.tune}}"><span class="tpic cream"><img src="/tools/assets/0ef8dcdd586ecd0ff80676f1e620be34.svg" alt=""></span><span class="tt">What am I feeling?</span><span class="tsub">Name a feeling you can’t put a word to.</span></button>
+<button class="tooltile" onClick="{{tool.eim}}"><span class="tpic cream"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt=""></span><span class="tt">Energy in Motion</span><span class="tsub">Name it, find it on the wheel, know what to do next.</span></button>
+<button class="tooltile" onClick="{{startProcess}}"><span class="tpic cream"><img src="/tools/assets/86849d58f49611f02400cea832d04565.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">Process it</span><span class="tsub">Move a feeling through your body, step by step.</span></button>
+<button class="tooltile" onClick="{{tool.mine}}"><span class="tpic cream"><img src="/tools/assets/663cd271223c87a3e9eb85198c255ca8.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">My blueprints</span><span class="tsub">Your patterns, and your shelf.</span></button>
+<button class="tooltile" onClick="{{tool.body}}"><span class="tpic lilac"><svg width="74" height="120" viewBox="0 0 300 490" role="img" aria-label="A person with the seven chakra areas coloured in bands: violet crown at the top of the head, indigo third eye across the forehead, blue throat, green heart across the chest and shoulders, yellow solar plexus at the upper belly, orange sacral at the lower belly and hips, and red root through the pelvis and legs."><defs><mask id="pms"><circle cx="150" cy="52" r="38" fill="#FFF"/><path d="M150 86V146" stroke="#FFF" stroke-width="32" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#FFF"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#FFF" stroke-width="34" stroke-linecap="round"/></mask></defs><g><circle cx="150" cy="52" r="38" fill="#4E0C08" stroke="#4E0C08" stroke-width="5"/><path d="M150 86V146" stroke="#4E0C08" stroke-width="37" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#4E0C08" stroke="#4E0C08" stroke-width="5" stroke-linejoin="round"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#4E0C08" stroke-width="39" stroke-linecap="round"/></g><g mask="url(#pms)"><rect x="0" y="0" width="300" height="30" fill="#9B6FD1"/><rect x="0" y="30" width="300" height="42" fill="#4B3F9E"/><rect x="0" y="72" width="300" height="68" fill="#4C7FD1"/><rect x="0" y="140" width="300" height="74" fill="#5FA35A"/><rect x="0" y="214" width="300" height="44" fill="#F2C230"/><rect x="0" y="258" width="300" height="46" fill="#F28C3B"/><rect x="0" y="304" width="300" height="180" fill="#D3302B"/></g><circle cx="150" cy="18" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="18" r="3" fill="#9B6FD1"/><circle cx="150" cy="48" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="48" r="3" fill="#4B3F9E"/><circle cx="150" cy="116" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="116" r="3" fill="#4C7FD1"/><circle cx="150" cy="182" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="182" r="3" fill="#5FA35A"/><circle cx="150" cy="236" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="236" r="3" fill="#F2C230"/><circle cx="150" cy="280" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="280" r="3" fill="#F28C3B"/><circle cx="150" cy="312" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="312" r="3" fill="#D3302B"/></svg></span><span class="tt">Body map</span><span class="tsub">Where you feel it, and what it’s saying.</span></button>
+<button class="tooltile" onClick="{{tool.blends}}"><span class="tpic cream"><svg width="110" height="90" viewBox="0 0 110 90" aria-hidden="true"><circle cx="40" cy="36" r="26" fill="#D3302B" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="70" cy="36" r="26" fill="#E890EC" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="55" cy="60" r="26" fill="#4C7FD1" fill-opacity=".6" stroke="#4E0C08" stroke-width="2"></circle></svg></span><span class="tt">Emotion mixer</span><span class="tsub">Two feelings at once? See what they make.</span></button>
+<button class="tooltile" onClick="{{tool.levels}}"><span class="tpic"><img src="/tools/assets/7205741504b90f111c0451fab85ff2d3.svg" alt=""></span><span class="tt">Consciousness</span><span class="tsub">The Map of Consciousness, every level.</span></button>
+<button class="tooltile dark" onClick="{{tool.ect}}"><span class="tpic"><img src="/tools/assets/6c4de069e172edaa21031a8fb148e873.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">ECT with Sav</span><span class="tsub">The deep release, at the root.</span></button>
+</div>
+</section>
+</sc-if>
 <section class="sec" id="home-course">
 <sc-if value="{{cShow}}" hint-placeholder-val="{{ true }}">
 <div class="coursebox">
@@ -1192,8 +1243,14 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <sc-if value="{{m.c0}}" hint-placeholder-val="{{ false }}">
 <div class="bigidea"><span class="hand" style="font-size: 15px; color: #F1F9A6">What this is for</span><p>Most of us can feel something, but can’t name it. This app helps you find the word you’re missing, make sense of it, and then actually move it through your body.</p></div>
 <h3 class="mh">Four ways in. Which one are you?</h3>
-<p class="lead">Everyone’s brain processes emotions a little differently. There are four doors into this app, one for each type. Have a read, and notice which one sounds most like you. You can use any door, any time, and you might find you use different ones on different days.</p>
-<div class="ways"><sc-for list="{{wayCards}}" as="w" hint-placeholder-count="4"><div class="way" style="border-top-color: {{w.col}}"><img src="{{w.img}}" alt="{{w.alt}}"><span class="wayk" style="color: {{w.col}}">{{w.k}}</span><strong>{{w.t}}</strong><p>{{w.who}}</p><span class="waydoor"><b>Your door:</b> {{w.door}}</span><button class="ghost solid" onClick="{{w.go}}">{{w.btn}}</button></div></sc-for></div>
+<p class="lead">Everyone’s brain processes emotions a little differently. There are four doors into this app, one for each type. Have a read, and tap <b>This is me</b> on the one that sounds most like you. We’ll save it, and What am I feeling? will start where you do. You can change it any time.</p>
+<div class="ways"><sc-for list="{{wayCards}}" as="w" hint-placeholder-count="4"><div class="way" style="border-top-color: {{w.col}}"><img src="{{w.img}}" alt="{{w.alt}}"><span class="wayk" style="color: {{w.col}}">{{w.k}}</span><strong>{{w.t}}</strong><p>{{w.who}}</p><span class="waydoor"><b>Your door:</b> {{w.door}}</span><button class="{{w.pcls}}" aria-pressed="{{w.on}}" onClick="{{w.pick}}">{{w.pl}}</button></div></sc-for></div>
+<sc-if value="{{wayChosen}}" hint-placeholder-val="{{ false }}">
+<div class="doorcard" style="--dc: {{wayCol}}">
+<svg class="doorart" viewBox="0 0 120 150" aria-hidden="true"><rect x="22" y="14" width="76" height="126" rx="6" fill="#FFF4EE" stroke="#4E0C08" stroke-width="3"/><path class="doorleaf" d="M28 20 H92 V134 H28 Z" fill="var(--dc)" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"/><rect x="38" y="32" width="44" height="34" rx="5" fill="#FFFFFF" fill-opacity=".45" stroke="#4E0C08" stroke-width="2"/><rect x="38" y="78" width="44" height="40" rx="5" fill="#FFFFFF" fill-opacity=".35" stroke="#4E0C08" stroke-width="2"/><circle cx="82" cy="76" r="4.5" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"/><path class="doorglow" d="M60 4 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6" stroke-linejoin="round"/></svg>
+<div class="doorcard-t"><span class="hand" style="font-size: 16px; color: #A8231F">Your door · {{wayName}}</span><strong>“{{wayDoor}}”</strong><p>This door unlocks the emotion. Remember it. Whenever you open What am I feeling?, we’ll start where you do: with {{wayStart}}. You can change your door any time.</p></div>
+</div>
+</sc-if>
 <h3 class="mh">The search speaks your language</h3>
 <p class="lead">Type how you feel in your own words. It finds the closest feeling on the wheel and lights it up.</p>
 <div class="mock" aria-hidden="true">
@@ -1201,31 +1258,9 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <span class="mockin">I’m so swamped<span class="caret"></span></span>
 <span class="mockhit" style="border-left-color: #6B4FB0"><span class="mfdot" style="background: #6B4FB0"></span><span><strong>“Swamped” sounds like overwhelmed.</strong><span>Overwhelmed is rooted in fear · rung 1, the louder flavours</span></span></span>
 </div>
-<h3 class="mh">How it works, start to finish</h3>
-<p class="lead">Let’s follow one feeling all the way through. Say it’s been a day, and you’re frustrated.</p>
-<div class="exsteps">
-<div class="exs"><span class="exn">1</span><div class="exb"><strong>Find it.</strong><span>Type “so over it”, or tap <b>Frustrated</b> on the wheel.</span><div class="exv"><img class="exslice" src="/tools/assets/67991f5dea14c9c436b7f8e6457ce229.svg" alt=""><span class="exhl" aria-hidden="true"></span></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">2</span><div class="exb"><strong>Its card opens.</strong><span>Everything you need to make sense of it, in one place.</span><div class="exv"><div class="mcard"><span class="mctag">Rung 1 · the louder flavours</span><strong>Frustrated</strong><span class="mcroot">If you’re feeling frustrated, it’s rooted in anger.</span><span class="mcb">“Why is this so hard?”</span><span class="mcb">“Nobody listens.”</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">3</span><div class="exb"><strong>Make sense of it.</strong><span>Where it sits, what it does to your energy, and where it’s heading.</span><div class="exv"><div class="mpath"><span style="background: #D3302B; color: #FFFFFF">Anger</span>→<span style="background: #E2645F; color: #FFFFFF">Frustrated</span>→<span style="background: #F1A9A6">Annoyed</span><i>┆</i><span style="background: #FFF4D6; border: 1.5px solid #4E0C08">Passion</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">4</span><div class="exb"><strong>Tell it about your body.</strong><span>You answer a few questions about how it feels in your body, so we can build a blueprint of that emotion, just for you.</span><div class="exv"><div class="mockchips"><span class="chip small on">Tight jaw</span><span class="chip small on">Hot face</span><span class="chip small">Clenched fists</span><span class="chip small on">Snapping at people</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">5</span><div class="exb"><strong>Rate how loud it is.</strong><span>You check in with your body and rate it, 0 to 10. Say it’s sitting at about a 6.</span><div class="exv"><div class="mint" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span class="on">6</span><span>7</span><span>8</span><span>9</span><span>10</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">6</span><div class="exb"><strong>Get a plan for that volume.</strong><span>At a 6, it’s turned up: too loud to reason with. So the card tells you to move it through your body first, one rung outward, from frustrated towards annoyed. Plus the tools that help with anger at this level.</span><div class="exv"><div class="mockhit" style="border-left-color: #D3302B" aria-hidden="true"><span class="mfdot" style="background: #D3302B"></span><span><strong>4–6 · Turned up</strong><span>Move it through your body, one rung outward.</span></span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">7</span><div class="exb"><strong>Choose: keep it, or move it.</strong><span>This is the big question on every card.</span><div class="exv"><div class="mbind col"><span class="mbk"><b>Keep my problem with frustrated</b>Put it up on the shelf and carry it longer, and let the trapped energy quietly drain me.</span><span class="mbg"><b>Process it and let it go</b>Move it through my body now, get one rung closer to passion, and get my energy back.</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">8</span><div class="exb"><strong>Process it, step by step.</strong><span>Choose to process it, and you’re taken to Process it with everything you’ve already told us filled in. Then I guide you through moving it through your body.</span><div class="exv"><div class="carry" aria-hidden="true"><span class="mrh">What you’ve told us so far</span><p>You’re processing frustrated, rooted in anger, at 6 out of 10.</p><p>You feel it: tight jaw, hot face.</p></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">9</span><div class="exb"><strong>It’s saved to your blueprint.</strong><span>Whichever you choose, it’s saved, so your blueprint keeps learning you.</span><div class="exv"><div class="mentry"><span class="mctag">Today · anger</span><strong>Frustrated · 6/10</strong><span><b>In my body:</b> tight jaw, hot face</span><span><b>It made me:</b> snap at people</span><span><b>What happened:</b> the third interruption before 9am</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">10</span><div class="exb"><strong>Over time, it learns you.</strong><span>After a few weeks, your blueprint starts showing you patterns you couldn’t see before: what sets each emotion off, the early signs it’s building, and what actually helps you let it go.</span><div class="exv"><div class="mentry big"><span class="mctag">Your anger blueprint · after a few weeks</span><strong>How anger shows up for you</strong><span><b>The early signs:</b> tight jaw, hot face, short answers</span><span><b>It usually kicks in when:</b> you’re interrupted, or not listened to</span><span><b>It makes you:</b> snap, then go quiet</span><span><b>What helps you let it go:</b> stomping it out, a loud song in the car</span></div></div></div></div>
-<div class="exarrow" aria-hidden="true">↓</div>
-<div class="exs"><span class="exn">11</span><div class="exb"><strong>And if you keep it? It goes on your shelf.</strong><span>Your shelf groups the same emotions together, so when you’re ready, you can process them all in one go. But the more you put up there, the heavier it gets, and the more energy it takes to hold it all up.</span><div class="exv"><img src="/tools/assets/b56d90f66181fc1cb147686bd30dd4d2.svg" alt="" style="width: 96px; height: 96px"></div></div></div>
-</div>
+<h3 class="mh">What’s inside, and when to use it</h3>
+<p class="lead">You don’t need to learn the whole process. Here’s every tool in your Emotional Blueprint, what it’s for, and when to reach for it.</p>
+<div class="tinside"><div class="tin"><strong>What am I feeling?</strong><span class="tin-w">Name a feeling you can’t put a word to.</span><span class="tin-u"><b>Use it:</b> When something’s knocking and you don’t know what it is: you’re off, snappy, flat or teary. Write it out, find it on the wheel, feel it in your body. It saves to your blueprints.</span></div><div class="tin"><strong>Energy in Motion</strong><span class="tin-w">The wheel: every feeling, where it sits and what it does to your energy.</span><span class="tin-u"><b>Use it:</b> When you’ve got a word and want to understand it: what it’s rooted in, how loud it is, and what to do at that volume.</span></div><div class="tin"><strong>My blueprints</strong><span class="tin-w">Your map of how each emotion shows up for you.</span><span class="tin-u"><b>Use it:</b> Start with anger or sadness. Come back to see your patterns: what sets it off, the early signs it’s building, and what helps you let it out.</span></div><div class="tin"><strong>Process it</strong><span class="tin-w">A planned, safe release, step by step.</span><span class="tin-u"><b>Use it:</b> When an emotion’s close to the surface and you’ve got the time and space to let it out on purpose, instead of it exploding at the wrong moment.</span></div><div class="tin"><strong>Body map</strong><span class="tin-w">Where you feel it, and what it’s telling you.</span><span class="tin-u"><b>Use it:</b> When you can feel something in your body but have no words for it yet. Start with the sensation and let it lead you to the feeling.</span></div><div class="tin"><strong>Emotion mixer</strong><span class="tin-w">Two feelings at once? See what they make.</span><span class="tin-u"><b>Use it:</b> When it’s not just one thing, like angry and sad, or excited and scared, and you want to know what the mix is.</span></div><div class="tin"><strong>Consciousness</strong><span class="tin-w">The Map of Consciousness, every level.</span><span class="tin-u"><b>Use it:</b> When you want the bigger picture: where an emotion sits in terms of energy, and what’s one step up from here.</span></div><div class="tin"><strong>ECT with Sav</strong><span class="tin-w">The deep release, at the root.</span><span class="tin-u"><b>Use it:</b> When the same emotion keeps coming back no matter what you do. ECT goes back to where it started and releases years of it in one go.</span></div></div>
 <div class="callout lime"><span><strong>That’s the whole point of this.</strong> We can’t think our way through emotions. We have to feel through them. And I’ll guide you through that process.</span></div>
 <div class="printcard"><img src="/tools/assets/51497c2cfaa41f0357b287d0f8c03c58.png" alt="The printable Energy in Motion wheel poster."><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1 1 240px"><span class="hand" style="font-size: 16px; color: #A8231F">Put it on your wall</span><strong style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px; line-height: 1.2">Print the wheel</strong><p class="body">An A3 poster with a QR code that brings you straight back here.</p><a class="primary maroon" href="/tools/assets/39dc06590a0be01292c4b7e5b25de439.pdf" download="energy-in-motion-wheel.pdf" target="_blank" rel="noopener" style="align-self: flex-start">Download the A3 poster</a></div></div>
 </sc-if>
@@ -1338,21 +1373,30 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </sc-if>
 </section>
 
+<section class="sec firststeps">
+<span class="hand" style="font-size: 17px; color: #A8231F">Now it all makes sense</span>
+<p class="big">Your first steps</p>
+<p class="lead">Do these in order. Tap the button on each one to go straight there.</p>
+<div class="fsx">
+<div class="fsx-c" style="--fc: #F1F9A6"><span class="fsx-n">1</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><rect x="10" y="12" width="100" height="62" rx="12" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path class="fsx-play" d="M52 30 L74 43 L52 56 Z" fill="#D3302B" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"/><path d="M30 84 h60" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"/><path d="M96 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/></svg><div class="fsx-t"><strong>Watch Lesson 3</strong><span>Naming Emotions. Build your first blueprint right underneath it as you watch.</span><a class="primary sm" href="/#Lesson-w4a2" target="_self">Go to Lesson 3 →</a></div></div>
+<div class="fsx-c" style="--fc: #F6D3CF"><span class="fsx-n">2</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><g class="fsx-cardL"><rect x="14" y="16" width="46" height="60" rx="8" fill="#FBE1DF" stroke="#4E0C08" stroke-width="3" transform="rotate(-8 37 46)"/><text x="37" y="54" text-anchor="middle" font-size="22" transform="rotate(-8 37 46)">🔥</text></g><g class="fsx-cardR"><rect x="60" y="14" width="46" height="60" rx="8" fill="#DFEAF8" stroke="#4E0C08" stroke-width="3" transform="rotate(7 83 44)"/><text x="83" y="52" text-anchor="middle" font-size="22" transform="rotate(7 83 44)">💧</text></g></svg><div class="fsx-t"><strong>Make anger + sadness</strong><span>At the very least, a blueprint for each. Started one in Lesson 3? Finish it, then do the other.</span><button class="primary sm" onClick="{{tool.mine}}">My blueprints →</button></div></div>
+<div class="fsx-c" style="--fc: #F4C2F7"><span class="fsx-n">3</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><circle cx="52" cy="42" r="24" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path d="M70 60 L92 82" stroke="#4E0C08" stroke-width="6" stroke-linecap="round"/><path class="fsx-heart" d="M52 52 C40 44 40 34 46 32 C50 30 52 34 52 36 C52 34 54 30 58 32 C64 34 64 44 52 52 Z" fill="#E0457B" stroke="#4E0C08" stroke-width="2"/><text x="98" y="30" font-size="16" fill="#4E0C08" font-family="Patrick Hand SC, cursive">?</text></svg><div class="fsx-t"><strong>Notice it this week</strong><span>When a feeling comes up, or you remember one you couldn’t name, check in. Each one adds to your blueprints.</span><button class="primary sm" onClick="{{tool.tune}}">What am I feeling? →</button></div></div>
+<div class="fsx-c" style="--fc: #DDF0D6"><span class="fsx-n">4</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><path d="M30 70 C24 56 30 44 40 44 L60 56 L80 44 C90 44 96 56 90 70 Z" fill="#FFF4EE" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"/><g class="fsx-rise"><path d="M60 38 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8"/><path d="M42 24 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/><path d="M80 20 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#BFD7F2" stroke="#4E0C08" stroke-width="1.4"/></g></svg><div class="fsx-t"><strong>Watch Lesson 4, then let one go</strong><span>Processing Emotions. Then come back and try a release. Quicker to lash out, or to cry? Start with that one.</span><div class="fsx-b"><a class="ghost solid sm" href="/#Lesson-w4l4" target="_self">Lesson 4 →</a><button class="primary sm" onClick="{{startProcess}}">Process it →</button></div></div></div>
+</div>
+</section>
 <section class="sec" id="home-knock">
-<p class="big">Hey you. Something’s knocking.</p>
-<div class="dropin"><span class="breathe" aria-hidden="true"></span><div><span class="dk">Before anything else</span><p>Take one slow breath in through your nose, and a long breath out. Drop your shoulders. Notice where it’s sitting in your body right now. Then pick the door that fits.</p></div></div>
-<p class="lead" style="text-align: center; margin: 0">Where are you starting from?</p>
-<div class="doorrow"><sc-for list="{{doorBtns}}" as="d" hint-placeholder-count="3"><button class="{{d.cls}}" onClick="{{d.go}}"><img src="{{d.img}}" alt=""><span><strong>{{d.t}}</strong>{{d.s}}</span></button></sc-for></div>
 <sc-if value="{{hasLater}}" hint-placeholder-val="{{ false }}">
 <div class="banner pink"><img src="/tools/assets/f255c82adfac072178e45af61ee62c83.svg" alt=""><span class="bt"><strong>{{laterText}}</strong> They’re up on your shelf, quietly using your energy. When you get a pause in your day, take one down.</span><button class="ghost solid" onClick="{{goMine}}">See my shelf</button></div>
 </sc-if>
 </section>
+
 
 <sc-if value="{{homeTools}}" hint-placeholder-val="{{ true }}">
 <section class="sec">
 <div class="eyebrow">Shortcuts</div>
 <h2 class="h2">Jump straight into a tool.</h2>
 <div class="tools">
+<button class="tooltile" onClick="{{tool.tune}}"><span class="tpic cream"><img src="/tools/assets/0ef8dcdd586ecd0ff80676f1e620be34.svg" alt=""></span><span class="tt">What am I feeling?</span><span class="tsub">Name a feeling you can’t put a word to.</span></button>
 <button class="tooltile" onClick="{{tool.eim}}"><span class="tpic cream"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt=""></span><span class="tt">Energy in Motion</span><span class="tsub">Name it, find it on the wheel, know what to do next.</span></button>
 <button class="tooltile" onClick="{{startProcess}}"><span class="tpic cream"><img src="/tools/assets/86849d58f49611f02400cea832d04565.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">Process it</span><span class="tsub">Move a feeling through your body, step by step.</span></button>
 <button class="tooltile" onClick="{{tool.mine}}"><span class="tpic cream"><img src="/tools/assets/663cd271223c87a3e9eb85198c255ca8.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">My blueprints</span><span class="tsub">Your patterns, and your shelf.</span></button>
@@ -2707,7 +2751,7 @@ var IMG = {
   breath: '/tools/assets/c8af3be239e308bc789ccaf133f93013.svg'
 };
 IMG.wheel = '/tools/assets/49b9549cb566e401a6413476bea140d6.svg';
-var MENUTABS = [['tune', 'What am I feeling?', 'other'], ['home', 'Start here', 'door'], ['eim', 'Energy in Motion', 'wheel'], ['process', 'Process it', 'express'], ['mine', 'My blueprints', 'blueprint'], ['body', 'Body map', 'littleme'], ['blends', 'Emotion mixer', 'prepare'], ['levels', 'Consciousness', 'breath'], ['ect', 'ECT with Sav', 'hug']];
+var MENUTABS = [['home', 'Start here', 'door'], ['tune', 'What am I feeling?', 'other'], ['eim', 'Energy in Motion', 'wheel'], ['process', 'Process it', 'express'], ['mine', 'My blueprints', 'blueprint'], ['body', 'Body map', 'littleme'], ['blends', 'Emotion mixer', 'prepare'], ['levels', 'Consciousness', 'breath'], ['ect', 'ECT with Sav', 'hug']];
 var TABS = [['home', 'Start here', 'door', ''], ['eim', 'Energy in Motion', 'wheel', '✦'], ['energy', 'Energy', 'shake', '1'], ['roots', 'Root & flavour', 'journal', '2'], ['menu', 'Emotional menu', 'wheel', '✦'], ['body', 'Body map', 'littleme', '3'], ['wheel', 'Feelings wheel', 'wheel', '4'], ['tune', 'What am I feeling?', 'other', '5'], ['blends', 'Blends', 'prepare', '6'], ['levels', 'Consciousness', 'breath', '7'], ['mine', 'Waves & blueprints', 'blueprint', '8'], ['process', 'Process it', 'express', '9'], ['ect', 'ECT', 'hug', '★']];
 
 // kicker, title, image, next label, drop-in
@@ -3425,7 +3469,12 @@ var FTORDER = ['body', 'see', 'think'];
 function tStepName(ph) { if (ph === 'w') return 'name it on the wheel'; if (ph === 'd' || ph === 'dw') return 'the brain dump'; return low(TSTEPS[ph][1]); }
 
 // EB_LOCK1: is the whole resource open yet? (Processing Emotions done, a Founding Member, or unlocked in the playground)
-function EB_FULL(st) { try { var p = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); if (p && ((p.done && p.done.w4l4) || p.founder)) return true; } catch (e) {} return !!(st && st.demoUnlock); }
+function EB_FULL(st) { try { var p = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); if (p && ((p.done && (p.done.w4l2 || p.done.w4l4)) || p.founder)) return true; /* EB_START1: opens after Lesson 2 */ } catch (e) {} return !!(st && st.demoUnlock); }
+var WAY_SEQ = [['d', 'w', 1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 'd', 'w', 4, 5, 6, 7], ['w', 'd', 1, 2, 3, 4, 5, 6, 7], ['w', 1, 2, 3, 'd', 4, 5, 6, 7]];
+var WAY_NAME = ['The thinker', 'The feeler', 'The visual one', 'The knower'];
+var WAY_START = ['writing it out', 'your body', 'the wheel', 'the wheel'];
+function ebGroup(ph) { return ph === 'd' ? 'Write it out' : ph === 'w' ? 'Pick it on the wheel' : (ph === 1 || ph === 2 || ph === 3) ? 'Feel it in your body' : ph === 4 ? 'Does the name fit?' : (ph === 5 || ph === 6) ? 'What do you need?' : ph === 7 ? 'An intentional pause' : ''; }
+function ebStepLabel(seq, pos) { var n = 0, last = null; for (var i = 0; i <= pos; i++) { var g = ebGroup(seq[i]); if (g !== last) { n++; last = g; } } return 'Step ' + n + ' · ' + ebGroup(seq[pos]); }
 var EB_TK = { d: 'Step 1 · Write it out', w: 'Step 2 · Pick it on the wheel', 1: 'Step 3 · Feel it in your body', 2: 'Step 3 · Feel it in your body', 3: 'Step 3 · Feel it in your body', 4: 'Step 4 · Does the name fit?', 5: 'Step 5 · What do you need?', 6: 'Step 5 · What do you need?', 7: 'Step 6 · An intentional pause' };
 function CMODS_ALL(s) { var ld = s.lessonsDone || {}; for (var i = 0; i < 6; i++) if (!ld['mod' + i]) return false; return true; }
 
@@ -3601,17 +3650,18 @@ class Component extends DCLogic {
     }
     if (s && typeof s === 'object') {
       this.setState({
-        feelType: FT[s.feelType] ? s.feelType : null, tab: (CMODS_ALL(s) && ['process', 'tune', 'mine'].indexOf(tabOk(s.tab)) < 0) ? 'tune' : tabOk(s.tab), tStep: typeof s.tStep === 'number' ? Math.max(0, Math.min(8, s.tStep)) : 0, pStep: typeof s.pStep === 'number' ? Math.max(0, Math.min(4, s.pStep)) : 0,
+        feelType: FT[s.feelType] ? s.feelType : null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: (CMODS_ALL(s) && ['process', 'tune', 'mine'].indexOf(tabOk(s.tab)) < 0) ? 'tune' : tabOk(s.tab), tStep: typeof s.tStep === 'number' ? Math.max(0, Math.min(8, s.tStep)) : 0, pStep: typeof s.pStep === 'number' ? Math.max(0, Math.min(4, s.pStep)) : 0,
         cur: Object.assign(emptyCur(), s.cur || {}), proc: Object.assign(emptyProc(), s.proc || {}),
         blueprints: s.blueprints || {}, history: Array.isArray(s.history) ? s.history : [], sessions: Array.isArray(s.sessions) ? s.sessions : [], open: s.open || null, lessonsDone: migDone(s.lessonsDone), l4: Object.assign({ t: '', f: '', d: '' }, s.l4 || {})
       });
     }
     if (!EB_FULL(this.state)) this.setState({ tab: 'tune' }); /* EB_LOCK1 */
+    try { var qt = new URLSearchParams(window.location.search).get('tab'); if (qt && ['home', 'tune', 'mine', 'process', 'eim', 'body'].indexOf(qt) >= 0 && (qt === 'tune' || EB_FULL(this.state))) this.setState({ tab: qt, tStep: qt === 'tune' ? 0 : this.state.tStep }); } catch (e) {} /* EB_START1 */
   }
 
   componentDidUpdate() {
     var s = this.state;
-    try { window.localStorage.setItem(EB_KEY, JSON.stringify({ feelType: s.feelType || null, tab: s.tab, tStep: s.tStep, pStep: s.pStep, cur: s.cur, proc: s.proc, blueprints: s.blueprints, history: s.history, sessions: s.sessions, open: s.open, lessonsDone: s.lessonsDone, l4: s.l4 })); } catch (e) {}
+    try { window.localStorage.setItem(EB_KEY, JSON.stringify({ feelType: s.feelType || null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: s.tab, tStep: s.tStep, pStep: s.pStep, cur: s.cur, proc: s.proc, blueprints: s.blueprints, history: s.history, sessions: s.sessions, open: s.open, lessonsDone: s.lessonsDone, l4: s.l4 })); } catch (e) {}
   }
 
   scrollTool(t) { setTimeout(function () { try { var el = document.getElementById('tool-' + t); if (el) { var y = el.getBoundingClientRect().top + (window.pageYOffset || 0) - 100; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); } else window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }, 60); }
@@ -3710,15 +3760,15 @@ class Component extends DCLogic {
 
   renderVals() {
     var self = this, s = this.state, c = s.cur, pr = s.proc, ps = s.pStep;
-    var tSeq = TSEQ.think, tPos = Math.max(0, Math.min(s.tStep || 0, tSeq.length - 1)), tPh = tSeq[tPos], ts = typeof tPh === 'number' ? tPh : 0;
+    var tSeq = WAY_SEQ[s.wayIn] || TSEQ.think, tPos = Math.max(0, Math.min(s.tStep || 0, tSeq.length - 1)), tPh = tSeq[tPos], ts = typeof tPh === 'number' ? tPh : 0;
     var tm = tPh === 'w' ? TW_STEP : TSTEPS[ts], pm = PSTEPS[ps];
     var allJ = JOURNEY.every(function (J) { return (s.lessonsDone || {})[J[0]]; });
     // EB_V2: where they're up to in Week 4, and which blueprints exist
     var ebProg = null; try { ebProg = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); } catch (e) {}
     var ebDone = (ebProg && ebProg.done) || {}, ebVid = !!ebDone.w4l4 || !!s.demoUnlock || !!(ebProg && ebProg.founder);
-    var rLocked = !ebVid, lockView = rLocked && s.tab !== 'tune', vt = lockView ? '__locked' : s.tab;
-    var ebHas = function (k) { return (s.history || []).some(function (hh) { return (hh.emos || []).some(function (e) { return e.id === k; }); }); };
-    var ebLeft = ['anger', 'sadness', 'fear'].filter(function (k) { return !ebHas(k); });
+    var ebOpen = !!ebDone.w4l2 || ebVid; var rLocked = !ebOpen, lockView = rLocked && s.tab !== 'tune', vt = lockView ? '__locked' : s.tab;
+    var ebHas = function (k) { var bq = (s.blueprints || {})[k] || {}; return ['body', 'triggers', 'signs', 'express'].some(function (f) { return trim(bq[f] || ''); }) || (s.history || []).some(function (hh) { return (hh.emos || []).some(function (e) { return e.id === k; }); }); };
+    var ebLeft = ['anger', 'sadness'].filter(function (k) { return !ebHas(k); });
     var ebLocked = s.demoUnlock ? false : (!ebVid || ebLeft.length > 0);
     var EB_Q = { anger: 'Think back to a time you felt the angriest you’ve ever felt. What was happening in your body?', sadness: 'Think back to a time you felt the saddest you’ve ever felt. What was happening in your body?', fear: 'Think back to a time you felt the most scared you’ve ever felt. What was happening in your body?', hurt: 'Think back to a time you felt the most hurt you’ve ever felt. What was happening in your body?', grief: 'Think back to a time you were grieving the hardest. What was happening in your body?', shame: 'Think back to a time you felt the most ashamed you’ve ever felt. What was happening in your body?', guilt: 'Think back to a time you felt the guiltiest you’ve ever felt. What was happening in your body?' };
     var bpBtn = function (k) { var n = (s.history || []).filter(function (hh) { return (hh.emos || []).some(function (e) { return e.id === k; }); }).length; return { l: EMOBY[k] ? EMOBY[k][1] : cap(k), img: IMG[k] || IMG.other, st: n ? '✓ Blueprint made' : 'Make this one', cls: n ? 'bpbtn done' : 'bpbtn', go: function () { var c0 = emptyCur(); c0.emos = {}; c0.emos[k] = true; c0.bp = k; self.setState({ tab: 'tune', tStep: 0, cur: c0, tuneDone: null, confirm: null }); self.scrollTool('tune'); } }; };
@@ -3752,7 +3802,7 @@ class Component extends DCLogic {
     var cKeys = curEmoKeys(c);
     var firstKey = c.first && cKeys.indexOf(c.first) >= 0 ? c.first : cKeys[0];
     var firstChips = cKeys.map(function (k) { var on = k === firstKey; return { l: emoName(k), img: emoImg(k), cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ first: k }); } }; });
-    var pathBtns = TPATHS.map(function (p) { if (rLocked && p[0] === 'process') return { img: IMG[p[1]], t: '🔒 ' + p[2], s: 'This opens with your full Emotional Blueprint, after Lesson 4: Processing Emotions. For now, pick one of the other two. Naming it is already doing the work.', cls: 'pathb lockd', pressed: 'false', pick: function () {} }; var on = c.path === p[0]; return { img: IMG[p[1]], t: p[2], s: p[3], cls: on ? 'pathb on' : 'pathb', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ path: on ? null : p[0] }); } }; });
+    var pathBtns = TPATHS.map(function (p) { if (ebLocked && p[0] === 'process') return { img: IMG[p[1]], t: '🔒 ' + p[2], s: !ebVid ? 'This opens after Lesson 4: Processing Emotions. For now, pick one of the other two. Naming it is already doing the work.' : 'First, make your anger and sadness blueprints. Then this opens.', cls: 'pathb lockd', pressed: 'false', pick: function () {} }; var on = c.path === p[0]; return { img: IMG[p[1]], t: p[2], s: p[3], cls: on ? 'pathb on' : 'pathb', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ path: on ? null : p[0] }); } }; });
     var picked = keys(c.emos).filter(function (k) { return NEEDS[k]; });
     var needSrc = [];
     picked.forEach(function (k) { needSrc = needSrc.concat(NEEDS[k]); });
@@ -4300,7 +4350,8 @@ class Component extends DCLogic {
       NV.eDoors = NV.doorBtns;
       var WAYS = [['The thinker', 'You live in your head', 'You tend to disconnect from your body and work through your feelings by thinking them through. You want knowledge and understanding: what happened, why, and what it means.', 'Something happened', 'Talk it through', '393d1cd0363a6c807f49f86f0f9c640d', '#6B4FB0', 'A head with a thought bubble full of question marks, and turning cogs.'], ['The feeler', 'You feel it, but can’t name it', 'You’re connected to your body. You know exactly how it feels: the lump, the knot, the heat. You just don’t know what to call it.', 'I can feel it in my body', 'Start with my body', '4258c786c9eccfaff671fe9a3b1ef84c', '#E0457B', 'A person with a glowing heart and sensations moving through their body.'], ['The visual one', 'You’ll know it when you see it', 'You’re quick. You don’t need the whole process, you just need to see the word written down, and you know straight away: that’s the one.', 'I’ll know it when I see it', 'Show me the wheel', 'c1debaa8b5d0bd188a8969bba732958b', '#22B3A6', 'A wide-open eye looking at a word, with a tick next to it.'], ['The doer', 'You know it, you need to move it', 'You’re already tapped into your emotions, or you’ve used the app for a while and your blueprints have taught you your patterns. You know what it is. You just need help processing it.', 'I know what it is', 'Process it', '88bb3cb53b2e3e99e5e4cab4f5c5e6b9', '#F28C3B', 'A person shaking it out, with an arrow pointing forward.']];
       NV.notEctTab = s.tab !== 'ect';
-      NV.wayCards = WAYS.map(function (w, i) { return { k: w[0], t: w[1], who: w[2], door: w[3], btn: w[4], img: BT_ASSET(w[5]), col: w[6], alt: w[7], go: NV.doorBtns[i].go }; });
+      NV.wayCards = WAYS.map(function (w, i) { var on = s.wayIn === i; return { k: w[0], t: w[1], who: w[2], door: w[3], btn: w[4], img: BT_ASSET(w[5]), col: w[6], alt: w[7], go: NV.doorBtns[i].go, on: on ? 'true' : 'false', pcls: on ? 'primary maroon' : 'ghost solid', pl: on ? '✓ This is me' : 'This is me', pick: function () { self.setState({ wayIn: on ? null : i }); } }; });
+      NV.wayChosen = typeof s.wayIn === 'number' && !!WAYS[s.wayIn]; NV.wayName = NV.wayChosen ? WAYS[s.wayIn][0] : ''; NV.wayDoor = NV.wayChosen ? WAYS[s.wayIn][3] : ''; NV.wayCol = NV.wayChosen ? WAYS[s.wayIn][6] : '#F4C2F7'; NV.wayStart = NV.wayChosen ? WAY_START[s.wayIn] : '';
       NV.eIsDump = false;
       NV.pGoTune = openTune;
       // ---- What am I feeling? feeling words
@@ -4428,7 +4479,7 @@ class Component extends DCLogic {
       levels: levels, bodyBtns: bodyBtns, chakraBtns: chakraBtns, areaCards: areaCards,
       bodyHints: bodyHints, hasBodyHints: bodyHints.length > 0,
       tabs: tabs,
-      homeTools: !CMODS_ALL(s), bpNeedVid: !ebVid, bpCanMake: ebVid, bpMain: ['anger', 'sadness', 'fear'].map(bpBtn), bpDeep: ['hurt', 'grief', 'shame', 'guilt'].map(bpBtn),
+      homeTools: !CMODS_ALL(s), homeToolsTop: CMODS_ALL(s), bpNeedVid: !ebVid, bpCanMake: ebVid, bpMain: ['anger', 'sadness', 'fear'].map(bpBtn), bpDeep: ['hurt', 'grief', 'shame', 'guilt'].map(bpBtn),
       tBp: !!(s.cur && s.cur.bp), tNotBp: !(s.cur && s.cur.bp), tBpK: tBpK, tBpQ: s.cur && s.cur.bp ? (EB_Q[s.cur.bp] || '') : '', tTrigLabel: s.cur && s.cur.bp ? 'What was happening? (in a line, just for you)' : 'What happened? (the trigger, in a line)',
       pLocked: ebLocked, pOpen: !ebLocked, pLockVid: !ebVid, pLockBp: ebVid && ebLeft.length > 0,
       pLockT: !ebVid ? 'This unlocks after the Processing Emotions video.' : 'First, create your blueprints.',
@@ -4453,7 +4504,7 @@ class Component extends DCLogic {
       tShowDump: tPh === 'd' || tPh === 'dw', tShowWheel: tPh === 'w' || tPh === 'dw', tBpFirst: !!(s.cur && s.cur.bp) && tPos === 0, tBpHow: FT[s.feelType] ? FT[s.feelType].how : 'Now notice what was happening in your body. Write it all down, then we’ll map it, step by step.',
       tMis: !!tMis, tMisText: tMis, tuneDoneText: s.tuneDone || '', newTune: function () { self.setState({ tuneDone: null, tStep: 0 }); self.top(); },
       tHasBack: tPos > 0, tNoBack: tPos === 0, tPrev: function () { self.setState({ tStep: Math.max(0, tPos - 1), confirm: null }); self.top(); },
-      tDots: dotsOf(tSeq.length, tPos), tStepLabel: 'Step ' + (tPos + 1) + ' of ' + tSeq.length, tKicker: (tBpK ? tBpK + ' · ' : '') + (EB_TK[tPh] || tm[0]), tTitle: tm[1], tImg: IMG[tm[2]], tDrop: tm[4],
+      tDots: dotsOf(tSeq.length, tPos), tStepLabel: 'Step ' + (tPos + 1) + ' of ' + tSeq.length, tKicker: (tBpK ? tBpK + ' · ' : '') + (ebStepLabel(tSeq, tPos) || tm[0]), tTitle: tm[1], tImg: IMG[tm[2]], tDrop: tm[4],
       tShowNext: tShowNext, tNextLabel: tPos < tSeq.indexOf(4) ? 'Next: ' + tStepName(tSeq[tPos + 1]) : tm[3], tNext: function () { self.setState({ tStep: Math.min(tSeq.length - 1, tPos + 1), confirm: null }); self.top(); },
       tShowSave: tShowSave, tSaveLabel: tSaveLabel, tSave: tSave,
       tResetCls: s.confirm === 'tune' ? 'ghost warn' : 'ghost', tResetLabel: s.confirm === 'tune' ? 'Tap again to start over' : 'Start over',

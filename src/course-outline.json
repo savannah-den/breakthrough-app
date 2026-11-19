@@ -823,7 +823,7 @@
           "id": "w4l1",
           "title": "Lesson 1: Association vs Disassociation",
           "video": "",
-          "vimeo": "",
+          "vimeo": "https://vimeo.com/1245020788",
           "desc": "If you’re in your head, you’re dead!",
           "prompts": [
             [
@@ -856,7 +856,7 @@
           "id": "w4l2",
           "title": "Lesson 2: Emotions",
           "video": "",
-          "vimeo": "",
+          "vimeo": "https://vimeo.com/1245020791",
           "desc": "The other end of the spectrum: we also suppress excitement, happiness and joy out of fear of being too much, too loud or too dramatic. We’re taught to stay small.",
           "prompts": [
             [
@@ -871,17 +871,65 @@
           "tip": ""
         },
         {
+          "id": "w4s1",
+          "title": "Start here: Your Emotional Blueprint",
+          "video": "",
+          "vimeo": "",
+          "desc": "Learn more about emotions and how your Emotional Blueprint works: pick your way in, and see what every tool inside is for.",
+          "prompts": [],
+          "res": [
+            "blueprint"
+          ],
+          "restab": "home",
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": "Learn more about emotions and how your Emotional Blueprint works: pick your way in, and see what every tool inside is for."
+        },
+        {
           "id": "w4a2",
           "title": "Lesson 3: Naming Emotions",
           "video": "",
-          "vimeo": "",
-          "desc": "Name it to move it. Use the What am I feeling? check-in in your Emotional Blueprint: write it out, pick it on the wheel, then find it in your body. Do this one before Lesson 4.",
+          "vimeo": "https://vimeo.com/1245302128",
+          "desc": "This video is also an activity. Pick anger or sadness, and as Sav goes through each question, write your answers underneath. That’s the start of your first blueprint.",
           "prompts": [],
           "res": [],
           "notes": false,
           "optional": false,
           "transcript": "",
           "tip": ""
+        },
+        {
+          "id": "w4b1",
+          "title": "Step 1: Make your anger and sadness blueprints",
+          "video": "",
+          "vimeo": "",
+          "desc": "At the very least, an anger and a sadness blueprint. Started one under Lesson 3? Finish it, then make the other.",
+          "prompts": [],
+          "res": [
+            "blueprint"
+          ],
+          "restab": "mine",
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": "At the very least, an anger and a sadness blueprint. Started one under Lesson 3? Finish it, then make the other."
+        },
+        {
+          "id": "w4b2",
+          "title": "Step 2: Notice it with What am I feeling?",
+          "video": "",
+          "vimeo": "",
+          "desc": "This week, use What am I feeling? whenever a feeling comes up. Or pick a moment you remember, when you had feelings and weren’t sure what they were. Each one adds to your blueprints, so they get fuller and more detailed.",
+          "prompts": [],
+          "res": [
+            "blueprint"
+          ],
+          "restab": "tune",
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": "This week, use What am I feeling? whenever a feeling comes up. Or pick a moment you remember, when you had feelings and weren’t sure what they were. Each one adds to your blueprints, so they get fuller and more detailed."
         },
         {
           "id": "w4l4",
@@ -898,10 +946,10 @@
         },
         {
           "id": "w4a3",
-          "title": "Activity: Emotional Blueprint",
+          "title": "Step 3: Try a release",
           "video": "",
           "vimeo": "",
-          "desc": "Map your emotional patterns and start rewriting them.",
+          "desc": "You’ve watched Processing Emotions. Now come back and try a release on one of your blueprints. Which comes more naturally to you: are you quicker to lash out, or to cry? Start with that one.",
           "prompts": [],
           "res": [
             "blueprint"
@@ -909,13 +957,14 @@
           "notes": false,
           "optional": false,
           "transcript": "",
-          "tip": ""
+          "tip": "You’ve watched Processing Emotions. Now come back and try a release on one of your blueprints. Which comes more naturally to you: are you quicker to lash out, or to cry? Start with that one.",
+          "restab": "process"
         },
         {
           "id": "w4l5",
           "title": "Lesson 5: Emotional Change Technique",
           "video": "",
-          "vimeo": "",
+          "vimeo": "https://vimeo.com/1245297405",
           "desc": "ECT (the Emotional Change Technique) releases years of stored anger, sadness, fear, hurt, guilt, shame and grief at the root, so you’re only dealing with the feelings of now. Watch the video, then see what it changed for the people who’ve done it.",
           "prompts": [],
           "res": [],
@@ -928,7 +977,7 @@
           "id": "w4l3",
           "title": "Side Quest: Meltdowns",
           "video": "",
-          "vimeo": "",
+          "vimeo": "https://vimeo.com/1245020789",
           "desc": "",
           "prompts": [
             [
@@ -940,6 +989,19 @@
               ""
             ]
           ],
+          "res": [],
+          "notes": false,
+          "optional": false,
+          "transcript": "",
+          "tip": ""
+        },
+        {
+          "id": "w4q",
+          "title": "Bonus: Live Q+A replay",
+          "video": "",
+          "vimeo": "https://vimeo.com/1245297344",
+          "desc": "",
+          "prompts": [],
           "res": [],
           "notes": false,
           "optional": false,
