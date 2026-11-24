@@ -376,6 +376,9 @@
       var r0 = resource(sk[0].l.res[0]);
       out.push({ id: 'acts-' + sk.map(function (x) { return x.l.id; }).join('.') + '-' + Math.floor(Date.now() / (3 * DAY)), kind: 'act', title: sk.length === 1 ? (r0 ? r0.title : sk[0].l.title) + ' is waiting for you' : sk.length + ' activities waiting for you', text: DOING[Math.floor(Date.now() / DAY) % DOING.length] + (sk.length > 1 ? ' Start with ' + (r0 ? r0.title : sk[0].l.title) + '.' : ''), href: lessonHref(sk[0].l), cta: 'Do it now' });
     }
+    // Coming Home: the few-times-a-month ones ("you wanted to go to pilates this month, book it in"), every 3 days until they've done it once this month
+    try { var sdT = chSched().d[chDK(new Date())] || {}, AT = chActs(); Object.keys(sdT).forEach(function (id) { if (!AT[id] || sdT[id] === 1) return; out.push({ id: 'chday-' + id + '-' + chDK(new Date()), kind: 'chm', title: 'Today’s the day: ' + AT[id][0].toLowerCase(), text: 'You booked it in for today. Enjoy it, and tick it off in Your day when you’re done.', img: AT[id][3], acts: [{ t: '✓ Done it', fn: function () { chSchedSet(chDK(new Date()), id, 1); chMonthBox(id, true, id + '|s' + chDK(new Date())); APP.toast('Ticked off for this month. Counted in today’s reps.'); APP.reload(); } }] }); }); } catch (e) {}
+    try { chMonthly().forEach(function (m) { if (m.done || m.booked) return; out.push({ id: 'chm-' + m.id + '-' + m.mk + '-' + Math.floor(Date.now() / (3 * DAY)), kind: 'chm', title: 'You wanted to do ' + m.name.toLowerCase() + ' this month', text: 'It’s on your Coming Home plan for a few times a month. Have you booked it in? Pick a day on your month calendar so future you doesn’t have to remember.', img: m.img, acts: [{ t: '📅 Pick a day', fn: function () { calView = 'month'; calMOff = 0; calMSel = null; var el = document.querySelector('.bt-day'); if (el && window.BT_REPS_CHANGED) { window.BT_REPS_CHANGED(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } }, { t: '✓ Done it', fn: function () { chMonthTick(m.id); } }] }); }); } catch (e) {}
     // intentions
     if (!(tx(d.intention) && tx(d.nsToward))) out.push({ id: 'intent', kind: 'nudge', title: 'Set your intentions', text: 'Your North Star and your why become your lock screen.', href: '#Intentions', cta: 'Set my intentions' });
     // 1:1 setup is its own card at the top of the home page
@@ -414,8 +417,10 @@
     return h('section', { class: 'bt-rem', 'aria-label': 'Open loops' }, [h('span', { class: 'bt-rem-k', text: 'Open loops' })].concat(rs.map(function (r) {
       var row = h('div', { class: 'bt-rem-i ' + r.kind }, [
         h('span', { class: 'bt-rem-dot', 'aria-hidden': 'true' }),
+        r.img ? h('img', { class: 'bt-rem-img', src: r.img, alt: '' }) : null,
         h('div', { class: 'bt-rem-b' }, [h('b', { text: r.title }), h('span', { text: r.text }),
-          r.href ? h('a', { class: 'bt-rem-cta', href: r.href, target: /^https?:/.test(r.href) ? '_blank' : null, rel: 'noopener', text: r.cta + ' →' }) : null]),
+          r.href ? h('a', { class: 'bt-rem-cta', href: r.href, target: /^https?:/.test(r.href) ? '_blank' : null, rel: 'noopener', text: r.cta + ' →' }) : null,
+          r.acts ? h('div', { class: 'bt-rem-acts' }, r.acts.map(function (a) { return h('button', { class: 'bt-btn lime sm', type: 'button', text: a.t, onclick: a.fn }); })) : null]),
         h('button', { class: 'bt-rem-x', type: 'button', 'aria-label': 'Dismiss', text: '×', onclick: function () { dismiss(r.id, r.forever); row.remove(); } })
       ]);
       return row;
@@ -496,12 +501,265 @@
         nx.zoom ? zoomBtn(nx.zoom, true) : h('span', { class: 'bt-sub small', text: 'Your Zoom link will show up here.' })])
     ]);
   }
+  /* ---------------- Home: My week calendar = your DOSE + your Coming Home plan. Every tick lands in Today's reps ---------------- */
+  var CH_K = 'coming-home-v3', CH_SLOTN = { daily: 'Daily routine', weekly: 'A few times a week', monthly: 'A few times a month' };
+  var CH_REP = { breath: 'breathe', sound: 'breathe', move: 'move' }, CH_REPN = { breathe: 'Did some breathwork', pause: 'Took a pause', move: 'Moved my body' };
+  var chCalDay = null;
+  function chMon() { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+  function chMonKey() { var d = chMon(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function chMonthK() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1); }
+  // Coming Home's saved state, with last week's ticks cleared the same way the resource does it
+  function chState() {
+    var s = rd(CH_K); if (!s || typeof s !== 'object') return null;
+    var wk = chMonKey(), mk = chMonthK(), t = s.ticks || {}, keep = {};
+    Object.keys(t).forEach(function (k) { if (k.indexOf('m|') === 0) { if (s.monthKey === mk) keep[k] = true; } else if (s.weekStart === wk) keep[k] = true; });
+    s.ticks = keep; s.weekStart = wk; s.monthKey = mk; s.plan = s.plan || {}; s.wdays = s.wdays || {}; return s;
+  }
+  function chActs() { return window.BT_CH_ACTS || {}; }
+  function chPart(id) { var a = chActs()[id]; return (a && CH_REP[a[1]]) || 'pause'; }
+  function chDayItems(s, i) {
+    var A = chActs(), out = [];
+    ((s.plan || {}).daily || []).forEach(function (id) { if (A[id]) out.push({ id: id, slot: 'daily', key: 'd|' + i + '|daily|' + id }); });
+    ((s.plan || {}).weekly || []).forEach(function (id) { var days = Array.isArray(s.wdays[id]) ? s.wdays[id] : [1, 3, 5]; if (A[id] && days.indexOf(i) >= 0) out.push({ id: id, slot: 'weekly', key: 'd|' + i + '|weekly|' + id }); });
+    return out;
+  }
+  function chDayKey(i) { var d = chMon(); d.setDate(d.getDate() + i); d.setHours(12); return window.BT_VAGAL && window.BT_VAGAL.dayKey ? window.BT_VAGAL.dayKey(d.getTime()) : dayKey(d.getTime()); }
+  // ticks made inside the Coming Home resource count in Today's reps too (runs every time Home draws)
+  function chReconcile() {
+    var V = window.BT_VAGAL, s = chState(); if (!V || !V.calRep || !s) return;
+    var today = (new Date().getDay() + 6) % 7, vd = (rd('bt-vwork') || {}).days || {};
+    for (var i = 0; i <= today; i++) {
+      var k = chDayKey(i);
+      chDayItems(s, i).forEach(function (it) { if (!s.ticks[it.key]) return; var pt = chPart(it.id), cur = (vd[k] || {})[pt] || {}; if ((cur.ch || []).indexOf(it.id) < 0) V.calRep(k, pt, it.id, true); });
+    }
+  }
+  // Coming Home: when they've scheduled their few-times-a-month ones (from the month view on Home). { d: { 'Y-M-D': { id: 0 | 1 done } } }
+  var CHS_K = 'bt-ch-sched', calView = 'week', calMOff = 0, calMSel = null;
+  function chDK(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function chSched() { var x = rd(CHS_K); x = x && typeof x === 'object' ? x : {}; x.d = x.d || {}; return x; }
+  function chBookedThisMonth(id) { var x = chSched().d, mk = chMonthK() + '-'; return Object.keys(x).filter(function (k) { return k.indexOf(mk) === 0 && x[k] && (id in x[k]); }); }
+  // tick or untick one of the few-times-a-month boxes (no reload)
+  function chMonthBox(id, on, src) {
+    var s2 = chState(); if (!s2) return; var mk = chMonthK(), boxes = [0, 1, 2].map(function (x) { return 'm|' + mk + '|' + id + '|' + x; });
+    if (on) { var free = boxes.filter(function (b) { return !s2.ticks[b]; })[0]; if (free) s2.ticks[free] = true; }
+    else { var last = boxes.filter(function (b) { return s2.ticks[b]; }).pop(); if (last) delete s2.ticks[last]; }
+    wr(CH_K, s2);
+    if (window.BT_VAGAL && window.BT_VAGAL.calRep) window.BT_VAGAL.calRep(dayKey(Date.now()), chPart(id), src || id, on);
+  }
+  function chSchedSet(dk, id, val) { var x = chSched(); if (val === null) { if (x.d[dk]) { delete x.d[dk][id]; if (!Object.keys(x.d[dk]).length) delete x.d[dk]; } } else { x.d[dk] = x.d[dk] || {}; x.d[dk][id] = val; } wr(CHS_K, x); }
+  // Coming Home's few-times-a-month list for this month: { id, name, img, done (times ticked this month) }
+  function chMonthly() {
+    var s = chState(), A = chActs(); if (!s) return [];
+    var mk = chMonthK();
+    return ((s.plan || {}).monthly || []).filter(function (id) { return A[id]; }).map(function (id) { var n = [0, 1, 2].filter(function (x) { return s.ticks['m|' + mk + '|' + id + '|' + x]; }).length; return { id: id, name: A[id][0], img: A[id][3], mk: mk, done: n, booked: chBookedThisMonth(id).length > 0 }; });
+  }
+  function chMonthTick(id) {
+    var s2 = chState(); if (!s2) return; var mk = chMonthK(), n = [0, 1, 2].filter(function (x) { return !s2.ticks['m|' + mk + '|' + id + '|' + x]; })[0]; if (n == null) return;
+    void n; chMonthBox(id, true, id + '|m' + Date.now());
+    APP.toast('Ticked off for this month. Counted in today’s reps.'); APP.reload();
+  }
+  // "Book it in": a calendar file for this Saturday at 10am that opens in Apple, Google or Outlook (they move it to whenever suits)
+  function chIcs(name, on) {
+    var d = on ? new Date(on.getTime()) : new Date(); if (!on) d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); d.setHours(10, 0, 0, 0);
+    var f = function (t) { return t.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }, e = new Date(d.getTime() + 3600e3);
+    var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Colour Me Neurospicy//Coming Home//EN', 'BEGIN:VEVENT', 'UID:ch-' + Date.now() + '@colourmeneurospicy', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(d), 'DTEND:' + f(e),
+      'SUMMARY:' + name + ' 💛 (Coming Home)', 'DESCRIPTION:Part of your Coming Home plan. Move this to whenever suits you.', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    try { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = name.replace(/[^\w ]+/g, '') + '.ics'; document.body.appendChild(a); a.click(); a.remove(); APP.toast('Open the file to add it to your calendar, then move it to a day that suits you.'); } catch (x) {}
+  }
+  // Home: "Your day" = the week calendar + Today's reps + your Energy Audit plan + your Coming Home plan, as one card.
+  // Every tick on the calendar is a rep, and every rep shows on the calendar.
+  var calWinOpen = false;
+  function dayCard() {
+    var V = window.BT_VAGAL; if (!V || !V.repsCard) return null;
+    var reps0 = V.repsCard(); if (reps0.classList.contains('rp-locked') || !V.calStatus) return reps0;
+    var A = chActs(), today = (new Date().getDay() + 6) % 7; if (chCalDay == null) chCalDay = today;
+    var card = h('section', { class: 'bt-day', 'aria-labelledby': 'bt-day-h' });
+    card.appendChild(h('div', { class: 'chc-top' }, [h('span', { class: 'chc-k', text: 'The key to rewiring' }), h('h2', { id: 'bt-day-h', text: 'Your day' }), h('span', { class: 'chc-s', text: 'Your wins, DOSE, Coming Home plan, Energy Audit and Today’s reps, all in one place. Every tick is a rep.' })]));
+    var calPart = h('div', { class: 'chc-cal' }), repsSlot = h('div', { class: 'rp-in' });
+    card.appendChild(calPart); card.appendChild(repsSlot);
+    var newReps = function () { repsSlot.innerHTML = ''; repsSlot.appendChild(V.repsCard()); };
+    repsSlot.appendChild(reps0);
+    function msg(t) { var m = calPart.querySelector('.chc-msg'); if (m && t) { m.textContent = t; m.hidden = false; } }
+    function after(t, repsToo) { drawCal(); if (repsToo !== false) newReps(); msg(t); }
+    function calRow(img, name, tag, on, future, onTick) {
+      return h('button', { class: 'chc-it' + (on ? ' on' : '') + (future ? ' later' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', disabled: future ? true : null, onclick: function (e) { if (!on) sparkleBurst(e.currentTarget); onTick(!on, e); } },
+        [img, h('span', { class: 'chc-t' }, [h('span', { class: 'chc-tag', text: tag }), h('b', { text: name })]), h('span', { class: 'chc-tk', 'aria-hidden': 'true', text: on ? '✓' : '' })]);
+    }
+    // the DOSE drop-down: their chosen DOSE, each one tickable on its own
+    function doseDrop(k, future) {
+      var dd = null; try { dd = V.doseData(); } catch (e) {}
+      var plan = (dd && dd.plan) || [], dayD = V.calDoseDay ? V.calDoseDay(k) : {};
+      var det = h('details', { class: 'chc-dose' }, [h('summary', null, [h('span', { text: plan.length ? 'My DOSE (' + plan.filter(function (id) { return dayD[id]; }).length + ' of ' + plan.length + ')' : 'My DOSE' })])]);
+      if (!plan.length) { det.appendChild(h('a', { class: 'rp-link', href: '#Dose', text: 'Build my bare-ass minimum DOSE →' })); return det; }
+      var L = h('div', { class: 'chc-dl' });
+      plan.forEach(function (id) {
+        var it = V.doseItem(id); if (!it) return; var on = !!dayD[id];
+        L.appendChild(h('button', { class: 'chc-di' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', disabled: future ? true : null, onclick: function (e) { if (!on) sparkleBurst(e.currentTarget); V.calDoseItem(k, id, !on); after(!on ? 'Feel-good chemical: delivered. Counted in your reps.' : ''); setTimeout(function () { var d2 = calPart.querySelector('.chc-dose'); if (d2) d2.open = true; }, 0); } },
+          [h('span', { class: 'chc-dl-l', text: it.letters.split('').join(' ') }), h('span', { text: it.text }), h('span', { class: 'chc-tk sm', 'aria-hidden': 'true', text: on ? '✓' : '' })]));
+      });
+      det.appendChild(L); det.appendChild(h('a', { class: 'rp-link', href: '#Dose', text: 'Did something different? Open my DOSE menu →' }));
+      return det;
+    }
+    function tabsBar() {
+      return h('div', { class: 'chc-view', role: 'tablist', 'aria-label': 'Calendar view' }, [['week', 'Week'], ['month', 'Month']].map(function (v) {
+        var on = calView === v[0]; return h('button', { class: on ? 'on' : '', type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: v[1], onclick: function () { calView = v[0]; drawCal(); } });
+      }));
+    }
+    function drawMonth() {
+      calPart.innerHTML = ''; calPart.appendChild(tabsBar()); repsSlot.hidden = true;
+      var s = chState(), sched = chSched().d, now = new Date(); now.setHours(0, 0, 0, 0);
+      var first = new Date(now.getFullYear(), now.getMonth() + calMOff, 1), mName = first.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+      var monthly = s ? ((s.plan || {}).monthly || []).filter(function (id) { return A[id]; }) : [];
+      calPart.appendChild(h('div', { class: 'chc-mhd' }, [h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Previous month', disabled: calMOff <= 0 ? true : null, text: '‹', onclick: function () { calMOff--; calMSel = null; drawCal(); } }), h('b', { text: mName }), h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Next month', disabled: calMOff >= 2 ? true : null, text: '›', onclick: function () { calMOff++; calMSel = null; drawCal(); } })]));
+      if (monthly.length) calPart.appendChild(h('p', { class: 'chc-s', text: 'Tap a day to book in your few-times-a-month Coming Home things. They show up on that day, and you’ll get a nudge if you haven’t booked one yet.' }));
+      var grid = h('div', { class: 'chc-mgrid', role: 'grid' });
+      ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(function (x) { grid.appendChild(h('span', { class: 'chc-wd', 'aria-hidden': 'true', text: x })); });
+      var lead = (first.getDay() + 6) % 7, nDays = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+      for (var b = 0; b < lead; b++) grid.appendChild(h('span'));
+      for (var dnum = 1; dnum <= nDays; dnum++) (function (dnum) {
+        var dt = new Date(first.getFullYear(), first.getMonth(), dnum), dk = chDK(dt), sd = sched[dk] || {}, ids = Object.keys(sd).filter(function (id) { return A[id]; });
+        var past = dt < now, isT = dt.getTime() === now.getTime(), done = false;
+        if (past || isT) { try { var cs = V.calStatus(V.dayKey(dt.getTime() + 12 * 3600e3)); done = cs.win || cs.dose; } catch (e) {} }
+        grid.appendChild(h('button', { class: 'chc-md' + (isT ? ' today' : '') + (past ? ' past' : '') + (calMSel === dk ? ' on' : '') + (done ? ' did' : ''), type: 'button', 'aria-label': dt.toDateString() + (ids.length ? ', ' + ids.length + ' booked' : ''), onclick: function () { calMSel = calMSel === dk ? null : dk; drawCal(); } },
+          [h('b', { text: String(dnum) }), ids.length ? h('span', { class: 'chc-mi' }, ids.slice(0, 2).map(function (id) { return h('img', { src: A[id][3], alt: '', class: sd[id] === 1 ? 'ok' : '' }); })) : (done ? h('i', { class: 'chc-mdot' }) : null)]));
+      })(dnum);
+      calPart.appendChild(grid);
+      if (calMSel) {
+        var p = calMSel.split('-'), sel = new Date(+p[0], p[1] - 1, +p[2]), selPast = sel < now, selToday = sel.getTime() === now.getTime(), sd2 = sched[calMSel] || {};
+        var panel = h('div', { class: 'chc-mpan' }, [h('b', { class: 'chc-mpan-h', text: (selToday ? 'Today, ' : '') + sel.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) })]);
+        var selFut = !selPast && !selToday, kd = V.dayKey(sel.getTime() + 12 * 3600e3), csd = V.calStatus(kd), pOn = csd.on, wd = (sel.getDay() + 6) % 7;
+        var monDt = chMon(), inWeek = sel >= monDt && sel < new Date(monDt.getTime() + 7 * 864e5), dl = h('div', { class: 'chc-list' }), dd2 = null; try { dd2 = V.doseData(); } catch (e) {}
+        if (pOn.win) dl.appendChild(calRow(h('span', { class: 'chc-glyph', text: '✦' }), csd.nWins ? csd.nWins + (csd.nWins === 1 ? ' win' : ' wins') : 'Had a win', 'Wins · they become proof', csd.win, selFut, function (on) { V.calSet(kd, 'win', on); after(on ? 'Win ticked. Counted in your reps.' : ''); }));
+        if (pOn.dose) {
+          dl.appendChild(calRow(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'Got my DOSE', dd2 && dd2.plan.length ? 'Bare-ass minimum' : 'Any happy-chemical hit counts', csd.dose, selFut, function (on) { if (dd2 && dd2.plan.length) V.calDose(kd, on); else V.calSet(kd, 'dose', on); after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : ''); }));
+          dl.appendChild(doseDrop(kd, selFut));
+        }
+        if (s) {
+          var dItems = []; ((s.plan || {}).daily || []).forEach(function (id) { if (A[id]) dItems.push({ id: id, slot: 'daily' }); });
+          ((s.plan || {}).weekly || []).forEach(function (id) { var ds = Array.isArray(s.wdays[id]) ? s.wdays[id] : [1, 3, 5]; if (A[id] && ds.indexOf(wd) >= 0) dItems.push({ id: id, slot: 'weekly' }); });
+          dItems.forEach(function (it) {
+            var pt = chPart(it.id), key = 'd|' + wd + '|' + it.slot + '|' + it.id, on = inWeek ? !!s.ticks[key] : V.calChOn(kd, pt, it.id);
+            dl.appendChild(calRow(h('img', { src: A[it.id][3], alt: '', class: 'chc-img' }), A[it.id][0], 'Coming Home · ' + CH_SLOTN[it.slot], on, selFut, function (on2) {
+              if (inWeek) { var s2 = chState(); if (on2) s2.ticks[key] = true; else delete s2.ticks[key]; wr(CH_K, s2); }
+              V.calRep(kd, pt, it.id, on2); after(on2 ? 'Back in your body. Counted in your reps as “' + CH_REPN[pt] + '”.' : '');
+            }));
+          });
+        }
+        if (selFut && dl.children.length) dl.appendChild(h('p', { class: 'chc-none', text: 'Coming up. You can tick these off on the day.' }));
+        if (dl.children.length) panel.appendChild(dl);
+        Object.keys(sd2).filter(function (id) { return A[id]; }).forEach(function (id) {
+          var on = sd2[id] === 1;
+          panel.appendChild(h('div', { class: 'chc-mrow' }, [h('img', { src: A[id][3], alt: '', class: 'chc-img' }), h('span', { class: 'chc-t' }, [h('span', { class: 'chc-tag', text: on ? 'Done ✓' : selPast || selToday ? 'Booked in' : 'Booked in · I’ll remind you on the day' }), h('b', { text: A[id][0] })]),
+            h('span', { class: 'chc-macts' }, [
+              (selPast || selToday) ? h('button', { class: 'bt-btn sm ' + (on ? 'ghost' : 'lime'), type: 'button', text: on ? 'Undo' : '✓ Done', onclick: function () { chSchedSet(calMSel, id, on ? 0 : 1); chMonthBox(id, !on, id + '|s' + calMSel); after(!on ? 'Done! Ticked off for this month and counted in today’s reps.' : ''); } }) : h('button', { class: 'bt-btn sm ghost', type: 'button', text: '📅 Add to my calendar', onclick: function () { chIcs(A[id][0], sel); } }),
+              on ? null : h('button', { class: 'chc-rm', type: 'button', 'aria-label': 'Take ' + A[id][0] + ' off this day', text: '×', onclick: function () { chSchedSet(calMSel, id, null); drawCal(); } })])]));
+        });
+        var free = monthly.filter(function (id) { return !(id in sd2); });
+        if (!selPast && free.length) panel.appendChild(h('div', { class: 'chc-book' }, [h('span', { class: 'chc-tag', text: 'Book in a few-times-a-month one:' }), h('div', { class: 'chc-chips' }, free.map(function (id) {
+          return h('button', { class: 'chc-chip', type: 'button', onclick: function (e) { sparkleBurst(e.currentTarget); chSchedSet(calMSel, id, 0); after('Booked in. It’ll show on that day, and you can add it to your phone calendar too.', false); } }, [h('img', { src: A[id][3], alt: '' }), h('span', { text: '+ ' + A[id][0] })]);
+        }))]));
+        if (!monthly.length) panel.appendChild(h('p', { class: 'chc-none', text: 'Add some few-times-a-month things to your Coming Home plan, then book them in here.' }));
+        if (selPast && !Object.keys(sd2).length) panel.appendChild(h('p', { class: 'chc-none', text: 'This day has been and gone. Pick today or a day coming up to book something in.' }));
+        calPart.appendChild(panel);
+      }
+      if (monthly.length) {
+        var mk = chMonthK();
+        calPart.appendChild(h('div', { class: 'chc-month' }, [h('span', { class: 'chc-tag', text: 'This month so far' })].concat(monthly.map(function (id) {
+          var n = [0, 1, 2].filter(function (x) { return (s.ticks || {})['m|' + mk + '|' + id + '|' + x]; }).length, bk = chBookedThisMonth(id).length;
+          return h('div', { class: 'chc-mrow' }, [h('img', { src: A[id][3], alt: '', class: 'chc-img' }), h('b', { text: A[id][0] }), h('span', { class: 'chc-tag', text: n + ' done · ' + bk + ' booked' })]);
+        }))));
+      }
+      calPart.appendChild(h('p', { class: 'chc-msg', 'aria-live': 'polite', hidden: true }));
+      calPart.appendChild(h('div', { class: 'chc-links' }, [h('a', { class: 'rp-link', href: '/tools/coming-home.html?tab=plan', text: monthly.length ? 'My Coming Home plan →' : 'Add few-times-a-month things to my plan →' })]));
+    }
+    function drawCal() {
+      if (calView === 'month') { drawMonth(); return; }
+      calPart.innerHTML = ''; calPart.appendChild(tabsBar());
+      var s = chState(), dd = null; try { dd = V.doseData(); } catch (e) {}
+      var P = (s && s.plan) || {}, hasDosePlan = !!(dd && dd.plan && dd.plan.length), mon = chMon(), NM = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      var parts = V.calStatus(chDayKey(today)).on;
+      var dayInfo = function (i) {
+        var k = chDayKey(i), cs = V.calStatus(k), its = s ? chDayItems(s, i) : [];
+        var dd0 = new Date(mon.getTime()); dd0.setDate(mon.getDate() + i); var sk = chDK(dd0), sd = chSched().d[sk] || {};
+        Object.keys(sd).forEach(function (id) { if (A[id]) its.push({ id: id, slot: 'sched', key: 's|' + sk + '|' + id, sk: sk, done: sd[id] === 1 }); });
+        var tot = its.length + (parts.win ? 1 : 0) + (parts.dose ? 1 : 0);
+        var dn = its.filter(function (x) { return x.slot === 'sched' ? x.done : s && s.ticks[x.key]; }).length + (parts.win && cs.win ? 1 : 0) + (parts.dose && cs.dose ? 1 : 0);
+        return { k: k, cs: cs, its: its, tot: tot, dn: dn };
+      };
+      var days = h('div', { class: 'chc-days', role: 'tablist', 'aria-label': 'Days this week' });
+      for (var i = 0; i < 7; i++) (function (i) {
+        var dt = new Date(mon.getTime()); dt.setDate(mon.getDate() + i); var inf = dayInfo(i);
+        days.appendChild(h('button', { class: 'chc-d' + (i === chCalDay ? ' on' : '') + (i === today ? ' today' : '') + (inf.tot && inf.dn === inf.tot && i <= today ? ' full' : ''), type: 'button', role: 'tab', 'aria-selected': i === chCalDay ? 'true' : 'false', onclick: function () { chCalDay = i; calWinOpen = false; drawCal(); } },
+          [h('span', { class: 'chc-dn', text: i === today ? 'Today' : NM[i] }), h('b', { text: String(dt.getDate()) }), h('span', { class: 'chc-dots', 'aria-label': inf.dn + ' of ' + inf.tot + ' done' }, Array.apply(null, Array(Math.min(inf.tot, 6))).map(function (_, j) { return h('i', { class: j < inf.dn ? 'on' : '' }); }))]));
+      })(i);
+      calPart.appendChild(days);
+      var di = chCalDay, inf = dayInfo(di), k = inf.k, future = di > today, isToday = di === today, list = h('div', { class: 'chc-list' });
+      var row = function (img, name, tag, on, onTick, extraCls) {
+        return h('button', { class: 'chc-it' + (on ? ' on' : '') + (future ? ' later' : '') + (extraCls || ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', disabled: future ? true : null, onclick: function (e) { if (!on) sparkleBurst(e.currentTarget); onTick(!on, e); } },
+          [img, h('span', { class: 'chc-t' }, [h('span', { class: 'chc-tag', text: tag }), h('b', { text: name })]), h('span', { class: 'chc-tk', 'aria-hidden': 'true', text: on ? '✓' : '' })]);
+      };
+      // a win
+      if (parts.win) {
+        var nW = inf.cs.nWins;
+        list.appendChild(row(h('span', { class: 'chc-glyph', text: '✦' }), isToday ? (nW ? (nW === 1 ? '1 win today. Got another?' : nW + ' wins today. Got another?') : 'Had a win') : (inf.cs.win ? 'Had a win' : 'A win'), 'Wins · they become proof', inf.cs.win, function (on) {
+          if (isToday) { calWinOpen = !calWinOpen || !inf.cs.win; drawCal(); setTimeout(function () { var wi = document.getElementById('chc-win-in'); if (wi) wi.focus(); }, 40); return; }
+          V.calSet(k, 'win', on); after(on ? 'Win ticked. Counted in your reps.' : '');
+        }));
+        if (isToday && calWinOpen) {
+          var wIn = h('input', { class: 'bt-in sm', id: 'chc-win-in', placeholder: 'Today I…', 'aria-label': 'Your win today' });
+          var addW = function () { var t = tx(wIn.value); if (!t) { wIn.focus(); return; } var ab = V.calWin(t); calWinOpen = false; after('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.'); };
+          wIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addW(); });
+          list.appendChild(h('div', { class: 'chc-win' }, [h('b', { text: '✦ What was your win?' }), h('span', { class: 'chc-s', text: 'Big or tiny, it all counts. It goes into your proof portfolio.' }),
+            h('div', { class: 'rp-inrow' }, [wIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: addW })]),
+            inf.cs.win ? null : h('button', { class: 'rp-more', type: 'button', text: 'Just tick it for now', onclick: function () { V.calSet(k, 'win', true); calWinOpen = false; after('Win ticked. Counted in your reps.'); } })]));
+        }
+      }
+      // your DOSE
+      if (parts.dose) {
+        var names = hasDosePlan ? dd.plan.map(function (id) { var it = V.doseItem(id); return it ? it.text : ''; }).filter(Boolean) : [];
+        list.appendChild(row(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'Got my DOSE', names.length ? 'Bare-ass minimum · ' + names.slice(0, 3).join(', ') + (names.length > 3 ? '…' : '') : 'Any happy-chemical hit counts', inf.cs.dose, function (on) {
+          if (hasDosePlan) V.calDose(k, on); else V.calSet(k, 'dose', on);
+          after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : '');
+        }));
+        list.appendChild(doseDrop(k, future));
+      }
+      // Coming Home
+      inf.its.forEach(function (it) {
+        var a = A[it.id], pt = chPart(it.id);
+        if (it.slot === 'sched') {
+          list.appendChild(row(h('img', { src: a[3], alt: '', class: 'chc-img' }), a[0], 'Coming Home · booked in for today', it.done, function (on2) {
+            chSchedSet(it.sk, it.id, on2 ? 1 : 0); chMonthBox(it.id, on2, it.id + '|s' + it.sk);
+            after(on2 ? 'Done! Ticked off for this month and counted in your reps.' : '');
+          }));
+          return;
+        }
+        var on = !!s.ticks[it.key];
+        list.appendChild(row(h('img', { src: a[3], alt: '', class: 'chc-img' }), a[0], 'Coming Home · ' + CH_SLOTN[it.slot], on, function (on2) {
+          var s2 = chState(); if (on2) s2.ticks[it.key] = true; else delete s2.ticks[it.key]; wr(CH_K, s2);
+          V.calRep(k, pt, it.id, on2);
+          after(on2 ? 'Back in your body. Counted in your reps as “' + CH_REPN[pt] + '”.' : '');
+        }));
+      });
+      if (future) list.appendChild(h('p', { class: 'chc-none', text: 'Coming up. You can tick these off on the day.' }));
+      calPart.appendChild(list);
+      // Energy Audit: today's planned blocks
+      if (isToday) { try { var hp = eaHomePlan(); if (hp) { hp.classList.add('in-day'); calPart.appendChild(hp); } } catch (e) {} }
+      calPart.appendChild(h('p', { class: 'chc-msg', 'aria-live': 'polite', hidden: true }));
+      var hasCH = !!s && ['daily', 'weekly', 'monthly'].some(function (x) { return (P[x] || []).length; });
+      calPart.appendChild(h('div', { class: 'chc-links' }, [h('a', { class: 'rp-link', href: '/tools/coming-home.html?tab=plan', text: hasCH ? 'My Coming Home plan →' : 'Add my Coming Home plan →' }), h('a', { class: 'rp-link', href: '#Dose', text: hasDosePlan ? 'My DOSE →' : 'Build my DOSE →' })]));
+      if (isToday) calPart.appendChild(h('div', { class: 'chc-vn' }, [h('span', { class: 'chc-k', text: 'Today’s reps' }), h('span', { class: 'chc-s', text: 'Your vagus nerve workout. Coming Home ticks fill these in for you.' })]));
+      repsSlot.hidden = !isToday;
+    }
+    drawCal();
+    window.BT_REPS_CHANGED = function () { if (document.body.contains(card)) drawCal(); };
+    return card;
+  }
   function fillHomeTop(slot) {
     slot.innerHTML = ''; syncFounder();
     var wa = waButton(); if (wa) slot.appendChild(wa);
     try { var nc = nextCallCard(); if (nc) slot.appendChild(nc); } catch (e) {}
     try { var pc = pushCard(); if (pc) slot.appendChild(pc); } catch (e) {}
-    try { eaSeedPlayground(false); var hp = eaHomePlan(); if (hp) slot.appendChild(hp); } catch (e) {}
+    try { eaSeedPlayground(false); } catch (e) {}
     try { var ed = eaData(), el = eaLoggedDays(ed).length; if (el >= 3 && (ed.patSeen || 0) < el) slot.appendChild(h('a', { class: 'ea-home-pat', href: '#Energy', onclick: function () { try { sessionStorage.setItem('bt-ea-tab', 'audit'); } catch (x) {} } }, [emblem('energy') || h('span', { text: '🔋' }), h('span', null, [h('b', { text: 'I’ve found patterns in your energy 👀' }), h('span', { text: 'Your Energy Audit has something to show you. Take a look →' })])])); } catch (e) {}
     // once the 1:1 setup is done it's tucked away (the tests and agreement live in the profile)
     if (APP.state.tier === 'private' && !oneSetupDone()) oneStart(slot);
@@ -510,7 +768,8 @@
     var bk = h('a', { class: 'bt-bookln', href: '#Book' }, [icon('star', 'bt-bookln-ic'), h('span', null, [h('b', { text: 'Your Becoming Book' }), h('span', { text: 'Your notebook + ' + pages + ' page' + (pages === 1 ? '' : 's') + ' of your story' })]), h('span', { class: 'bt-bookln-go', text: 'Open →' })]);
     if (c) slot.appendChild(c);
     var tw = thisWeek(); if (tw) slot.appendChild(tw);
-    if (window.BT_VAGAL && window.BT_VAGAL.repsCard) { try { slot.appendChild(window.BT_VAGAL.repsCard()); } catch (e) {} }
+    try { chReconcile(); } catch (e) {}
+    try { var dc = dayCard(); if (dc) slot.appendChild(dc); } catch (e) { if (window.console) console.warn(e); if (window.BT_VAGAL && window.BT_VAGAL.repsCard) { try { slot.appendChild(window.BT_VAGAL.repsCard()); } catch (x) {} } }
     try { slot.appendChild(notesBox({ home: true })); } catch (e) {}
     slot.appendChild(proofHome());
     // (the belief map lives in Breaking Out of Your Box and the Becoming Book, not on Home)
@@ -2501,7 +2760,7 @@
   }
   var LESSON_FILES = {};
   // course cards that open one part of a resource straight away (the Emotional Blueprint's Start here, blueprints, What am I feeling?, Process it)
-  var RES_TAB = { w4s1: 'home', w4b1: 'mine', w4b2: 'tune', w4a3: 'process' };
+  var RES_TAB = { w4s1: 'home', w4b1: 'mine', w4b2: 'tune', w4a3: 'process', w4a1: 'learn' };
   function resTab(l) { return l.restab || RES_TAB[l.id] || ''; }
   function lessonHref(l) {
     if (resTab(l) && (l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var rt = resource(l.res[0]); if (rt && rt.href) return rt.href + (rt.href.indexOf('?') >= 0 ? '&' : '?') + 'tab=' + resTab(l); }
@@ -6213,6 +6472,7 @@
     tour: function () { if (APP) appTour(); },
     runTour: function (steps, o) { if (APP) runTour(steps, o); },
     winsToday: function () { return evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === dayKey(Date.now()); }).length; },
+    dayCard: dayCard, chReconcile: chReconcile,
     goAddProof: function () { var el = document.getElementById('bt-home-proof'); if (!el) { proofTabNext = proofTabState = 'mine'; goHref('#Proof'); return; } el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(function () { var i = document.getElementById('bt-win-in'); if (i) { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } } el.classList.add('bt-flash'); setTimeout(function () { el.classList.remove('bt-flash'); }, 1600); }, 450); },
     resIntro: resIntro,
     contractPdf: function (ct, hh) { if (!h && hh) h = hh; contractPdf(ct); },

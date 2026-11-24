@@ -4,7 +4,7 @@
 const push = require('../lib/push');
 const { pick } = require('../lib/nudges');
 function hourIn(tz) { try { return Number(new Intl.DateTimeFormat('en-AU', { timeZone: tz || 'Australia/Brisbane', hour: 'numeric', hourCycle: 'h23' }).format(new Date())); } catch (e) { return -1; } }
-const KEYS = ['bt-course', 'bt-vwork', 'bt-dose', 'cmn-companion', 'bt-energy-v1'];
+const KEYS = ['bt-course', 'bt-vwork', 'bt-dose', 'cmn-companion', 'bt-energy-v1', 'coming-home-v3', 'bt-ch-sched'];
 
 exports.handler = async () => {
   if (!push.ready()) return { statusCode: 200, body: 'not set up' };

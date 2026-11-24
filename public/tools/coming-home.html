@@ -336,6 +336,9 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 .oitem button:hover{background:rgba(31,20,18,.08)}
 .planhead{display:flex;align-items:center;gap:16px}
 .planhead img{flex:none;width:84px;height:84px;border-radius:22px}
+.ch-search{position:relative;display:flex;align-items:center}.ch-search svg{position:absolute;left:14px;color:#6A5A57;pointer-events:none}.ch-search .input{padding-left:42px;width:100%;box-sizing:border-box}
+.ch-steps{margin:0;padding:0;list-style:none;counter-reset:st;display:flex;flex-direction:column;gap:12px}.ch-steps li{counter-increment:st;position:relative;padding:14px 16px 14px 56px;background:#FFFFFF;border:1.5px solid #EDE3DF;border-radius:20px;font-size:15px;line-height:1.55;color:#463A38;display:flex;flex-direction:column;gap:8px;align-items:flex-start}.ch-steps li b{color:#1F1412}.ch-steps li::before{content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:#4E0C08;color:#F1F9A6;display:flex;align-items:center;justify-content:center;font-weight:700}
+.ch-feel{display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:22px;background:#FFFFFF;border:2px solid #4E0C08}.ch-feel-t{margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:20px;line-height:1.25}.ch-feel-l{display:flex;flex-direction:column;gap:10px}.ch-feel-i{display:flex;gap:12px;align-items:flex-start}.ch-feel-i img{width:44px;height:44px;flex:none}.ch-feel-i p{margin:4px 0 0;font-size:14px;line-height:1.5;color:#463A38}.ch-feel-d{font-size:12px;color:#A8231F;font-weight:600}.ch-feel .primary{align-self:flex-start}
 .tour-dim{position:fixed;inset:0;z-index:38;background:rgba(31,20,18,.28);pointer-events:none}
 .tour{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:40;width:min(460px,calc(100% - 24px));box-sizing:border-box;padding:20px;border-radius:26px;background:#FFFFFF;border:2px solid #4E0C08;box-shadow:0 24px 60px rgba(78,12,8,.3);display:flex;flex-direction:column;gap:10px;animation:ch-pop .3s cubic-bezier(.2,1.3,.4,1)}
 @keyframes ch-pop{0%{transform:translate(-50%,20px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
@@ -349,6 +352,150 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 .tourbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font-size:13px;font-weight:600;cursor:pointer}
 .tourbtn:hover{border-color:#1F1412}
 @media (prefers-reduced-motion: reduce){.bcirc,.bin,.bout,.tab.spot,.tour{animation:none}.bcirc{transform:scale(.8)}.bout{opacity:0}.mood:hover{transform:none}}
+.card .pic{border:0;padding:0;cursor:pointer;display:block;width:100%;font:inherit}
+.dt-title{all:unset;cursor:pointer;font:inherit}.dt-title:hover{text-decoration:underline;text-underline-offset:4px}.dt-title:focus-visible{outline:3px solid #A8231F;outline-offset:3px;border-radius:6px}
+.dtp{position:fixed;inset:0;z-index:60;overflow-y:auto;background:#FAF7F5;-webkit-overflow-scrolling:touch}
+.dt-in{max-width:760px;margin:0 auto;padding:18px 20px 60px;display:flex;flex-direction:column;gap:22px}
+.dt-back{align-self:flex-start;position:sticky;top:10px;z-index:2;background:#FAF7F5}
+.dt-hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:22px;border-radius:28px;background:#FBE6FC}
+.dt-hero img{width:120px;height:120px;flex:none;animation:dtbob 4s ease-in-out infinite}
+@keyframes dtbob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+@media (prefers-reduced-motion: reduce){.dt-hero img{animation:none}}
+.dt-ht{flex:1 1 260px;display:flex;flex-direction:column;gap:8px}
+.dt-h{margin:0;font-size:clamp(28px,5vw,38px);line-height:1.1;color:#4E0C08}
+.dt-lead{margin:0;font-size:16px;line-height:1.55;color:#463A38}
+.dt-sec{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:24px;background:#FFFFFF;border:2px solid #F0E2DC}
+.dt-sec .eyebrow{font-size:16px}
+.dt-h3{margin:0;font-size:22px;line-height:1.25;color:#4E0C08}
+.dt-p{margin:0;font-size:15px;line-height:1.65;color:#1F1412}
+.dt-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.dt-steps li{display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:18px;background:#FFF4EE}
+.dt-steps p{margin:4px 0 0;font-size:14.5px;line-height:1.55;color:#463A38}
+.dt-steps strong{color:#4E0C08;font-size:16px}
+.dt-n{flex:none;width:34px;height:34px;border-radius:50%;background:#4E0C08;color:#F1F9A6;display:grid;place-items:center;font-family:'Patrick Hand SC',cursive;font-size:18px}
+.dt-draw{border-radius:20px;background:#FFF9F5;border:2px dashed #E8C9C0;padding:10px}
+.dt-svg{display:block;width:100%;height:auto;max-height:320px}
+.dt-lbl{font-family:'Patrick Hand SC',cursive;letter-spacing:.04em}
+.dt-proc{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.dt-st{position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:18px}
+.dt-st .hand{font-size:18px;color:#4E0C08;display:flex;align-items:center;gap:8px}
+.dt-st p{margin:0;font-size:14px;line-height:1.5;color:#1F1412}
+.dt-st.s0{background:#FDE3DF}.dt-st.s1{background:#FFF1C9}.dt-st.s2{background:#E4F3C2}
+.dt-dot{width:12px;height:12px;border-radius:50%;position:absolute;top:18px;right:16px}
+.s0 .dt-dot{background:#D6453B}.s1 .dt-dot{background:#E9A21D}.s2 .dt-dot{background:#5E9A2C}
+.dt-why{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.6}
+.dt-why strong{color:#4E0C08}
+.dt-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.dt-ben ul,.dt-when ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.dt-ben li{display:flex;gap:10px;align-items:center}
+.dt-when li::before{content:'→ ';color:#A8231F}
+.dt-ben{background:#F1F9A6;border-color:#E3EE8A}
+.dt-rem{font-size:15px}
+.dt-add .hand{font-size:15px;color:#A8231F}
+.dt-nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.spec{display:flex;flex-direction:column;gap:8px}
+.spec-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 8px;scrollbar-width:thin}
+.spi{flex:0 0 132px;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:20px;border:1.5px solid #EDE3DF;background:#FFFFFF}
+.spi img{width:64px;height:64px;border-radius:16px}
+.spi .spn{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:16px;line-height:1.2;color:#4E0C08}
+.spi p{margin:0;font-size:12.5px;line-height:1.45;color:#463A38}
+.spi.s1{background:#FBD9D5}.spi.s2{background:#FDE3DF}.spi.s3{background:#FCEAE3}.spi.s4{background:#FFF0DE}.spi.s5{background:#FFF6D6}.spi.s6{background:#F7F7D2}.spi.s7{background:#EEF6CF}.spi.s8{background:#E2F2C4;border-color:#1F1412}
+.spec-bar{height:12px;border-radius:999px;background:linear-gradient(90deg,#D6453B,#E98A4E 35%,#E9C23D 60%,#9CC94F 85%,#5E9A2C)}
+.spec-ends{display:flex;justify-content:space-between;gap:10px;font-family:'Patrick Hand SC',cursive;letter-spacing:.04em;font-size:14px;color:#4E0C08}
+.spec-ends span:nth-child(2){text-align:center}.spec-ends span:last-child{text-align:right;color:#5E9A2C}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.use{position:relative;display:flex;flex-direction:column;gap:10px;padding:22px;border-radius:24px;border:1.5px solid #EDE3DF}
+.use.u1{background:#FDE9E6}.use.u2{background:#F3F9D8}
+.use h3{margin:0;font-size:22px;line-height:1.2;color:#4E0C08}
+.use p{margin:0;font-size:15px;line-height:1.55;color:#1F1412}
+.use .hand{font-size:16px;color:#A8231F}
+.use .un{position:absolute;top:16px;right:18px;width:36px;height:36px;border-radius:50%;background:#4E0C08;color:#F1F9A6;display:grid;place-items:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:18px}
+.use .uh{font-weight:600;font-size:14px}
+.minis{display:flex;flex-direction:column;gap:8px}
+.mini{display:flex;gap:10px;align-items:center;padding:8px 12px 8px 8px;border-radius:16px;background:#FFFFFF;border:1.5px solid #1F1412}
+.mini img{width:40px;height:40px;border-radius:12px;flex:none}
+.mini .mt{display:block;font-weight:600;font-size:14px}.mini .ms{display:block;font-size:12.5px;color:#A8231F}
+.states{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:22px;background:#FFF4EE}
+.states .hand{font-size:17px;color:#A8231F}
+.st-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.st{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:18px;background:#FFFFFF}
+.st img{width:48px;height:48px;border-radius:14px}.st b{font-family:'Playfair Display',Georgia,serif;font-size:18px;color:#4E0C08}.st span{font-size:13px;color:#463A38}
+.bucket{border-radius:22px;background:#FFF9F5;padding:10px;max-width:640px}
+.mlt{display:flex;flex-direction:column;gap:12px;max-width:680px}
+.mlt h3,.mlt-h{margin:8px 0 0;font-family:'Playfair Display',Georgia,serif;font-size:23px;line-height:1.25;color:#F1F9A6}
+.mlt p{margin:0;font-size:15.5px;line-height:1.65;color:#F6D6CF}
+.sos-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;scrollbar-width:thin}
+.sc{flex:0 0 220px;scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.sc.rec{border-color:#E890EC}.sc.on{background:#FBFDE6;border-color:#1F1412}
+.sc-pic{position:relative;border:0;padding:0;background:#FBE6FC;border-radius:16px;cursor:pointer;display:grid;place-items:center;height:110px}
+.sc-pic img{width:84px;height:84px}
+.sc-best{position:absolute;left:8px;top:8px;padding:3px 8px;border-radius:999px;background:#4E0C08;color:#F1F9A6;font-size:11px;font-weight:600}
+.sc-n{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:17px;line-height:1.2;color:#4E0C08}
+.sc p{margin:0;font-size:13px;line-height:1.45;color:#463A38;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sc-act{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.sc-act .chip .box{width:18px;height:18px;border-radius:6px;border:1.5px solid #1F1412;display:grid;place-items:center}
+.sc-act .chip .box svg{opacity:0}.sc-act .chip.on .box{background:#4E0C08}.sc-act .chip.on .box svg{opacity:1}
+.sc-more{border:0;background:none;color:#A8231F;font-weight:600;font-size:13px;cursor:pointer;min-height:40px;text-decoration:underline;text-underline-offset:3px}
+.sc-hint{font-size:13px;color:#463A38}
+.dt-top{position:sticky;top:10px;z-index:3;display:flex;justify-content:space-between;align-items:center}
+.dt-top .dt-back{position:static}
+.dt-x{width:46px;height:46px;border-radius:50%;border:1.5px solid #1F1412;background:#FFFFFF;color:#1F1412;display:grid;place-items:center;cursor:pointer}
+.dt-x:hover{background:#F1F9A6}
+.dt-sticky{position:sticky;bottom:12px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 14px;border-radius:22px;background:#FFFFFF;border:1.5px solid #1F1412;box-shadow:0 10px 30px rgba(78,12,8,.15)}
+.dt-sticky span{font-size:13px;color:#463A38}
+.spec-wrap{display:flex;flex-direction:column;gap:14px}
+.h3s{margin:6px 0 0;font-family:'Playfair Display',Georgia,serif;font-size:24px;line-height:1.25;color:#4E0C08}
+.ladder2{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.ladder2 > .hand{font-size:16px;color:#A8231F}
+.ladder2-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
+.ladder-svg{display:block;width:100%;max-width:420px;height:auto;margin:0 auto}
+.ladder2-t{display:flex;flex-direction:column;gap:10px}
+.ladder2-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5}
+.ladder2-l li{display:flex;gap:10px;align-items:flex-start}
+.ladder2-l .ld{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px}
+.ladder2-l b{color:#4E0C08}
+.ladder2-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.lh{padding:14px 16px;border-radius:18px;font-size:14.5px;line-height:1.55}
+.lh.up{background:#E3F1E8}.lh.down{background:#FBE6F1}
+.lh b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:18px;color:#4E0C08;margin-bottom:2px}
+.chsteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:12px}
+.chs{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 14px 18px;border-radius:22px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;font:400 14.5px/1.45 Poppins,system-ui,sans-serif;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.chs:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(78,12,8,.08)}
+.chs.done{background:#FBFDE6;border-color:#C9DD7A}
+.chs-h{align-self:flex-start;display:flex;align-items:center;gap:10px;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;color:#4E0C08}
+.chs-h b{width:34px;height:34px;border-radius:50%;background:#4E0C08;color:#F1F9A6;display:grid;place-items:center;font:700 16px Poppins,sans-serif}
+.chs.done .chs-h b{background:#3DAA4A;color:#FFFFFF}
+.chs-art{width:100%;max-width:170px;aspect-ratio:150/110}.chs-art svg{width:100%;height:100%;overflow:visible}
+.chs-t{max-width:210px}
+.chs .chs-beat{transform-box:fill-box;transform-origin:center;animation:chsBeat 1.6s ease-in-out infinite}
+.chs .chs-tw{transform-box:fill-box;transform-origin:center;animation:chsTw 2.6s ease-in-out infinite}
+.chs .chs-bob{animation:chsBob 1.8s ease-in-out infinite}
+.chs .chs-drop{transform-box:fill-box;transform-origin:center;animation:chsPop 2.4s ease-in-out infinite}
+@keyframes chsBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@keyframes chsTw{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes chsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes chsPop{0%,100%{transform:scale(.9) rotate(0)}50%{transform:scale(1.12) rotate(12deg)}}
+@media (prefers-reduced-motion: reduce){.chs .chs-beat,.chs .chs-tw,.chs .chs-bob,.chs .chs-drop{animation:none}}
+.nextstep{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 18px;border-radius:20px;background:#F1F9A6;border:1.5px solid #1F1412}
+.nextstep .hand{font-size:17px;color:#4E0C08}
+.homecal{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:#F3F9D8;border:1.5px solid #C9DD7A;font-size:14.5px;line-height:1.5}
+.homecal > span{flex:1 1 260px}
+.homecal a{text-decoration:none;display:inline-flex;align-items:center}
+.wk-cal{display:flex;flex-direction:column;gap:12px;max-width:640px}
+.wk-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wk-d{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border-radius:16px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;cursor:pointer;font:inherit}
+.wk-d b{font-family:'Playfair Display',Georgia,serif;font-size:18px}
+.wk-dn{font-size:11.5px;color:#463A38}
+.wk-d.today{border-color:#E890EC}
+.wk-d.full{background:#F1F9A6}
+.wk-d.on{background:#4E0C08;border-color:#4E0C08;color:#F1F9A6}.wk-d.on .wk-dn{color:#F6D6CF}
+.wk-dots{display:flex;gap:2px;min-height:6px}.wk-dots i{width:6px;height:6px;border-radius:50%;background:#E6D6D2}.wk-dots i.on{background:#3DAA4A}.wk-d.on .wk-dots i.on{background:#F1F9A6}
+.wk-day{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:22px;background:#FFFFFF;border:1.5px solid #EDE3DF}
+.wk-day .dhd{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.wk-day .dname{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:20px}
+.wk-day .dcount{font-size:12px;color:#6A5A57}
+.sc-dur{font-size:12px;font-weight:600;color:#A8231F}
+.slot .sos-car{margin:0 -6px}
 </style>
 <style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
 </head>
@@ -398,10 +545,15 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <h1 style="margin: 0; font-weight: 700; font-size: clamp(34px, 6vw, 52px); line-height: 1">Coming Home</h1>
 <span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(18px, 2.6vw, 22px); color: #4E0C08">into your body.</span>
 </div>
-<button class="tourbtn" onClick="{{startTour}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"></path></svg>Take the tour</button>
 </header>
 
-<nav class="tabs" aria-label="Coming Home sections">
+<div class="chsteps">
+<button class="{{st1Cls}}" onClick="{{goLearnTop}}"><span class="chs-h"><b>{{st1N}}</b><span>Learn it</span></span><span class="chs-art"><svg viewBox="0 0 150 110" aria-hidden="true"><defs><filter id="chsf" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="2.6"></feDisplacementMap></filter></defs><g filter="url(#chsf)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M75 30c-14-8-34-10-52-6v66c18-4 38-2 52 6z" fill="#FFFFFF"></path><path d="M75 30c14-8 34-10 52-6v66c-18-4-38-2-52 6z" fill="#FBE6FC"></path><path d="M75 30v66"></path><path d="M34 44h28M34 54h24M34 64h28M34 74h18" stroke-width="1.6"></path><path d="M88 62l13-12 13 12v16H88z" fill="#FFD9A8"></path><path class="chs-beat" d="M101 74c-5-3.5-6.5-6-5-8 1.2-1.7 3.5-1.4 5 .7 1.5-2.1 3.8-2.4 5-.7 1.5 2 0 4.5-5 8z" fill="#D3302B" stroke-width="1.2"></path></g><path class="chs-tw" d="M124 14l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z" fill="#F2B705" stroke="#4E0C08" stroke-width="1.2"></path></svg></span><span class="chs-t">Read the Learn page, so you know what’s happening in your body,</span></button>
+<button class="{{st2Cls}}" onClick="{{goPlans}}"><span class="chs-h"><b>{{st2N}}</b><span>Make your plans</span></span><span class="chs-art"><svg viewBox="0 0 150 110" aria-hidden="true"><defs><filter id="chsf" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="2.6"></feDisplacementMap></filter></defs><g filter="url(#chsf)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="16" width="70" height="88" rx="8" fill="#FFFFFF"></rect><rect x="60" y="10" width="30" height="12" rx="4" fill="#F4C2F7"></rect><path d="M52 40l4 4 7-8M52 60l4 4 7-8" stroke="#3DAA4A" stroke-width="2.6"></path><path d="M70 40h28M70 60h24M70 80h26" stroke-width="1.8"></path><rect x="51" y="74" width="12" height="12" rx="3" stroke-width="1.8"></rect><path d="M116 52l14-8M118 62h14M116 72l14 8" stroke="#E8338A" stroke-width="2"></path></g><g class="chs-bob"><path d="M22 58c-7-5-9-8.5-7-11.5 1.6-2.4 5-2 7 1 2-3 5.4-3.4 7-1 2 3 0 6.5-7 11.5z" fill="#D3302B" stroke="#4E0C08" stroke-width="1.6"></path></g></svg></span><span class="chs-t">pick your SOS moves and your coming home routine,</span></button>
+<button class="{{st3Cls}}" onClick="{{goWeek}}"><span class="chs-h"><b>{{st3N}}</b><span>Tick them off</span></span><span class="chs-art"><svg viewBox="0 0 150 110" aria-hidden="true"><defs><filter id="chsf" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="23"></feTurbulence><feDisplacementMap in="SourceGraphic" scale="2.6"></feDisplacementMap></filter></defs><g filter="url(#chsf)" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="20" width="106" height="82" rx="10" fill="#FFFFFF"></rect><path d="M22 38h106" ></path><rect x="22" y="20" width="106" height="18" rx="10" fill="#F4C2F7"></rect><path d="M44 12v14M106 12v14" stroke-width="3"></path><path d="M57 38v64M92 38v64M22 70h106" stroke-width="1.4" stroke="#C9B8B3"></path><path d="M30 52l5 5 9-10M65 52l5 5 9-10" stroke="#3DAA4A" stroke-width="2.8"></path><rect x="98" y="46" width="22" height="18" rx="5" fill="#F1F9A6" stroke-width="1.8"></rect><path d="M30 84l5 5 9-10" stroke="#3DAA4A" stroke-width="2.8"></path></g><g class="chs-drop"><path d="M109 47l3.5 7 7.6 1-5.5 5.4 1.3 7.6-6.9-3.6-6.9 3.6 1.3-7.6-5.5-5.4 7.6-1z" fill="#F2B705" stroke="#4E0C08" stroke-width="1.3"></path></g></svg></span><span class="chs-t">then tick them off on your Home calendar with your DOSE. Every tick is a rep.</span></button>
+</div>
+
+<nav class="tabs" id="ch-tabs" aria-label="Coming Home sections">
 <div class="tabrow">
 <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="6">
 <button class="{{tb.cls}}" aria-current="{{tb.current}}" onClick="{{tb.go}}"><img src="{{tb.img}}" alt="">{{tb.l}}</button>
@@ -411,46 +563,6 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 
 <!-- ================= RIGHT NOW ================= -->
 <sc-if value="{{tabNow}}" hint-placeholder-val="{{ true }}">
-
-<sc-if value="{{nowHome}}" hint-placeholder-val="{{ true }}">
-<div class="banner"><img src="/tools/assets/b54cf8597b937e67a8020b66d1ce173f.svg" alt=""><span class="bt"><strong>New here? Read the Learn page before you try this for the first time.</strong> Then come back to this page whenever you’re in the moment and need help reconnecting to your body.</span><button class="ghost solid" onClick="{{goLearn}}">Go to Learn</button></div>
-
-<p class="big">Hey you. How are you, right now?</p>
-
-<section class="moodblock ff">
-<div class="mbh"><span class="eyebrow">Fight, flight or freeze</span><span class="mbt">My body thinks I’m in danger.</span><span class="mbs">Amygdala hijack mode. Tap the closest one and I’ll walk you home, step by step.</span></div>
-<div class="moods">
-<sc-for list="{{ffMoods}}" as="m" hint-placeholder-count="3">
-<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
-</sc-for>
-</div>
-</section>
-
-<section class="moodblock ev">
-<div class="mbh"><span class="eyebrow">Everyday moments</span><span class="mbt">I just need to come back to my body.</span><span class="mbs">Opens your saved plan for that moment, or the 55 ways menu so you can find one.</span></div>
-<div class="moods">
-<sc-for list="{{evMoods}}" as="m" hint-placeholder-count="4">
-<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
-</sc-for>
-</div>
-</section>
-
-<div class="help">
-<span class="hh">Need more support?</span>
-<span class="hk">In Australia</span>
-<a class="hl" href="tel:131114"><span>Call Lifeline, 24/7</span><span>13 11 14</span></a>
-<a class="hl" href="sms:0477131114"><span>Text Lifeline, 24/7</span><span>0477 13 11 14</span></a>
-<a class="hl" href="tel:000"><span>If you or someone else is in danger</span><span>000</span></a>
-<span class="hk">Not in Australia?</span>
-<div class="intl">
-<span class="ir"><strong>USA and Canada</strong>Call or text 988</span>
-<span class="ir"><strong>UK and Ireland</strong>Samaritans, call 116 123</span>
-<span class="ir"><strong>New Zealand</strong>Call or text 1737</span>
-<span class="ir"><strong>Anywhere else</strong><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free lines in your country</span>
-</div>
-<p class="hn">In an emergency, call your local emergency number: 911 in the US and Canada, 999 or 112 in the UK and Europe, 111 in New Zealand.</p>
-</div>
-</sc-if>
 
 <sc-if value="{{nowPlan}}" hint-placeholder-val="{{ false }}">
 <section class="flow">
@@ -592,22 +704,7 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <p class="lead">For when you’re stuck in your head, overthinking, ruminating, or halfway down the dark doom hole, and you want to come back to the land of the living. This is an experiment, not homework. Try things, keep what feels good, ditch what doesn’t.</p>
 </section>
 
-<section class="dark sec" style="padding: 30px 26px; gap: 18px">
-<div class="eyebrow">The Tony Robbins Triad</div>
-<h2 class="h2" style="color: #FFF4EE">Change your state, change your life.</h2>
-<p class="lead">Your state is how you feel in this exact moment, and Tony Robbins says three things drive it. Pull any one of these levers and your state shifts. Pull all three and it flips. Everything in this app is one of these levers.</p>
-<div class="doors">
-<div class="door"><img src="/tools/assets/6a3871dfb91267d41e8251fe86eb7ba2.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">1 · Physiology</span><span class="dn">Your body</span><p>How you breathe, stand, move and touch. Change your body and your brain follows. That’s the whole 55 ways menu.</p></div>
-<div class="door"><img src="/tools/assets/5156dbc53efb3eb2089fc5827d2cc81f.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">2 · Focus</span><span class="dn">Your attention</span><p>Whatever you focus on, you feel. Pull your focus out of your head and into your five senses, and you’re back in the room.</p></div>
-<div class="door"><img src="/tools/assets/4d15e84cdb8661ef1361585cdfc81997.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">3 · Language</span><span class="dn">Your words</span><p>The words you say to yourself, and the meaning you give things. That’s what your mantra is for.</p></div>
-</div>
-<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Try all three in 30 seconds.</strong> Stand up, shoulders back, chin up, and take a big physiological sigh (physiology). Find one thing you can see and really look at it (focus). Say your mantra out loud, or “I’m here. I’m home.” (language). Notice what changed.</span></div>
-<div class="vlinks">
-<a class="vlink" href="https://www.youtube.com/watch?v=oViDv_Afxb8" target="_blank" rel="noopener" aria-label="Watch Tony Robbins explain the Triad on YouTube (opens in a new tab)"><span class="vi" style="background: #D3302B"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="vt"><span>Watch Tony explain the Triad</span><span>YouTube · opens in a new tab</span></span></a>
-<a class="vlink" href="https://www.instagram.com/p/DWAxPszD1Tj/" target="_blank" rel="noopener" aria-label="Watch my reel on changing your state on Instagram (opens in a new tab)"><span class="vi" style="background: #F1F9A6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1412" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="#1F1412"></circle></svg></span><span class="vt"><span>My reel: change your state</span><span>Instagram · @colour_me_neurospicy</span></span></a>
-<a class="vlink" href="https://www.instagram.com/p/DZqiPJKBgIp/" target="_blank" rel="noopener" aria-label="Watch my fast energy reset reel on Instagram (opens in a new tab)"><span class="vi" style="background: #F28C3B"><svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#1F1412" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span><span class="vt"><span>Need more energy? My fast way back into your body</span><span>Instagram · @colour_me_neurospicy</span></span></a>
-</div>
-</section>
+
 
 <section class="sec">
 <div class="eyebrow">Quick refresher</div>
@@ -632,7 +729,7 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </div>
 </section>
 
-<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>Panic, meltdowns and freeze have their own page.</strong> Coming home after an amygdala hijack works differently, so it gets its own teaching, tools and plans.</span><button class="ghost solid" onClick="{{goSos}}">Open Fight or flight</button></div>
+<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>Panic, meltdowns and freeze have their own section, further down this page.</strong> Coming home after an amygdala hijack works differently, so it gets its own teaching, tools and plans.</span><button class="ghost solid" onClick="{{goSos}}">Take me there</button></div>
 
 <section class="dark sec" style="padding: 30px 26px; gap: 18px">
 <div class="eyebrow">So what is grounding?</div>
@@ -708,11 +805,9 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </section>
 
 <div class="callout white"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4E0C08" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg><span><strong>Go gently.</strong> Coming back into your body can sometimes bring up feelings your brain was protecting you from. That’s normal, and it’s okay to stop, open your eyes, and pick something softer. If something big comes up, bring it to our calls, or to your therapist if you have one. You don’t have to do it alone.</span></div>
-</sc-if>
 
-<!-- ================= FIGHT OR FLIGHT ================= -->
-<sc-if value="{{tabSos}}" hint-placeholder-val="{{ false }}">
-<section class="sec">
+<!-- ===== Fight or flight (was its own tab) ===== -->
+<section class="sec" id="ch-sos">
 <span class="eyebrow">Fight or flight</span>
 <p class="big">Coming home after an amygdala hijack.</p>
 <p class="lead">Your amygdala is your brain’s smoke alarm. When it thinks you’re in danger, it floods your body with adrenaline and cortisol before your thinking brain even gets a say. That’s an amygdala hijack. Your heart races, your breath goes shallow, and logic leaves the building.</p>
@@ -746,8 +841,22 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <section class="dark sec" style="padding: 30px 26px; gap: 16px">
 <div class="eyebrow">When it’s all too much</div>
 <h2 class="h2" style="color: #FFF4EE">Meltdowns aren’t a choice.</h2>
-<p class="lead">A meltdown is what happens when your nervous system hits overload. Too much noise, light, emotion, demand or change, for too long, and the cup overflows. It can look like screaming, crying, snapping, or shutting right down. It’s not a tantrum. It’s not you being dramatic. It’s your body saying: I can’t take in any more.</p>
+<p class="lead">A meltdown is what happens when your nervous system hits overload. Too much noise, light, emotion, demand or change, for too long, without enough breaks, and it spills over. It can look like screaming, crying, snapping, slamming doors, or shutting right down and not being able to talk. It’s not a tantrum. You’re not being dramatic, and you’re not choosing it. It’s your body saying: I can’t take in any more.</p>
+<div class="bucket"><svg class="dt-svg" viewBox="0 0 340 250" role="img" aria-label="Two buckets: one full all day and overflowing into a meltdown, one drained little and often with room to spare" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 110h120l-14 110H44z" fill="#FFF4EE"/><path d="M33 112h114l-13 106H46z" fill="#BFE3F2" stroke="none"/><path d="M30 110q-8 30 -12 60M150 110q10 26 12 58" stroke="#5BA8C8" stroke-dasharray="4 6"/><path d="M60 70 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M90 58 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M120 74 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M100 88 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><text x="90" y="30" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="16">full all day</text><text x="52" y="62" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="12">noise</text><text x="130" y="60" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="12">masking</text><text x="92" y="48" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="12">emails</text><text x="90" y="242" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="16">… meltdown</text><path d="M190 110h120l-14 110h-92z" fill="#FFF4EE"/><path d="M200 170h102l-7 48h-88z" fill="#BFE3F2" stroke="none"/><path d="M296 200h22v10h-8v8"/><circle cx="314" cy="228" r="3" fill="#5BA8C8" stroke="none"/><circle cx="314" cy="240" r="3" fill="#5BA8C8" stroke="none"/><text x="250" y="30" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="16">drained little and often</text><text x="250" y="150" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="14">room to spare</text><text x="250" y="62" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">sigh · hum · cuppa</text><path d="M250 70v24M242 86l8 10 8-10" stroke="#A8231F"/><text x="250" y="242" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="16">still standing</text></svg></div>
+<div class="mlt">
+<h3>Your nervous system is a bucket.</h3>
+<p>Every time you get dysregulated, every time the world feels like too much, more water goes in. The noise. The emails. The masking. The “quick question”. The feeling you pushed down to deal with later. Most of us walk around with the bucket full to the brim, so one tiny thing (the wrong sock, a dropped spoon, someone chewing too loud) and over it goes.</p>
+<h3>Empty it little by little.</h3>
+<p>You can wait for it to overflow. A meltdown does empty the bucket, and sometimes that’s exactly what you need. Zero shame. I’ve had full-blown ones myself. Or you can let a little water out every time you notice it rising: a physiological sigh, covering your ears for a minute, a hum in the car, a cuppa with no phone. Each one drains a bit, so there’s room left when life pours more in.</p>
+<p>A 20-minute meditation is amazing, and it might drain the whole bucket. But if it’s the only break you take, the bucket’s full again by tomorrow. Little and often is how you stop it overflowing.</p>
+<h3>Why coming home to your body drains it.</h3>
+<p>Feelings are meant to move through your body and finish. When you live in your head, you skip that bit. You think about the feeling instead of feeling it, file it away for later, and it stays in the bucket.</p>
+<p>Every time you come back into your body, two things happen. Your nervous system gets a break: it drops out of high alert and into rest and digest, where it can actually recover. And your brain gets space: a pause long enough for your thoughts to catch up and for what happened to get processed. (Those 2am thought downloads? That’s your brain trying to process everything it didn’t get space for during the day.)</p>
+<p>Neuroscientist Dr Jill Bolte Taylor describes the chemical rush of an emotion as passing in about 90 seconds when you let yourself feel it, without feeding it more thoughts. Feel it, let it move through, and the water level drops.</p>
+</div>
+<a class="vlink" style="flex: none; max-width: 640px" href="https://vimeo.com/1249478522" target="_blank" rel="noopener" aria-label="Watch my bucket video on Vimeo (opens in a new tab)"><span class="vi" style="background: #1AB7EA"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="vt"><span>Watch: why your bucket overflows</span><span>Vimeo · 41 sec · opens in a new tab</span></span></a>
 <a class="video" href="https://www.youtube.com/watch?v=i4qTAoIGBcI" target="_blank" rel="noopener" aria-label="Watch my unhinged 4 step nervous system reset for AuDHD’ers on YouTube (opens in a new tab)" style="border-color: rgba(255,244,238,.25)"><img src="/tools/assets/16ececf4aed9bfe373643768c34d7c7b.png" alt="Video cover: unhinged 4 step nervous system reset for AuDHD’ers"><span class="vb"><span class="vp"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 15px">Watch: my unhinged 4-step nervous system reset</span><span style="font-size: 13px; color: #F6D6CF">For AuDHD’ers · 5:30 · YouTube</span></span></span></a>
+<h3 class="mlt-h">And when it overflows anyway</h3>
 <div class="doors">
 <div class="door"><img src="/tools/assets/62768a1cfc0371b2fa3f28ec1434cfe3.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">First</span><span class="dn">Less input</span><p>Lights down, headphones on, somewhere small and quiet, stop talking. Less before more.</p></div>
 <div class="door"><img src="/tools/assets/3f39c5e191cd716cd67b76399e8c408a.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">Then</span><span class="dn">Pressure and rhythm</span><p>Weighted blanket, a tight hug, rocking, humming, butterfly taps. Stimming is regulating.</p></div>
@@ -755,24 +864,85 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </div>
 </section>
 
-<section class="sec" id="ch-sosplan">
-<div class="eyebrow">My SOS plans</div>
-<h2 class="h2">Decide now, while you’re calm.</h2>
-<p class="lead">In a hijack your thinking brain goes offline. So pick your go-to moves now, in order, for each one. Next time you tap it on Right now, your plan opens straight away.</p>
-<div class="seg" role="group" aria-label="Which plan"><sc-for list="{{sosSeg}}" as="sg" hint-placeholder-count="3"><button class="{{sg.cls}}" aria-pressed="{{sg.pressed}}" onClick="{{sg.pick}}"><img src="{{sg.img}}" alt="">{{sg.l}}</button></sc-for></div>
-<div class="step">
-<span class="fq">{{sosEditTitle}}</span>
-<sc-if value="{{hasSosEdit}}" hint-placeholder-val="{{ false }}">
-<div class="ordered"><sc-for list="{{sosOrdered}}" as="k" hint-placeholder-count="3"><div class="oitem"><span class="on">{{k.i}}</span><img src="{{k.img}}" alt=""><span class="t">{{k.n}}</span><button aria-label="{{k.rmLabel}}" onClick="{{k.remove}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></sc-for></div>
-</sc-if>
-<sc-if value="{{noSosEdit}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing yet. Tap up to 5 below. The best ones for this state are first.</span></sc-if>
-<span class="fq" style="font-weight: 400; color: #463A38">{{sosPickLabel}}</span>
-<div class="chips"><sc-for list="{{sosChips}}" as="o" hint-placeholder-count="12"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><img src="{{o.img}}" alt="">{{o.l}}</button></sc-for></div>
-<div class="senses">
-<div class="sense"><label for="sos-person">My person I can text</label><input id="sos-person" class="input" type="text" value="{{sosPerson}}" onChange="{{onSosPerson}}" placeholder="e.g. my sister, Jess"></div>
-<div class="sense"><label for="sos-place">My safe place to go</label><input id="sos-place" class="input" type="text" value="{{sosPlace}}" onChange="{{onSosPlace}}" placeholder="e.g. the car, my bedroom floor"></div>
+
+<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>Your SOS plans live in My plan.</strong> Pick your go-to moves for panic, meltdowns and freeze while you’re calm, so you don’t have to think in the moment.</span><button class="ghost solid" onClick="{{goSosPlan}}">Make my SOS plans</button></div>
+
+
+<section class="sec" id="ch-two">
+<div class="eyebrow">Two ways to use the 55 ways</div>
+<h2 class="h2">Not every hard moment is a meltdown.</h2>
+<p class="lead">Sometimes you’re not in fight or flight, and you don’t need to process some huge emotion. You’re just overwhelmed. Stressed. Wired. Overstimulated. Or flat as a pancake. You’re living up in high alert instead of rest and digest, and you want to come back into a good state: calm and settled, or excited and lit up, or switched on and ready to go. Same activities. Different job.</p>
+<div class="spec-wrap" id="ch-spectrum">
+<h3 class="h3s">Why we leave our bodies: it’s a spectrum.</h3>
+<p class="body">There are loads of reasons you end up out of your body, and they all sit on one line. At one end it’s survival: trauma, and the moments your body thinks you’re in danger, so it hits the alarm and you go into fight, flight, freeze or meltdown. At the other end it’s everyday life: you’re overwhelmed, stressed, overstimulated, stuck in your head, or flat and foggy. Same escape hatch. Different volume.</p>
+<div class="spec">
+<div class="spec-row"><div class="spi s1"><img src="/tools/assets/a11ad324fdb2f2c6ffee1e5895c941e5.svg" alt=""><span class="spn">Trauma and old hurts</span><p>Your brain learned long ago that being in your body wasn’t safe.</p></div><div class="spi s2"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="spn">Fight or flight</span><p>Racing heart, want to run or explode.</p></div><div class="spi s3"><img src="/tools/assets/5d5e574219f73922043f755784dc386d.svg" alt=""><span class="spn">Freeze</span><p>Numb, floaty, far away.</p></div><div class="spi s4"><img src="/tools/assets/3483ab7ef64fe4aa0dfaf595410a7b23.svg" alt=""><span class="spn">Meltdown</span><p>Too much, for too long. The bucket overflows.</p></div><div class="spi s5"><img src="/tools/assets/81f32f69ffd7998e4b19f6ed1e33401d.svg" alt=""><span class="spn">Overwhelmed and overstimulated</span><p>Wired, frazzled, everything is loud.</p></div><div class="spi s6"><img src="/tools/assets/a1d75ea44d2f8b5daa7b340010a626ea.svg" alt=""><span class="spn">Stuck in your head</span><p>Overthinking, ruminating, spiralling.</p></div><div class="spi s7"><img src="/tools/assets/2698eb06626b25eab3cb6a5f2980bbd4.svg" alt=""><span class="spn">Flat and foggy</span><p>Sluggish, bored, switched off.</p></div><div class="spi s8 home"><img src="/tools/assets/2fd7c05d8e6485ce7d82e1b7ae169442.svg" alt=""><span class="spn">Home</span><p>In your body. Calm, excited or switched on. Your choice.</p></div></div>
+<div class="spec-bar" aria-hidden="true"></div>
+<div class="spec-ends"><span>Survival mode: “I’m in danger”</span><span>Everyday: “It’s a lot” or “I’m flat”</span><span>Home</span></div>
 </div>
-<div class="callout cream"><span>Pack a little SOS kit for your bag or car: sour lollies, a cold pack or water bottle, a strong-scented roller, earplugs or headphones, a fidget.</span></div>
+<div class="ladder2">
+<span class="hand">From the Energy Audit: your nervous system load</span>
+<div class="ladder2-in">
+<div class="ladder2-pic"><svg class="ladder-svg" viewBox="0 0 360 312" role="img" aria-label="Nervous system load, from the Energy Audit: fight and flight at the top, then overstimulated, excite and activate, regulated, rest and digest, understimulated, and shutdown and freeze at the bottom. The green zone in the middle is home. Relaxing recharging brings you down to it, energising recharging lifts you up to it."><defs><filter id="chlf" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="31"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><rect x="102" y="88" width="156" height="128" rx="16" fill="none" stroke="#3DAA4A" stroke-width="2" stroke-dasharray="5 5"/><g filter="url(#chlf)"><rect x="110" y="14" width="140" height="32" rx="10" fill="#F6D3CF" stroke="#C0392B" stroke-width="2"/></g><text x="180" y="35" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Fight + flight</text><g filter="url(#chlf)"><rect x="110" y="54" width="140" height="32" rx="10" fill="#FBE3D2" stroke="#E07A3B" stroke-width="2"/></g><text x="180" y="75" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Overstimulated</text><g filter="url(#chlf)"><rect x="110" y="94" width="140" height="32" rx="10" fill="#FBEFC2" stroke="#D9A400" stroke-width="2"/></g><text x="180" y="115" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Excite + activate</text><g filter="url(#chlf)"><rect x="110" y="134" width="140" height="32" rx="10" fill="#DDF0D6" stroke="#3DAA4A" stroke-width="3"/></g><text x="180" y="155" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="700" fill="#1F1412">Regulated</text><g filter="url(#chlf)"><rect x="110" y="174" width="140" height="32" rx="10" fill="#E3F1E8" stroke="#5FA052" stroke-width="2"/></g><text x="180" y="195" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Rest + digest</text><g filter="url(#chlf)"><rect x="110" y="214" width="140" height="32" rx="10" fill="#E6E6F6" stroke="#7B7FC4" stroke-width="2"/></g><text x="180" y="235" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Understimulated</text><g filter="url(#chlf)"><rect x="110" y="254" width="140" height="32" rx="10" fill="#E9E1EC" stroke="#7A6A87" stroke-width="2"/></g><text x="180" y="275" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12.5" font-weight="500" fill="#1F1412">Shutdown + freeze</text><g filter="url(#chlf)"><path d="M100 28 C74 58 74 106 96 134" fill="none" stroke="#5FA052" stroke-width="3" stroke-linecap="round"/><path d="M88 130 l9 7 l2 -12" fill="none" stroke="#5FA052" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M262 278 C288 246 288 192 266 156" fill="none" stroke="#E8338A" stroke-width="3" stroke-linecap="round"/><path d="M259 166 l6 -11 l8 10" fill="none" stroke="#E8338A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><text font-family="'Patrick Hand SC', cursive" font-size="14" fill="#2F6B27" text-anchor="end"><tspan x="72" y="62">relaxing</tspan><tspan x="72" dy="16">recharge</tspan><tspan x="72" dy="16">brings you</tspan><tspan x="72" dy="16">down</tspan></text><text font-family="'Patrick Hand SC', cursive" font-size="14" fill="#B0236B"><tspan x="290" y="198">energising</tspan><tspan x="290" dy="16">recharge</tspan><tspan x="290" dy="16">lifts you</tspan><tspan x="290" dy="16">up</tspan></text><text x="180" y="308" text-anchor="middle" font-family="'Patrick Hand SC', cursive" font-size="14" fill="#3DAA4A">the green box is home</text></svg></div>
+<div class="ladder2-t">
+<p class="body">Think of your nervous system like a ladder. Home is the green box in the middle: anywhere from <strong>excite and activate</strong> down to <strong>rest and digest</strong>. That’s regulated. Calm or lit up, you’re in your body and you can think, feel and choose.</p>
+<ul class="ladder2-l"><li><span class="ld" style="background:#C0392B"></span><span><b>Fight + flight</b> Panic, rage, a meltdown on its way. Your alarm is going off and your body thinks you’re in danger. Use your SOS plan.</span></li><li><span class="ld" style="background:#E07A3B"></span><span><b>Overstimulated</b> Overwhelmed, stressed, wired, frazzled, everything’s too loud. Not danger, just too much. This is where most of us live, and where the bucket fills up.</span></li><li><span class="ld" style="background:#D9A400"></span><span><b>Excite + activate</b> Lit up, focused, energised, ready to go. A great place to be. It’s home too.</span></li><li><span class="ld" style="background:#5FA052"></span><span><b>Rest + digest</b> Calm, soft, settled, recovering. Where your body repairs and your brain catches up.</span></li><li><span class="ld" style="background:#7B7FC4"></span><span><b>Understimulated</b> Flat, bored, foggy, can’t get going. Often where you land after too long in overstimulated.</span></li><li><span class="ld" style="background:#7A6A87"></span><span><b>Shutdown + freeze</b> Numb, far away, frozen. Your body hit pause because it was all too much. Use your SOS plan.</span></li></ul>
+</div>
+</div>
+<div class="ladder2-how">
+<div class="lh up"><b>Too high?</b> Overstimulated or heading for fight or flight. Use a <strong>relaxing</strong> way to bring yourself down: long exhales, pressure, less input, slow touch, humming. In 55 ways, try <em>Calm and soothe</em>.</div>
+<div class="lh down"><b>Too low?</b> Flat, foggy, understimulated. Use an <strong>energising</strong> way to lift yourself up: movement, music, singing, cold water, sunshine. In 55 ways, try <em>Energy boost</em>.</div>
+</div>
+</div>
+<p class="body">Wherever you are on it, the way back is the same: through your body. What changes is how hard and fast you go, and which direction you’re heading.</p>
+<div class="callout white"><span>If trauma is part of your story, go gently. Coming back into your body is the work, and it can bring things up. Bring anything big to our calls, or to your therapist if you have one.</span></div>
+</div>
+<div class="uses">
+<div class="use u1">
+<span class="un">1</span>
+<span class="hand">The survival end</span>
+<h3>Fight, flight, freeze or meltdown</h3>
+<p>Your body thinks you’re in danger. You need fast, strong, physical moves to get out of the hijack. That’s what your SOS plans are for.</p>
+<span class="uh">On the 55 ways page, tap one of these, right at the top:</span>
+<div class="minis"><div class="mini"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span><span class="mt">I’m panicking</span><span class="ms">Opens my panic plan</span></span></div><div class="mini"><img src="/tools/assets/3483ab7ef64fe4aa0dfaf595410a7b23.svg" alt=""><span><span class="mt">I’m having a meltdown</span><span class="ms">Opens my meltdown plan</span></span></div><div class="mini"><img src="/tools/assets/5d5e574219f73922043f755784dc386d.svg" alt=""><span><span class="mt">I’m numb or frozen</span><span class="ms">Opens my freeze plan</span></span></div></div>
+<p>I’ll walk you through your plan, one step at a time.</p>
+</div>
+<div class="use u2">
+<span class="un">2</span>
+<span class="hand">The everyday end</span>
+<h3>Back into your body, and into a better state</h3>
+<p>Overwhelmed, stressed, overstimulated, stuck in your head, or flat. You use the 55 ways to shift your state and come home, little and often.</p>
+<span class="uh">On the 55 ways page, tap one of these, under Everyday moments:</span>
+<div class="minis"><div class="mini"><img src="/tools/assets/81f32f69ffd7998e4b19f6ed1e33401d.svg" alt=""><span><span class="mt">It’s all a bit much</span><span class="ms">Calm down, turn it down</span></span></div><div class="mini"><img src="/tools/assets/a1d75ea44d2f8b5daa7b340010a626ea.svg" alt=""><span><span class="mt">I’m stuck in my head</span><span class="ms">Get out of your head</span></span></div><div class="mini"><img src="/tools/assets/2fd7c05d8e6485ce7d82e1b7ae169442.svg" alt=""><span><span class="mt">I just want a reset</span><span class="ms">A quick top-up</span></span></div><div class="mini"><img src="/tools/assets/2698eb06626b25eab3cb6a5f2980bbd4.svg" alt=""><span><span class="mt">I need more energy</span><span class="ms">Wake up, get excited</span></span></div></div>
+<p>It opens the plan you saved for that moment, or the ways that work best for it. Or just type how you feel in the search bar.</p>
+</div>
+</div>
+<div class="nextstep"><span class="hand">Your next step</span><button class="primary maroon" onClick="{{goPlans}}">Make your plans →</button></div>
+<div class="states">
+<span class="hand">Where do you want to land?</span>
+<div class="st-row">
+<div class="st"><img src="/tools/assets/e5c14dd4bed1c2d0ce2392c1bc2d4937.svg" alt=""><b>Calm</b><span>Soft, settled, rest and digest.</span></div>
+<div class="st"><img src="/tools/assets/1f98186a04d8d535455be88f9ee9c6ab.svg" alt=""><b>Excited</b><span>Lit up, playful, joyful.</span></div>
+<div class="st"><img src="/tools/assets/2698eb06626b25eab3cb6a5f2980bbd4.svg" alt=""><b>Switched on</b><span>Focused, energised, ready to go.</span></div>
+</div>
+</div>
+<button class="primary maroon" style="align-self: flex-start" onClick="{{goMenu}}">Show me the 55 ways</button>
+</section>
+
+<section class="dark sec" id="ch-triad" style="padding: 30px 26px; gap: 18px">
+<div class="eyebrow">The everyday end · The Tony Robbins Triad</div>
+<h2 class="h2" style="color: #FFF4EE">Change your state, change your life.</h2>
+<p class="lead">When you’re not in survival mode, coming home is about changing your state. From frazzled to calm. From flat to excited. From foggy to switched on and ready to go. Your state is how you feel in this exact moment, and Tony Robbins says three things drive it. Pull any one of these levers and your state shifts. Pull all three and it flips. Everything in this app is one of these levers.</p>
+<div class="doors">
+<div class="door"><img src="/tools/assets/6a3871dfb91267d41e8251fe86eb7ba2.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">1 · Physiology</span><span class="dn">Your body</span><p>How you breathe, stand, move and touch. Change your body and your brain follows. That’s the whole 55 ways menu.</p></div>
+<div class="door"><img src="/tools/assets/5156dbc53efb3eb2089fc5827d2cc81f.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">2 · Focus</span><span class="dn">Your attention</span><p>Whatever you focus on, you feel. Pull your focus out of your head and into your five senses, and you’re back in the room.</p></div>
+<div class="door"><img src="/tools/assets/4d15e84cdb8661ef1361585cdfc81997.svg" alt=""><span class="hand" style="font-size: 16px; color: #F1F9A6">3 · Language</span><span class="dn">Your words</span><p>The words you say to yourself, and the meaning you give things. That’s what your mantra is for.</p></div>
+</div>
+<div class="callout lime"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E890EC" stroke="#4E0C08" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg><span><strong>Try all three in 30 seconds.</strong> Stand up, shoulders back, chin up, and take a big physiological sigh (physiology). Find one thing you can see and really look at it (focus). Say your mantra out loud, or “I’m here. I’m home.” (language). Notice what changed.</span></div>
+<div class="vlinks">
+<a class="vlink" href="https://www.youtube.com/watch?v=oViDv_Afxb8" target="_blank" rel="noopener" aria-label="Watch Tony Robbins explain the Triad on YouTube (opens in a new tab)"><span class="vi" style="background: #D3302B"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span><span class="vt"><span>Watch Tony explain the Triad</span><span>YouTube · opens in a new tab</span></span></a>
+<a class="vlink" href="https://www.instagram.com/p/DWAxPszD1Tj/" target="_blank" rel="noopener" aria-label="Watch my reel on changing your state on Instagram (opens in a new tab)"><span class="vi" style="background: #F1F9A6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1412" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8" fill="#1F1412"></circle></svg></span><span class="vt"><span>My reel: change your state</span><span>Instagram · @colour_me_neurospicy</span></span></a>
+<a class="vlink" href="https://www.instagram.com/p/DZqiPJKBgIp/" target="_blank" rel="noopener" aria-label="Watch my fast energy reset reel on Instagram (opens in a new tab)"><span class="vi" style="background: #F28C3B"><svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#1F1412" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span><span class="vt"><span>Need more energy? My fast way back into your body</span><span>Instagram · @colour_me_neurospicy</span></span></a>
 </div>
 </section>
 
@@ -794,17 +964,52 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </div>
 </sc-if>
 
+<!-- ================= FIGHT OR FLIGHT ================= -->
+
+
 <!-- ================= 55 WAYS ================= -->
 <sc-if value="{{tabMenu}}" hint-placeholder-val="{{ false }}">
+<div class="banner"><img src="/tools/assets/b54cf8597b937e67a8020b66d1ce173f.svg" alt=""><span class="bt"><strong>New here? Read the Learn page before you try this for the first time.</strong> Then come back to this page whenever you’re in the moment and need help reconnecting to your body.</span><button class="ghost solid" onClick="{{goLearn}}">Go to Learn</button></div>
+
+<p class="big">Hey you. How are you, right now?</p>
+
+<section class="moodblock ff">
+<div class="mbh"><span class="eyebrow">Fight, flight or freeze</span><span class="mbt">My body thinks I’m in danger.</span><span class="mbs">Amygdala hijack mode. Tap the closest one and I’ll walk you home, step by step.</span></div>
+<div class="moods">
+<sc-for list="{{ffMoods}}" as="m" hint-placeholder-count="3">
+<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
+</sc-for>
+</div>
+</section>
+
+<section class="moodblock ev">
+<div class="mbh"><span class="eyebrow">Everyday moments</span><span class="mbt">I just need to come back to my body.</span><span class="mbs">Opens your saved plan for that moment, or the 55 ways menu so you can find one.</span></div>
+<div class="moods">
+<sc-for list="{{evMoods}}" as="m" hint-placeholder-count="4">
+<button class="mood" onClick="{{m.pick}}"><img src="{{m.img}}" alt=""><span><span class="mt">{{m.t}}</span><span class="ms">{{m.s}}</span><span class="{{m.kcls}}">{{m.k}}</span></span></button>
+</sc-for>
+</div>
+</section>
+
 <section class="sec">
 <p class="big">55 ways home.</p>
 <p class="lead">Pick a category. Try one, then rate it. Tap “Add to my plan” on the keepers.</p>
 </section>
 
+<div class="ch-search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input class="input" type="search" aria-label="Search the 55 ways" value="{{q}}" onChange="{{onQ}}" placeholder="Search, or type how you feel: “I’m overwhelmed”"></div>
+<sc-if value="{{hasFeel}}" hint-placeholder-val="{{ false }}">
+<div class="ch-feel">
+<p class="ch-feel-t">{{feelTitle}}</p>
+<sc-if value="{{feelIsFF}}" hint-placeholder-val="{{ false }}"><button class="primary maroon" onClick="{{feelStartFlow}}">Walk me through it now</button></sc-if>
+<div class="ch-feel-l"><sc-for list="{{feelActs}}" as="fa" hint-placeholder-count="4"><div class="ch-feel-i"><img src="{{fa.img}}" alt=""><div><b>{{fa.n}}</b> <span class="ch-feel-d">{{fa.d}}</span><p>{{fa.h}}</p><sc-if value="{{fa.hasD}}" hint-placeholder-val="{{ false }}"><button class="morebtn" onClick="{{fa.openD}}">How to do it, and why →</button></sc-if></div></div></sc-for></div>
+<sc-if value="{{feelSaved}}" hint-placeholder-val="{{ false }}"><div class="callout lime"><span>{{feelSavedText}}</span><button class="ghost solid" onClick="{{feelSeePlan}}">See my plan</button></div></sc-if>
+<button class="primary lime" onClick="{{feelMakePlan}}">{{feelPlanLabel}}</button>
+</div>
+</sc-if>
 <div class="cats" role="group" aria-label="Categories"><sc-for list="{{cats}}" as="c" hint-placeholder-count="11"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><img src="{{c.img}}" alt=""><span>{{c.l}}</span><span class="cc">{{c.count}}</span></button></sc-for></div>
 
 <sc-if value="{{hasMenuNote}}" hint-placeholder-val="{{ false }}"><div class="callout lime"><span>{{menuNote}}</span></div></sc-if>
-<sc-if value="{{catIsFF}}" hint-placeholder-val="{{ false }}"><div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt">These are calm-down tools you can use anywhere. For full panic, meltdowns or freeze, the Fight or flight page has the fast SOS moves and step-by-step guides.</span><button class="ghost solid" onClick="{{goSos}}">Open Fight or flight</button></div></sc-if>
+<sc-if value="{{catIsFF}}" hint-placeholder-val="{{ false }}"><div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt">These are calm-down tools you can use anywhere. For full panic, meltdowns or freeze, the Fight or flight section in Learn has the fast SOS moves and step-by-step guides.</span><button class="ghost solid" onClick="{{goSos}}">Open Fight or flight</button></div></sc-if>
 
 <div class="bar">
 <span class="hand" style="font-size: 16px; color: #A8231F">{{expLabel}}</span>
@@ -832,30 +1037,15 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <div class="cards">
 <sc-for list="{{acts}}" as="a" hint-placeholder-count="9">
 <article class="{{a.cls}}">
-<div class="pic"><img src="{{a.img}}" alt=""><span class="dur">{{a.dur}}</span></div>
+<button class="pic" onClick="{{a.openD}}" aria-label="{{a.openL}}"><img src="{{a.img}}" alt=""><span class="dur">{{a.dur}}</span></button>
 <div class="cb">
 <sc-if value="{{a.isSurprise}}" hint-placeholder-val="{{ false }}"><span class="badge">Your surprise pick. Go try it.</span></sc-if>
 <span class="ctier">{{a.tier}}</span>
-<h4>{{a.n}}</h4>
+<h4><button class="dt-title" onClick="{{a.openD}}">{{a.n}}</button></h4>
 <sc-if value="{{a.hasAka}}" hint-placeholder-val="{{ false }}"><span class="aka">{{a.aka}}</span></sc-if>
 <p>{{a.h}}</p>
 <sc-if value="{{a.hasVideo}}" hint-placeholder-val="{{ false }}"><a class="vbtn" href="{{a.video}}" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>{{a.videoLabel}}</a></sc-if>
-<sc-if value="{{a.hasMore}}" hint-placeholder-val="{{ false }}">
-<button class="morebtn" aria-expanded="{{a.moreA}}" onClick="{{a.toggleMore}}">{{a.moreLabel}}</button>
-<sc-if value="{{a.moreOpen}}" hint-placeholder-val="{{ false }}">
-<div class="more">
-<span class="mh">How to do it</span>
-<ol><sc-for list="{{a.mSteps}}" as="ms" hint-placeholder-count="3"><li><strong>{{ms.t}}</strong> {{ms.d}}</li></sc-for></ol>
-<span class="mh">Why it works</span>
-<ul><sc-for list="{{a.mWhy}}" as="mw" hint-placeholder-count="4"><li><strong>{{mw.t}}</strong> {{mw.d}}</li></sc-for></ul>
-<span class="mh">When to use it</span>
-<ul><sc-for list="{{a.mWhen}}" as="mn" hint-placeholder-count="6"><li>{{mn.l}}</li></sc-for></ul>
-<span class="mh">The science</span>
-<p>{{a.mSci}}</p>
-<span class="rem">{{a.mRem}}</span>
-</div>
-</sc-if>
-</sc-if>
+<button class="morebtn" onClick="{{a.openD}}">How to do it, and why it works →</button>
 <div class="tags"><sc-for list="{{a.tags}}" as="tg" hint-placeholder-count="4"><span class="tag">{{tg.l}}</span></sc-for></div>
 <div class="rate" role="group" aria-label="How was it?"><sc-for list="{{a.rates}}" as="r" hint-placeholder-count="3"><button class="{{r.cls}}" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}">{{r.l}}</button></sc-for></div>
 <button class="{{a.addCls}}" aria-expanded="{{a.open}}" onClick="{{a.toggleAdd}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{a.addLabel}}</button>
@@ -872,27 +1062,68 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </sc-for>
 </div>
 <button class="primary maroon" style="align-self: flex-start" onClick="{{goPlan}}">See my plan</button>
+<div class="help">
+<span class="hh">Need more support?</span>
+<span class="hk">In Australia</span>
+<a class="hl" href="tel:131114"><span>Call Lifeline, 24/7</span><span>13 11 14</span></a>
+<a class="hl" href="sms:0477131114"><span>Text Lifeline, 24/7</span><span>0477 13 11 14</span></a>
+<a class="hl" href="tel:000"><span>If you or someone else is in danger</span><span>000</span></a>
+<span class="hk">Not in Australia?</span>
+<div class="intl">
+<span class="ir"><strong>USA and Canada</strong>Call or text 988</span>
+<span class="ir"><strong>UK and Ireland</strong>Samaritans, call 116 123</span>
+<span class="ir"><strong>New Zealand</strong>Call or text 1737</span>
+<span class="ir"><strong>Anywhere else</strong><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free lines in your country</span>
+</div>
+<p class="hn">In an emergency, call your local emergency number: 911 in the US and Canada, 999 or 112 in the UK and Europe, 111 in New Zealand.</p>
+</div>
 </sc-if>
 
 <!-- ================= MY PLAN ================= -->
 <sc-if value="{{tabPlan}}" hint-placeholder-val="{{ false }}">
-<section class="sec">
+<section class="sec" id="ch-sosplan">
+<div class="eyebrow">My SOS plans</div>
+<h2 class="h2">Decide now, while you’re calm.</h2>
+<p class="lead">In a hijack your thinking brain goes offline. So pick your go-to moves now, in order, for each one. Next time you tap “I’m panicking”, “I’m having a meltdown” or “I’m numb or frozen” at the top of 55 ways, your plan opens straight away.</p>
+<div class="seg" role="group" aria-label="Which plan"><sc-for list="{{sosSeg}}" as="sg" hint-placeholder-count="3"><button class="{{sg.cls}}" aria-pressed="{{sg.pressed}}" onClick="{{sg.pick}}"><img src="{{sg.img}}" alt="">{{sg.l}}</button></sc-for></div>
+<div class="step">
+<span class="fq">{{sosEditTitle}}</span>
+<sc-if value="{{hasSosEdit}}" hint-placeholder-val="{{ false }}">
+<div class="ordered"><sc-for list="{{sosOrdered}}" as="k" hint-placeholder-count="3"><div class="oitem"><span class="on">{{k.i}}</span><img src="{{k.img}}" alt=""><span class="t">{{k.n}}</span><button aria-label="{{k.rmLabel}}" onClick="{{k.remove}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></sc-for></div>
+</sc-if>
+<sc-if value="{{noSosEdit}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing yet. Tick up to 5 below. The best ones for this state come first, and you can open any card to see how and why it works.</span></sc-if>
+<span class="fq" style="font-weight: 400; color: #463A38">{{sosPickLabel}}</span>
+<div class="sos-car" role="list" aria-label="{{sosPickLabel}}"><sc-for list="{{sosChips}}" as="o" hint-placeholder-count="6"><div class="{{o.ccls}}" role="listitem">
+<button class="sc-pic" onClick="{{o.open}}" aria-label="{{o.openL}}"><img src="{{o.img}}" alt=""><sc-if value="{{o.rec}}" hint-placeholder-val="{{ true }}"><span class="sc-best">{{o.best}}</span></sc-if></button>
+<span class="sc-n">{{o.l}}</span>
+<p>{{o.h}}</p>
+<div class="sc-act"><button class="{{o.tcls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.tl}}</button><button class="sc-more" onClick="{{o.open}}">Open →</button></div>
+</div></sc-for></div>
+<span class="sc-hint">Swipe or scroll sideways for more. Tap a card to open it full size.</span>
+<div class="senses">
+<div class="sense"><label for="sos-person">My person I can text</label><input id="sos-person" class="input" type="text" value="{{sosPerson}}" onChange="{{onSosPerson}}" placeholder="e.g. my sister, Jess"></div>
+<div class="sense"><label for="sos-place">My safe place to go</label><input id="sos-place" class="input" type="text" value="{{sosPlace}}" onChange="{{onSosPlace}}" placeholder="e.g. the car, my bedroom floor"></div>
+</div>
+<div class="callout cream"><span>Pack a little SOS kit for your bag or car: sour lollies, a cold pack or water bottle, a strong-scented roller, earplugs or headphones, a fidget.</span></div>
+</div>
+</section>
+<section class="sec" id="ch-week">
 <p class="big">My week of coming home.</p>
+<div class="homecal"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="7" width="32" height="29" rx="6" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.4"></rect><path d="M4 15h32M12 4v6M28 4v6" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round"></path><path d="M13 25l4 4 9-9" fill="none" stroke="#3DAA4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><span><strong>This week is on your Home calendar too, next to your DOSE.</strong> Tick things off there or here, whichever is easier. Every tick counts in Today’s reps: breathing ones as breathwork, moving ones as moving your body, everything else as taking a pause.</span><a class="ghost solid" href="/#Dashboard">Open my Home calendar</a></div>
 <p class="lead">Your routine, laid out day by day. Tap things off as you do them. No streaks to break, no guilt. Every tick is a brick. It starts fresh every Monday.</p>
 <sc-if value="{{routineEmpty}}" hint-placeholder-val="{{ false }}">
 <div class="callout lime"><span>Your week is empty. Add a few things to your routine below, or tap <strong>Add to my plan</strong> on the cards in 55 ways. A few is plenty.</span></div>
 </sc-if>
 <sc-if value="{{routineHas}}" hint-placeholder-val="{{ true }}">
-<div class="week">
-<sc-for list="{{weekDays}}" as="d" hint-placeholder-count="7">
-<div class="{{d.cls}}">
-<div class="dhd"><span class="dname">{{d.n}}</span><sc-if value="{{d.isToday}}" hint-placeholder-val="{{ false }}"><span class="today-tag">Today</span></sc-if><span class="dcount">{{d.count}}</span></div>
-<sc-for list="{{d.items}}" as="it" hint-placeholder-count="3">
+<div class="wk-cal">
+<div class="wk-days" role="tablist" aria-label="Days this week"><sc-for list="{{weekDays}}" as="d" hint-placeholder-count="7"><button class="{{d.tcls}}" role="tab" aria-selected="{{d.sel}}" onClick="{{d.pick}}"><span class="wk-dn">{{d.short}}</span><b>{{d.num}}</b><span class="wk-dots"><sc-for list="{{d.dots}}" as="dt2" hint-placeholder-count="3"><i class="{{dt2.cls}}"></i></sc-for></span></button></sc-for></div>
+<div class="wk-day">
+<div class="dhd"><span class="dname">{{selDayName}}</span><span class="dcount">{{selDayCount}}</span></div>
+<sc-for list="{{selItems}}" as="it" hint-placeholder-count="3">
 <button class="{{it.cls}}" aria-pressed="{{it.pressed}}" aria-label="{{it.label}}" onClick="{{it.toggle}}"><img src="{{it.img}}" alt=""><span class="dt"><span class="dk">{{it.k}}</span>{{it.n}}</span><span class="tk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></button>
 </sc-for>
-<sc-if value="{{d.none}}" hint-placeholder-val="{{ false }}"><span class="empty">A rest day. Still counts.</span></sc-if>
+<sc-if value="{{selNone}}" hint-placeholder-val="{{ false }}"><span class="empty">A rest day. Still counts.</span></sc-if>
 </div>
-</sc-for>
 </div>
 <sc-if value="{{hasMonthly}}" hint-placeholder-val="{{ false }}">
 <div class="day" style="max-width: 560px">
@@ -912,14 +1143,24 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 <p class="lead">Daily routine shows up every day. Pick which days for your few-times-a-week ones. Few-times-a-month ones get their own little tracker.</p>
 <div class="plangrid">
 <sc-for list="{{routineSlots}}" as="sl" hint-placeholder-count="3">
-<div class="slot">
+<div class="slot" id="{{sl.slotId}}">
 <div class="sh2"><img src="{{sl.img}}" alt=""><div style="display: flex; flex-direction: column; gap: 2px"><span class="sn">{{sl.n}}</span><p class="sh">{{sl.h}}</p></div></div>
 <sc-if value="{{sl.isEmpty}}" hint-placeholder-val="{{ true }}"><span class="empty">Nothing here yet.</span></sc-if>
 <div class="mine"><sc-for list="{{sl.items}}" as="it" hint-placeholder-count="2"><div class="mi"><div class="mr"><span>{{it.n}}</span><button aria-label="{{it.rmLabel}}" onClick="{{it.remove}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div><sc-if value="{{it.hasDays}}" hint-placeholder-val="{{ false }}"><div class="daypick" role="group" aria-label="{{it.dayLabel}}"><sc-for list="{{it.days}}" as="dd" hint-placeholder-count="7"><button class="{{dd.cls}}" aria-pressed="{{dd.pressed}}" aria-label="{{dd.full}}" onClick="{{dd.pick}}">{{dd.l}}</button></sc-for></div></sc-if></div></sc-for></div>
-<sc-if value="{{sl.hasIdeas}}" hint-placeholder-val="{{ true }}">
-<div class="ideas"><span class="hand">Ideas</span><div class="chips"><sc-for list="{{sl.ideas}}" as="idea" hint-placeholder-count="4"><button class="chip small" onClick="{{idea.add}}"><img src="{{idea.img}}" alt="">{{idea.n}}</button></sc-for></div></div>
+<sc-if value="{{sl.galOpen}}" hint-placeholder-val="{{ true }}">
+<span class="hand">{{sl.galHint}}</span>
+<div class="sos-car" role="list" aria-label="{{sl.galLabel}}"><sc-for list="{{sl.gallery}}" as="o" hint-placeholder-count="6"><div class="{{o.ccls}}" role="listitem">
+<button class="sc-pic" onClick="{{o.open}}" aria-label="{{o.openL}}"><img src="{{o.img}}" alt=""><sc-if value="{{o.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="sc-best">{{o.badge}}</span></sc-if></button>
+<span class="sc-n">{{o.n}}</span>
+<span class="sc-dur">{{o.dur}}</span>
+<p>{{o.h}}</p>
+<div class="sc-act"><button class="{{o.tcls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.tl}}</button><button class="sc-more" onClick="{{o.open}}">Open →</button></div>
+</div></sc-for></div>
+<span class="sc-hint">Swipe or scroll sideways for more. Tap a card to see how and why it works.</span>
+<div class="addrow"><input class="input" type="text" aria-label="{{sl.ownLabel}}" value="{{sl.draft}}" onChange="{{sl.onDraft}}" placeholder="Or add my own…"><button class="ghost" onClick="{{sl.addOwn}}">Add</button></div>
+<sc-if value="{{sl.canClose}}" hint-placeholder-val="{{ false }}"><button class="primary maroon" style="align-self: flex-start" onClick="{{sl.closeGal}}">Done, that’s my selection</button></sc-if>
 </sc-if>
-<div class="addrow"><input class="input" type="text" aria-label="{{sl.ownLabel}}" value="{{sl.draft}}" onChange="{{sl.onDraft}}" placeholder="Add my own…"><button class="ghost" onClick="{{sl.addOwn}}">Add</button></div>
+<sc-if value="{{sl.galShut}}" hint-placeholder-val="{{ false }}"><button class="ghost solid" style="align-self: flex-start" onClick="{{sl.openGal}}">{{sl.editLabel}}</button></sc-if>
 </div>
 </sc-for>
 </div>
@@ -942,7 +1183,6 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </div>
 </sc-for>
 </div>
-<div class="banner" style="background: #FBE6FC"><img src="/tools/assets/965835d597d63dbfb533bd132c48b010.svg" alt=""><span class="bt"><strong>My SOS plans:</strong> {{sosSummary}}</span><button class="ghost solid" onClick="{{goSosPlan}}">Build them on Fight or flight</button></div>
 </section>
 </sc-if>
 
@@ -1006,6 +1246,84 @@ button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{
 </footer>
 
 </div>
+
+<sc-if value="{{dOpen}}" hint-placeholder-val="{{ false }}">
+<div class="dtp" role="dialog" aria-modal="true" aria-label="{{dName}}">
+<div class="dt-in">
+<div class="dt-top"><button class="ghost dt-back" onClick="{{dClose}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>{{dBackL}}</button><button class="dt-x" aria-label="Close" onClick="{{dClose}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<div class="dt-hero">
+<img src="{{dImg}}" alt="">
+<div class="dt-ht">
+<span class="hand" style="font-size: 16px; color: #A8231F">{{dTier}} · {{dDur}}</span>
+<h2 class="dt-h">{{dName}}</h2>
+<sc-if value="{{dHasAka}}" hint-placeholder-val="{{ false }}"><span class="aka">{{dAka}}</span></sc-if>
+<p class="dt-lead">{{dH}}</p>
+<div class="tags"><sc-for list="{{dTags}}" as="tg" hint-placeholder-count="4"><span class="tag">{{tg.l}}</span></sc-for></div>
+</div>
+</div>
+
+<sc-if value="{{dHasVideo}}" hint-placeholder-val="{{ false }}"><a class="vbtn" href="{{dVideo}}" target="_blank" rel="noopener"><span class="vd"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg></span>{{dVideoLabel}}</a></sc-if>
+
+<section class="dt-sec">
+<span class="eyebrow">Step by step</span>
+<h3 class="dt-h3">How to do it</h3>
+<ol class="dt-steps"><sc-for list="{{dSteps}}" as="st" hint-placeholder-count="4"><li><span class="dt-n">{{st.n}}</span><div><strong>{{st.t}}</strong><p>{{st.d}}</p></div></li></sc-for></ol>
+</section>
+
+<section class="dt-sec dt-body">
+<span class="eyebrow">What’s happening in your body</span>
+<h3 class="dt-h3">{{dBodyT}}</h3>
+<div class="dt-draw"><sc-if value="{{dBExhale}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Body drawing: a long breath out switches on the vagus nerve, which slows the heart" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="100" cy="50" r="26" fill="#FFF4EE"/><path d="M90 75v10M110 75v10"/><path d="M50 112q50-34 100 0l-6 118H56z" fill="#FFF4EE"/><ellipse cx="80" cy="140" rx="17" ry="30" fill="#FBE6FC"/><ellipse cx="120" cy="140" rx="17" ry="30" fill="#FBE6FC"/><path d="M100 66c-6 24 10 34 2 60s10 40 0 64-6 30 2 38" stroke="#A8231F" stroke-width="3.4"/><path transform="translate(104 150) scale(1)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#A8231F" stroke="#4E0C08" stroke-width="1.6"/><circle cx="100" cy="66" r="5" fill="#A8231F" stroke="none"/><path d="M128 54q38-10 66 4M128 62q42 4 62 22" stroke-dasharray="6 6"/><path d="M186 50l9 8-12 3M182 78l9 7-12 2"/><text x="200" y="50" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">long breath out</text><text x="200" y="70" text-anchor="start" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">= the brake</text><path d="M108 112 L196 118" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="123" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">vagus nerve</text><path d="M122 158 L196 160" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="165" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">heart slows</text><path d="M110 212 L196 208" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="213" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">rest + digest</text></svg></sc-if><sc-if value="{{dBVoice}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Body drawing: humming buzzes the voice box, right next to the vagus nerve" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="100" cy="50" r="26" fill="#FFF4EE"/><path d="M90 75v10M110 75v10"/><path d="M50 112q50-34 100 0l-6 118H56z" fill="#FFF4EE"/><path d="M100 66c-6 24 10 34 2 60s10 40 0 64-6 30 2 38" stroke="#A8231F" stroke-width="3.4"/><rect x="91" y="80" width="18" height="12" rx="5" fill="#F1F9A6"/><path d="M128 78q10 8 0 16M140 72q16 14 0 28M152 66q22 20 0 40" stroke="#A8231F"/><path d="M186 40v-20l14-4v20" /><circle cx="182" cy="40" r="5" fill="#4E0C08"/><circle cx="196" cy="36" r="5" fill="#4E0C08"/><path transform="translate(104 150) scale(1)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#A8231F" stroke="#4E0C08" stroke-width="1.6"/><text x="212" y="36" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">hmmmm…</text><path d="M112 86 L196 90" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="95" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">voice box + buzz</text><path d="M108 130 L196 136" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="141" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">vagus nerve</text><path d="M122 158 L196 170" stroke-dasharray="3 5" stroke-width="1.6"/><text x="200" y="175" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">heart slows</text><text x="200" y="205" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">long, slow exhale</text></svg></sc-if><sc-if value="{{dBTouch}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: slow stroking on skin sends a safe signal to the brain" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 170q100-26 210-8l0 40q-110-14-210 6z" fill="#FFF4EE"/><circle cx="50" cy="178" r="3" fill="#A8231F" stroke="none"/><circle cx="80" cy="174" r="3" fill="#A8231F" stroke="none"/><circle cx="110" cy="172" r="3" fill="#A8231F" stroke="none"/><circle cx="140" cy="171" r="3" fill="#A8231F" stroke="none"/><circle cx="170" cy="172" r="3" fill="#A8231F" stroke="none"/><circle cx="200" cy="174" r="3" fill="#A8231F" stroke="none"/><path d="M90 140q0-22 22-24l44-2q14 0 14 10t-14 10h-10q10 6 6 14-4 8-16 8l-34 0q-12 0-12-16z" fill="#FFE3D3"/><path d="M70 120h70M130 112l10 8-10 8" stroke-dasharray="6 6"/><text x="60" y="110" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">slow, gentle stroke</text><path d="M200 168q30-60 60-90" stroke="#A8231F" stroke-dasharray="2 7" stroke-width="3"/><path d="M250 30q40-14 60 14 18 30-10 48-30 14-56-4-24-30 6-58z" fill="#FBE6FC"/><path transform="translate(278 52) scale(0.9)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#A8231F" stroke="#4E0C08" stroke-width="1.6"/><text x="282" y="118" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">brain: “safe”</text><text x="40" y="232" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="14">skin nerves (C-tactile) love slow touch</text></svg></sc-if><sc-if value="{{dBPressure}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: a weighted blanket presses evenly, telling the body it is held" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="150" width="270" height="20" rx="8" fill="#FFF4EE"/><circle cx="70" cy="128" r="20" fill="#FFF4EE"/><path d="M90 140q20-30 210-12v26H92z" fill="#F1F9A6"/><path d="M140 60v32M132 84l8 10 8-10" stroke="#A8231F"/><path d="M190 60v32M182 84l8 10 8-10" stroke="#A8231F"/><path d="M240 60v32M232 84l8 10 8-10" stroke="#A8231F"/><text x="190" y="50" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">even, steady pressure</text><text x="190" y="196" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">heart slows · body feels held</text><text x="190" y="220" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">like a big, calm hug</text></svg></sc-if><sc-if value="{{dBSenses}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: sight, sound, smell, taste and touch all pull attention into the present" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="170" cy="120" r="56" fill="#FFF4EE"/><path d="M150 108q8-8 16 0q-8 8-16 0z" fill="#4E0C08"/><path d="M180 108q8-8 16 0q-8 8-16 0z" fill="#4E0C08"/><path d="M172 116l-5 16h8"/><path d="M158 144q14 10 28 0"/><path d="M226 112q8 8 0 18"/><path d="M70 50l50 40M270 50l-50 40M60 200l58-40M280 200l-56-40M170 20v36" stroke="#A8231F" stroke-dasharray="6 6"/><text x="60" y="42" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">see</text><text x="282" y="42" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">hear</text><text x="50" y="220" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">smell</text><text x="290" y="220" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">touch</text><text x="170" y="14" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">taste</text><text x="170" y="200" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="17">here + now</text></svg></sc-if><sc-if value="{{dBMove}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: moving burns off adrenaline and cortisol and completes the stress cycle" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="110" cy="60" r="18" fill="#FFF4EE"/><path d="M110 78v60M110 96l-34-22M110 96l40-10M110 138l-26 52M110 138l30 44"/><path d="M150 70l10-8 8 8 10-8 8 8" stroke="#A8231F"/><path d="M164 100l10-8 8 8 10-8 8 8" stroke="#A8231F"/><path d="M150 130l10-8 8 8 10-8 8 8" stroke="#A8231F"/><path d="M200 80q30-20 60-14M266 60l8 6-10 4" /><text x="196" y="48" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">stress chemicals out</text><path transform="translate(70 170) scale(0.8)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><path transform="translate(40 140) scale(0.7)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="26" y="226" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">endorphins in</text><text x="210" y="150" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="16">stress cycle: done</text></svg></sc-if><sc-if value="{{dBNature}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: clouds and trees hold attention gently so the thinking brain can rest" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M60 150q-30-10-16-40 4-30 34-28 20-30 48-6 30 6 20 40 10 30-24 34z" fill="#DDEFB0"/><path d="M84 150v70M84 186l-14-14M84 176l16-14"/><path d="M190 60q0-20 22-18 8-16 26-8 22-4 24 16 16 6 6 20h-70q-14-2-8-10z" fill="#FFFFFF"/><circle cx="300" cy="40" r="16" fill="#F1F9A6"/><circle cx="250" cy="170" r="30" fill="#FFF4EE"/><path d="M238 166q5-4 10 0M256 166q5-4 10 0M242 182q10 6 18 0"/><path d="M248 138q-10-30-20-50" stroke="#A8231F" stroke-dasharray="4 6"/><text x="166" y="112" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">soft attention</text><text x="150" y="226" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">thinking brain gets a rest</text></svg></sc-if><sc-if value="{{dBHands}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: rhythmic hand work gives the brain a gentle job" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M40 190q10-40 50-40h30q10 0 10 10t-10 10H96" fill="#FFE3D3"/><path d="M300 190q-10-40-50-40h-30q-10 0-10 10t10 10h24" fill="#FFE3D3"/><circle cx="170" cy="170" r="26" fill="#FBE6FC"/><path d="M150 160q20 10 40 0M150 176q20 10 40 0M156 150q14 30 28 40"/><path d="M40 110q20-20 40 0t40 0 40 0 40 0 40 0 40 0" stroke="#A8231F"/><text x="170" y="90" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">steady rhythm</text><circle cx="170" cy="40" r="24" fill="#FFF4EE"/><path d="M160 38q4-4 8 0M172 38q4-4 8 0M162 48q8 6 16 0"/><text x="206" y="46" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">quiet mind</text><text x="170" y="232" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">busy hands</text></svg></sc-if><sc-if value="{{dBMind}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: watching thoughts pass on a conveyor belt" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="80" y="170" width="240" height="16" rx="8" fill="#FFF4EE"/><circle cx="96" cy="196" r="9"/><circle cx="304" cy="196" r="9"/><circle cx="200" cy="196" r="9"/><path d="M110 160q-20 0-20-18t20-18h30q20 0 20 18t-20 18z" fill="#FBE6FC"/><path d="M190 160q-20 0-20-18t20-18h30q20 0 20 18t-20 18z" fill="#F1F9A6"/><path d="M270 160q-20 0-20-18t20-18h30q20 0 20 18t-20 18z" fill="#FBE6FC"/><text x="125" y="147" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">what if…</text><text x="205" y="147" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">I should…</text><text x="285" y="147" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">ugh</text><path d="M250 100l40 0M282 92l8 8-8 8" stroke="#A8231F"/><text x="266" y="88" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">let it go</text><circle cx="40" cy="120" r="20" fill="#FFF4EE"/><path d="M48 116h4"/><path d="M40 140v50M40 160l-16 20M40 160l16 20"/><path d="M62 116q30-8 50 10" stroke-dasharray="4 6"/><text x="20" y="80" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">you, watching</text><text x="200" y="232" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">thoughts come and go</text></svg></sc-if><sc-if value="{{dBWarm}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: warmth softens muscles and feels like safety" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M120 100h100v80q0 30-30 30h-40q-30 0-30-30z" fill="#FBE6FC"/><path d="M220 120q30 0 30 24t-30 24"/><path d="M90 160q20-10 34-2M250 160q-10-6-26-2" stroke-width="6" stroke="#FFE3D3"/><path d="M148 86q-10-14 0-26t0-26" stroke="#A8231F"/><path d="M170 86q-10-14 0-26t0-26" stroke="#A8231F"/><path d="M192 86q-10-14 0-26t0-26" stroke="#A8231F"/><path d="M60 120q-16 10 0 20t0 20M290 100q16 10 0 20t0 20" stroke="#A8231F"/><text x="170" y="24" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">warmth</text><text x="40" y="226" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">muscles soften</text><text x="300" y="226" text-anchor="end" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">safe + cosy</text></svg></sc-if><sc-if value="{{dBCold}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: cold water on the face triggers the dive reflex and slows the heart" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="110" cy="80" r="40" fill="#FFF4EE"/><path d="M92 74q6-5 12 0M118 74q6-5 12 0M104 98q8 4 14 0"/><path d="M50 150q60 30 120 0v20q-60 30-120 0z" fill="#BFE3F2"/><path d="M80 128 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M132 122 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M150 140 q4 -10 8 0 q-4 6 -8 0z" fill="#5BA8C8" stroke="none"/><path d="M110 120v14" stroke="#A8231F" stroke-width="3.4"/><path transform="translate(214 92) scale(1.3)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#A8231F" stroke="#4E0C08" stroke-width="1.6"/><path d="M240 140v30M232 162l8 10 8-10" stroke="#A8231F"/><text x="30" y="30" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">cold on your face</text><text x="196" y="70" text-anchor="#A8231F" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">dive reflex</text><text x="196" y="200" text-anchor="start" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">heart slows</text><text x="110" y="222" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">like a seal diving</text></svg></sc-if><sc-if value="{{dBJolt}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: a big sensation breaks the panic loop" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="120" cy="120" r="62" fill="#FFF4EE"/><path d="M90 120a30 30 0 1 1 30 30" stroke="#A8231F"/><path d="M114 144l8 6-6 8" stroke="#A8231F"/><text x="120" y="108" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">what if…</text><path d="M250 40l-26 50h22l-20 50" stroke="#E9A21D" stroke-width="4"/><ellipse cx="262" cy="190" rx="34" ry="24" fill="#F1F9A6"/><path d="M240 190h44M262 168v44" stroke-width="1.6"/><text x="120" y="40" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">the loop</text><text x="262" y="30" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">big sensation</text><text x="262" y="232" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="13">sour · ice · peppermint</text><text x="120" y="212" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">loop broken</text></svg></sc-if><sc-if value="{{dBRhythm}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: a steady rhythm of rocking or tapping calms the nervous system" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="120" cy="70" r="20" fill="#FFF4EE"/><path d="M120 90v60M120 110l-26 16M120 110l26 16M120 150l-20 50M120 150l20 50"/><path d="M70 60q-20 30 0 60M170 60q20 30 0 60" stroke="#A8231F"/><path d="M64 112l6 10 8-6M176 112l-6 10-8-6" stroke="#A8231F"/><path d="M210 120q15-30 30 0t30 0 30 0" stroke="#A8231F"/><circle cx="210" cy="120" r="4" fill="#4E0C08" stroke="none"/><circle cx="240" cy="120" r="4" fill="#4E0C08" stroke="none"/><circle cx="270" cy="120" r="4" fill="#4E0C08" stroke="none"/><circle cx="300" cy="120" r="4" fill="#4E0C08" stroke="none"/><text x="255" y="90" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">steady beat</text><text x="255" y="160" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">predictable = safe</text><text x="120" y="228" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">rock · sway · tap · stim</text></svg></sc-if><sc-if value="{{dBQuiet}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: turning down light and noise stops the bucket filling" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="120" width="16" height="30" rx="4" fill="#F1F9A6"/><rect x="64" y="100" width="16" height="50" rx="4" fill="#F1F9A6"/><rect x="88" y="80" width="16" height="70" rx="4" fill="#FFF4EE"/><rect x="112" y="60" width="16" height="90" rx="4" fill="#FFF4EE"/><path d="M30 60l140 100" stroke="#A8231F" stroke-width="3"/><circle cx="250" cy="70" r="26" fill="#FFF4EE"/><path d="M240 96h20v12h-20z"/><path d="M230 44l-8-8M270 44l8-8M250 36v-10" stroke-dasharray="3 5"/><path d="M200 150h100l-10 70h-80z" fill="#FFF4EE"/><path d="M206 186h88l-5 32h-78z" fill="#BFE3F2" stroke="none"/><text x="100" y="40" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">less noise</text><text x="250" y="20" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">lights down</text><text x="250" y="140" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">nothing new in</text><text x="100" y="190" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">space to catch up</text></svg></sc-if><sc-if value="{{dBConnect}}" hint-placeholder-val="{{ false }}"><svg class="dt-svg" viewBox="0 0 340 240" role="img" aria-label="Drawing: a safe person’s calm voice helps your nervous system settle" fill="none" stroke="#4E0C08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="100" r="32" fill="#FFF4EE"/><path d="M70 96q4-4 8 0M88 96q4-4 8 0M74 112q8 6 16 0"/><circle cx="260" cy="100" r="32" fill="#FBE6FC"/><path d="M250 98q4-4 8 0M266 98q4-4 8 0M252 112q8 6 16 0"/><path d="M126 90q14 10 0 20M140 82q22 18 0 36M154 74q30 26 0 52" stroke="#A8231F"/><path transform="translate(170 150) scale(1)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#A8231F" stroke="#4E0C08" stroke-width="1.6"/><path transform="translate(196 160) scale(0.8)" d="M0 6c-4-6-14-4-12 4 2 6 12 12 12 12s10-6 12-12c2-8-8-10-12-4z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6"/><text x="80" y="170" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">you</text><text x="260" y="170" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">your safe person</text><text x="170" y="40" text-anchor="middle" fill="#A8231F" stroke="none" class="dt-lbl" font-size="15">calm voice</text><text x="170" y="222" text-anchor="middle" fill="#4E0C08" stroke="none" class="dt-lbl" font-size="15">co-regulation: borrow their calm</text></svg></sc-if></div>
+<p class="dt-p">{{dBodyD}}</p>
+</section>
+
+<section class="dt-sec">
+<span class="eyebrow">The process</span>
+<h3 class="dt-h3">Your nervous system, before, during and after</h3>
+<div class="dt-proc"><sc-for list="{{dProc}}" as="pr" hint-placeholder-count="3"><div class="{{pr.cls}}"><span class="dt-dot"></span><span class="hand">{{pr.l}}</span><p>{{pr.d}}</p></div></sc-for></div>
+</section>
+
+<section class="dt-sec">
+<span class="eyebrow">Why this one works</span>
+<h3 class="dt-h3">The science, in plain words</h3>
+<ul class="dt-why"><sc-for list="{{dWhy}}" as="w" hint-placeholder-count="3"><li><strong>{{w.t}}</strong> {{w.d}}</li></sc-for></ul>
+<sc-if value="{{dHasSci}}" hint-placeholder-val="{{ false }}"><p class="dt-p">{{dSci}}</p></sc-if>
+</section>
+
+<div class="dt-two">
+<section class="dt-sec dt-ben">
+<span class="eyebrow">The benefits</span>
+<ul><sc-for list="{{dBen}}" as="b" hint-placeholder-count="3"><li><svg width="18" height="18" viewBox="0 0 24 24" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.6" aria-hidden="true"><path d="M12 1C12.7 7.3 16.7 11.3 23 12C16.7 12.7 12.7 16.7 12 23C11.3 16.7 7.3 12.7 1 12C7.3 11.3 11.3 7.3 12 1Z"></path></svg>{{b.l}}</li></sc-for></ul>
+</section>
+<section class="dt-sec dt-when">
+<span class="eyebrow">Try it when</span>
+<ul><sc-for list="{{dWhen}}" as="w" hint-placeholder-count="3"><li>{{w.l}}</li></sc-for></ul>
+</section>
+</div>
+
+<sc-if value="{{dHasRem}}" hint-placeholder-val="{{ false }}"><div class="rem dt-rem">{{dRem}}</div></sc-if>
+
+<sc-if value="{{dIs55}}" hint-placeholder-val="{{ true }}">
+<section class="dt-sec dt-add">
+<span class="eyebrow">Make it yours</span>
+<h3 class="dt-h3">{{dAddT}}</h3>
+<span class="hand">My routine</span>
+<div class="slots"><sc-for list="{{dRSlots}}" as="sl" hint-placeholder-count="3"><button class="{{sl.cls}}" aria-pressed="{{sl.pressed}}" onClick="{{sl.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{sl.l}}</button></sc-for></div>
+<span class="hand">For specific moments</span>
+<div class="slots"><sc-for list="{{dMSlots}}" as="sl" hint-placeholder-count="4"><button class="{{sl.cls}}" aria-pressed="{{sl.pressed}}" onClick="{{sl.toggle}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{sl.l}}</button></sc-for></div>
+<div class="rate" role="group" aria-label="How was it?"><sc-for list="{{dRates}}" as="r" hint-placeholder-count="3"><button class="{{r.cls}}" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}">{{r.l}}</button></sc-for></div>
+</section>
+
+<div class="dt-nav">
+<button class="ghost" onClick="{{dPrev}}">← {{dPrevN}}</button>
+<button class="ghost" onClick="{{dNext}}">{{dNextN}} →</button>
+</div>
+</sc-if>
+<sc-if value="{{dIsSos}}" hint-placeholder-val="{{ false }}"><div class="dt-sticky"><button class="{{dSosAddCls}}" onClick="{{dSosAdd}}">{{dSosAddL}}</button><span>{{dSosNote}}</span></div></sc-if>
+<button class="primary maroon" style="align-self: flex-start" onClick="{{dClose}}">{{dBackL}}</button>
+</div>
+</div>
+</sc-if>
 </div>
 </template>
 <script>
@@ -1196,6 +1514,11 @@ var CH_SIGH_MORE = {
   rem: 'If you forget everything else: double inhale through the nose, long slow exhale through the mouth, repeat 1 to 3 times. Your body already does this on its own. You’re just pressing the built-in reset button on purpose.'
 };
 
+// CH_MORE start (made by tools/build_cominghome_more.py from src/cominghome-more.py, do not edit here)
+var CH_MORE = {"sigh":{"b":"exhale","steps":[{"t":"First inhale.","d":"A slow, deep breath in through your nose, filling your lungs as much as is comfortable."},{"t":"Second inhale.","d":"At the very top, take a second short, sharp sniff in through your nose to fully expand your lungs."},{"t":"Long exhale.","d":"Slowly and completely breathe out through your mouth, like you’re fogging up a mirror. Make it longer than the inhale."},{"t":"Repeat 1 to 3 times.","d":"Then breathe normally and notice the difference."}],"why":[{"t":"Reinflates the air sacs in your lungs.","d":"When you’re stressed, some of the tiny air sacs (alveoli) can partly collapse. The second inhale pops them back open."},{"t":"Offloads carbon dioxide.","d":"The long exhale clears out extra carbon dioxide, which is part of what makes you feel panicky."},{"t":"Proven to work fast.","d":"A Stanford study found five minutes a day of cyclic sighing improved mood and lowered breathing rate, more than mindfulness meditation did."}],"ben":["Fast reset in under a minute","Slows your heart rate","Nobody can tell you’re doing it"],"when":["During anxiety or panic","After being startled","Before a hard conversation","Before bed"]},"ribs":{"b":"exhale","steps":[{"t":"Get comfortable.","d":"Sitting or lying down. Put your hands on the sides of your ribs if you like."},{"t":"Breathe into your sides and back.","d":"A little deeper than usual. Feel your ribs widen out under your hands, like an umbrella opening."},{"t":"Let it go slowly.","d":"Breathe out gently and feel your ribs close back in."},{"t":"Keep going for a minute.","d":"Five or six slow breaths is plenty."}],"why":[{"t":"Uses your diaphragm properly.","d":"Stressed breathing lives up in your chest and shoulders. Rib breathing brings your diaphragm back into the job, which is how your body breathes when it feels safe."},{"t":"Slower breathing, calmer heart.","d":"Deeper breaths mean fewer breaths per minute, which shifts you towards rest and digest."}],"ben":["Loosens a tight chest","Helps you fall asleep","Builds a calmer breathing habit"],"when":["Lying in bed at night","When your chest feels tight","Waiting rooms and queues"]},"box":{"b":"exhale","steps":[{"t":"Breathe in for 4.","d":"Through your nose, counting slowly."},{"t":"Hold for 4.","d":"Gently, no straining."},{"t":"Breathe out for 4.","d":"Slow and steady."},{"t":"Hold for 4, then repeat.","d":"Trace a square on your leg with your finger, one side per step. Do 4 to 6 rounds."}],"why":[{"t":"Gives your brain a job.","d":"Counting and tracing keeps your attention busy, so it’s harder for anxious thoughts to take over."},{"t":"Steadies your breathing rhythm.","d":"An even, slow rhythm brings your breathing and heart rate back into a calmer pattern."}],"ben":["Steady and predictable","Great when your mind is racing","Used by first responders under pressure"],"when":["Before a meeting or exam","When your thoughts are racing","When you need to focus"]},"legs":{"b":"touch","steps":[{"t":"Hands on your thighs.","d":"Palms flat, wherever you are sitting."},{"t":"Stroke slowly down to your knees.","d":"Notice the fabric, the warmth and the pressure under your palms."},{"t":"Back up again.","d":"Slowly. Slow is the magic part."},{"t":"Repeat for 30 seconds.","d":"Breathe out a little longer while you do it."}],"why":[{"t":"Slow stroking speaks the language of safety.","d":"The nerve fibres that signal comfort respond best to slow, gentle strokes like this one."},{"t":"Brings you back into your body.","d":"Your attention moves from your head to the feeling in your hands and legs."}],"ben":["Invisible under a desk","Calms you in seconds","Grounds you in meetings"],"when":["In meetings and appointments","When anxiety creeps in in public","Sitting in the car"]},"fingers":{"b":"touch","steps":[{"t":"Thumbs first.","d":"Press the tips of your thumbs together. Feel the pressure and the temperature."},{"t":"Move along each pair.","d":"Pointer fingers, middle fingers, ring fingers, little fingers."},{"t":"Notice the details.","d":"The little ridges of your fingerprints, which fingers feel warmer, the pulse in your fingertips."},{"t":"Go back the other way.","d":"Slowly, with a long breath out."}],"why":[{"t":"Your fingertips are packed with nerve endings.","d":"That gives your brain a lot of clear, present-moment information to focus on."},{"t":"A tiny focus task.","d":"Moving finger by finger is just enough of a job to interrupt a thought spiral."}],"ben":["Completely invisible","Quick focus reset","Works anywhere"],"when":["On public transport","When you start to drift off","Mid-conversation overwhelm"]},"energyreel":{"b":"move","steps":[{"t":"Stand up.","d":"Feet hip-width apart."},{"t":"Watch the reel and follow along.","d":"Do it with me, as big or small as you like."},{"t":"Notice your energy before and after.","d":"Rate it out of 10 at the start and the end."}],"why":[{"t":"Wakes up your body fast.","d":"Quick movement gets your blood pumping and sends more oxygen to your brain."},{"t":"Shifts you out of flat or freeze.","d":"Movement tells your nervous system it’s time to come back online."}],"ben":["More energy in two minutes","Clears brain fog","Fun, so you’ll actually do it"],"when":["Afternoon slump","Before you start a task","When you feel flat or foggy"]},"handrub":{"b":"touch","steps":[{"t":"Thumb into your palm.","d":"Make slow, firm circles in the centre of one palm with the other thumb."},{"t":"Squeeze each finger.","d":"From the base to the tip, one at a time."},{"t":"Swap hands.","d":"Give the other hand the same love."},{"t":"Add hand cream if you have it.","d":"The smell and the slip make it even better."}],"why":[{"t":"Hands are sensory hotspots.","d":"A large part of the touch area in your brain is dedicated to your hands, so this sends a lot of grounding signals."},{"t":"Releases built-up tension.","d":"We hold stress in our hands without noticing. Firm pressure helps the muscles let go."}],"ben":["Calming and self-soothing","Eases tense, achy hands","Feels like a mini treat"],"when":["After lots of typing","Watching TV at night","When you feel anxious"]},"feet":{"b":"senses","steps":[{"t":"Plant both feet.","d":"Flat on the floor, if you can."},{"t":"Press down.","d":"Push your feet into the ground and feel the floor push back."},{"t":"Notice the details.","d":"Your shoes, your socks, the weight of your body, the temperature."},{"t":"Wiggle your toes.","d":"Then take one slow breath."}],"why":[{"t":"Your feet are a long way from your head.","d":"Literally moving your attention down your body moves you out of your thoughts."},{"t":"Feeling held by the ground.","d":"Noticing that something solid is holding you up is a simple, powerful safety signal."}],"ben":["Instant grounding","Totally invisible","Works during panic"],"when":["Panic or anxiety","Hard conversations","Waiting for news"]},"five":{"b":"senses","steps":[{"t":"Hear.","d":"Name one thing you can hear, in detail."},{"t":"See.","d":"Name one thing you can see. Its colour, shape, how the light hits it."},{"t":"Smell.","d":"One thing you can smell, even if it’s faint."},{"t":"Taste and feel.","d":"One thing you can taste, and one thing you can feel on your skin."}],"why":[{"t":"All five senses only work in the present.","d":"So checking in with them drags your attention out of past and future worries and into right now."},{"t":"Detail matters.","d":"The more detail you notice, the more your brain has to process, and the less room is left for the spiral."}],"ben":["Out of your head fast","Anywhere, any time","Builds the habit of noticing"],"when":["Stuck in your head","Before switching tasks","Waking up anxious"]},"fivefour":{"b":"senses","steps":[{"t":"5 things you can see.","d":"Look around and name them."},{"t":"4 things you can feel.","d":"Your clothes, the chair, the air, your hair on your neck."},{"t":"3 things you can hear.","d":"Near and far."},{"t":"2 things you can smell, 1 you can taste.","d":"Then take a long breath out."}],"why":[{"t":"Counting down gives structure.","d":"When your brain is flooded, a simple countdown is easy to follow and gives you a clear task."},{"t":"Floods your brain with present-moment data.","d":"Fifteen real things around you are hard to argue with: you’re here, now, and safe."}],"ben":["Interrupts panic","Easy to remember","Used by therapists worldwide"],"when":["Panic or a flashback","Spiralling thoughts","Overwhelm in a busy place"]},"sip":{"b":"senses","steps":[{"t":"Lick your lips.","d":"Notice how they feel."},{"t":"Take a small sip.","d":"Hold it in your mouth for a moment."},{"t":"Really taste it.","d":"The temperature, the flavour, the texture."},{"t":"Swallow slowly.","d":"Feel it go all the way down."}],"why":[{"t":"Swallowing is a rest and digest action.","d":"Your vagus nerve is involved in swallowing, and your body only bothers with digesting when it feels safe."},{"t":"Taste is fully in the present.","d":"It gives your brain a strong, simple focus point."}],"ben":["Ten-second reset","Socially invisible","Calms your throat and gut"],"when":["In meetings","When your mouth goes dry with nerves","At your desk"]},"narrate":{"b":"senses","steps":[{"t":"Pick three things.","d":"Anything around you."},{"t":"Narrate like a nature documentary.","d":"“And here we see the green mug, slightly chipped, glowing in the afternoon light…”"},{"t":"Go into detail.","d":"Colour, shape, texture, size, sound."},{"t":"In your head is fine.","d":"Out loud if you want the giggle."}],"why":[{"t":"Describing beats ruminating.","d":"Putting real things into words uses the language part of your brain for the present instead of the worry."},{"t":"Humour helps.","d":"A silly voice in your head makes it hard to keep spiralling, and a laugh is a quick nervous system reset."}],"ben":["Breaks a thought loop","Makes you smile","Trains your noticing"],"when":["Spiralling thoughts","Boredom-anxiety","Waiting around"]},"mug":{"b":"warm","steps":[{"t":"Get something warm.","d":"A mug of something, or warm running water."},{"t":"Wrap both hands around it.","d":"Or let the warm water run over your hands and wrists."},{"t":"Feel all of it.","d":"The heat, the weight, the texture of the mug."},{"t":"Breathe in the steam.","d":"Slow breaths, longer out than in."}],"why":[{"t":"Warmth relaxes your blood vessels and muscles.","d":"Cold, tense hands are a sign of stress. Warming them sends the opposite message."},{"t":"A built-in comfort signal.","d":"Your brain links warmth on your hands with care and safety."}],"ben":["Cosy and comforting","Warms cold, stressed hands","Easy to make a ritual"],"when":["Cold mornings","After bad news","Evening wind-down"]},"shoulders":{"b":"move","steps":[{"t":"Roll back three times.","d":"Big, slow circles, lifting up towards your ears and down your back."},{"t":"Roll forward three times.","d":"Same again, the other way."},{"t":"Drop them.","d":"Let your shoulders fall as low as they’ll go."},{"t":"Unclench your jaw.","d":"Teeth apart, tongue resting on the bottom of your mouth."}],"why":[{"t":"Releases stress you’re holding.","d":"Shoulders creep up and jaws clench when you’re stressed. Moving them tells your body it can let go."},{"t":"Your body talks to your brain.","d":"Relaxed muscles send relaxed signals back up to your brain."}],"ben":["Eases neck and shoulder tension","Works at your desk","Thirty seconds"],"when":["Every hour at a desk","After a long drive","When you notice tension"]},"redlight":{"b":"senses","steps":[{"t":"Hands on the wheel.","d":"Feel the texture and the grip."},{"t":"Back against the seat.","d":"Let the seat take your weight."},{"t":"One deeper breath.","d":"Long and slow out."},{"t":"Notice one thing outside.","d":"A colour, a tree, the sky. Then drive on."}],"why":[{"t":"Turns dead time into a reset.","d":"Red lights happen anyway. Using them builds a calm habit into your day without extra time."},{"t":"Driving stress builds up.","d":"Small resets stop it stacking up into road rage or arriving frazzled."}],"ben":["Arrive calmer","No extra time needed","Builds a habit"],"when":["Every red light","Traffic jams","Before a stressful arrival"]},"pocket":{"b":"touch","steps":[{"t":"Choose your object.","d":"A smooth stone, a fidget, a scrap of soft fabric."},{"t":"Keep it on you.","d":"Pocket, bag, car."},{"t":"Rub it when you drift.","d":"Feel the texture with your thumb, slowly."},{"t":"Pair it with a breath.","d":"Rub and breathe out at the same time."}],"why":[{"t":"An anchor you can carry.","d":"Over time your brain links that texture with calm, so just touching it starts to settle you."},{"t":"Fidgeting is regulating.","d":"For neurodivergent brains, repetitive sensory input helps focus and calm. This is a fidget with a purpose."}],"ben":["Always with you","Discreet","Helps you focus"],"when":["Meetings and appointments","Social events","Travelling"]},"scent":{"b":"senses","steps":[{"t":"Pick a scent you love.","d":"A roller oil, hand cream or perfume. Something that means calm to you."},{"t":"Breathe it in slowly.","d":"A long, slow inhale through your nose."},{"t":"Hold the moment.","d":"Notice where you feel it and what it reminds you of."},{"t":"Long breath out.","d":"Repeat two or three times."}],"why":[{"t":"Smell is the fastest route to your feelings.","d":"Smell signals go straight to the emotion and memory centres of your brain, without the usual detour."},{"t":"Train a calm association.","d":"Use the same scent when you’re calm (like before bed) and it becomes a shortcut back to that feeling."}],"ben":["Works in seconds","Easy to carry","Builds a calm shortcut"],"when":["Anxious moments","Before sleep","Overwhelming places"]},"hum":{"b":"voice","steps":[{"t":"Breathe in through your nose.","d":"A comfortable, slow breath."},{"t":"Hum one low note.","d":"Lips together, “mmmmm”."},{"t":"Feel the buzz.","d":"In your chest, throat, lips and face. Low notes buzz more."},{"t":"Repeat for a minute.","d":"Make the hum as long as is comfortable."}],"why":[{"t":"Works the vagus nerve directly.","d":"Your vagus nerve runs through your throat, and humming gently stimulates it."},{"t":"Forces a long exhale.","d":"You can’t hum and breathe in, so every hum is a long breath out."}],"ben":["Calms you fast","Lifts your mood","Clears your sinuses"],"when":["In the car","In the shower","When your chest feels tight"]},"brush":{"b":"move","steps":[{"t":"Start brushing.","d":"Same as always."},{"t":"Sway side to side.","d":"Gently shift your weight from foot to foot."},{"t":"Focus on the brush.","d":"Feel it run over each tooth, one by one."},{"t":"Two minutes, done.","d":"Mindfulness without adding a single minute to your day."}],"why":[{"t":"Rhythmic swaying is soothing.","d":"Gentle side-to-side rocking is one of the oldest calming signals there is. It’s how we settle babies."},{"t":"Habit stacking.","d":"Pairing it with something you already do every day means you’ll actually do it."}],"ben":["Twice a day, built in","Calms your morning and night","No extra time"],"when":["Morning routine","Night routine","Any time you brush"]},"microdance":{"b":"move","steps":[{"t":"Food in the microwave.","d":"Hit start."},{"t":"Song on.","d":"Something that makes you want to move."},{"t":"Dance until it beeps.","d":"Any moves. The sillier the better."},{"t":"Notice how you feel.","d":"Lighter? Smiling? That’s the point."}],"why":[{"t":"Burns off stress chemicals.","d":"Even a short burst of movement helps your body clear adrenaline and cortisol."},{"t":"Music changes your state.","d":"Upbeat music and movement together boost feel-good chemicals like dopamine and endorphins."}],"ben":["Mood boost in two minutes","Fun","Turns waiting into a win"],"when":["Heating up lunch","Afternoon slump","After a tough call"]},"shake":{"b":"move","steps":[{"t":"Hands first.","d":"Shake them out like you’re flicking off water."},{"t":"Then arms and shoulders.","d":"Let them go floppy."},{"t":"Then legs.","d":"One at a time."},{"t":"Whole body.","d":"Like a dog after a bath, for 30 seconds."}],"why":[{"t":"Animals do this after a scare.","d":"Shaking is a natural way the body discharges fight-or-flight energy and comes back to calm."},{"t":"Completes the stress cycle.","d":"It gives the adrenaline somewhere to go instead of keeping it stuck in your body."}],"ben":["Releases stress fast","Great for freeze","Feels silly in a good way"],"when":["After a fright","Before a big moment","When you feel frozen"]},"stretch":{"b":"move","steps":[{"t":"Reach up high.","d":"Arms over your head, up on your toes if you like."},{"t":"Stretch everything.","d":"Fingers, back, sides, legs. Every bit of you."},{"t":"Let a yawn happen.","d":"If it comes, let it be big."},{"t":"Flop back down.","d":"And notice how your body feels."}],"why":[{"t":"Your body’s built-in reset.","d":"Stretching and yawning together (pandiculation) is something animals do to wake up their bodies and reset muscle tension."},{"t":"Yawns cool and refresh your brain.","d":"They’re also a sign your nervous system is shifting towards rest."}],"ben":["Wakes you up","Releases tension","Feels amazing"],"when":["After sitting too long","First thing in the morning","Between tasks"]},"heart":{"b":"touch","steps":[{"t":"One hand on your heart.","d":"Flat, gentle pressure."},{"t":"One hand on your belly.","d":"Just below your ribs."},{"t":"Feel the warmth.","d":"And the rise and fall of your breath under your hands."},{"t":"Stay for a minute.","d":"Say something kind to yourself if you can."}],"why":[{"t":"Self-touch lowers stress hormones.","d":"A study found people who did a hand-on-heart gesture had lower cortisol after a stressful task."},{"t":"It’s how you would comfort someone else.","d":"Doing it for yourself tells your nervous system you are cared for."}],"ben":["Deeply soothing","Builds self-compassion","Works anywhere private"],"when":["When you feel alone","After a hard moment","Before sleep"]},"conveyor":{"b":"mind","steps":[{"t":"Get comfortable and close your eyes.","d":"Picture a conveyor belt in front of you."},{"t":"Watch a thought arrive.","d":"Let it sit on the belt."},{"t":"Pick it up, look at it.","d":"“Hmm, interesting.” No judging, no solving."},{"t":"Put it down and watch it leave.","d":"Next thought. Keep going for 2 to 10 minutes."}],"why":[{"t":"You’re not your thoughts.","d":"Watching them come and go teaches your brain that thoughts are just passing events, not facts or orders."},{"t":"Rests your brain, not just your body.","d":"Scrolling rests your body but keeps your brain working. This gives your brain a proper break."}],"ben":["Quietens a busy head","Gets easier with practice","Proper brain rest"],"when":["Thoughts on loop","Before sleep","Midday break"]},"dump":{"b":"mind","steps":[{"t":"Grab paper or your notes app.","d":"Paper is best."},{"t":"Write every looping thought.","d":"Messy, unfiltered, no full sentences needed."},{"t":"Keep going until you’re empty.","d":"Usually around five minutes."},{"t":"Circle what matters.","d":"Come back to those later. The rest can go."}],"why":[{"t":"Frees up your working memory.","d":"Your brain holds looping thoughts so you don’t forget them. Writing them down tells it they’re safe to drop."},{"t":"Proven to calm worry.","d":"Research found writing down worries before an exam reduced anxiety and improved performance."}],"ben":["Clearer head","Better sleep","Turns worry into a list"],"when":["Before bed","Overwhelmed by the to-do list","Before a big task"]},"humbreak":{"b":"voice","steps":[{"t":"Head outside.","d":"A step, a balcony, a patch of grass."},{"t":"Put a song on.","d":"One you know well."},{"t":"Hum along.","d":"Feel the buzz in your chest and throat."},{"t":"Notice your senses.","d":"What can you hear, see, smell, taste and feel?"}],"why":[{"t":"Humming plus outside is a double reset.","d":"The hum works your vagus nerve while fresh air and light give your brain a break."},{"t":"Music shifts your state.","d":"A song you love changes your mood faster than willpower."}],"ben":["Mood lift","Proper brain break","Fresh air and light"],"when":["Between work tasks","Lunch break","When you feel stuck"]},"grass":{"b":"nature","steps":[{"t":"Shoes off.","d":"Grass, sand or dirt."},{"t":"Stand still first.","d":"Feel the temperature and the texture under your feet."},{"t":"Walk slowly.","d":"Notice every step."},{"t":"Stay five minutes.","d":"Breathe and look around."}],"why":[{"t":"Your feet are full of nerve endings.","d":"Natural textures give them rich, grounding sensory input you don’t get in shoes."},{"t":"Nature calms.","d":"Being outside, even briefly, is linked to lower stress and better mood."}],"ben":["Instantly grounding","Fresh air and light","Free"],"when":["Morning coffee break","After screen time","When you feel flat"]},"walk":{"b":"nature","steps":[{"t":"Leave the headphones.","d":"No podcast, no calls."},{"t":"Walk at an easy pace.","d":"No destination needed."},{"t":"Cycle through your senses.","d":"What can you hear? See? Smell? Feel?"},{"t":"Notice small things.","d":"A bird, a smell, the light on a fence."}],"why":[{"t":"Walking plus noticing is moving meditation.","d":"The rhythm of walking is calming, and noticing keeps you in the present."},{"t":"Left, right, left, right.","d":"The back-and-forth rhythm of walking is regulating for your nervous system."}],"ben":["Clears your head","Gentle movement","Better sleep"],"when":["Lunch break","After an argument","When ideas are stuck"]},"clouds":{"b":"nature","steps":[{"t":"Get comfy outside.","d":"Lie on the grass or sit with a view of the sky."},{"t":"Watch the sky move.","d":"Clouds, birds, leaves."},{"t":"Let your mind wander.","d":"Shapes in clouds are encouraged."},{"t":"Five to ten minutes.","d":"No screen."}],"why":[{"t":"Soft fascination.","d":"Moving clouds hold your attention gently, which lets the tired thinking part of your brain rest."},{"t":"Looking far away relaxes your eyes.","d":"Screens keep your eyes locked close. Gazing into the distance is relaxing for your eyes and body."}],"ben":["Real brain rest","Lowers stress","Free and simple"],"when":["Overstimulated","Midday slump","Weekend reset"]},"cuppa":{"b":"warm","steps":[{"t":"Phone away.","d":"In another room if you can."},{"t":"Make it slowly.","d":"Listen to the kettle, watch the steam, smell the tea or coffee."},{"t":"Hold it.","d":"Feel the warmth in your hands."},{"t":"First sip on purpose.","d":"Really taste it. Then keep noticing."}],"why":[{"t":"A ritual tells your body it’s break time.","d":"Doing the same steps the same way becomes a cue to switch into rest."},{"t":"Senses plus warmth.","d":"Smell, taste, heat and steam give your brain lots of calm, present things to focus on."}],"ben":["A built-in break","Cosy and calming","Easy daily habit"],"when":["Morning start","Afternoon break","After a hard conversation"]},"disco":{"b":"move","steps":[{"t":"Two or three songs.","d":"Ones that make you want to move."},{"t":"Full body.","d":"Arms, hips, head, everything."},{"t":"Terrible moves encouraged.","d":"Nobody is watching."},{"t":"Sing if you want.","d":"Double the benefits."}],"why":[{"t":"Completes the stress cycle.","d":"Ten minutes of moving gives stress chemicals somewhere to go."},{"t":"Joy is regulating.","d":"Laughing and dancing release endorphins and dopamine, your feel-good chemicals."}],"ben":["Big mood boost","More energy","Fun"],"when":["After work","While cooking","Bad day reset"]},"sing":{"b":"voice","steps":[{"t":"Pick your song.","d":"One you love and know the words to."},{"t":"Full volume.","d":"Car, shower, wherever no one minds."},{"t":"Feel the sound.","d":"In your chest, throat and face."},{"t":"Pitch-perfect not required.","d":"At all."}],"why":[{"t":"Singing works your vagus nerve.","d":"The long, controlled breaths and the vibration in your throat both switch on rest and digest."},{"t":"Mood booster.","d":"Singing releases endorphins and, in groups, oxytocin."}],"ben":["Lifts your mood","Deeper breathing","Feels free"],"when":["Driving","In the shower","Doing chores"]},"floorstretch":{"b":"move","steps":[{"t":"Get on the floor.","d":"A mat, a rug or the carpet."},{"t":"Stretch what feels tight.","d":"Hips, back, neck, hamstrings. No routine needed."},{"t":"Breathe into each stretch.","d":"Long exhales help your muscles let go."},{"t":"Ten minutes.","d":"Follow your body."}],"why":[{"t":"Slow stretching shifts you into rest.","d":"Gentle stretching with slow breathing is linked to more rest and digest activity."},{"t":"Listening to your body.","d":"Following what feels good builds your interoception: your sense of what is going on inside you."}],"ben":["Less tension and pain","Calmer evenings","Better sleep"],"when":["Evenings","After a long day sitting","Before bed"]},"lotion":{"b":"touch","steps":[{"t":"Pick a lotion or oil you love.","d":"Scent is a bonus."},{"t":"Start with your feet.","d":"Slow, firm strokes."},{"t":"Then hands and arms.","d":"Take your time."},{"t":"Notice every bit of skin.","d":"Warmth, texture, pressure."}],"why":[{"t":"Slow touch calms.","d":"Slow, gentle stroking activates the nerve fibres linked to comfort and safety."},{"t":"Care for your body, from your body.","d":"Treating your body kindly sends a strong message of safety."}],"ben":["Soothing and grounding","Soft skin","Lovely bedtime ritual"],"when":["After a shower","Before bed","When you feel disconnected"]},"pat":{"b":"touch","steps":[{"t":"Find a furry friend.","d":"Yours or anyone’s who says yes."},{"t":"Slow strokes.","d":"Feel the fur, the warmth, the heartbeat."},{"t":"Breathe with them.","d":"Match their slow, steady breathing."},{"t":"Stay five minutes.","d":"Or as long as they let you."}],"why":[{"t":"Patting animals releases oxytocin.","d":"Research shows it can lower cortisol and blood pressure, for you and them."},{"t":"Animals are naturally regulated.","d":"Being close to a calm animal helps your nervous system settle too (co-regulation)."}],"ben":["Instant comfort","Lowers stress","Feels like connection"],"when":["Lonely or low","After work","When people feel like too much"]},"weighted":{"b":"pressure","steps":[{"t":"Lie down.","d":"Bed or couch."},{"t":"Blanket on.","d":"Covering your body, not your face."},{"t":"Feel the pressure.","d":"Let your body sink and get heavy."},{"t":"Stay 10 to 15 minutes.","d":"Breathe slowly."}],"why":[{"t":"Deep pressure is regulating.","d":"Firm, even pressure is linked with lower arousal and a calmer heart rate."},{"t":"Feels like being held.","d":"Many neurodivergent people find it one of the fastest ways to settle."}],"ben":["Settles overstimulation","Helps sleep","Feels like a hug"],"when":["After a big day","Overstimulated","Trouble sleeping"]},"colouring":{"b":"hands","steps":[{"t":"Pencils and a page.","d":"A colouring book or a printout."},{"t":"Pick your colours.","d":"No rules."},{"t":"Notice the process.","d":"The colour going on, the sound of the pencil, the pressure in your hand."},{"t":"10 to 20 minutes.","d":"Stop whenever you like."}],"why":[{"t":"Gentle focus, quiet mind.","d":"Colouring is just absorbing enough to crowd out worry, without being hard."},{"t":"Studies show it lowers anxiety.","d":"Colouring complex patterns has been shown to reduce anxiety more than free drawing."}],"ben":["Calming","Screen-free","Satisfying"],"when":["Evenings","Waiting","Busy head"]},"doodle":{"b":"hands","steps":[{"t":"Any paper, any pen.","d":"Even the corner of your notes."},{"t":"Start with a shape.","d":"Lines, swirls, circles."},{"t":"Repeat and fill.","d":"Let patterns grow."},{"t":"Let your hand lead.","d":"No plan, no goal."}],"why":[{"t":"Repetition soothes.","d":"Repeating simple shapes is rhythmic and steadying."},{"t":"Doodling can help focus.","d":"Studies found people who doodled while listening remembered more."}],"ben":["Calms and focuses","Tiny time needed","Fun"],"when":["Phone calls","Meetings","Busy head"]},"clay":{"b":"hands","steps":[{"t":"Grab clay or playdough.","d":"Any kind."},{"t":"Squish and roll.","d":"Feel the texture and resistance."},{"t":"Pinch and shape.","d":"Make something or nothing."},{"t":"Ten minutes.","d":"Notice how your hands feel."}],"why":[{"t":"Sensory heaven.","d":"Squishing gives your hands rich, satisfying feedback, which is regulating for sensory-seeking brains."},{"t":"Pressure through your hands.","d":"Squeezing and pushing is a form of heavy work, which is calming."}],"ben":["Satisfying","Grounding","No skill needed"],"when":["Stressed","After screens","Needing to fidget"]},"yarn":{"b":"hands","steps":[{"t":"Pick your craft.","d":"Knitting, crochet or stitching."},{"t":"Find the rhythm.","d":"Stitch, stitch, stitch."},{"t":"Let your hands lead.","d":"Your mind can rest."},{"t":"15 minutes or more.","d":"It adds up to something."}],"why":[{"t":"Rhythm calms the nervous system.","d":"Repetitive, rhythmic movement is soothing and can bring on a meditative state."},{"t":"Surveys of knitters show big benefits.","d":"Most report feeling calmer and happier after knitting."}],"ben":["Meditative","Productive","Portable"],"when":["Evenings","Travel","Waiting rooms"]},"cook":{"b":"hands","steps":[{"t":"Pick something hands-on.","d":"Dough, chopping, rolling."},{"t":"Use all your senses.","d":"Smell, feel, listen, taste as you go."},{"t":"Go slow.","d":"Notice each step."},{"t":"Enjoy what you made.","d":"Bonus: you made food."}],"why":[{"t":"Senses fully on.","d":"Cooking gives you smells, textures, sounds and tastes all at once, which keeps you present."},{"t":"Kneading is heavy work.","d":"Pushing and stretching dough is great calming pressure through your hands."}],"ben":["Present and absorbed","Nourishing","Satisfying"],"when":["Weekends","After work","When you need to switch off"]},"garden":{"b":"nature","steps":[{"t":"Get your hands in the dirt.","d":"Pot a plant, pull weeds, water."},{"t":"Feel the soil.","d":"Texture, temperature, smell."},{"t":"Notice what’s alive.","d":"Bugs, birds, leaves, new growth."},{"t":"15 minutes or more.","d":"Take your time."}],"why":[{"t":"Nature plus hands.","d":"Gardening combines the calm of being outside with the grounding of working with your hands."},{"t":"Studies link it to lower cortisol.","d":"Gardening has been shown to reduce stress hormones and improve mood."}],"ben":["Calming","Outdoors","Satisfying progress"],"when":["Weekends","Morning or evening","Needing quiet time"]},"yoga":{"b":"move","steps":[{"t":"Pick a class.","d":"Studio, hall or online."},{"t":"Find a teacher you like.","d":"Gentle, yin and restorative all count."},{"t":"Follow your breath.","d":"Long exhales into each pose."},{"t":"Rest at the end.","d":"Don’t skip the lying-down bit."}],"why":[{"t":"Movement plus breath.","d":"Yoga links slow breathing with movement, which is linked to better vagal tone over time."},{"t":"Research shows it lowers anxiety.","d":"Regular yoga is linked with lower stress and better mood."}],"ben":["Calmer nervous system","Flexibility","Better sleep"],"when":["A few times a week","Stressful seasons","Weekends"]},"pilates":{"b":"move","steps":[{"t":"Pick a class.","d":"Studio, gym or online."},{"t":"Slow and controlled.","d":"Feel which muscle is doing what."},{"t":"Breathe with each move.","d":"Exhale on effort."},{"t":"Notice your body.","d":"Pilates is all body awareness."}],"why":[{"t":"Deep body awareness.","d":"Focusing on specific muscles builds your sense of your body, which is grounding."},{"t":"Breath control.","d":"Coordinated breathing keeps you calm while working hard."}],"ben":["Stronger core","Better posture","In-your-body focus"],"when":["A few times a week","Back pain","Needing structure"]},"workout":{"b":"move","steps":[{"t":"Pick something you like.","d":"Weights, a class, a run, a home video."},{"t":"Focus on how it feels.","d":"Not how it looks."},{"t":"Push a little.","d":"Enough to breathe harder."},{"t":"Cool down slowly.","d":"Long exhales at the end."}],"why":[{"t":"Completes the stress cycle.","d":"Exercise is one of the most effective ways to burn off stress hormones."},{"t":"Huge brain benefits.","d":"Exercise is linked to lower anxiety and depression and better focus, especially for ADHD."}],"ben":["Big stress release","Better mood and focus","Better sleep"],"when":["A few times a week","After a stressful day","Mornings"]},"danceclass":{"b":"move","steps":[{"t":"Pick a style.","d":"Pole, salsa, jazz, hip hop, adult ballet."},{"t":"Go for the giggles.","d":"Not perfection."},{"t":"Follow the music.","d":"Let your body lead."},{"t":"Notice how you feel after.","d":"Usually: amazing."}],"why":[{"t":"Movement plus music plus people.","d":"Dancing combines exercise, rhythm and social connection, all regulating."},{"t":"Learning steps fills your brain.","d":"There’s no room to worry when you’re remembering choreography."}],"ben":["Joy","Fitness","New friends"],"when":["Weekly","Need fun","Need connection"]},"swim":{"b":"nature","steps":[{"t":"Pool, ocean or creek.","d":"Wherever is safe for you."},{"t":"Feel the water.","d":"Temperature, weight, movement."},{"t":"Notice your breath.","d":"Swimming naturally slows and steadies it."},{"t":"Float for a bit.","d":"Let the water hold you."}],"why":[{"t":"Water calms.","d":"Cool water on your face triggers the dive reflex, which slows your heart rate."},{"t":"Rhythmic movement.","d":"Swimming strokes and breathing create a steady, calming rhythm."}],"ben":["Full body reset","Calming","Feels free"],"when":["Weekends","Hot days","Stressful weeks"]},"bushwalk":{"b":"nature","steps":[{"t":"Somewhere green.","d":"Trees, trails, parks."},{"t":"Headphones off.","d":"At least for part of it."},{"t":"Notice everything.","d":"Smells, sounds, colours, light."},{"t":"An hour or more.","d":"Take snacks."}],"why":[{"t":"Forest bathing.","d":"Studies on time in forests show lower cortisol, heart rate and blood pressure."},{"t":"Natural movement plus nature.","d":"A double dose of calm."}],"ben":["Deep reset","Better mood","Fitness"],"when":["Weekends","Feeling burnt out","Need perspective"]},"massage":{"b":"pressure","steps":[{"t":"Book it.","d":"Remedial, relaxation, whatever you like."},{"t":"Tell them what you like.","d":"Pressure, music, talking or not."},{"t":"Breathe and let go.","d":"Long exhales."},{"t":"Notice your body.","d":"Where it’s tight, where it softens."}],"why":[{"t":"Pressure and touch.","d":"Massage can lower cortisol and boost serotonin and dopamine."},{"t":"Hard to stay in your head.","d":"The sensations pull your focus into your body."}],"ben":["Deep relaxation","Less tension","Feels amazing"],"when":["Monthly","Stressful seasons","Sore muscles"]},"bodywork":{"b":"pressure","steps":[{"t":"Pick one to try.","d":"Reiki, acupuncture or acupressure."},{"t":"Find a practitioner you trust.","d":"Check reviews and qualifications."},{"t":"Notice your body during.","d":"Sensations, warmth, tingles."},{"t":"Rest after.","d":"Drink water, go slow."}],"why":[{"t":"Brings awareness to your body.","d":"Whatever the method, focused attention on your body is grounding."},{"t":"Deep rest.","d":"Lying still in a calm space gives your nervous system time to shift into rest."}],"ben":["Deep relaxation","Body awareness","Something new"],"when":["Monthly","When stuck","Trying new things"]},"bath":{"b":"warm","steps":[{"t":"Set the scene.","d":"Candles, music, no phone."},{"t":"Warm water.","d":"Comfortably warm, not scalding."},{"t":"Feel it.","d":"The water, the warmth, your body getting heavy."},{"t":"30 minutes.","d":"Take your time."}],"why":[{"t":"Warmth relaxes muscles.","d":"Warm water helps tight muscles let go."},{"t":"Helps sleep.","d":"Your body temperature drops after a bath, which helps signal sleep."}],"ben":["Deep relaxation","Better sleep","Self-care ritual"],"when":["Evenings","After a hard day","Weekends"]},"breathwork":{"b":"exhale","steps":[{"t":"Start with the breathing lesson.","d":"Learn the basics first."},{"t":"Find a guided session.","d":"Plenty are free online, or book a class."},{"t":"Lie down and follow along.","d":"Comfortable and warm."},{"t":"20 to 30 minutes.","d":"Rest quietly after."}],"why":[{"t":"Trains your nervous system.","d":"Regular slow breathing practice is linked to better vagal tone and calmer responses to stress."},{"t":"A deep reset.","d":"A longer session gives your body time to really shift into rest."}],"ben":["Deep calm","Builds resilience","Emotional release"],"when":["A few times a month","Stressful seasons","Weekends"]},"soundbath":{"b":"voice","steps":[{"t":"Find a session.","d":"Local, or recorded online."},{"t":"Lie down comfortably.","d":"Blanket, pillow, eyes closed."},{"t":"Let the sound wash over you.","d":"Feel the vibrations in your body."},{"t":"Rest afterwards.","d":"Go slow."}],"why":[{"t":"Vibration and sound calm.","d":"Low, steady sounds and vibrations are soothing to your nervous system."},{"t":"Deep rest.","d":"Lying still with nothing to do gives your body permission to fully relax."}],"ben":["Deep relaxation","Better sleep","Feels magical"],"when":["Monthly","Burnt out","Weekends"]},"longmed":{"b":"mind","steps":[{"t":"Build up to it.","d":"Start with 2 minutes and grow."},{"t":"Conveyor belt style.","d":"Notice thoughts and let them pass."},{"t":"Same time each day.","d":"It becomes a habit."},{"t":"20 minutes.","d":"The best on your ladder."}],"why":[{"t":"Rewires your brain.","d":"Regular meditation strengthens the link between your calm, wise brain and your smoke alarm."},{"t":"Lower stress over time.","d":"Studies show regular meditation lowers anxiety and stress."}],"ben":["Calmer baseline","Better focus","More emotional control"],"when":["Daily","Mornings","Before bed"]},"creativeclass":{"b":"hands","steps":[{"t":"Pick something new.","d":"Pottery, painting, candles, flowers."},{"t":"Go with an open mind.","d":"Not to be good at it."},{"t":"Hands-on.","d":"Notice textures, colours, smells."},{"t":"A whole afternoon.","d":"Enjoy it."}],"why":[{"t":"Flow state.","d":"Absorbing creative work brings on flow, where worry fades and time disappears."},{"t":"Novelty plus hands.","d":"New skills plus sensory work give your brain a full break from the usual loops."}],"ben":["Joy","New skills","Deep switch-off"],"when":["Monthly","Weekends","Need inspiration"]},"cold":{"b":"cold","steps":[{"t":"Get cold water.","d":"Fill a sink or bowl with cold water, or grab a cold pack."},{"t":"Breathe in and hold.","d":"A normal breath in, then hold it."},{"t":"Face in for 15 to 30 seconds.","d":"Or splash your face, or press the cold pack over your eyes and cheeks."},{"t":"Come up slowly.","d":"Breathe out long and slow. Repeat once more if you need it."}],"why":[{"t":"Your dive reflex slows your heart.","d":"Cold on your face tells your body to save oxygen, so your heart rate drops fast."},{"t":"It is a proper therapy skill.","d":"It is the T (temperature) in the DBT TIPP skills for moments of extreme emotion."}],"ben":["One of the fastest ways to slow your heart","Works when nothing else will","Clears your head"],"when":["Full panic","Emotions at a 10","Can’t stop crying"]},"ice":{"b":"cold","steps":[{"t":"Grab an ice cube.","d":"Or anything frozen."},{"t":"Hold it in your hand.","d":"Or press it on the inside of your wrists or the back of your neck."},{"t":"Put all your focus on the cold.","d":"Where is it coldest? Is it starting to burn or tingle?"},{"t":"Breathe out slowly while you hold it.","d":"Stop whenever you like."}],"why":[{"t":"A big sensation your brain can’t ignore.","d":"The cold pulls your attention out of the panic and into your hand."},{"t":"Cold calms.","d":"Cold on your skin nudges your nervous system towards slowing down."}],"ben":["Interrupts panic fast","Wakes you up out of freeze","Easy to do at home"],"when":["Panic","Freeze and numbness","Urges you want to ride out"]},"sour":{"b":"jolt","steps":[{"t":"Grab the sourest thing you have.","d":"Sour lollies, a lemon wedge, sour drops."},{"t":"Pop it in your mouth.","d":"Don’t chew straight away."},{"t":"Notice everything.","d":"The pucker, the saliva, the face you are pulling."},{"t":"Breathe.","d":"Long exhale once the sour peaks."}],"why":[{"t":"Too loud to ignore.","d":"An intense taste grabs your brain’s attention away from the panic loop."},{"t":"Salivating is rest and digest.","d":"Your mouth watering is your digestive system switching on, which only happens when your body feels safe enough."}],"ben":["Works in seconds","Discreet","Fits in your bag"],"when":["Panic in public","Freeze","Before a meltdown takes over"]},"exhale":{"b":"exhale","steps":[{"t":"First inhale.","d":"A slow, deep breath in through your nose."},{"t":"Second inhale.","d":"A short top-up sniff at the very top."},{"t":"Long exhale.","d":"Slowly and completely out through your mouth, longer than the inhale."},{"t":"Repeat 1 to 3 times.","d":"Then let your breath go back to normal."}],"why":[{"t":"Reopens your lungs.","d":"The double inhale pops open the tiny air sacs that partly collapse when you are stressed."},{"t":"Presses the brake.","d":"The long exhale switches on your vagus nerve and slows your heart."}],"ben":["The fastest breathing reset","Invisible","Use it anywhere"],"when":["Panic","Building up to a meltdown","After a fright"]},"burn":{"b":"move","steps":[{"t":"Pick your move.","d":"Run on the spot, star jumps, sprint up the stairs, dance like a maniac."},{"t":"Go hard for 1 to 2 minutes.","d":"Enough that you are puffing."},{"t":"Stop and stand still.","d":"Hands on your belly."},{"t":"Long exhales while you recover.","d":"Notice your heart slowing down."}],"why":[{"t":"Gives the energy somewhere to go.","d":"Fight or flight pumps out adrenaline to make you run or fight. Moving uses it up."},{"t":"Completes the stress cycle.","d":"Your body gets the signal: we ran, we survived, we’re safe now."}],"ben":["Burns off adrenaline","Shifts you out of freeze","Big relief"],"when":["Panic","Rage","Freeze"]},"squeezer":{"b":"move","steps":[{"t":"Breathe in and squeeze.","d":"Clench your fists, shoulders, face, your whole body, as tight as you can."},{"t":"Hold for five.","d":"Tighter."},{"t":"Breathe out and flop.","d":"Let every muscle go at once."},{"t":"Three times.","d":"Notice the difference between tight and loose."}],"why":[{"t":"Muscles release after tension.","d":"Tensing first makes the release deeper. It is how progressive muscle relaxation works."},{"t":"Your body tells your brain it’s safe.","d":"Floppy, relaxed muscles send calm signals back up to your brain."}],"ben":["Releases tension fast","Can do it sitting or lying","Discreet version: just fists"],"when":["Panic","Before a meltdown","Can’t sleep"]},"wall":{"b":"pressure","steps":[{"t":"Find a wall.","d":"Both palms flat on it, arms straight."},{"t":"Push as hard as you can.","d":"For 10 seconds, like you are trying to move it."},{"t":"Feel it everywhere.","d":"Feet, legs, core, arms all working."},{"t":"Release and repeat.","d":"Three rounds."}],"why":[{"t":"Heavy work is calming.","d":"Pushing against resistance gives your joints and muscles strong pressure input, used in occupational therapy to regulate."},{"t":"Uses the fight energy safely.","d":"Your body wants to push or fight. This lets it, without hurting anyone."}],"ben":["Grounds you fast","Uses up fight energy","No gear needed"],"when":["Panic","Anger","Feeling like you want to explode"]},"butterfly":{"b":"rhythm","steps":[{"t":"Cross your arms over your chest.","d":"Hands resting on your shoulders or upper arms."},{"t":"Tap left, then right.","d":"Slowly, one side at a time."},{"t":"Breathe slowly while you tap.","d":"Eyes closed or soft."},{"t":"Keep going for a minute or two.","d":"Until you feel a little settled."}],"why":[{"t":"Left-right tapping calms.","d":"Tapping both sides in turn is used in trauma therapy (EMDR) to help calm big feelings."},{"t":"It’s a hug from you.","d":"The pressure and holding feel safe."}],"ben":["Soothing","Self-hug","Works anywhere"],"when":["Panic","Meltdown","After something upsetting"]},"scentsos":{"b":"jolt","steps":[{"t":"Grab a strong scent.","d":"Peppermint oil, Vicks, coffee beans, your perfume."},{"t":"Breathe it in slowly.","d":"Deep through your nose."},{"t":"Notice where you feel it.","d":"Nose, throat, eyes, chest."},{"t":"Long exhale.","d":"Repeat two or three times."}],"why":[{"t":"Smell is a shortcut to your brain.","d":"It goes straight to your emotion centres, faster than any other sense."},{"t":"Strong beats subtle here.","d":"A sharp smell like peppermint is a big enough jolt to break the panic loop."}],"ben":["Works in seconds","Fits in your bag","Wakes up a frozen body"],"when":["Panic","Freeze","Feeling faint or floaty"]},"shakesos":{"b":"move","steps":[{"t":"Hands first.","d":"Shake them like you are flicking off water."},{"t":"Arms and shoulders.","d":"Floppy."},{"t":"Legs.","d":"One at a time."},{"t":"Whole body for 30 seconds.","d":"Like a dog after a bath."}],"why":[{"t":"Animals shake off fear.","d":"Shaking is a natural way the body discharges stress after a scare."},{"t":"Thaws freeze.","d":"It brings feeling and movement back into a body that hit pause."}],"ben":["Releases stress","Brings you back from numb","Feels silly in a good way"],"when":["Freeze","After a fright","Shaky and wired"]},"stomp":{"b":"move","steps":[{"t":"Stand up.","d":"Shoes on or off."},{"t":"Stomp, heavy and slow.","d":"Left, right, ten times."},{"t":"Feel the ground push back.","d":"Notice your legs and feet."},{"t":"Stand still and breathe.","d":"You’re here."}],"why":[{"t":"Strong input through your feet.","d":"Heavy stomping sends big pressure signals up through your joints, which is grounding."},{"t":"Movement wakes you up.","d":"It brings a frozen body back online."}],"ben":["Grounding","Wakes you up","Lets off steam"],"when":["Freeze","Feeling not real","Anger"]},"coldhands":{"b":"cold","steps":[{"t":"Turn on the cold tap.","d":"As cold as it goes."},{"t":"Hands and wrists under.","d":"For 30 seconds."},{"t":"Notice every bit.","d":"The temperature, the pressure of the water, the tingle."},{"t":"Dry off slowly.","d":"With a long breath out."}],"why":[{"t":"A gentler cold.","d":"Less intense than your whole face, but still a strong signal that pulls you into your body."},{"t":"Cools you down.","d":"Panic makes you hot and flushed. Cool water helps your body settle."}],"ben":["Gentle but strong","Easy at work","Clears fog"],"when":["Freeze","Meltdown building","Hot and flustered"]},"orient":{"b":"senses","steps":[{"t":"Turn your head slowly.","d":"Left to right, taking in the room."},{"t":"Find 5 things that are blue.","d":"Or any colour you like."},{"t":"Let your eyes rest.","d":"On something safe or pretty."},{"t":"Notice you’re here.","d":"This room, right now."}],"why":[{"t":"Orienting is how animals check for safety.","d":"Slowly looking around tells your nervous system there is no threat here."},{"t":"Brings you into the room.","d":"Especially helpful when you feel far away or not real."}],"ben":["Gentle","Invisible","Great for freeze"],"when":["Freeze","Feeling not real","After a meltdown"]},"teaser":{"b":"jolt","steps":[{"t":"Pick a brain teaser.","d":"Count back from 100 in 7s, name every dog breed, alphabet backwards."},{"t":"Do it slowly.","d":"Out loud if you can."},{"t":"Lose track? Start again.","d":"That’s fine."},{"t":"Notice your body after.","d":"Has your breathing slowed?"}],"why":[{"t":"Gives your thinking brain a job.","d":"Hard thinking pulls energy back to the front of your brain and away from the alarm."},{"t":"No room for panic.","d":"Your working memory is full, so the loop has less space."}],"ben":["Breaks the loop","Invisible","No gear"],"when":["Panic","Spiralling thoughts","Can’t sleep"]},"humsos":{"b":"voice","steps":[{"t":"Breathe in.","d":"Through your nose."},{"t":"Hum long and loud.","d":"Or belt out your favourite song."},{"t":"Feel the buzz.","d":"Chest, throat, face."},{"t":"Keep going.","d":"A minute or more."}],"why":[{"t":"Vibration calms your vagus nerve.","d":"It runs right past your voice box."},{"t":"A long exhale every time.","d":"You can’t hum while breathing in."}],"ben":["Calms fast","Lifts mood","Works in the car"],"when":["Panic","Meltdown","Freeze"]},"energysos":{"b":"move","steps":[{"t":"Open my reel.","d":"Watch it once."},{"t":"Stand up and do it with me.","d":"Small or big, your call."},{"t":"Notice your energy.","d":"Before and after."}],"why":[{"t":"Moves you out of freeze.","d":"Movement tells your body it’s time to come back online."},{"t":"Doing it with someone helps.","d":"Following a person (even on video) gives your brain a guide."}],"ben":["Back online fast","Clears fog","Fun"],"when":["Freeze","Flat and foggy","Numb"]},"lessinput":{"b":"quiet","steps":[{"t":"Lights down.","d":"Or sunglasses on."},{"t":"Sound down.","d":"Headphones, earplugs, or leave the room."},{"t":"Go small.","d":"A small, quiet space: the car, the bathroom, under a blanket."},{"t":"Stop talking.","d":"And stop doing. Let people know you need a minute if you can."}],"why":[{"t":"Stops the bucket filling.","d":"Nothing new goes in, so your nervous system can start catching up."},{"t":"Less before more.","d":"You can’t calm down while input keeps pouring in. This comes first."}],"ben":["The first step in every meltdown","Protects you","Makes everything else work"],"when":["Meltdown","Sensory overload","Shutdown"]},"weight":{"b":"pressure","steps":[{"t":"Find some weight.","d":"A weighted blanket, a heavy jumper, a pillow, or a tight hug."},{"t":"Get under it.","d":"Lie down on the floor or bed."},{"t":"Let your body sink.","d":"Heavy and held."},{"t":"Stay as long as you need.","d":"Breathe slowly."}],"why":[{"t":"Deep pressure says “you’re held”.","d":"Firm, even pressure helps your nervous system shift towards calm."},{"t":"Many autistic people find it the fastest way to settle.","d":"It’s used in occupational therapy for exactly this."}],"ben":["Settles overload","Feels safe","Helps you rest after"],"when":["Meltdown","Overstimulated","Can’t sleep"]},"rock":{"b":"rhythm","steps":[{"t":"Let your body move.","d":"Rock forwards and back, or side to side."},{"t":"Find a rhythm.","d":"Steady and slow."},{"t":"Stim if you want to.","d":"Flap, bounce, hum, whatever feels right."},{"t":"Keep going.","d":"Until you feel more settled."}],"why":[{"t":"Rhythm is regulating.","d":"A steady beat is predictable, and predictable feels safe to your brain."},{"t":"Stimming is self-regulation.","d":"It’s your body doing exactly what it needs."}],"ben":["Soothing","Natural","No shame, just regulation"],"when":["Meltdown","Overwhelm","After a hard day"]},"call":{"b":"connect","steps":[{"t":"Pick your safe person.","d":"Someone who won’t need an explanation."},{"t":"Text or call.","d":"“Can you talk to me about something random for 5 minutes?” is enough."},{"t":"Listen to their voice.","d":"Let them do the talking."},{"t":"Breathe with them.","d":"Slow down to match their calm."}],"why":[{"t":"Co-regulation.","d":"A calm, safe person helps your nervous system calm down faster than doing it alone."},{"t":"You don’t have to explain.","d":"Connection is the medicine, not the conversation."}],"ben":["Less alone","Calms faster","Reminds you you’re loved"],"when":["Panic","Freeze","After a meltdown"]}};
+var CH_BODY = {"exhale":{"t":"Your exhale is the brake pedal","d":"Your vagus nerve runs from your brain stem down past your heart, lungs and gut. It is the main nerve of your rest and digest system. Every time you breathe in, your heart speeds up a tiny bit. Every time you breathe out, your vagus nerve gently slows it down. So when you make your exhale longer than your inhale, you press the brake for longer, your heart rate drops, and your brain gets the message: we are safe, we can stand down.","p":["Short, fast, high breaths. Heart racing. Thoughts racing.","Long, slow exhales switch on the vagus brake. Heart rate starts to drop within a few breaths.","Shoulders drop, breathing settles, and your thinking brain comes back online."]},"voice":{"t":"The vagus nerve runs right past your voice box","d":"Branches of your vagus nerve control the muscles of your throat and voice box. Humming, singing and chanting gently activate those muscles and vibrate the area, and they also force a long, slow exhale. Long exhale plus vibration is a double dose of rest and digest. Humming also boosts nitric oxide in your sinuses, which helps air flow.","p":["Tight throat, shallow breath, buzzing head.","The sound makes your exhale long and slow, and the buzz works on the nerve that calms you.","Breathing deeper, chest softer, mood lifted."]},"touch":{"t":"Slow, gentle touch is a safety signal","d":"Your skin has special nerve fibres (C-tactile fibres) that respond best to slow, gentle stroking. They send signals to the parts of your brain that process emotion and safety, not just touch. Warm, caring touch, even your own, can lower stress hormones and release oxytocin, the bonding and calm chemical. It also pulls your attention out of your head and into your body.","p":["In your head, tense, disconnected from your body.","Your skin sends slow, steady “safe” signals to your brain and your attention lands in your hands.","Calmer, softer, more present, and back in your body."]},"pressure":{"t":"Deep pressure tells your nervous system it is held","d":"Firm, even pressure on your body (a weighted blanket, a big hug, a firm massage) stimulates pressure receptors deep in your skin and muscles. Deep pressure stimulation is linked with a shift towards rest and digest: a slower heart rate and a calmer, more organised feeling. Many neurodivergent people find it especially regulating, which is why it is used in occupational therapy.","p":["Scattered, overstimulated, can’t settle.","Steady pressure gives your body clear, calming input to focus on.","Heavier, slower, safer, and more able to rest."]},"senses":{"t":"Your senses pull you into the present","d":"When you are stuck in your head, your brain is running on old stories and future worries. Your senses only work in the present moment. When you deliberately notice what you can see, hear, smell, taste and feel, you shift your brain’s attention from the overthinking loop to real, right-now information. That tells your nervous system: nothing dangerous is happening right here, right now. Smell is extra powerful because it goes straight to your brain’s emotion centre.","p":["Ruminating, spiralling, living in the past or the future.","Each thing you notice gives your brain present-moment evidence that you are safe.","Back in the room, clearer, and able to choose what to do next."]},"move":{"t":"Moving completes the stress cycle","d":"Stress hormones like adrenaline and cortisol are designed to get you moving: to fight or run. When you are stressed but stay still, those chemicals hang around in your body. Moving gives that energy somewhere to go and tells your body the threat is over, so the stress response can complete its cycle. Movement also releases endorphins and gives your brain proprioception, the sense of where your body is in space, which is very grounding.","p":["Wired, restless, flat or stuck in freeze.","Your body burns off the stress chemicals and your brain gets strong body signals.","Lighter, more energised, and “done” with the stress, not just distracted from it."]},"nature":{"t":"Nature gives your brain a soft kind of attention","d":"Screens and to-do lists demand hard, focused attention, which tires your brain out. Nature gives you soft fascination: the clouds, leaves and water hold your attention gently, so the overworked thinking part of your brain gets to rest. Studies on time in green spaces show lower cortisol, lower heart rate and better mood. Being outside also adds natural light, fresh air and movement, all good for your nervous system.","p":["Mentally fried, overstimulated by screens and noise.","Gentle, interesting things to look at let your thinking brain recover.","Restored, calmer and clearer, often with better sleep that night."]},"hands":{"t":"Busy hands, quiet mind","d":"Rhythmic, repetitive work with your hands (stitching, colouring, kneading, shaping) fills up your brain’s working memory with something gentle, so there is less room for worry to loop. It can bring on flow, that absorbed state where time disappears. The steady rhythm itself is soothing to your nervous system, and the textures give you lots of grounding sensory input.","p":["Busy brain, can’t switch off, can’t sit still.","Your hands give your brain a gentle job and the worry loop runs out of space.","Calm, absorbed, and often proud of what you made."]},"mind":{"t":"Watching your thoughts instead of being them","d":"Your prefrontal cortex is the calm, wise part of your brain that can notice what is going on. Your amygdala is your smoke alarm. When you practise noticing thoughts (“hmm, interesting”) instead of following them, you strengthen the connection between the two, so your smoke alarm settles faster next time. Writing worries down does something similar: it moves them out of your working memory and onto the page.","p":["Thoughts on loop, every one feels urgent and true.","You notice each thought, name it and let it go, or park it on paper.","More space between you and your thoughts, and a quieter head."]},"warm":{"t":"Warmth feels like safety","d":"Warmth on your skin widens your blood vessels and helps your muscles let go. Your brain links physical warmth with comfort and social connection (warm hands, a warm drink, a warm bath are all early safety signals from when you were tiny). Slowing down to notice the warmth also brings your attention into your body and into the present.","p":["Cold, tense, braced and disconnected.","Warmth softens your muscles and gives your senses something comforting to focus on.","Relaxed, cosy and settled. A warm bath before bed can help you sleep."]},"cold":{"t":"Cold switches on your dive reflex","d":"When cold water hits your face (especially around your eyes and cheeks), your body triggers the mammalian dive reflex: an old survival response that slows your heart rate to save oxygen, like a seal diving underwater. Your vagus nerve does the slowing. That is why cold is one of the DBT “TIPP” skills therapists teach for moments when your emotions are at a 10. Cold on your hands, wrists or neck is gentler, but the strong sensation still pulls your attention straight into your body.","p":["Heart pounding, breath fast, feelings at a 10.","The cold triggers your dive reflex and your vagus nerve slows your heart, often within 30 seconds.","Calmer body, clearer head, able to take the next step."]},"jolt":{"t":"A big sensation breaks the loop","d":"In panic or freeze, your brain gets stuck on a loop of danger signals. A big, sharp sensation (super sour, icy cold, a strong smell) or a task that takes real brain effort is too loud for your brain to ignore. It grabs your attention, and every bit of attention spent on the sour or the counting is attention not spent feeding the panic. It also gives your thinking brain something to do, which helps it come back online.","p":["Stuck in the loop: what if, what if, what if.","The big sensation hijacks your attention back.","The loop is broken. Now you can breathe and choose your next move."]},"rhythm":{"t":"Rhythm is regulating","d":"Steady, repetitive rhythm (rocking, swaying, tapping left and right) is one of the first ways a nervous system learns to calm down. It is how babies get settled. Rhythm is predictable, and predictable tells your brain it is safe. Stimming is your body doing this on purpose to regulate itself, so let it. Tapping both sides of your body in turn (like the butterfly hug) is also used in trauma therapy to help calm big feelings.","p":["Overloaded, chaotic, everything too much.","The steady beat gives your nervous system something predictable to sync to.","Slower, softer and more organised inside."]},"quiet":{"t":"Less input means more room","d":"A meltdown happens when more is coming in than your nervous system can process. You can’t calm down while the input keeps pouring in, so the first move is always to turn it down: less light, less noise, less talking, fewer demands. That stops the bucket from filling while your body catches up. Your brain finally gets space to process what has already come in, and that is when the calm can start.","p":["Too loud, too bright, too much. The bucket is overflowing.","Input drops, nothing new goes in, and your brain starts catching up.","Room to breathe, and ready for pressure, rhythm and rest."]},"connect":{"t":"Safe people calm your nervous system","d":"Humans are built to calm down together. It is called co-regulation: a calm, safe voice or face can settle your nervous system faster than you can settle it alone. The part of your vagus nerve linked to safety is also tied to your face, your voice and your hearing, which is why a familiar, calm voice can be so soothing. You don’t have to explain anything. Just being connected to someone safe helps.","p":["Alone with it, spiralling, feels like it will never end.","A safe person’s calm gives your nervous system something to borrow.","Less alone, more held, and the wave starts to pass."]}};
+// CH_MORE end
+
 var CH_CATS = [
   ['all', 'All 55', 'disco', function () { return true; }],
   ['ff', 'Fight or flight', 'heartboom', function (a) { return ['sigh', 'box', 'feet', 'fivefour', 'handrub', 'scent', 'pocket', 'hum', 'shake', 'heart', 'legs', 'mug', 'sip', 'weighted'].indexOf(a.id) >= 0; }],
@@ -1293,7 +1616,21 @@ var CH_MANTRAS = [
   'I come home to myself, again and again.',
   'Present beats perfect.'
 ];
-var CH_TABS = [['now', 'Right now', 'heart'], ['learn', 'Learn', 'journal'], ['sos', 'Fight or flight', 'heartboom'], ['menu', '55 ways', 'disco'], ['plan', 'My plan', 'pencil'], ['why', 'My why', 'plant']];
+// type how you feel in the 55 ways search: suggestions that work for it, and a one-tap plan
+var CH_FEELS = [
+  { re: /overwhelm|overstimul|too much|a lot going on|all a bit much|frazzl|stressed|swamped|busy|noisy|sensory/, slot: 'much', cat: 'calm', l: 'overwhelmed' },
+  { re: /overthink|ruminat|spiral|stuck in my head|in my head|racing thought|can.?t stop thinking|worr|what if|doom/, slot: 'head', cat: 'head', l: 'stuck in your head' },
+  { re: /tired|exhaust|flat|sluggish|foggy|fog|no energy|low energy|lethargic|unmotivated|can.?t get going|drained|sleepy/, slot: 'energy', cat: 'energy', l: 'low on energy' },
+  { re: /reset|top.?up|okay|ok\b|fine|bored|restless|fidget/, slot: 'reset', cat: 'quick', l: 'in need of a reset' },
+  { re: /panic|anxious|anxiety|heart racing|can.?t breathe|scared|terrified|freaking out|attack/, mode: 'panic', slot: 'much', cat: 'ff', l: 'panicky' },
+  { re: /meltdown|melting|losing it|explod|rage|furious|angry|so mad/, mode: 'meltdown', slot: 'much', cat: 'ff', l: 'close to a meltdown' },
+  { re: /freez|numb|shut ?down|frozen|can.?t move|dissociat|zoned out|blank/, mode: 'freeze', slot: 'head', cat: 'ff', l: 'frozen or shut down' },
+  { re: /sad|down|low|lonely|teary|cry|blue|hurt/, slot: 'much', cat: 'calm', l: 'low' },
+  { re: /can.?t sleep|insomnia|wired|awake/, slot: 'much', cat: 'calm', l: 'wired and can’t switch off' }
+];
+function chFeel(q) { q = String(q || '').toLowerCase(); if (q.replace(/\s/g, '').length < 3) return null; for (var i = 0; i < CH_FEELS.length; i++) if (CH_FEELS[i].re.test(q)) return CH_FEELS[i]; return null; }
+var CH_TABS = [['learn', 'Learn', 'journal'], ['menu', '55 ways', 'disco'], ['plan', 'My plan', 'pencil']];
+// DRAFT (hidden for now, Sav may want it later): ['why', 'My why', 'plant'] — its page, wallpaper and saved answers are all still in here
 var CH_TOUR = [
   ['now', 'Welcome home', 'This is Coming Home, your get-back-in-your-body app. Let me show you around. It takes about 30 seconds.'],
   ['now', 'Right now', 'When you’re in the moment, come here. Tap how you feel and I’ll walk you through it, or open the plan you saved for that moment.'],
@@ -1305,7 +1642,7 @@ var CH_TOUR = [
   ['now', 'You’re home', 'That’s it! Head to Learn first. You can replay this tour any time with the button at the top.']
 ];
 
-var CH_SAVED = ['tab', 'tourDone', 'cat', 'fTime', 'fWhere', 'fWho', 'fCost', 'fGear', 'rate', 'plan', 'wdays', 'ticks', 'weekStart', 'monthKey', 'why', 'whyOwn', 'mantra', 'mantraOwn', 'wpContent', 'wpTheme', 'senses', 'sosPlans', 'sosEdit', 'sosPerson', 'sosPlace'];
+var CH_SAVED = ['learnSeen', 'tab', 'tourDone', 'cat', 'fTime', 'fWhere', 'fWho', 'fCost', 'fGear', 'rate', 'plan', 'wdays', 'ticks', 'weekStart', 'monthKey', 'why', 'whyOwn', 'mantra', 'mantraOwn', 'wpContent', 'wpTheme', 'senses', 'sosPlans', 'sosEdit', 'sosPerson', 'sosPlace'];
 var CH_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 var CH_DAYN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 var CH_DAYS3 = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -1324,10 +1661,10 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 'now', tour: 0, tourDone: false,
+      tab: 'learn', tour: null, tourDone: true,
       view: null, mode: null, step: 0, jolts: {}, landDone: {}, melt: {}, check: null, planDone: {},
       cat: 'all', menuNote: '', showFilters: false, fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any',
-      rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, surprise: null,
+      rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, detail: null, gal: {}, learnSeen: false, surprise: null,
       ticks: {}, weekStart: chMonday(), monthKey: chMonthKey(), drafts: {},
       why: {}, whyOwn: '', mantra: null, mantraOwn: '',
       wpContent: 'both', wpTheme: 'maroon',
@@ -1352,12 +1689,14 @@ class Component extends DCLogic {
             else if (s.weekStart === wk) keep[k] = true;
           });
           s.ticks = keep; s.weekStart = wk; s.monthKey = mk;
-          s.tour = s.tourDone ? null : 0;
-          if (!s.tab) s.tab = 'now';
+          s.tour = null; s.tourDone = true;
+          if (!s.tab || s.tab === 'now') s.tab = 'menu'; if (s.tab === 'sos' || s.tab === 'why') s.tab = 'learn';
           this.setState(s);
         }
       }
     } catch (e) {}
+    // opened from the course (?tab=learn) or another link with a tab: go straight there
+    try { var qt = new URLSearchParams(window.location.search).get('tab'); if (qt && CH_TABS.some(function (t) { return t[0] === qt; })) this.setState({ tab: qt, view: null }); } catch (e) {}
     this.maybePreview();
   }
 
@@ -1368,6 +1707,8 @@ class Component extends DCLogic {
     this.maybePreview();
   }
 
+  openDetail(id) { this.setState({ detail: id, open: null }); }
+  dTop() { setTimeout(function () { var el = document.querySelector('.dtp'); if (el) el.scrollTop = 0; }, 30); }
   top() { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }
   scrollTo(id) { setTimeout(function () { try { var el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); } catch (e) {} }, 80); }
 
@@ -1540,7 +1881,7 @@ class Component extends DCLogic {
     var p = {}; p[field] = n; this.setState(p);
   }
 
-  goTab(k) { this.setState({ tab: k, open: null }); this.top(); }
+  goTab(k) { var p = { tab: k, open: null }; if (k === 'learn') p.learnSeen = true; this.setState(p); this.top(); }
 
   startFlow(m) { this.setState({ tab: 'now', view: 'flow', mode: m, step: 0, jolts: {}, landDone: {}, melt: {}, check: null }); this.top(); }
 
@@ -1565,7 +1906,7 @@ class Component extends DCLogic {
     var tourStep = typeof s.tour === 'number' ? CH_TOUR[s.tour] : null;
 
     var tabs = CH_TABS.map(function (tb) {
-      var on = s.tab === tb[0];
+      var on = s.tab === tb[0] || (s.tab === 'now' && tb[0] === 'menu');
       var spot = tourStep && tourStep[0] === tb[0] && s.tour > 0 && s.tour < CH_TOUR.length - 1;
       return { l: tb[1], img: CH_IMG[tb[2]], cls: 'tab' + (on ? ' on' : '') + (spot ? ' spot' : ''), current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } };
     });
@@ -1641,13 +1982,17 @@ class Component extends DCLogic {
       return { l: c[1], img: CH_IMG[c[2]], count: CH_ACTS.filter(c[3]).length + ' ways', cls: on ? 'cat on' : 'cat', pressed: on ? 'true' : 'false', pick: function () { self.setState({ cat: c[0], surprise: null, menuNote: '' }); } };
     });
     var activeFilters = ['fTime', 'fWhere', 'fWho', 'fCost', 'fGear'].filter(function (k) { return s[k] !== 'any'; }).length;
+    var feel = chFeel(s.q), feelCat = feel ? CH_CATBY[feel.cat] : null;
+    var qWords = feel ? [] : String(s.q || '').toLowerCase().split(/\s+/).filter(Boolean);
     var filtered = CH_ACTS.filter(function (a) {
-      if (!catNow[3](a)) return false;
+      if (feelCat) { if (!feelCat[3](a)) return false; }
+      else if (!qWords.length && !catNow[3](a)) return false;
       if (s.fTime !== 'any' && a.t !== s.fTime) return false;
       if (s.fWhere !== 'any' && a.w !== 'any' && a.w !== s.fWhere) return false;
       if (s.fWho === 'public' && !a.q) return false;
       if (s.fCost === 'free' && a.c) return false;
       if (s.fGear === 'none' && a.g) return false;
+      if (qWords.length && !qWords.every(function (w) { return (a.n + ' ' + a.d + ' ' + a.h + ' ' + a.k + ' ' + a.t).toLowerCase().indexOf(w) >= 0; })) return false;
       return true;
     });
     if (s.surprise && CH_BY[s.surprise]) filtered = [CH_BY[s.surprise]].concat(filtered.filter(function (a) { return a.id !== s.surprise; }));
@@ -1655,7 +2000,7 @@ class Component extends DCLogic {
     var inSlots = function (id) { return allSlots.filter(function (sl) { return (plan[sl.k] || []).indexOf(id) >= 0; }); };
     var slotBtn = function (a) { return function (sl) { var on = (plan[sl.k] || []).indexOf(a.id) >= 0; return { l: CH_SHORT[sl.k], cls: on ? 'chip small on' : 'chip small', pressed: on ? 'true' : 'false', toggle: function () { self.togglePlan(sl.k, a.id); } }; }; };
     var acts = s.tab === 'menu' ? filtered.map(function (a) {
-      var r = rate[a.id] || '', used = inSlots(a.id), open = s.open === a.id, isSigh = a.id === 'sigh', moreOpen = s.more === a.id;
+      var r = rate[a.id] || '', used = inSlots(a.id), open = s.open === a.id, isSigh = a.id === 'sigh';
       var tags = [{ l: CH_TYPES[a.k] }, { l: CH_WHERE[a.w] }];
       if (a.q) tags.push({ l: 'Low-key' });
       tags.push({ l: a.c ? 'Costs $' : 'Free' });
@@ -1664,10 +2009,7 @@ class Component extends DCLogic {
         n: a.n, h: a.h, dur: a.d, img: a.img, tier: CH_TIERS[a.t], tags: tags,
         hasAka: isSigh, aka: isSigh ? CH_SIGH_MORE.aka : '',
         hasVideo: !!a.video, video: a.video, videoLabel: a.vlabel,
-        hasMore: isSigh, moreOpen: moreOpen, moreA: moreOpen ? 'true' : 'false', moreLabel: moreOpen ? 'Hide the how-to' : 'How to do it, and why it works',
-        toggleMore: function () { self.setState({ more: self.state.more === a.id ? null : a.id }); },
-        mSteps: isSigh ? CH_SIGH_MORE.steps : [], mWhy: isSigh ? CH_SIGH_MORE.why : [], mWhen: isSigh ? CH_SIGH_MORE.when.map(function (w) { return { l: w }; }) : [],
-        mSci: isSigh ? CH_SIGH_MORE.sci : '', mRem: isSigh ? CH_SIGH_MORE.rem : '',
+        openD: function () { self.openDetail(a.id); }, openL: 'How to do ' + a.n,
         isSurprise: s.surprise === a.id,
         cls: 'card' + (r ? ' ' + r : '') + (s.surprise === a.id ? ' surprise' : ''),
         rates: [['love', 'Loved it'], ['maybe', 'Maybe'], ['nope', 'Not for me']].map(function (o) {
@@ -1681,6 +2023,50 @@ class Component extends DCLogic {
         rSlots: CH_RSLOTS.map(slotBtn(a)), mSlots: CH_MSLOTS.map(slotBtn(a))
       };
     }) : [];
+
+    // ---------- How-to page for one of the 55 ----------
+    var dSosId = s.detail && s.detail.indexOf('sos:') === 0 ? s.detail.slice(4) : null, dSA = dSosId ? CH_SOSBY[dSosId] : null;
+    var dA = dSA ? { id: dSA.id, n: dSA.n, img: dSA.img, d: '', t: '', h: dSA.h, video: dSA.video || '', vlabel: dSA.video ? 'Watch the video' : '' } : (s.detail && !dSosId ? CH_BY[s.detail] : null);
+    var dM = dA ? CH_MORE[dA.id] : null, dBd = dM ? CH_BODY[dM.b] : null;
+    var dEdit = CH_FFBY[s.sosEdit] ? s.sosEdit : 'panic', dEditL = validSos(dEdit), dOnPlan = !!dSA && dEditL.indexOf(dSA.id) >= 0;
+    var dIsSigh = !!dA && dA.id === 'sigh';
+    var dIdx = dA ? CH_ACTS.indexOf(dA) : 0, dPv = CH_ACTS[(dIdx + CH_ACTS.length - 1) % CH_ACTS.length], dNx = CH_ACTS[(dIdx + 1) % CH_ACTS.length];
+    var dUsed = dA ? inSlots(dA.id) : [], dR = dA ? (rate[dA.id] || '') : '';
+    var dTags = [];
+    if (dSA) { dTags = dSA.modes.map(function (m) { return { l: 'For ' + CH_FFBY[m][3].toLowerCase() }; }); }
+    else if (dA) { dTags = [{ l: CH_TYPES[dA.k] }, { l: CH_WHERE[dA.w] }]; if (dA.q) dTags.push({ l: 'Low-key' }); dTags.push({ l: dA.c ? 'Costs $' : 'Free' }); dTags.push({ l: dA.g ? 'Needs stuff' : 'No gear' }); }
+    var dSteps = dIsSigh ? CH_SIGH_MORE.steps.concat([{ t: 'Repeat 1 to 3 times.', d: 'Then breathe normally and notice the difference.' }]) : (dM ? dM.steps : []);
+    var dWhyL = dIsSigh ? CH_SIGH_MORE.why : (dM ? dM.why : []);
+    var dWhenL = dIsSigh ? CH_SIGH_MORE.when : (dM ? dM.when : []);
+    var dBodyFlags = {};
+    Object.keys(CH_BODY).forEach(function (k) { dBodyFlags['dB' + k.charAt(0).toUpperCase() + k.slice(1)] = !!dM && dM.b === k; });
+    var detailVals = Object.assign({
+      dOpen: !!dM, dName: dA ? dA.n : '', dImg: dA ? dA.img : '', dDur: dSA ? 'fast and physical' : (dA ? dA.d : ''), dTier: dSA ? 'SOS move' : (dA ? CH_TIERS[dA.t] : ''),
+      dIs55: !!dA && !dSA, dIsSos: !!dSA, dBackL: dSA ? 'Back to my SOS plan' : 'Back to the 55 ways',
+      dSosAddL: dOnPlan ? '✓ In my ' + CH_FFBY[dEdit][3].toLowerCase() + ' plan (tap to remove)' : (dEditL.length >= 5 ? 'Your ' + CH_FFBY[dEdit][3].toLowerCase() + ' plan is full (5)' : '+ Add to my ' + CH_FFBY[dEdit][3].toLowerCase() + ' plan'),
+      dSosAddCls: dOnPlan ? 'primary lime edge' : 'primary maroon',
+      dSosNote: dEditL.length + ' of 5 picked',
+      dSosAdd: function () { if (dSA) self.toggleSos(dEdit, dSA.id); }, dH: dA ? dA.h : '', dTags: dTags,
+      dHasAka: dIsSigh, dAka: CH_SIGH_MORE.aka,
+      dHasVideo: !!(dA && dA.video), dVideo: dA ? dA.video : '', dVideoLabel: dA ? dA.vlabel : '',
+      dSteps: dSteps.map(function (x, i) { return { n: i + 1, t: x.t, d: x.d }; }),
+      dBodyT: dBd ? dBd.t : '', dBodyD: dBd ? dBd.d : '',
+      dProc: dBd ? dBd.p.map(function (x, i) { return { l: ['Before', 'While you do it', 'After'][i], d: x, cls: 'dt-st s' + i }; }) : [],
+      dWhy: dWhyL, dHasSci: dIsSigh, dSci: CH_SIGH_MORE.sci, dHasRem: dIsSigh, dRem: CH_SIGH_MORE.rem,
+      dBen: dM ? dM.ben.map(function (x) { return { l: x }; }) : [], dWhen: dWhenL.map(function (x) { return { l: x }; }),
+      dAddT: dUsed.length ? 'In my plan: ' + dUsed.map(function (sl) { return CH_SHORT[sl.k]; }).join(', ') : 'Add it to my plan',
+      dRSlots: dA && !dSA ? CH_RSLOTS.map(slotBtn(dA)) : [], dMSlots: dA && !dSA ? CH_MSLOTS.map(slotBtn(dA)) : [],
+      dRates: dA ? [['love', 'Loved it'], ['maybe', 'Maybe'], ['nope', 'Not for me']].map(function (o) {
+        var on = dR === o[0];
+        return { l: o[1], cls: on ? 'rb on' : 'rb', pressed: on ? 'true' : 'false', pick: function () { var n = Object.assign({}, self.state.rate); if (on) delete n[dA.id]; else n[dA.id] = o[0]; self.setState({ rate: n }); } };
+      }) : [],
+      dPrevN: dPv.n, dNextN: dNx.n,
+      dPrev: function () { self.openDetail(dPv.id); self.dTop(); }, dNext: function () { self.openDetail(dNx.id); self.dTop(); },
+      dClose: function () { self.setState({ detail: null }); },
+      goTwo: function () { self.scrollTo('ch-two'); }
+    }, dBodyFlags);
+    var chHasPlans = ['panic', 'meltdown', 'freeze'].some(function (m) { return validSos(m).length; }) && ['daily', 'weekly', 'monthly'].some(function (k) { return (plan[k] || []).length; });
+    var chTicked = Object.keys(s.ticks || {}).length > 0;
     var rated = Object.keys(rate).length;
     var loved = Object.keys(rate).filter(function (k) { return rate[k] === 'love'; }).length;
     var expLabel = rated ? 'Experiment log: tried ' + rated + ' of ' + CH_ACTS.length + ', loved ' + loved + '.' : 'Experiment log: nothing tried yet. ' + CH_ACTS.length + ' ways home to play with.';
@@ -1688,13 +2074,14 @@ class Component extends DCLogic {
     // ---------- Plan ----------
     var wdays = s.wdays || {};
     var daysFor = function (id) { return Array.isArray(wdays[id]) ? wdays[id] : [1, 3, 5]; };
+    var gal = s.gal || {};
     var buildSlot = function (sl, withDays) {
       var list = plan[sl.k] || [];
       var pool = CH_ACTS.filter(function (a) { return sl.fit(a) && list.indexOf(a.id) < 0 && rate[a.id] !== 'nope'; });
       var ordered = pool.filter(function (a) { return rate[a.id] === 'love'; }).concat(pool.filter(function (a) { return rate[a.id] === 'maybe'; })).concat(pool.filter(function (a) { return !rate[a.id]; }));
       var ideas = ordered.slice(0, 4).map(function (a) { return { n: a.n, img: a.img, add: function () { self.togglePlan(sl.k, a.id); } }; });
       return {
-        n: sl.n, h: sl.h, img: CH_IMG[sl.img], isEmpty: list.length === 0,
+        n: sl.n, h: sl.h, img: CH_IMG[sl.img], isEmpty: list.length === 0, slotId: 'ch-slot-' + sl.k,
         items: list.map(function (id) {
           var ds = daysFor(id);
           return {
@@ -1704,6 +2091,17 @@ class Component extends DCLogic {
           };
         }),
         ideas: ideas, hasIdeas: ideas.length > 0 && list.length < 6,
+        galOpen: withDays && (gal[sl.k] != null ? gal[sl.k] : list.length === 0), galShut: withDays && !(gal[sl.k] != null ? gal[sl.k] : list.length === 0),
+        canClose: list.length > 0, galLabel: 'Ideas for ' + sl.n, galHint: list.length ? 'Tick the ones you like. Tap a card to open it.' : 'Pick a few that feel good. Tap a card to open it.',
+        editLabel: list.length ? 'Edit my selection' : 'Pick from the ideas',
+        openGal: function () { var g = Object.assign({}, self.state.gal); g[sl.k] = true; self.setState({ gal: g }); },
+        closeGal: function () { var g = Object.assign({}, self.state.gal); g[sl.k] = false; self.setState({ gal: g }); self.scrollTo('ch-slot-' + sl.k); },
+        gallery: withDays ? CH_ACTS.filter(function (a) { return sl.fit(a) && rate[a.id] !== 'nope'; }).sort(function (x, y) { var r = function (a) { return list.indexOf(a.id) >= 0 ? 0 : rate[a.id] === 'love' ? 1 : rate[a.id] === 'maybe' ? 2 : 3; }; return r(x) - r(y); }).map(function (a) {
+          var on = list.indexOf(a.id) >= 0;
+          return { n: a.n, img: a.img, dur: a.d, h: a.h, hasBadge: on || rate[a.id] === 'love', badge: on ? 'In my plan' : 'You loved it', ccls: 'sc' + (on ? ' on' : ''),
+            tcls: 'chip small' + (on ? ' on' : ''), tl: on ? 'In my plan' : 'Add', pressed: on ? 'true' : 'false', openL: 'Open ' + a.n,
+            open: function () { self.openDetail(a.id); }, pick: function () { if ((self.state.gal || {})[sl.k] == null) { var g = Object.assign({}, self.state.gal); g[sl.k] = true; self.setState({ gal: g }); } self.togglePlan(sl.k, a.id); } };
+        }) : [],
         draft: (s.drafts || {})[sl.k] || '', ownLabel: 'Add my own to ' + sl.n,
         onDraft: function (e) { var dr = Object.assign({}, self.state.drafts); dr[sl.k] = e.target.value; self.setState({ drafts: dr }); },
         addOwn: function () {
@@ -1732,8 +2130,12 @@ class Component extends DCLogic {
       (plan.daily || []).forEach(function (id) { add('daily', id, 'Daily routine'); });
       (plan.weekly || []).forEach(function (id) { if (daysFor(id).indexOf(i) >= 0) add('weekly', id, 'A few times a week'); });
       var done = items.filter(function (x) { return x.on; }).length;
-      return { n: CH_DAYS3[i] + ' ' + date.getDate(), isToday: i === today, cls: i === today ? 'day today' : 'day', items: items, none: items.length === 0, count: items.length ? done + ' of ' + items.length : '' };
+      var sel = (s.calDay == null ? today : s.calDay) === i;
+      return { n: CH_DAYS3[i] + ' ' + date.getDate(), isToday: i === today, cls: i === today ? 'day today' : 'day', items: items, none: items.length === 0, count: items.length ? done + ' of ' + items.length + ' done' : '',
+        short: i === today ? 'Today' : CH_DAYS3[i], num: date.getDate(), sel: sel ? 'true' : 'false', tcls: 'wk-d' + (sel ? ' on' : '') + (i === today ? ' today' : '') + (items.length && done === items.length ? ' full' : ''),
+        dots: items.slice(0, 6).map(function (x, j) { return { cls: j < done ? 'on' : '' }; }), pick: function () { self.setState({ calDay: i }); } };
     });
+    var selD = weekDays[s.calDay == null ? today : s.calDay];
     var mk = chMonthKey();
     var monthItems = (plan.monthly || []).map(function (id) {
       return { n: chName(id), img: chImg(id), boxes: [0, 1, 2].map(function (n) { var key = 'm|' + mk + '|' + id + '|' + n, on = !!ticks[key]; return { cls: on ? 'on' : '', pressed: on ? 'true' : 'false', label: chName(id) + ', time ' + (n + 1) + ' this month', toggle: function () { self.flip('ticks', key); } }; }) };
@@ -1748,7 +2150,13 @@ class Component extends DCLogic {
     var sosSeg = CH_FF.map(function (m) { var on = editMode === m[0]; return { l: m[3], img: CH_IMG[m[4]], cls: on ? 'on' : '', pressed: on ? 'true' : 'false', pick: function () { self.setState({ sosEdit: m[0] }); } }; });
     var rec = CH_SOSA.filter(function (a) { return a.modes.indexOf(editMode) >= 0; });
     var other = CH_SOSA.filter(function (a) { return a.modes.indexOf(editMode) < 0; });
-    var sosChips = rec.concat(other).map(function (a) { var on = editList.indexOf(a.id) >= 0; return { l: a.n, img: a.img, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.toggleSos(editMode, a.id); } }; });
+    var sosChips = rec.concat(other).map(function (a) {
+      var on = editList.indexOf(a.id) >= 0, isRec = a.modes.indexOf(editMode) >= 0, full = !on && editList.length >= 5;
+      return { l: a.n, img: a.img, h: a.h, rec: isRec, best: 'Great for ' + CH_FFBY[editMode][3].toLowerCase(), ccls: 'sc' + (on ? ' on' : '') + (isRec ? ' rec' : ''),
+        tcls: 'chip small' + (on ? ' on' : ''), tl: on ? 'In my plan' : (full ? 'Plan full' : 'Add to plan'), pressed: on ? 'true' : 'false',
+        openL: 'Open ' + a.n, open: function () { self.openDetail('sos:' + a.id); },
+        pick: function () { self.toggleSos(editMode, a.id); } };
+    });
     var sosOrdered = editList.map(function (id, i) { var a = CH_SOSBY[id]; return { i: i + 1, n: a.n, img: a.img, rmLabel: 'Remove ' + a.n, remove: function () { self.toggleSos(editMode, id); } }; });
 
     // ---------- Why ----------
@@ -1765,11 +2173,17 @@ class Component extends DCLogic {
 
     var finishTour = function () { self.setState({ tour: null, tourDone: true, tab: 'now', view: null }); self.top(); };
 
-    return {
+    return Object.assign(detailVals, {
       tabs: tabs,
       tabNow: s.tab === 'now', tabLearn: s.tab === 'learn', tabSos: s.tab === 'sos', tabMenu: s.tab === 'menu', tabPlan: s.tab === 'plan', tabWhy: s.tab === 'why',
-      goMenu: function () { self.goTab('menu'); }, goPlan: function () { self.goTab('plan'); }, goLearn: function () { self.goTab('learn'); }, goSos: function () { self.goTab('sos'); },
-      goSosPlan: function () { self.setState({ tab: 'sos' }); self.scrollTo('ch-sosplan'); },
+      goMenu: function () { self.goTab('menu'); }, goPlan: function () { self.goTab('plan'); }, goLearn: function () { self.goTab('learn'); }, goSos: function () { self.setState({ tab: 'learn', open: null }); self.scrollTo('ch-sos'); },
+      goSosPlan: function () { self.setState({ tab: 'plan' }); self.scrollTo('ch-sosplan'); },
+      goLearnTop: function () { self.setState({ tab: 'learn', learnSeen: true }); self.scrollTo('ch-tabs'); },
+      goWeek: function () { self.setState({ tab: 'plan' }); self.scrollTo('ch-week'); },
+      st1Cls: 'chs' + (s.learnSeen || s.tab === 'learn' ? ' done' : ''), st1N: s.learnSeen || s.tab === 'learn' ? '✓' : '1',
+      st2Cls: 'chs' + (chHasPlans ? ' done' : ''), st2N: chHasPlans ? '✓' : '2',
+      st3Cls: 'chs' + (chTicked ? ' done' : ''), st3N: chTicked ? '✓' : '3',
+      goPlans: function () { self.setState({ tab: 'plan' }); self.scrollTo('ch-sosplan'); },
       tryPanic: function () { self.startFlow('panic'); }, tryMelt: function () { self.startFlow('meltdown'); }, tryFreeze: function () { self.startFlow('freeze'); },
 
       inTour: !!tourStep, tourTitle: tourStep ? tourStep[1] : '', tourText: tourStep ? tourStep[2] : '',
@@ -1785,9 +2199,9 @@ class Component extends DCLogic {
 
       nowHome: !s.view, nowPlan: s.view === 'myplan', nowFlow: s.view === 'flow',
       ffMoods: ffMoods, evMoods: evMoods,
-      backHome: function () { self.setState({ view: null, mode: null, step: 0, check: null }); self.top(); },
+      backHome: function () { self.setState({ tab: 'menu', view: null, mode: null, step: 0, check: null }); self.top(); },
       planTitle: planTitle, planImg: planImg, planCards: planCards, planIsFF: s.view === 'myplan' && isFFMode, planIsEv: s.view === 'myplan' && !isFFMode,
-      editPlan: function () { if (isFFMode) { self.setState({ tab: 'sos', sosEdit: mode, view: null }); self.scrollTo('ch-sosplan'); } else { self.setState({ tab: 'plan', view: null }); self.top(); } },
+      editPlan: function () { if (isFFMode) { self.setState({ tab: 'learn', sosEdit: mode, view: null }); self.scrollTo('ch-sosplan'); } else { self.setState({ tab: 'plan', view: null }); self.top(); } },
       openGuide: function () { self.startFlow(mode); },
       browseMore: function () { var ev = CH_EVBY[mode]; self.setState({ tab: 'menu', cat: ev ? ev[3] : 'all', view: null, menuNote: '' }); self.top(); },
       infoTitle: info[0], infoImg: CH_IMG[info[1]], infoText: info[2],
@@ -1795,10 +2209,10 @@ class Component extends DCLogic {
       modeLabel: CH_FFBY[mode] ? CH_FFBY[mode][3] + ' guide · step ' + (s.step + 1) + ' of ' + flow.length : '',
       stepLabel: 'Step ' + (s.step + 1) + ' of ' + flow.length,
       dots: flow.map(function (k, i) { return { cls: i === s.step ? 'dot on' : (i < s.step ? 'dot done' : 'dot') }; }),
-      backLabel: s.step > 0 ? 'Back' : 'Start over',
+      backLabel: s.step > 0 ? 'Back' : 'Back',
       flowBack: function () {
         if (self.state.step > 0) { self.setState({ step: self.state.step - 1, check: null }); self.top(); return; }
-        self.setState({ view: null, mode: null, step: 0, check: null }); self.top();
+        self.setState({ tab: 'menu', view: null, mode: null, step: 0, check: null }); self.top();
       },
       isFirst: s.view === 'flow' && s.step === 0,
       isCalm: stepKey === 'calm', isMeltsafe: stepKey === 'meltsafe', isWake: stepKey === 'wake', isBreathe: stepKey === 'breathe',
@@ -1836,7 +2250,28 @@ class Component extends DCLogic {
       filtersLabel: s.showFilters ? 'Hide filters' : (activeFilters ? 'Filters (' + activeFilters + ')' : 'More filters'),
       toggleFilters: function () { self.setState({ showFilters: !self.state.showFilters }); },
       fGroups: fGroups,
-      countLabel: 'Showing ' + filtered.length + ' in ' + catNow[1] + '.',
+      q: s.q || '', onQ: function (e) { self.setState({ q: e && e.target ? e.target.value : '', feelSaved: null }); },
+      hasFeel: !!feel, feelIsFF: !!(feel && feel.mode),
+      feelTitle: feel ? 'Sounds like you’re ' + feel.l + '. These work well for that:' : '',
+      feelActs: feel && feel.mode ? CH_SOSA.filter(function (x) { return x.modes.indexOf(feel.mode) >= 0; }).slice(0, 5).map(function (x) { var ma = CH_BY[x.id]; return { n: x.n, d: '', img: x.img, h: x.h, hasD: !!ma, openD: function () { if (ma) self.openDetail(ma.id); } }; }) : feel ? filtered.filter(function (a) { return rate[a.id] !== 'nope'; }).sort(function (x, y) { return (rate[y.id] === 'love') - (rate[x.id] === 'love'); }).slice(0, 4).map(function (a) { return { n: a.n, d: a.d, img: a.img, h: a.h, hasD: true, openD: function () { self.openDetail(a.id); } }; }) : [],
+      feelPlanLabel: feel ? (feel.mode ? 'Make these my ' + feel.mode + ' plan' : 'Make these my plan for “' + CH_SHORT[feel.slot] + '”') : '',
+      feelSaved: !!(feel && s.feelSaved === (feel.mode || feel.slot)),
+      feelSavedText: feel ? (feel.mode ? 'Saved as your ' + feel.mode + ' plan. Next time, tap it at the top of this page and I’ll walk you through it.' : 'Saved to My plan › ' + CH_SHORT[feel.slot] + '. Next time, tap “' + (CH_EVBY[feel.slot] || ['', ''])[1] + '” at the top of this page and it opens straight away.') : '',
+      feelMakePlan: function () {
+        if (!feel) return;
+        var picks = filtered.filter(function (a) { return rate[a.id] !== 'nope'; }).sort(function (x, y) { return (rate[y.id] === 'love') - (rate[x.id] === 'love'); }).slice(0, 4).map(function (a) { return a.id; });
+        if (feel.mode) {
+          var sp2 = Object.assign(chEmptySos(), self.state.sosPlans || {}), sosIds = CH_SOSA.filter(function (x) { return x.modes.indexOf(feel.mode) >= 0; }).map(function (x) { return x.id; });
+          var cur2 = (sp2[feel.mode] || []).slice(); sosIds.forEach(function (id) { if (cur2.length < 5 && cur2.indexOf(id) < 0) cur2.push(id); }); sp2[feel.mode] = cur2;
+          self.setState({ sosPlans: sp2, feelSaved: feel.mode });
+        } else {
+          var pl = Object.assign({}, self.state.plan), cur = (pl[feel.slot] || []).slice(); picks.forEach(function (id) { if (cur.indexOf(id) < 0) cur.push(id); }); pl[feel.slot] = cur;
+          self.setState({ plan: pl, feelSaved: feel.slot });
+        }
+      },
+      feelSeePlan: function () { if (feel && feel.mode) { self.setState({ tab: 'learn', sosEdit: feel.mode, view: null }); self.scrollTo('ch-sosplan'); } else { self.setState({ tab: 'plan', view: null }); self.top(); } },
+      feelStartFlow: function () { if (feel && feel.mode) self.startFlow(feel.mode); },
+      countLabel: feel ? 'Showing ' + filtered.length + ' that help when you’re ' + feel.l + '.' : String(s.q || '').trim() ? 'Showing ' + filtered.length + ' for “' + String(s.q).trim() + '” (all categories).' : 'Showing ' + filtered.length + ' in ' + catNow[1] + '.',
       noResults: filtered.length === 0,
       resetFilters: function () { self.setState({ fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any', surprise: null }); },
       surpriseMe: function () {
@@ -1847,7 +2282,7 @@ class Component extends DCLogic {
       },
       acts: acts, expLabel: expLabel,
 
-      routineSlots: routineSlots, momentSlots: momentSlots, weekDays: weekDays,
+      routineSlots: routineSlots, momentSlots: momentSlots, weekDays: weekDays, selItems: selD.items, selNone: selD.none, selDayName: (selD.isToday ? 'Today, ' : '') + selD.n, selDayCount: selD.count,
       routineEmpty: routineCount === 0, routineHas: routineCount > 0,
       hasMonthly: monthItems.length > 0, monthItems: monthItems, monthName: CH_MONFULL[new Date().getMonth()],
       tickLabel: tickCount === 0 ? 'No ticks yet this week. One is plenty to start.' : (tickCount === 1 ? '1 brick laid this week. Look at you.' : tickCount + ' bricks laid this week. Your nervous system thanks you.'),
@@ -1884,10 +2319,10 @@ class Component extends DCLogic {
       clearLabel: s.confirmClear ? 'Tap again to clear everything' : 'Start fresh',
       clearAll: function () {
         if (!self.state.confirmClear) { self.setState({ confirmClear: true }); setTimeout(function () { self.setState({ confirmClear: false }); }, 4000); return; }
-        self.setState({ view: null, mode: null, step: 0, cat: 'all', menuNote: '', fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any', rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, surprise: null, ticks: {}, drafts: {}, why: {}, whyOwn: '', mantra: null, mantraOwn: '', senses: {}, sosPlans: chEmptySos(), sosPerson: '', sosPlace: '', confirmClear: false });
+        self.setState({ view: null, mode: null, step: 0, cat: 'all', menuNote: '', fTime: 'any', fWhere: 'any', fWho: 'any', fCost: 'any', fGear: 'any', rate: {}, plan: chEmptyPlan(), wdays: {}, open: null, more: null, detail: null, gal: {}, learnSeen: false, surprise: null, ticks: {}, drafts: {}, why: {}, whyOwn: '', mantra: null, mantraOwn: '', senses: {}, sosPlans: chEmptySos(), sosPerson: '', sosPlace: '', confirmClear: false });
         self.top();
       }
-    };
+    });
   }
 }
 

@@ -1135,7 +1135,7 @@
     boot();
     var box = h('section', { class: 'rp', 'aria-labelledby': 'rp-h' });
     var k = dk(), mode = vw().repsMode || 'quick';
-    function redraw(msg, part) { var nb = repsCard(); box.replaceWith(nb); if (msg) { var m = nb.querySelector('[data-rp="' + part + '"] .rp-msg') || nb.querySelector('.rp-msg-all'); if (m) { m.textContent = msg; m.hidden = false; } } }
+    function redraw(msg, part) { var nb = repsCard(); box.replaceWith(nb); try { if (window.BT_REPS_CHANGED) window.BT_REPS_CHANGED(); } catch (e) {} if (msg) { var m = nb.querySelector('[data-rp="' + part + '"] .rp-msg') || nb.querySelector('.rp-msg-all'); if (m) { m.textContent = msg; m.hidden = false; } } }
     function set(part, patch, msg) { setV(k, part, patch); if (part !== 'water' && part !== 'win') tickLesson(part); redraw(msg, part); }
     // locked until Week 1 is finished: an empty card with a kind note on top
     var on = partsOn(), PARTS6 = ['win', 'dose', 'breathe', 'pause', 'move', 'water'], total = PARTS6.filter(function (p) { return on[p]; }).length;
@@ -1420,7 +1420,32 @@
   function firstLog() { var ks = Object.keys(workoutDays()); return ks.length ? Math.min.apply(null, ks.map(fromKey)) : null; }
   function todayStatus(k) { var s = status(k); s.doseN = s.dose ? Math.max(1, s.doseN) : 0; return s; }
 
-  window.BT_VAGAL = { repsCard: repsCard, bookEntries: bookEntries, todayStatus: todayStatus, firstLog: firstLog, doseData: doseData, doseItem: doseItem, workoutDays: workoutDays, workoutCard: workoutCard, streak: function () { return streakOf(workoutDays()); }, openDay: function (k) { vs.day = k; if (location.hash === '#Vagal') window.BT_APP.reload(); else location.hash = '#Vagal'; } };
+  // Home calendar: tick the bare-minimum DOSE or a Coming Home activity for a day, and it lands in Today's reps
+  function calDose(k, on) {
+    var d2 = doseData(), x = d2.days[k] = d2.days[k] || {}, p = { done: !!on };
+    if (on) { (d2.plan || []).forEach(function (id) { x[id] = x[id] || Date.now(); var it = doseItem(id); if (it) it.letters.split('').forEach(function (L) { p[L] = true; }); }); }
+    else { (d2.plan || []).forEach(function (id) { delete x[id]; }); p.done = Object.keys(x).length > 0; if (!p.done) { p.D = p.O = p.S = p.E = false; } }
+    wr(K.dose, d2); setV(k, 'dose', p); if (on) tickLesson('dose');
+  }
+  function calDoseOn(k) { var dd = doseData(), dts = dd.days[k] || {}; return dd.plan.length > 0 && dd.plan.every(function (id) { return dts[id]; }); }
+  // part = breathe | pause | move; src = the Coming Home activity id. Only undoes the rep if Coming Home was what ticked it.
+  function calRep(k, part, src, on) {
+    var cur = vday(k)[part] || {}, ch = (cur.ch || []).filter(function (x) { return x !== src; });
+    if (on) { ch.push(src); setV(k, part, { done: true, ch: ch, via: cur.done && !cur.via ? 'own' : (cur.via || 'ch') }); tickLesson(part); }
+    else { var patch = { ch: ch }; if (!ch.length && cur.via === 'ch') patch.done = false; setV(k, part, patch); }
+  }
+  function calStatus(k) { var st = status(k), v = vday(k), w = kit.winsOn(k); return { win: w.length > 0 || !!(v.win || {}).done, nWins: w.length, dose: st.dose, on: partsOn() }; }
+  function calSet(k, part, on) { setV(k, part, { done: !!on }); if (on && part !== 'win' && part !== 'water') tickLesson(part); }
+  function calWin(text) { var k = dk(), ab = kit.addWin(text); setV(k, 'win', { done: true }); return ab; }
+  // one DOSE item on or off for a day (the drop-down in Your day)
+  function calDoseItem(k, id, on) {
+    var d2 = doseData(), x = d2.days[k] = d2.days[k] || {}; if (on) x[id] = x[id] || Date.now(); else delete x[id]; wr(K.dose, d2);
+    var p = { done: Object.keys(x).length > 0 }; if (on) { var it = doseItem(id); if (it) it.letters.split('').forEach(function (L) { p[L] = true; }); }
+    setV(k, 'dose', p); if (on) tickLesson('dose');
+  }
+  function calDoseDay(k) { return Object.assign({}, doseData().days[k] || {}); }
+  function calChOn(k, part, id) { return ((vday(k)[part] || {}).ch || []).indexOf(id) >= 0; }
+  window.BT_VAGAL = { calDoseItem: calDoseItem, calDoseDay: calDoseDay, calChOn: calChOn, calStatus: calStatus, calSet: calSet, calWin: calWin, calDose: calDose, calDoseOn: calDoseOn, calRep: calRep, dayKey: dk, repsCard: repsCard, bookEntries: bookEntries, todayStatus: todayStatus, firstLog: firstLog, doseData: doseData, doseItem: doseItem, workoutDays: workoutDays, workoutCard: workoutCard, streak: function () { return streakOf(workoutDays()); }, openDay: function (k) { vs.day = k; if (location.hash === '#Vagal') window.BT_APP.reload(); else location.hash = '#Vagal'; } };
   var N = window.BT_NATIVE || (window.BT_NATIVE = {});
   N.Vagal = Vagal; N.Breathe = gated('breathe', Breathe); N.Dose = gated('dose', Dose); N.Pause = gated('pause', Pause); N.Move = gated('move', Move);
 })();

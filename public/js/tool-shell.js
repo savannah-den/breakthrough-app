@@ -131,7 +131,7 @@
     document.body.classList.add('bt-has-top');
     // why we're doing this: links the tool back to its lesson (the What If Workout has its own, inside the page)
     try { var RID = { 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'understanding-bridge': 'ub' }[TOOL.slug]; var why = RID && window.BT_COURSE && window.BT_COURSE.resIntro(RID); if (why) { why.classList.add('bt-why-tool'); host.parentNode.insertBefore(why, host); } } catch (e) {}
-    if (window.BT_SAVES) window.BT_SAVES.mount(TOOL.slug);
+    if (window.BT_SAVES && TOOL.slug !== 'coming-home') window.BT_SAVES.mount(TOOL.slug); // Coming Home: no book bar (it covered the page)
     try { scrollTour(TOOL.slug); } catch (e) {}
   }
 

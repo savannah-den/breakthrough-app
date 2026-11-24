@@ -4,6 +4,7 @@
 //   2. In their Energy Audit week (the 7 days after they finish the Energy Audit lesson, w2a2): if they haven't
 //      logged at least 3 blocks today, a reminder to add their day in. Tapping it opens the Energy Audit.
 //   2b. New patterns in their Energy Audit they haven't looked at: a nudge that opens the Audit tab.
+//   2c. Coming Home: every 3rd day, a nudge about the few-times-a-month things on their plan they haven't done yet this month.
 //   3. Otherwise, Today's reps: once their reps have switched on and they haven't ticked any off today.
 //      Tapping it opens Home at the reps card.
 //   4. Otherwise (reps not switched on yet, early Week 1): a gentle 1% nudge, unless they've already been in a lesson today.
@@ -26,6 +27,8 @@ const GENTLE = [
   ['Hey you ✨', 'Small and done beats big and someday. Your next step is waiting.'],
   ['Come back to you 🌿', 'A few minutes in Breakthrough today. Slower and deeper always wins.']
 ];
+// the Coming Home activities people pick for a few times a month (the longer ones)
+const CH_NAMES = {"sigh": "Physiological sigh", "ribs": "Rib cage breath", "box": "Box breathing", "legs": "Leg strokes", "fingers": "Fingertip press", "energyreel": "My quick energy reset", "handrub": "Hand massage", "feet": "Feet on the floor", "five": "Five senses check-in", "fivefour": "5-4-3-2-1", "sip": "Taste the sip", "narrate": "Narrate the room", "mug": "Warm hands", "shoulders": "Shoulder rolls", "redlight": "Red-light reset", "pocket": "Texture in your pocket", "scent": "Scent anchor", "hum": "Hum it out", "brush": "Toothbrush sway", "microdance": "Microwave dance", "shake": "Shake it off", "stretch": "Big stretch and yawn", "heart": "Hand on heart", "conveyor": "Conveyor belt meditation", "dump": "Brain dump page", "humbreak": "Hum-along brain break", "grass": "Barefoot on the grass", "walk": "Five-senses walk", "clouds": "Cloud watching", "cuppa": "Mindful cuppa", "disco": "Kitchen disco", "sing": "Sing at full volume", "floorstretch": "Floor stretch flow", "lotion": "Lotion massage", "pat": "Pat an animal", "weighted": "Weighted blanket rest", "colouring": "Colouring in", "doodle": "Doodle or zentangle", "clay": "Clay or playdough", "yarn": "Knit, crochet or stitch", "cook": "Cook with your hands", "garden": "Hands in the dirt", "yoga": "Yoga class", "pilates": "Pilates class", "workout": "Gym or home workout", "danceclass": "Dance class", "swim": "Swim or ocean dip", "bushwalk": "Nature walk or bushwalk", "massage": "Massage", "bodywork": "Reiki, acupuncture or acupressure", "bath": "Long bath", "breathwork": "Guided breathwork session", "soundbath": "Sound bath", "longmed": "20-minute meditation", "creativeclass": "Creative class"};
 function clip(t, n) { t = String(t || '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : t; }
 function comebackDue(days) { if (days < 3) return false; if (COMEBACK_DAYS.indexOf(days) >= 0) return true; return days > 30 && (days - 30) % 15 === 0; }
 function comeback(days, who) {
@@ -57,6 +60,13 @@ function pick(data, opts) {
   // new patterns in their Energy Audit they haven't looked at yet: opens straight onto the Audit tab
   { const ea = parse(data['bt-energy-v1']) || {}, logged = Object.keys(ea.days || {}).filter(k => ((ea.days[k] || {}).blocks || []).length >= 3).length;
     if (logged >= 3 && (Number(ea.patSeen) || 0) < logged) return { kind: 'energy-patterns', title: 'I found patterns in your energy 👀', body: 'Your Energy Audit has something to show you: what drains you, what fills you up, and where your nervous system spent the week.', url: '/?go=ea-audit#Energy' }; }
+  // Coming Home: the few-times-a-month things on their plan ("you wanted to go to pilates this month"), every 3rd day until they've done it once this month
+  { const ch = parse(data['coming-home-v3']) || {}, mon = (padKey(now, tz) || '').slice(0, 7).split('-'), mk = Number(mon[0]) + '-' + Number(mon[1]);
+    const sd = (parse(data['bt-ch-sched']) || {}).d || {}, booked = id => Object.keys(sd).some(k => k.indexOf(mk + '-') === 0 && sd[k] && (id in sd[k]));
+    const left = ((ch.plan || {}).monthly || []).filter(id => !booked(id) && !(ch.monthKey === mk && [0, 1, 2].some(x => (ch.ticks || {})['m|' + mk + '|' + id + '|' + x])));
+    const todayK = (padKey(now, tz) || '').split('-').map(Number).join('-'), bookedToday = Object.keys(sd[todayK] || {}).filter(id => sd[todayK][id] !== 1);
+    if (bookedToday.length) { const nm = CH_NAMES[bookedToday[0]] || 'your Coming Home treat'; return { kind: 'coming-home-today', title: 'Today’s the day: ' + nm.toLowerCase() + ' 💛', body: 'You booked it in for today. Enjoy it, then tick it off in Your day.', url: '/#Dashboard' }; }
+    if (left.length && n % 3 === 0) { const nm = CH_NAMES[left[n % left.length]] || 'your Coming Home treat'; return { kind: 'coming-home', title: 'You wanted to do ' + nm.toLowerCase() + ' this month 💛', body: 'It’s on your Coming Home plan. Have you booked it in yet? Pick a day on your month calendar so future you doesn’t have to remember.', url: '/#Dashboard' }; } }
   const repsOn = !!(vw.repsUnlocked || (dose.plan || []).length || done.w1a4 || done.w1a3 || done.w1a5 || done.w1a6);
   const today = (vw.days || {})[dayKey(now, tz)] || {};
   const ticked = ['dose', 'breathe', 'pause', 'move', 'water', 'win'].some(p => today[p] && (today[p].done || today[p].ml || today[p].level)) || !!today.filled;
