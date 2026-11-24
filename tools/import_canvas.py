@@ -20,6 +20,8 @@ TOOLS = [
     ('rewind', 'src/canvases/rewind.dc.html', 'REWIND: Respond Instead of React', 'all'),
     ('coming-home', 'src/canvases/cominghome.dc.html', 'Coming Home: into your body', 'all'),
     ('emotional-blueprint', 'src/canvases/blueprint.dc.html', 'Emotional Blueprint', 'all'),
+    # the full, in-depth version (Nov 2026), kept as a draft: a back-end link only, not in Resources
+    ('emotional-blueprint-full', 'src/canvases/blueprint-full.dc.html', 'Emotional Blueprint (full version, draft)', 'all'),
 ]
 
 # Old Claude links -> where they live in the app now

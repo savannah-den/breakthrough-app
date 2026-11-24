@@ -130,8 +130,8 @@
     } catch (e) {}
     document.body.classList.add('bt-has-top');
     // why we're doing this: links the tool back to its lesson (the What If Workout has its own, inside the page)
-    try { var RID = { 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'understanding-bridge': 'ub' }[TOOL.slug]; var why = RID && window.BT_COURSE && window.BT_COURSE.resIntro(RID); if (why) { why.classList.add('bt-why-tool'); host.parentNode.insertBefore(why, host); } } catch (e) {}
-    if (window.BT_SAVES && TOOL.slug !== 'coming-home') window.BT_SAVES.mount(TOOL.slug); // Coming Home: no book bar (it covered the page)
+    try { var RID = { 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'emotional-blueprint-full': 'blueprint', 'understanding-bridge': 'ub' }[TOOL.slug]; var why = RID && window.BT_COURSE && window.BT_COURSE.resIntro(RID); if (why) { why.classList.add('bt-why-tool'); host.parentNode.insertBefore(why, host); } } catch (e) {}
+    if (window.BT_SAVES && ['coming-home', 'emotional-blueprint', 'emotional-blueprint-full'].indexOf(TOOL.slug) < 0) window.BT_SAVES.mount(TOOL.slug); // Coming Home + Emotional Blueprint: no book bar (it covered the page)
     try { scrollTour(TOOL.slug); } catch (e) {}
   }
 
@@ -180,7 +180,7 @@
     var checks = [sb.from('client_data').select('key,value').eq('user_id', user.id), sb.from('app_settings').select('key,value')];
     if (TOOL.access === 'private') checks.push(sb.from('profiles').select('tier,is_admin').eq('id', user.id).maybeSingle());
     return flush().then(function () { return Promise.all(checks); }).then(function (res) {
-      (res[1].data || []).forEach(function (row) { if (row.key === 'props' && row.value && row.value['tool:' + TOOL.slug]) { var o = row.value['tool:' + TOOL.slug]; Object.keys(o).forEach(function (k) { if (o[k]) TOOL.props[k] = o[k]; }); } });
+      (res[1].data || []).forEach(function (row) { var PSLUG = TOOL.slug.replace(/-full$/, ''); if (row.key === 'props' && row.value && row.value['tool:' + PSLUG]) { var o = row.value['tool:' + PSLUG]; Object.keys(o).forEach(function (k) { if (o[k]) TOOL.props[k] = o[k]; }); } });
       if (TOOL.access === 'private') { var p = res[2].data; if (!p || (p.tier !== 'private' && !p.is_admin)) { location.replace('/'); return; } }
       (res[0].data || []).forEach(function (row) { if (!queue[row.key]) { if (row.value == null) lsDel(row.key); else lsSet(row.key, row.value); } });
       sb.rpc('touch_last_seen').then(function () {}, function () {});

@@ -69,19 +69,31 @@
     var skip = window.BT_DEMO.skip || '';
     if (skip) { try { localStorage.setItem('bt-profile', JSON.stringify({ onboarded: Date.now(), tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000' })); if (skip === 'contract') localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true }));
       // straight to step 5, the welcome module: app saved, agreement signed, WhatsApp joined, tests left for later
-      if (skip === 'welcome' || skip === 'ready' || skip === 'box') {
+      if (skip === 'welcome' || skip === 'ready' || skip === 'box' || skip === 'emotions') {
         localStorage.setItem('bt-profile', JSON.stringify({ onboarded: Date.now(), tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000', startDone: Date.now() }));
         localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true, wa: true }));
         var c0 = D.contracts[D.contracts.length - 1], cl = { name: 'Sav (playground)', email: 'you@playground', phone: '0400 000 000', address: '12 Example St, Noosa QLD', consent: 'anon', notesAgreed: true, termsAgreed: true, signedName: 'Sav (playground)', tz: 'Australia/Brisbane' };
         c0.status = 'signed'; c0.signed_at = new Date().toISOString(); c0.signed = { client: cl, terms: c0.terms };
         // all set up: tests done and the welcome module finished, so everything's unlocked
-        if (skip === 'ready' || skip === 'box') {
+        if (skip === 'ready' || skip === 'box' || skip === 'emotions') {
           var dd = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
           localStorage.setItem('cmn-1to1-dashboard', JSON.stringify({ homeSaved: true, wa: true, repDone: true, repSent: true, hd: { type: 'sent', sent: true, date: dd }, disc: { type: 'sent', sent: true, date: dd } }));
           localStorage.setItem('bt-course', JSON.stringify({ done: { i1: Date.now(), i3: Date.now(), i2: Date.now() }, pct: {} }));
         }
         // "Breaking Out of Your Box" walkthrough: a client who has done everything up to Week 3 Lesson 4 (Beliefs), sitting on that lesson.
         // Marking it done is the moment Breaking Out of Your Box unlocks. Weeks are open up to Week 3 for this view only (BT_DEMO.openTo).
+        // Emotions week walkthrough: everything done up to Week 5 Lesson 1 + Coming Home, sitting on Lesson 2: Emotions.
+        // The Emotional Blueprint is untouched and still locked, exactly as a client meets it.
+        if (skip === 'emotions') {
+          var nowE = Date.now(), doneE = {}, idsE = ["i1", "i3", "i2", "w1l1", "w1l2", "w1l3", "w1l4", "w1a4", "w1l5", "w1a1", "w1l6", "w1a5", "w1l7", "w1a6", "w1l8", "w1l9", "w1a3", "w1a2", "w2l0", "w2l1", "w2l2", "w2s1", "w2s2", "w2l3", "w2a0", "w2l4", "w2a1", "w2l5", "w2l6", "w2q", "w2a2", "w3l0", "w3l1", "w3l2", "w3a1", "w3l3", "w3l4", "w3a2", "w3l5", "w3l6", "w3a3", "w3b1", "w3q", "w4l1", "w4a1"];
+          idsE.forEach(function (id, n) { doneE[id] = nowE - (idsE.length - n) * 3600000; });
+          localStorage.setItem('bt-course', JSON.stringify({ done: doneE, pct: {}, cheered: { 0: true, 1: true, 2: true, 3: true } }));
+          localStorage.setItem('bt-profile', JSON.stringify({ onboarded: nowE, tz: 'Australia/Brisbane', country: 'AU', phone: '0400 000 000', startDone: nowE, termsAt: nowE, tourDone: nowE, nbTour: nowE }));
+          localStorage.setItem('bt-hunt-done', '1');
+          localStorage.removeItem('emotional-blueprint-v1'); localStorage.removeItem('what-am-i-feeling-v1');
+          window.BT_DEMO.openTo = 4;
+          try { history.replaceState(null, '', location.pathname + location.search + '#Lesson-w4l2'); } catch (e3) { location.hash = '#Lesson-w4l2'; }
+        }
         if (skip === 'box') {
           var now0 = Date.now(), doneB = {};
           ['i1', 'i3', 'i2', 'w1l1', 'w1l2', 'w1l3', 'w1l4', 'w1a4', 'w1l5', 'w1a1', 'w1l6', 'w1a5', 'w1l7', 'w1a6', 'w1l8', 'w1l9', 'w1a3', 'w1a2', 'w2l0', 'w2l1', 'w2l2', 'w2s1', 'w2s2', 'w2l3', 'w2a0'].forEach(function (id, n) { doneB[id] = now0 - (30 - n) * 3600 * 1000; });

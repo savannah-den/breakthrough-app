@@ -1138,6 +1138,65 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 .lockcard .lockic{font-size:34px}
 .lockcard .big,.lockcard .lead{margin:0}
 .bpnote{padding:12px 14px;border-radius:16px;background:#F8FCD6;border:1.5px solid #1F1412;font-size:14.5px;line-height:1.5}
+.tmode{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.tmb{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;border-radius:22px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;font:inherit}
+.tmb b{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:#4E0C08}.tmb span{font-size:14px;color:#463A38;line-height:1.45}
+.tmb .tmk{font-family:'Patrick Hand SC',cursive;letter-spacing:.06em;font-size:15px;color:#A8231F}
+.tmb.on{border-color:#1F1412;background:#F1F9A6}
+.qflow{gap:14px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.qdots{display:flex;gap:6px}.qdots i{width:28px;height:6px;border-radius:999px;background:#EDE3DF}.qdots i.on{background:#4E0C08}
+.qh{margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:clamp(24px,4vw,30px);color:#1F1412}
+.qq{font-weight:600;font-size:15px;margin-top:4px}
+.qguess{margin:0;padding:10px 14px;border-radius:16px;background:#FBE6FC;font-size:14.5px}
+.qemos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.qemo,.qneed{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:18px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;font:inherit}
+.qemo b{font-size:16px}.qemo span{font-size:13px;color:#463A38;line-height:1.4}
+.qneeds{display:flex;flex-direction:column;gap:8px}.qneed{font-size:15px;line-height:1.45}
+.qemo.on,.qneed.on{border-color:#1F1412;background:#F1F9A6}
+.qnav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.qnav .primary{margin-left:auto}
+.qdone{display:flex;flex-direction:column;gap:14px}.qdone-t{margin:0;font-size:17px;line-height:1.55}
+.patcard{display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:24px;background:#FFF4EE;border:1.5px solid #1F1412}
+.patrow{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:16px;background:#FFFFFF}
+.patrow img{flex:none;width:44px;height:44px;border-radius:12px}.patrow b{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:#4E0C08}
+.patrow .pc{font-size:12px;font-weight:600;color:#A8231F;margin-left:6px}.patrow p{margin:2px 0 0;font-size:14px;line-height:1.5;color:#1F1412}
+.waypick{display:flex;flex-direction:column;gap:12px}
+.wp-h{margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:clamp(24px,4vw,30px);line-height:1.2}
+.wp-l{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.wp-b{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px 18px;border-radius:22px;border:1.5px solid #EDE3DF;background:#FFFFFF;color:#1F1412;text-align:left;cursor:pointer;font:inherit}
+.wp-b:hover{border-color:#1F1412}
+.wp-art{display:block;width:120px;height:100px;margin:-4px 0 2px}.wp-art svg{width:100%;height:100%;overflow:visible}
+.wp-q{font-family:'Patrick Hand SC',cursive;letter-spacing:.05em;font-size:16px;color:#A8231F}
+.wp-b b{font-family:'Playfair Display',Georgia,serif;font-size:21px;color:#4E0C08}
+.wp-d{font-size:14px;line-height:1.5;color:#463A38}
+.wp-o{margin-top:auto;padding:4px 10px;border-radius:999px;background:#FBE6FC;font-size:12.5px;font-weight:600;color:#4E0C08}
+.wp-b.on{border-color:#1F1412;background:#F1F9A6}.wp-b.on .wp-o{background:#FFFFFF}
+.emo .ew{display:block;margin-top:6px;font-size:12px;line-height:1.45;color:#4E0C08;font-weight:500}
+.emo .ewi{display:block;margin-top:3px;font-size:11.5px;line-height:1.4;color:#6A5A57;font-style:italic}
+.wp-note{margin:0;font-size:14.5px;font-weight:600;color:#4E0C08}
+.wzbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:4px}
+.wz-t{font-size:14px;font-weight:600;color:#4E0C08}
+.wz-c{display:inline-flex;align-items:center;gap:6px}
+.wz-b{width:40px;height:40px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;color:#1F1412;font-size:22px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.wz-b.off{opacity:.35;cursor:default}
+.wz-p{min-width:46px;text-align:center;font-size:13px;font-weight:600;color:#463A38}
+.wz-r{padding:8px 14px;border-radius:999px;border:1.5px solid #EDE3DF;background:#FBE6FC;color:#4E0C08;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.wzbox{border-radius:22px}
+.wzbox.zoomed{overflow:auto;max-height:min(78vh,720px);border:1.5px solid #EDE3DF;background:#FFFFFF;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.wzbox.zoomed .wheelwrap{margin:0}
+.wicard{display:flex;flex-direction:column;gap:14px;padding:0 0 18px;border-radius:24px;background:#FFFFFF;border:1.5px solid #EDE3DF;border-top:10px solid #EDE3DF;box-shadow:0 14px 34px rgba(78,12,8,.10);overflow:hidden;scroll-margin-top:90px;animation:wiIn .35s ease}
+@keyframes wiIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wi-h{position:relative;display:flex;flex-direction:column;gap:4px;padding:16px 56px 16px 20px}
+.wi-w{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:clamp(28px,6vw,40px);line-height:1.1;color:#1F1412}
+.wi-r{margin:0;font-size:14px;color:#463A38}
+.wi-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:999px;border:1.5px solid #1F1412;background:#FFFFFF;font-size:22px;line-height:1;cursor:pointer;color:#1F1412}
+.wi-d{margin:0 20px;font-size:16px;line-height:1.55;color:#1F1412}
+.wi-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:0 20px}
+.wi-s{display:flex;flex-direction:column;gap:8px;min-width:0}
+.wi-l{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14.5px;line-height:1.45;color:#1F1412}
+.wi-q{margin:0 20px;font-weight:600;color:#4E0C08}
+.wi-a{display:flex;flex-wrap:wrap;gap:10px;margin:0 20px}
+@media (prefers-reduced-motion: reduce){.wicard{animation:none}}
 </style>
 <style>body{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
 </head>
@@ -1184,7 +1243,7 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <header style="display: flex; align-items: center; gap: 14px; padding-top: 22px; flex-wrap: wrap">
 <img src="/tools/assets/49b9549cb566e401a6413476bea140d6.svg" alt="Emotional Blueprint icon: a colour wheel of feeling faces" style="flex: none; width: 72px; height: 72px; border-radius: 20px">
 <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 200px">
-<span class="hand" style="font-size: 15px; color: #A8231F">Breakthrough Program · Week 4 · Emotions</span>
+<span class="hand" style="font-size: 15px; color: #A8231F">Breakthrough Program · Week 5 · Emotions</span>
 <h1 style="margin: 0; font-weight: 700; font-size: clamp(34px, 6vw, 52px); line-height: 1">Emotional Blueprint</h1>
 <span style="font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(18px, 2.6vw, 22px); color: #4E0C08">Name the feeling. Let it move. Learn your patterns.</span>
 </div>
@@ -1210,22 +1269,34 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 
 <!-- ================= START HERE ================= -->
 <sc-if value="{{tabHome}}" hint-placeholder-val="{{ true }}">
-<sc-if value="{{homeToolsTop}}" hint-placeholder-val="{{ false }}">
-<section class="sec">
-<div class="eyebrow">Shortcuts</div>
-<h2 class="h2">Jump straight into a tool.</h2>
-<div class="tools">
-<button class="tooltile" onClick="{{tool.tune}}"><span class="tpic cream"><img src="/tools/assets/0ef8dcdd586ecd0ff80676f1e620be34.svg" alt=""></span><span class="tt">What am I feeling?</span><span class="tsub">Name a feeling you can’t put a word to.</span></button>
-<button class="tooltile" onClick="{{tool.eim}}"><span class="tpic cream"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt=""></span><span class="tt">Energy in Motion</span><span class="tsub">Name it, find it on the wheel, know what to do next.</span></button>
-<button class="tooltile" onClick="{{startProcess}}"><span class="tpic cream"><img src="/tools/assets/86849d58f49611f02400cea832d04565.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">Process it</span><span class="tsub">Move a feeling through your body, step by step.</span></button>
-<button class="tooltile" onClick="{{tool.mine}}"><span class="tpic cream"><img src="/tools/assets/663cd271223c87a3e9eb85198c255ca8.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">My blueprints</span><span class="tsub">Your patterns, and your shelf.</span></button>
-<button class="tooltile" onClick="{{tool.body}}"><span class="tpic lilac"><svg width="74" height="120" viewBox="0 0 300 490" role="img" aria-label="A person with the seven chakra areas coloured in bands: violet crown at the top of the head, indigo third eye across the forehead, blue throat, green heart across the chest and shoulders, yellow solar plexus at the upper belly, orange sacral at the lower belly and hips, and red root through the pelvis and legs."><defs><mask id="pms"><circle cx="150" cy="52" r="38" fill="#FFF"/><path d="M150 86V146" stroke="#FFF" stroke-width="32" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#FFF"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#FFF" stroke-width="34" stroke-linecap="round"/></mask></defs><g><circle cx="150" cy="52" r="38" fill="#4E0C08" stroke="#4E0C08" stroke-width="5"/><path d="M150 86V146" stroke="#4E0C08" stroke-width="37" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#4E0C08" stroke="#4E0C08" stroke-width="5" stroke-linejoin="round"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#4E0C08" stroke-width="39" stroke-linecap="round"/></g><g mask="url(#pms)"><rect x="0" y="0" width="300" height="30" fill="#9B6FD1"/><rect x="0" y="30" width="300" height="42" fill="#4B3F9E"/><rect x="0" y="72" width="300" height="68" fill="#4C7FD1"/><rect x="0" y="140" width="300" height="74" fill="#5FA35A"/><rect x="0" y="214" width="300" height="44" fill="#F2C230"/><rect x="0" y="258" width="300" height="46" fill="#F28C3B"/><rect x="0" y="304" width="300" height="180" fill="#D3302B"/></g><circle cx="150" cy="18" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="18" r="3" fill="#9B6FD1"/><circle cx="150" cy="48" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="48" r="3" fill="#4B3F9E"/><circle cx="150" cy="116" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="116" r="3" fill="#4C7FD1"/><circle cx="150" cy="182" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="182" r="3" fill="#5FA35A"/><circle cx="150" cy="236" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="236" r="3" fill="#F2C230"/><circle cx="150" cy="280" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="280" r="3" fill="#F28C3B"/><circle cx="150" cy="312" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="312" r="3" fill="#D3302B"/></svg></span><span class="tt">Body map</span><span class="tsub">Where you feel it, and what it’s saying.</span></button>
-<button class="tooltile" onClick="{{tool.blends}}"><span class="tpic cream"><svg width="110" height="90" viewBox="0 0 110 90" aria-hidden="true"><circle cx="40" cy="36" r="26" fill="#D3302B" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="70" cy="36" r="26" fill="#E890EC" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="55" cy="60" r="26" fill="#4C7FD1" fill-opacity=".6" stroke="#4E0C08" stroke-width="2"></circle></svg></span><span class="tt">Emotion mixer</span><span class="tsub">Two feelings at once? See what they make.</span></button>
-<button class="tooltile" onClick="{{tool.levels}}"><span class="tpic"><img src="/tools/assets/7205741504b90f111c0451fab85ff2d3.svg" alt=""></span><span class="tt">Consciousness</span><span class="tsub">The Map of Consciousness, every level.</span></button>
-<button class="tooltile dark" onClick="{{tool.ect}}"><span class="tpic"><img src="/tools/assets/6c4de069e172edaa21031a8fb148e873.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">ECT with Sav</span><span class="tsub">The deep release, at the root.</span></button>
+
+
+<section class="sec firststeps">
+<span class="hand" style="font-size: 17px; color: #A8231F">Start here</span>
+<p class="big">Your first steps</p>
+<p class="lead">Your Emotional Blueprint helps you notice a feeling, name it, and let it move, and over time it shows you your own patterns. Do these in order. Tap the button on each one to go straight there.</p>
+<div class="fsx">
+<div class="fsx-c" style="--fc: #F1F9A6"><span class="fsx-n">1</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><rect x="10" y="12" width="100" height="62" rx="12" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path class="fsx-play" d="M52 30 L74 43 L52 56 Z" fill="#D3302B" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"/><path d="M30 84 h60" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"/><path d="M96 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/></svg><div class="fsx-t"><strong>Watch Lesson 3</strong><span>Naming Emotions. Build your first blueprint right underneath it as you watch.</span><a class="primary sm" href="/#Lesson-w4a2" target="_self">Go to Lesson 3 →</a></div></div>
+<div class="fsx-c" style="--fc: #F6D3CF"><span class="fsx-n">2</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><g class="fsx-cardL"><rect x="14" y="16" width="46" height="60" rx="8" fill="#FBE1DF" stroke="#4E0C08" stroke-width="3" transform="rotate(-8 37 46)"/><text x="37" y="54" text-anchor="middle" font-size="22" transform="rotate(-8 37 46)">🔥</text></g><g class="fsx-cardR"><rect x="60" y="14" width="46" height="60" rx="8" fill="#DFEAF8" stroke="#4E0C08" stroke-width="3" transform="rotate(7 83 44)"/><text x="83" y="52" text-anchor="middle" font-size="22" transform="rotate(7 83 44)">💧</text></g></svg><div class="fsx-t"><strong>Make anger + sadness</strong><span>At the very least, a blueprint for each. Started one in Lesson 3? Finish it, then do the other.</span><button class="primary sm" onClick="{{tool.mine}}">My blueprints →</button></div></div>
+<div class="fsx-c" style="--fc: #F4C2F7"><span class="fsx-n">3</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><circle cx="52" cy="42" r="24" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path d="M70 60 L92 82" stroke="#4E0C08" stroke-width="6" stroke-linecap="round"/><path class="fsx-heart" d="M52 52 C40 44 40 34 46 32 C50 30 52 34 52 36 C52 34 54 30 58 32 C64 34 64 44 52 52 Z" fill="#E0457B" stroke="#4E0C08" stroke-width="2"/><text x="98" y="30" font-size="16" fill="#4E0C08" font-family="Patrick Hand SC, cursive">?</text></svg><div class="fsx-t"><strong>Notice it this week</strong><span>When a feeling comes up, or you remember one you couldn’t name, check in. Each one adds to your blueprints.</span><button class="primary sm" onClick="{{tool.tune}}">What am I feeling? →</button></div></div>
+<div class="fsx-c" style="--fc: #DDF0D6"><span class="fsx-n">4</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><path d="M30 70 C24 56 30 44 40 44 L60 56 L80 44 C90 44 96 56 90 70 Z" fill="#FFF4EE" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"/><g class="fsx-rise"><path d="M60 38 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8"/><path d="M42 24 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/><path d="M80 20 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#BFD7F2" stroke="#4E0C08" stroke-width="1.4"/></g></svg><div class="fsx-t"><strong>Watch Lesson 4, then let one go</strong><span>Processing Emotions. Then come back and try a release. Quicker to lash out, or to cry? Start with that one.</span><div class="fsx-b"><a class="ghost solid sm" href="/#Lesson-w4l4" target="_self">Lesson 4 →</a><button class="primary sm" onClick="{{startProcess}}">Process it →</button></div></div></div>
 </div>
 </section>
+<section class="sec" id="home-knock">
+<sc-if value="{{hasLater}}" hint-placeholder-val="{{ false }}">
+<div class="banner pink"><img src="/tools/assets/f255c82adfac072178e45af61ee62c83.svg" alt=""><span class="bt"><strong>{{laterText}}</strong> They’re up on your shelf, quietly using your energy. When you get a pause in your day, take one down.</span><button class="ghost solid" onClick="{{goMine}}">See my shelf</button></div>
 </sc-if>
+</section>
+
+
+
+</sc-if>
+
+
+
+<!-- ================= MORE TOOLS ================= -->
+<sc-if value="{{tabMore}}" hint-placeholder-val="{{ false }}">
+<!-- EB_MORE1 -->
 <section class="sec" id="home-course">
 <sc-if value="{{cShow}}" hint-placeholder-val="{{ true }}">
 <div class="coursebox">
@@ -1372,34 +1443,12 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <button class="coursepill" onClick="{{cOpenCourse}}"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt=""><span class="cpt"><span class="hand" style="font-size: 14px; color: #A8231F">{{cPillK}}</span><strong>The mini course</strong><span>{{cPillS}}</span></span><span class="cpgo">Open</span></button>
 </sc-if>
 </section>
-
-<section class="sec firststeps">
-<span class="hand" style="font-size: 17px; color: #A8231F">Now it all makes sense</span>
-<p class="big">Your first steps</p>
-<p class="lead">Do these in order. Tap the button on each one to go straight there.</p>
-<div class="fsx">
-<div class="fsx-c" style="--fc: #F1F9A6"><span class="fsx-n">1</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><rect x="10" y="12" width="100" height="62" rx="12" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path class="fsx-play" d="M52 30 L74 43 L52 56 Z" fill="#D3302B" stroke="#4E0C08" stroke-width="2.4" stroke-linejoin="round"/><path d="M30 84 h60" stroke="#4E0C08" stroke-width="3" stroke-linecap="round"/><path d="M96 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/></svg><div class="fsx-t"><strong>Watch Lesson 3</strong><span>Naming Emotions. Build your first blueprint right underneath it as you watch.</span><a class="primary sm" href="/#Lesson-w4a2" target="_self">Go to Lesson 3 →</a></div></div>
-<div class="fsx-c" style="--fc: #F6D3CF"><span class="fsx-n">2</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><g class="fsx-cardL"><rect x="14" y="16" width="46" height="60" rx="8" fill="#FBE1DF" stroke="#4E0C08" stroke-width="3" transform="rotate(-8 37 46)"/><text x="37" y="54" text-anchor="middle" font-size="22" transform="rotate(-8 37 46)">🔥</text></g><g class="fsx-cardR"><rect x="60" y="14" width="46" height="60" rx="8" fill="#DFEAF8" stroke="#4E0C08" stroke-width="3" transform="rotate(7 83 44)"/><text x="83" y="52" text-anchor="middle" font-size="22" transform="rotate(7 83 44)">💧</text></g></svg><div class="fsx-t"><strong>Make anger + sadness</strong><span>At the very least, a blueprint for each. Started one in Lesson 3? Finish it, then do the other.</span><button class="primary sm" onClick="{{tool.mine}}">My blueprints →</button></div></div>
-<div class="fsx-c" style="--fc: #F4C2F7"><span class="fsx-n">3</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><circle cx="52" cy="42" r="24" fill="#FFFFFF" stroke="#4E0C08" stroke-width="3"/><path d="M70 60 L92 82" stroke="#4E0C08" stroke-width="6" stroke-linecap="round"/><path class="fsx-heart" d="M52 52 C40 44 40 34 46 32 C50 30 52 34 52 36 C52 34 54 30 58 32 C64 34 64 44 52 52 Z" fill="#E0457B" stroke="#4E0C08" stroke-width="2"/><text x="98" y="30" font-size="16" fill="#4E0C08" font-family="Patrick Hand SC, cursive">?</text></svg><div class="fsx-t"><strong>Notice it this week</strong><span>When a feeling comes up, or you remember one you couldn’t name, check in. Each one adds to your blueprints.</span><button class="primary sm" onClick="{{tool.tune}}">What am I feeling? →</button></div></div>
-<div class="fsx-c" style="--fc: #DDF0D6"><span class="fsx-n">4</span><svg class="fsx-a" viewBox="0 0 120 90" aria-hidden="true"><path d="M30 70 C24 56 30 44 40 44 L60 56 L80 44 C90 44 96 56 90 70 Z" fill="#FFF4EE" stroke="#4E0C08" stroke-width="3" stroke-linejoin="round"/><g class="fsx-rise"><path d="M60 38 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#F1F9A6" stroke="#4E0C08" stroke-width="1.8"/><path d="M42 24 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="1.4"/><path d="M80 20 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#BFD7F2" stroke="#4E0C08" stroke-width="1.4"/></g></svg><div class="fsx-t"><strong>Watch Lesson 4, then let one go</strong><span>Processing Emotions. Then come back and try a release. Quicker to lash out, or to cry? Start with that one.</span><div class="fsx-b"><a class="ghost solid sm" href="/#Lesson-w4l4" target="_self">Lesson 4 →</a><button class="primary sm" onClick="{{startProcess}}">Process it →</button></div></div></div>
-</div>
-</section>
-<section class="sec" id="home-knock">
-<sc-if value="{{hasLater}}" hint-placeholder-val="{{ false }}">
-<div class="banner pink"><img src="/tools/assets/f255c82adfac072178e45af61ee62c83.svg" alt=""><span class="bt"><strong>{{laterText}}</strong> They’re up on your shelf, quietly using your energy. When you get a pause in your day, take one down.</span><button class="ghost solid" onClick="{{goMine}}">See my shelf</button></div>
-</sc-if>
-</section>
-
-
-<sc-if value="{{homeTools}}" hint-placeholder-val="{{ true }}">
 <section class="sec">
-<div class="eyebrow">Shortcuts</div>
-<h2 class="h2">Jump straight into a tool.</h2>
+<span class="hand" style="font-size: 17px; color: #A8231F">More tools</span>
+<p class="big">When you want to go deeper.</p>
+<p class="lead">You don’t need these to do the work. What am I feeling?, your blueprints and Process it are the main three. These are here when you’re curious.</p>
 <div class="tools">
-<button class="tooltile" onClick="{{tool.tune}}"><span class="tpic cream"><img src="/tools/assets/0ef8dcdd586ecd0ff80676f1e620be34.svg" alt=""></span><span class="tt">What am I feeling?</span><span class="tsub">Name a feeling you can’t put a word to.</span></button>
 <button class="tooltile" onClick="{{tool.eim}}"><span class="tpic cream"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt=""></span><span class="tt">Energy in Motion</span><span class="tsub">Name it, find it on the wheel, know what to do next.</span></button>
-<button class="tooltile" onClick="{{startProcess}}"><span class="tpic cream"><img src="/tools/assets/86849d58f49611f02400cea832d04565.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">Process it</span><span class="tsub">Move a feeling through your body, step by step.</span></button>
-<button class="tooltile" onClick="{{tool.mine}}"><span class="tpic cream"><img src="/tools/assets/663cd271223c87a3e9eb85198c255ca8.svg" alt="" style="width: 96px; height: 96px; border-radius: 24px"></span><span class="tt">My blueprints</span><span class="tsub">Your patterns, and your shelf.</span></button>
 <button class="tooltile" onClick="{{tool.body}}"><span class="tpic lilac"><svg width="74" height="120" viewBox="0 0 300 490" role="img" aria-label="A person with the seven chakra areas coloured in bands: violet crown at the top of the head, indigo third eye across the forehead, blue throat, green heart across the chest and shoulders, yellow solar plexus at the upper belly, orange sacral at the lower belly and hips, and red root through the pelvis and legs."><defs><mask id="pms"><circle cx="150" cy="52" r="38" fill="#FFF"/><path d="M150 86V146" stroke="#FFF" stroke-width="32" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#FFF"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#FFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#FFF" stroke-width="34" stroke-linecap="round"/></mask></defs><g><circle cx="150" cy="52" r="38" fill="#4E0C08" stroke="#4E0C08" stroke-width="5"/><path d="M150 86V146" stroke="#4E0C08" stroke-width="37" stroke-linecap="round"/><path d="M94 146Q150 126 206 146L196 306Q150 322 104 306Z" fill="#4E0C08" stroke="#4E0C08" stroke-width="5" stroke-linejoin="round"/><path d="M100 152Q70 162 62 220L52 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 152Q230 162 238 220L248 324" fill="none" stroke="#4E0C08" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 306L119 468M173 306L181 468" fill="none" stroke="#4E0C08" stroke-width="39" stroke-linecap="round"/></g><g mask="url(#pms)"><rect x="0" y="0" width="300" height="30" fill="#9B6FD1"/><rect x="0" y="30" width="300" height="42" fill="#4B3F9E"/><rect x="0" y="72" width="300" height="68" fill="#4C7FD1"/><rect x="0" y="140" width="300" height="74" fill="#5FA35A"/><rect x="0" y="214" width="300" height="44" fill="#F2C230"/><rect x="0" y="258" width="300" height="46" fill="#F28C3B"/><rect x="0" y="304" width="300" height="180" fill="#D3302B"/></g><circle cx="150" cy="18" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="18" r="3" fill="#9B6FD1"/><circle cx="150" cy="48" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="48" r="3" fill="#4B3F9E"/><circle cx="150" cy="116" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="116" r="3" fill="#4C7FD1"/><circle cx="150" cy="182" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="182" r="3" fill="#5FA35A"/><circle cx="150" cy="236" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="236" r="3" fill="#F2C230"/><circle cx="150" cy="280" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="280" r="3" fill="#F28C3B"/><circle cx="150" cy="312" r="7" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2"/><circle cx="150" cy="312" r="3" fill="#D3302B"/></svg></span><span class="tt">Body map</span><span class="tsub">Where you feel it, and what it’s saying.</span></button>
 <button class="tooltile" onClick="{{tool.blends}}"><span class="tpic cream"><svg width="110" height="90" viewBox="0 0 110 90" aria-hidden="true"><circle cx="40" cy="36" r="26" fill="#D3302B" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="70" cy="36" r="26" fill="#E890EC" fill-opacity=".75" stroke="#4E0C08" stroke-width="2"></circle><circle cx="55" cy="60" r="26" fill="#4C7FD1" fill-opacity=".6" stroke="#4E0C08" stroke-width="2"></circle></svg></span><span class="tt">Emotion mixer</span><span class="tsub">Two feelings at once? See what they make.</span></button>
 <button class="tooltile" onClick="{{tool.levels}}"><span class="tpic"><img src="/tools/assets/7205741504b90f111c0451fab85ff2d3.svg" alt=""></span><span class="tt">Consciousness</span><span class="tsub">The Map of Consciousness, every level.</span></button>
@@ -1407,8 +1456,6 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </div>
 </section>
 </sc-if>
-</sc-if>
-
 
 <!-- ================= ENERGY IN MOTION ================= -->
 <sc-if value="{{tabEim}}" hint-placeholder-val="{{ false }}">
@@ -1991,6 +2038,16 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <div class="ebs-c"><span class="ebs-n">3</span><div class="ebs-a"><svg viewBox="0 0 120 100" aria-hidden="true"><circle cx="60" cy="18" r="11" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 29 V66 M60 66 L48 92 M60 66 L72 92 M60 40 L40 56 M60 40 L80 56" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="ebs-glow" cx="60" cy="44" r="9" fill="#E5534B" opacity=".55"/><circle class="ebs-glow g2" cx="60" cy="32" r="5" fill="#F2994A" opacity=".55"/><path d="M20 30 q-6 10 0 20 M100 30 q6 10 0 20" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-linecap="round"/></svg></div><div class="ebs-t"><strong>Feel it in your body</strong><span>Now drop into your body and scan from your head to your toes. Where is it? A tight chest, a lump in your throat, your stomach dropping when a message comes in? You might only have “I don’t know… bad? I just feel tight in my chest and a lump in my throat.” That’s a perfect place to start. Your body usually knows before your brain does.</span></div></div>
 </div>
 </section>
+<!-- EB_WAY1 -->
+<sc-if value="{{wayShow}}" hint-placeholder-val="{{ true }}">
+<section class="waypick">
+<span class="hand" style="font-size: 17px; color: #A8231F">Where do you start?</span>
+<p class="wp-h">How do feelings usually show up for you?</p>
+<p class="lead" style="font-size: 16px">Everyone experiences emotions a little differently. You’ll write, name and feel every time. Where you start changes the order, and how much writing there is. Start with the one that comes most naturally to you.</p>
+<div class="wp-l"><button class="{{w0.cls}}" aria-pressed="{{w0.pressed}}" onClick="{{w0.pick}}"><span class="wp-art"><svg viewBox="0 0 120 100" aria-hidden="true"><path d="M22 14 L92 10 L96 88 L26 92 Z" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 30 q14 -4 26 0 t24 -2 M34 44 q10 4 22 0 t28 2 M34 58 q16 -5 30 0 t18 -1 M34 72 q8 3 18 0" fill="none" stroke="#B5281E" stroke-width="2.2" stroke-linecap="round"/><path class="ebs-pen" d="M86 74 L108 38 L114 42 L92 78 Z" fill="#F4C2F7" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 74 L84 84 L92 78" fill="#F28C3B" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="wp-q">{{w0.q}}</span><b>{{w0.t}}</b><span class="wp-d">{{w0.d}}</span><span class="wp-o">{{w0.o}}</span></button><button class="{{w1.cls}}" aria-pressed="{{w1.pressed}}" onClick="{{w1.pick}}"><span class="wp-art"><svg viewBox="0 0 120 100" aria-hidden="true"><circle cx="60" cy="18" r="11" fill="#FFFFFF" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 29 V66 M60 66 L48 92 M60 66 L72 92 M60 40 L40 56 M60 40 L80 56" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="ebs-glow" cx="60" cy="44" r="9" fill="#E5534B" opacity=".55"/><circle class="ebs-glow g2" cx="60" cy="32" r="5" fill="#F2994A" opacity=".55"/><path d="M20 30 q-6 10 0 20 M100 30 q6 10 0 20" fill="none" stroke="#B9ADAA" stroke-width="2.4" stroke-linecap="round"/></svg></span><span class="wp-q">{{w1.q}}</span><b>{{w1.t}}</b><span class="wp-d">{{w1.d}}</span><span class="wp-o">{{w1.o}}</span></button><button class="{{w2.cls}}" aria-pressed="{{w2.pressed}}" onClick="{{w2.pick}}"><span class="wp-art"><svg viewBox="0 0 120 100" aria-hidden="true"><g class="ebs-wheel" style="transform-origin:60px 50px"><path d="M60 50 L60 12 A38 38 0 0 1 93 31 Z" fill="#E5534B" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L93 31 A38 38 0 0 1 93 69 Z" fill="#F2994A" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L93 69 A38 38 0 0 1 60 88 Z" fill="#F2C94C" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L60 88 A38 38 0 0 1 27 69 Z" fill="#7CC46A" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L27 69 A38 38 0 0 1 27 31 Z" fill="#7B7FC4" stroke="#4E0C08" stroke-width="2"/><path d="M60 50 L27 31 A38 38 0 0 1 60 12 Z" fill="#E8338A" stroke="#4E0C08" stroke-width="2"/><circle cx="60" cy="50" r="9" fill="#F1F9A6" stroke="#4E0C08" stroke-width="2"/></g><path d="M98 82 l-12 -14 m0 0 l2 9 m-2 -9 l9 1" fill="none" stroke="#4E0C08" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="83" cy="35" r="6" fill="none" stroke="#FFFFFF" stroke-width="3"/></svg></span><span class="wp-q">{{w2.q}}</span><b>{{w2.t}}</b><span class="wp-d">{{w2.d}}</span><span class="wp-o">{{w2.o}}</span></button></div>
+<sc-if value="{{wayPicked}}" hint-placeholder-val="{{ false }}"><p class="wp-note">{{wayNote}}</p></sc-if>
+</section>
+</sc-if>
 </sc-if>
 <sc-if value="{{ftShowPick}}" hint-placeholder-val="{{ false }}">
 <section class="ftpick" id="ft-pick">
@@ -2008,6 +2065,40 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </sc-if>
 <sc-if value="{{ftShowBar}}" hint-placeholder-val="{{ false }}"><div class="ftbar"><span>Your way in: <strong>{{ftName}}</strong> · {{ftSeqText}}</span><button class="ghost" onClick="{{ftChange}}">Change</button></div></sc-if>
 
+<!-- quick check-in (EB_SIMPLE1) -->
+<sc-if value="{{tModeShow}}" hint-placeholder-val="{{ true }}">
+<div class="tmode" role="group" aria-label="How long have you got?">
+<button class="{{tmQuickCls}}" aria-pressed="{{tmQuickP}}" onClick="{{tmQuick}}"><span class="tmk">About 1 minute</span><b>Quick check-in</b><span>Where you feel it, a name for it, and what you need.</span></button>
+<button class="{{tmFullCls}}" aria-pressed="{{tmFullP}}" onClick="{{tmFull}}"><span class="tmk">About 10 minutes</span><b>The full check-in</b><span>All three steps, write it out, name it and feel it, in your order.</span></button>
+</div>
+</sc-if>
+<sc-if value="{{qShow}}" hint-placeholder-val="{{ false }}">
+<section class="flow qflow" aria-live="polite">
+<div class="qtop"><span class="hand" style="font-size: 16px; color: #A8231F">{{qKick}}</span><span class="qdots"><sc-for list="{{qDots}}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></div>
+<p class="qh">{{qTitle}}</p>
+<p class="lead" style="font-size: 15.5px">{{qHint}}</p>
+<sc-if value="{{qS0}}" hint-placeholder-val="{{ true }}">
+<span class="qq">Where is it?</span>
+<div class="chips"><sc-for list="{{qSpots}}" as="c" hint-placeholder-count="9"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.l}}</button></sc-for></div>
+<span class="qq">What does it feel like?</span>
+<div class="chips"><sc-for list="{{qFeels}}" as="c" hint-placeholder-count="8"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.l}}</button></sc-for></div>
+</sc-if>
+<sc-if value="{{qS1}}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{qHasGuess}}" hint-placeholder-val="{{ false }}"><p class="qguess">{{qGuess}}</p></sc-if>
+<div class="qemos"><sc-for list="{{qEmos}}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><b>{{c.l}}</b><span>{{c.h}}</span></button></sc-for></div>
+</sc-if>
+<sc-if value="{{qS2}}" hint-placeholder-val="{{ false }}">
+<div class="qneeds"><sc-for list="{{qNeeds}}" as="c" hint-placeholder-count="5"><button class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.l}}</button></sc-for></div>
+</sc-if>
+<sc-if value="{{qS3}}" hint-placeholder-val="{{ false }}">
+<div class="qdone"><p class="qdone-t">{{qDoneText}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><button class="primary maroon" onClick="{{goMine}}">See my blueprints</button><sc-if value="{{qCanProcess}}" hint-placeholder-val="{{ false }}"><button class="ghost solid" onClick="{{qProcess}}">Process it now</button></sc-if><button class="ghost" onClick="{{qAgain}}">Another quick one</button><button class="ghost" onClick="{{tmFull}}">Do the full check-in</button></div></div>
+</sc-if>
+<sc-if value="{{qNav}}" hint-placeholder-val="{{ true }}">
+<div class="qnav"><sc-if value="{{qHasBack}}" hint-placeholder-val="{{ false }}"><button class="ghost" onClick="{{qBack}}">Back</button></sc-if><button class="primary" onClick="{{qNext}}">{{qNextL}}</button></div>
+</sc-if>
+</section>
+</sc-if>
 <sc-if value="{{tuneDone}}" hint-placeholder-val="{{ false }}">
 <section class="donebox" aria-live="polite">
 <img src="/tools/assets/663cd271223c87a3e9eb85198c255ca8.svg" alt="">
@@ -2036,11 +2127,12 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <!-- T1 BRAIN DUMP -->
 <sc-if value="{{t0}}" hint-placeholder-val="{{ true }}">
 <sc-if value="{{tShowDump}}" hint-placeholder-val="{{ true }}">
-<sc-if value="{{tNotBp}}" hint-placeholder-val="{{ true }}"><p class="lead">What happened? Write down how you’re feeling. Don’t try to make sense of it. Just note the feelings in your body, the trigger, how it made you feel: annoyed, angry, like you weren’t good enough.</p></sc-if>
+<sc-if value="{{tDumpBig}}" hint-placeholder-val="{{ true }}"><sc-if value="{{tNotBp}}" hint-placeholder-val="{{ true }}"><p class="lead">What happened? Write down how you’re feeling. Don’t try to make sense of it. Just note the feelings in your body, the trigger, how it made you feel: annoyed, angry, like you weren’t good enough.</p></sc-if>
+</sc-if>
 <label class="lbl" for="wf-trigger">{{tTrigLabel}}</label>
 <input id="wf-trigger" class="input" type="text" value="{{c.what}}" onChange="{{onWhat}}" placeholder="He said it in front of everyone…">
-<label class="lbl" for="wf-dump">Big ass brain dump</label>
-<textarea id="wf-dump" class="input tall" value="{{c.dump}}" onChange="{{onDump}}" placeholder="Just keep writing. Messy is perfect."></textarea>
+<sc-if value="{{tDumpBig}}" hint-placeholder-val="{{ true }}"><label class="lbl" for="wf-dump">Big ass brain dump</label>
+<textarea id="wf-dump" class="input tall" value="{{c.dump}}" onChange="{{onDump}}" placeholder="Just keep writing. Messy is perfect."></textarea></sc-if>
 </sc-if>
 <sc-if value="{{tShowWheel}}" hint-placeholder-val="{{ true }}">
 <div class="qblock">
@@ -2050,9 +2142,26 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <sc-if value="{{tfHasHits}}" hint-placeholder-val="{{ false }}"><span class="mrh">Sounds like this. Tap the ones that fit</span><div class="chips"><sc-for list="{{tfHits}}" as="h" hint-placeholder-count="2"><button class="{{h.cls}}" onClick="{{h.pick}}"><span class="dotc" style="background: {{h.col}}"></span>{{h.l}}</button></sc-for></div></sc-if>
 <sc-if value="{{tfHasSit}}" hint-placeholder-val="{{ false }}"><span class="mrh">That sounds like what happened. If you were to know, how did it make you feel?</span><div class="chips"><sc-for list="{{tfSit}}" as="h" hint-placeholder-count="4"><button class="{{h.cls}}" onClick="{{h.pick}}"><span class="dotc" style="background: {{h.col}}"></span>{{h.l}}</button></sc-for></div></sc-if>
 <sc-if value="{{tfHasPicked}}" hint-placeholder-val="{{ false }}"><span class="mrh">You picked</span><div class="chips"><sc-for list="{{tfPicked}}" as="h" hint-placeholder-count="2"><button class="chip small on" onClick="{{h.pick}}"><span class="dotc" style="background: {{h.col}}"></span>{{h.l}}</button></sc-for></div></sc-if>
-<div class="wheelwrap pwheel"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt="The Energy in Motion wheel. Tap any feeling that fits.">
+<!-- EB_WHEEL1 -->
+<div class="wzbar"><span class="wz-t">Tap a word to see what it means</span><span class="wz-c"><button class="{{wzOutCls}}" onClick="{{wzOut}}" aria-label="Zoom out">−</button><span class="wz-p">{{wzPct}}</span><button class="{{wzInCls}}" onClick="{{wzIn}}" aria-label="Zoom in">+</button><sc-if value="{{wzZoomed}}" hint-placeholder-val="{{ false }}"><button class="wz-r" onClick="{{wzReset}}">Fit</button></sc-if></span></div>
+<div class="{{wzBoxCls}}" id="wzbox">
+<div class="wheelwrap pwheel" style="width: {{wzW}}; max-width: {{wzMax}}"><img src="/tools/assets/155c64712190eac9be159d6ad01d6e35.svg" alt="The Energy in Motion wheel. Tap any feeling to read about it.">
 <sc-for list="{{tfHl}}" as="h" hint-placeholder-count="2"><span class="{{h.cls}}" style="left: {{h.x}}%; top: {{h.y}}%" aria-hidden="true"></span></sc-for>
 <sc-for list="{{tfBtns}}" as="w" hint-placeholder-count="126"><button class="{{w.cls}}" style="left: {{w.x}}%; top: {{w.y}}%" aria-label="{{w.l}}" onClick="{{w.pick}}"></button></sc-for></div>
+</div>
+<sc-if value="{{wiShow}}" hint-placeholder-val="{{ false }}">
+<section class="wicard" id="wicard" style="border-top-color: {{wi.col}}" aria-live="polite">
+<div class="wi-h" style="background: {{wi.bg}}"><span class="ftag">{{wi.ring}}</span><span class="wi-w">{{wi.word}}</span><p class="wi-r">{{wi.root}}</p><button class="wi-x" onClick="{{wi.close}}" aria-label="Close this card">×</button></div>
+<p class="wi-d">{{wi.desc}}</p>
+<div class="wi-g">
+<div class="wi-s"><span class="tfk">It can sound like</span><div class="bubbles"><sc-for list="{{wi.thoughts}}" as="t" hint-placeholder-count="3"><span class="bub">“{{t}}”</span></sc-for></div></div>
+<div class="wi-s"><span class="tfk">In your body</span><ul class="wi-l"><sc-for list="{{wi.body}}" as="t" hint-placeholder-count="3"><li>{{t}}</li></sc-for></ul></div>
+<div class="wi-s"><span class="tfk">It might make you want to</span><ul class="wi-l"><sc-for list="{{wi.urges}}" as="t" hint-placeholder-count="3"><li>{{t}}</li></sc-for></ul></div>
+</div>
+<p class="wi-q">{{wi.ask}}</p>
+<div class="wi-a"><button class="primary maroon" onClick="{{wi.yes}}">{{wi.yesL}}</button><button class="ghost" onClick="{{wi.no}}">{{wi.noL}}</button></div>
+</section>
+</sc-if>
 <p class="hn" style="margin: 0">Not sure yet? That’s fine. Leave it, and we’ll work it out through your body in the next few steps.</p>
 </div>
 </sc-if>
@@ -2064,13 +2173,6 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <!-- T2 IN YOUR BODY -->
 <sc-if value="{{t1}}" hint-placeholder-val="{{ false }}">
 <p class="lead">Don’t worry about naming the emotion yet. Just describe what you’re experiencing. Your body often knows what you’re feeling long before your conscious mind catches up.</p>
-<div class="qblock">
-<h3>What does it feel like in your body?</h3>
-<p class="bodycue">Breathe into it. Is it still, or moving? Tight, or loose? Heavy, or buzzing?</p>
-<div class="chips"><sc-for list="{{feelChips}}" as="o" hint-placeholder-count="16"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.l}}</button></sc-for></div>
-<label class="lbl" for="wf-feel">In my own words, it feels…</label>
-<input id="wf-feel" class="input" type="text" value="{{c.feelOwn}}" onChange="{{onFeelOwn}}" placeholder="like pressure building inside me, trying to get out">
-</div>
 <div class="qblock">
 <h3>Where do you feel it?</h3>
 <p class="bodycue">Scan slowly from your head down to your feet. Where does it get louder? Tap those spots.</p>
@@ -2090,6 +2192,13 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <input id="wf-where" class="input" type="text" value="{{c.whereOwn}}" onChange="{{onWhereOwn}}" placeholder="a throbbing pressure in my head">
 </div>
 </div>
+</div>
+<div class="qblock">
+<h3>What does it feel like in your body?</h3>
+<p class="bodycue">Breathe into it. Is it still, or moving? Tight, or loose? Heavy, or buzzing?</p>
+<div class="chips"><sc-for list="{{feelChips}}" as="o" hint-placeholder-count="16"><button class="{{o.cls}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}"><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F1F9A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>{{o.l}}</button></sc-for></div>
+<label class="lbl" for="wf-feel">In my own words, it feels…</label>
+<input id="wf-feel" class="input" type="text" value="{{c.feelOwn}}" onChange="{{onFeelOwn}}" placeholder="like pressure building inside me, trying to get out">
 </div>
 </sc-if>
 
@@ -2143,7 +2252,7 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <sc-if value="{{tMis}}" hint-placeholder-val="{{ false }}"><div class="misflag"><strong>Heads up: your body might be telling a different story.</strong><span>{{tMisText}}</span></div></sc-if>
 <p class="lead">Read that back slowly. Then, based on everything you just described, which emotion feels closest? Pick one, or a few. Emotions love to travel in packs.</p>
 <div class="callout cream"><span>The little “clue” tags show where your answers match how that emotion often shows up. They’re clues, not a diagnosis. Everyone experiences emotions differently, and your body knows best.</span></div>
-<div class="emos"><sc-for list="{{emoCards}}" as="e" hint-placeholder-count="7"><button class="{{e.cls}}" aria-pressed="{{e.pressed}}" onClick="{{e.pick}}"><span class="er"><img src="{{e.img}}" alt=""><span class="en">{{e.n}}</span><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span><span class="es">{{e.s}}</span><sc-if value="{{e.hasMatch}}" hint-placeholder-val="{{ false }}"><span class="em">{{e.match}}</span></sc-if></button></sc-for></div>
+<div class="emos"><sc-for list="{{emoCards}}" as="e" hint-placeholder-count="7"><button class="{{e.cls}}" aria-pressed="{{e.pressed}}" onClick="{{e.pick}}"><span class="er"><img src="{{e.img}}" alt=""><span class="en">{{e.n}}</span><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span><span class="es">{{e.s}}</span><span class="ew">{{e.held}}</span><span class="ewi">{{e.up}}</span><sc-if value="{{e.hasMatch}}" hint-placeholder-val="{{ false }}"><span class="em">{{e.match}}</span></sc-if></button></sc-for></div>
 <label class="lbl" for="wf-other">Something else?</label>
 <input id="wf-other" class="input" type="text" value="{{c.emoOther}}" onChange="{{onEmoOther}}" placeholder="Jealousy, loneliness, disappointment, overwhelm…">
 </sc-if>
@@ -2393,7 +2502,7 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 <p class="big">Create your blueprints.</p>
 <p class="lead">Anger, sadness and fear are usually the easiest to name, and the easiest to notice in your body. Hurt, grief, shame and guilt often look and feel like sadness if you’re not really in tune with your body yet. That was me. It all just felt like sadness, and that is okay.</p>
 <p class="lead"><strong>If you want to, just do a blueprint for these three. They’re the main ones.</strong></p>
-<sc-if value="{{bpNeedVid}}" hint-placeholder-val="{{ false }}"><div class="bpnote">🔒 These open after the <strong>Processing Emotions</strong> video in Week 4. For now, have a play with the wheel and start naming what you feel.</div></sc-if>
+<sc-if value="{{bpNeedVid}}" hint-placeholder-val="{{ false }}"><div class="bpnote">🔒 These open after <strong>Lesson 3: Naming Emotions</strong> in Week 5. For now, try What am I feeling? and start naming what you feel.</div></sc-if>
 <sc-if value="{{bpCanMake}}" hint-placeholder-val="{{ true }}">
 <div class="bpgrid"><sc-for list="{{bpMain}}" as="b" hint-placeholder-count="3"><button class="{{b.cls}}" onClick="{{b.go}}"><img src="{{b.img}}" alt=""><span>{{b.l}}<span class="bps">{{b.st}}</span></span></button></sc-for></div>
 <div class="bpdeep">
@@ -2403,6 +2512,7 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </div>
 </sc-if>
 </section>
+<sc-if value="{{patShow}}" hint-placeholder-val="{{ false }}"><section class="patcard"><span class="hand" style="font-size: 16px; color: #A8231F">Your pattern so far</span><p class="lead" style="font-size: 15px">From your check-ins. The more you check in, the clearer this gets.</p><sc-for list="{{patRows}}" as="r" hint-placeholder-count="2"><div class="patrow"><img src="{{r.img}}" alt=""><div><b>{{r.n}}</b><span class="pc">{{r.count}}</span><p>{{r.t}}</p></div></div></sc-for><sc-if value="{{patNone}}" hint-placeholder-val="{{ false }}"><p class="lead" style="font-size: 15px">Once you’ve named the same feeling twice, its pattern shows up here.</p></sc-if></section></sc-if>
 <section class="sec">
 <p class="big">My blueprints.</p>
 <p class="lead">One blueprint for each feeling, with every time it’s knocked. Over time this becomes your personal roadmap: how each emotion shows up for you, what sets it off, and what it needs.</p>
@@ -2479,7 +2589,17 @@ textarea.input.tall{min-height:240px;background-image:repeating-linear-gradient(
 </sc-if>
 
 <!-- ================= 9 · PROCESS IT ================= -->
-<sc-if value="{{tabProcess}}" hint-placeholder-val="{{ false }}">
+<!-- EB_SOON1 -->
+<sc-if value="{{tabProcessSoon}}" hint-placeholder-val="{{ false }}">
+<section class="lockcard">
+<span class="lockic" aria-hidden="true">✨</span>
+<span class="hand" style="font-size: 16px; color: #A8231F">Process it · coming soon</span>
+<p class="big">This part is on its way.</p>
+<p class="lead">Process it is where you’ll move a feeling through your body and release it. It’s nearly ready. For now, keep naming what you feel with What am I feeling?, and every check-in adds to your blueprints, ready for when this opens.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><button class="primary maroon" onClick="{{soonTune}}">Go to What am I feeling?</button><button class="ghost" onClick="{{soonMine}}">See my blueprints</button></div>
+</section>
+</sc-if>
+<sc-if value="{{tabProcessLive}}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{pLocked}}" hint-placeholder-val="{{ false }}">
 <section class="lockcard">
 <span class="lockic" aria-hidden="true">🔒</span>
@@ -2751,7 +2871,8 @@ var IMG = {
   breath: '/tools/assets/c8af3be239e308bc789ccaf133f93013.svg'
 };
 IMG.wheel = '/tools/assets/49b9549cb566e401a6413476bea140d6.svg';
-var MENUTABS = [['home', 'Start here', 'door'], ['tune', 'What am I feeling?', 'other'], ['eim', 'Energy in Motion', 'wheel'], ['process', 'Process it', 'express'], ['mine', 'My blueprints', 'blueprint'], ['body', 'Body map', 'littleme'], ['blends', 'Emotion mixer', 'prepare'], ['levels', 'Consciousness', 'breath'], ['ect', 'ECT with Sav', 'hug']];
+/* EB_SIMPLE1 */ var MENUTABS = [['tune', 'What am I feeling?', 'other'], ['mine', 'My blueprints', 'blueprint'], ['process', 'Process it', 'express'], ['more', 'More tools', 'wheel']];
+var MORE_T = ['more', 'eim', 'body', 'blends', 'levels', 'energy', 'roots', 'menu', 'wheel'];
 var TABS = [['home', 'Start here', 'door', ''], ['eim', 'Energy in Motion', 'wheel', '✦'], ['energy', 'Energy', 'shake', '1'], ['roots', 'Root & flavour', 'journal', '2'], ['menu', 'Emotional menu', 'wheel', '✦'], ['body', 'Body map', 'littleme', '3'], ['wheel', 'Feelings wheel', 'wheel', '4'], ['tune', 'What am I feeling?', 'other', '5'], ['blends', 'Blends', 'prepare', '6'], ['levels', 'Consciousness', 'breath', '7'], ['mine', 'Waves & blueprints', 'blueprint', '8'], ['process', 'Process it', 'express', '9'], ['ect', 'ECT', 'hug', '★']];
 
 // kicker, title, image, next label, drop-in
@@ -3245,8 +3366,8 @@ var FOOD = {
 };
 var MAPTAG = { 'Love': ['Sadness and grief rise here', true], 'Acceptance': ['Hurt, guilt and shame rise here', true], 'Willingness': ['Fear rises here', true], 'Anger': ['Anger lives here', false], 'Fear': ['Fear lives here', false], 'Grief': ['Grief, sadness and hurt live here', false], 'Apathy': ['Sadness can sink here', false], 'Guilt': ['Guilt lives here', false], 'Shame': ['Shame lives here', false] };
 var RISE = [['anger', '150', 'Courage 200+', 'passion and healthy boundaries'], ['sadness', '75', 'Love 500', 'compassion'], ['fear', '100', 'Willingness 310', 'excitement to try new things'], ['hurt', '75', 'Acceptance 350', 'forgiveness and an open heart'], ['guilt', '30', 'Acceptance 350', 'integrity and self-forgiveness'], ['shame', '20', 'Acceptance 350', 'self-acceptance'], ['grief', '75', 'Love 500', 'gratitude and love']];
-var TABMAP = { learn: 'home', guide: 'wheel', mega: 'levels' };
-function tabOk(t) { t = TABMAP[t] || t; return TABS.some(function (x) { return x[0] === t; }) ? t : 'home'; }
+var TABMAP = { learn: 'more', home: 'more', guide: 'wheel', mega: 'levels' };
+function tabOk(t) { t = TABMAP[t] || t; return TABS.some(function (x) { return x[0] === t; }) ? t : 'tune'; }
 function migDone(ld) { ld = ld || {}; var M = ['energy', 'roots', 'body', 'wheel', 'blends', 'levels', 'mine', 'process']; var o = {}; Object.keys(ld).forEach(function (k) { if (/^\d+$/.test(k)) { if (M[+k] && ld[k]) o[M[+k]] = true; } else if (ld[k]) o[k] = true; }); return o; }
 
 var CGCOLS = ['anger', 'sadness', 'fear', 'hurt', 'guilt', 'shame', 'grief'];
@@ -3459,6 +3580,7 @@ function curEmoKeys(c) {
 
 // EB_V3: the three ways people feel their feelings, and the order of steps for each
 var TSEQ = { def: ['dw', 1, 2, 3, 4, 5, 6, 7], body: [1, 2, 3, 'dw', 4, 5, 6, 7], see: ['w', 'd', 1, 2, 3, 4, 5, 6, 7], think: ['d', 'w', 1, 2, 3, 4, 5, 6, 7] };
+var TDL_STEP = ['Step 1', 'What happened?', 'journal', 'Next', 'Just a line or two. Get it out of your head and onto the page, then come back to your body.'];
 var TW_STEP = ['Step 1', 'Name it on the wheel', 'other', 'Next', 'Take a breath. Look at the wheel and notice which word your eyes go to first. Don’t think too hard. Tap what feels closest.'];
 var FT = {
   body: { n: '1', t: 'You feel it in your body first', s: 'You feel the feelings in your body, and struggle to name them.', e1: 'Your chest goes tight before a hard conversation, but if someone asked what you were feeling you’d say “I don’t know… bad?”', e2: 'Your stomach drops when a message comes in, and you can’t say why.', name: 'body first', recT: 'Start with your body.', recD: 'My recommendation: whenever you use any of the tools in this resource, start with the body map. You feel it first, so we’ll start where you feel it, then describe it, then find its name on the wheel.', seq: ['Body scan', 'Describe it', 'Name it on the wheel'], note: 'We’ll show you clues about which emotion it might be, based on what your body is doing.', how: 'Start by noticing what was happening in your body. We’ll map that first, then you can write it all down.' },
@@ -3466,14 +3588,14 @@ var FT = {
   think: { n: '3', t: 'You think it first', s: 'You think about the feelings and try to find a name for them, and then you feel them in your body.', e1: 'You can explain exactly what happened and why it bothered you, but you don’t feel much in your body until later.', e2: 'You think “I’m annoyed”, then notice your jaw is clenched.', name: 'describe it first', recT: 'You need to describe it.', recD: 'My recommendation: whenever you use any of the tools in this resource, start by describing it. Get it all out of your head first, then find its name on the wheel, then do a body scan.', seq: ['Describe it', 'Name it on the wheel', 'Body scan'], note: 'We’ll let you know if your body is pointing to a different emotion than the name you picked.', how: 'Write down everything you remember about it first. Then we’ll find its name and check in with your body.' }
 };
 var FTORDER = ['body', 'see', 'think'];
-function tStepName(ph) { if (ph === 'w') return 'name it on the wheel'; if (ph === 'd' || ph === 'dw') return 'the brain dump'; return low(TSTEPS[ph][1]); }
+function tStepName(ph) { if (ph === 'w') return 'name it on the wheel'; if (ph === 'dl') return 'what happened'; if (ph === 'd' || ph === 'dw') return 'the brain dump'; return low(TSTEPS[ph][1]); }
 
 // EB_LOCK1: is the whole resource open yet? (Processing Emotions done, a Founding Member, or unlocked in the playground)
-function EB_FULL(st) { try { var p = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); if (p && ((p.done && (p.done.w4l2 || p.done.w4l4)) || p.founder)) return true; /* EB_START1: opens after Lesson 2 */ } catch (e) {} return !!(st && st.demoUnlock); }
-var WAY_SEQ = [['d', 'w', 1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 'd', 'w', 4, 5, 6, 7], ['w', 'd', 1, 2, 3, 4, 5, 6, 7], ['w', 1, 2, 3, 'd', 4, 5, 6, 7]];
+function EB_FULL(st) { try { if (window.BT_DEMO && window.BT_DEMO.unlock) return true; var p = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); if (p && ((p.done && (p.done.w4l2 || p.done.w4l4)) || p.founder)) return true; /* EB_START1: opens after Lesson 2 */ } catch (e) {} return !!(st && st.demoUnlock); }
+var WAY_SEQ = [['d', 'w', 1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 'dl', 'w', 4, 5, 6, 7], ['w', 'dl', 1, 4, 5, 6, 7], ['w', 1, 2, 3, 'd', 4, 5, 6, 7]];
 var WAY_NAME = ['The thinker', 'The feeler', 'The visual one', 'The knower'];
 var WAY_START = ['writing it out', 'your body', 'the wheel', 'the wheel'];
-function ebGroup(ph) { return ph === 'd' ? 'Write it out' : ph === 'w' ? 'Pick it on the wheel' : (ph === 1 || ph === 2 || ph === 3) ? 'Feel it in your body' : ph === 4 ? 'Does the name fit?' : (ph === 5 || ph === 6) ? 'What do you need?' : ph === 7 ? 'An intentional pause' : ''; }
+function ebGroup(ph) { return ph === 'd' || ph === 'dl' ? 'Write it out' : ph === 'w' ? 'Pick it on the wheel' : (ph === 1 || ph === 2 || ph === 3) ? 'Feel it in your body' : ph === 4 ? 'Does the name fit?' : (ph === 5 || ph === 6) ? 'What do you need?' : ph === 7 ? 'An intentional pause' : ''; }
 function ebStepLabel(seq, pos) { var n = 0, last = null; for (var i = 0; i <= pos; i++) { var g = ebGroup(seq[i]); if (g !== last) { n++; last = g; } } return 'Step ' + n + ' · ' + ebGroup(seq[pos]); }
 var EB_TK = { d: 'Step 1 · Write it out', w: 'Step 2 · Pick it on the wheel', 1: 'Step 3 · Feel it in your body', 2: 'Step 3 · Feel it in your body', 3: 'Step 3 · Feel it in your body', 4: 'Step 4 · Does the name fit?', 5: 'Step 5 · What do you need?', 6: 'Step 5 · What do you need?', 7: 'Step 6 · An intentional pause' };
 function CMODS_ALL(s) { var ld = s.lessonsDone || {}; for (var i = 0; i < 6; i++) if (!ld['mod' + i]) return false; return true; }
@@ -3482,7 +3604,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 'home', tStep: 0, pStep: 0, cur: emptyCur(), proc: emptyProc(),
+      tab: 'tune', tStep: 0, pStep: 0, cur: emptyCur(), proc: emptyProc(),
       blueprints: {}, history: [], sessions: [], open: null,
       tuneDone: null, procDone: null, confirm: null,
       mmA: 'sh', mmB: 'lo', bodyText: '', lessonsDone: {}, lesson: null, jMsg: '', l1Emo: 'anger', l1Ring: null, enEmo: 'anger', enLvl: null, lOpen: {}, l4: { t: '', f: '', d: '' }, eName: '', eWhy: '', eEmos: {}, form: { name: '', email: '', phone: '', where: '', now: '', why: '', other: '' }, fContact: 'Email', fHowLong: null, fBefore: {}, fWhen: null, fAgree: false, fTried: false,
@@ -3650,18 +3772,18 @@ class Component extends DCLogic {
     }
     if (s && typeof s === 'object') {
       this.setState({
-        feelType: FT[s.feelType] ? s.feelType : null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: (CMODS_ALL(s) && ['process', 'tune', 'mine'].indexOf(tabOk(s.tab)) < 0) ? 'tune' : tabOk(s.tab), tStep: typeof s.tStep === 'number' ? Math.max(0, Math.min(8, s.tStep)) : 0, pStep: typeof s.pStep === 'number' ? Math.max(0, Math.min(4, s.pStep)) : 0,
+        feelType: FT[s.feelType] ? s.feelType : null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: ['process', 'mine'].indexOf(tabOk(s.tab)) >= 0 ? tabOk(s.tab) : 'tune', tStep: typeof s.tStep === 'number' ? Math.max(0, Math.min(8, s.tStep)) : 0, pStep: typeof s.pStep === 'number' ? Math.max(0, Math.min(4, s.pStep)) : 0,
         cur: Object.assign(emptyCur(), s.cur || {}), proc: Object.assign(emptyProc(), s.proc || {}),
-        blueprints: s.blueprints || {}, history: Array.isArray(s.history) ? s.history : [], sessions: Array.isArray(s.sessions) ? s.sessions : [], open: s.open || null, lessonsDone: migDone(s.lessonsDone), l4: Object.assign({ t: '', f: '', d: '' }, s.l4 || {})
+        tMode: s.tMode || null, blueprints: s.blueprints || {}, history: Array.isArray(s.history) ? s.history : [], sessions: Array.isArray(s.sessions) ? s.sessions : [], open: s.open || null, lessonsDone: migDone(s.lessonsDone), l4: Object.assign({ t: '', f: '', d: '' }, s.l4 || {})
       });
     }
     if (!EB_FULL(this.state)) this.setState({ tab: 'tune' }); /* EB_LOCK1 */
-    try { var qt = new URLSearchParams(window.location.search).get('tab'); if (qt && ['home', 'tune', 'mine', 'process', 'eim', 'body'].indexOf(qt) >= 0 && (qt === 'tune' || EB_FULL(this.state))) this.setState({ tab: qt, tStep: qt === 'tune' ? 0 : this.state.tStep }); } catch (e) {} /* EB_START1 */
+    try { var qt = new URLSearchParams(window.location.search).get('tab'); if (qt && ['home', 'tune', 'mine', 'process', 'more', 'eim', 'body', 'blends', 'levels'].indexOf(qt) >= 0 && (qt === 'tune' || EB_FULL(this.state))) this.setState({ tab: qt === 'home' ? 'more' : qt, tStep: qt === 'tune' ? 0 : this.state.tStep }); } catch (e) {} /* EB_START1 */
   }
 
   componentDidUpdate() {
     var s = this.state;
-    try { window.localStorage.setItem(EB_KEY, JSON.stringify({ feelType: s.feelType || null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: s.tab, tStep: s.tStep, pStep: s.pStep, cur: s.cur, proc: s.proc, blueprints: s.blueprints, history: s.history, sessions: s.sessions, open: s.open, lessonsDone: s.lessonsDone, l4: s.l4 })); } catch (e) {}
+    try { window.localStorage.setItem(EB_KEY, JSON.stringify({ tMode: s.tMode || null, feelType: s.feelType || null, wayIn: typeof s.wayIn === 'number' ? s.wayIn : null, tab: s.tab, tStep: s.tStep, pStep: s.pStep, cur: s.cur, proc: s.proc, blueprints: s.blueprints, history: s.history, sessions: s.sessions, open: s.open, lessonsDone: s.lessonsDone, l4: s.l4 })); } catch (e) {}
   }
 
   scrollTool(t) { setTimeout(function () { try { var el = document.getElementById('tool-' + t); if (el) { var y = el.getBoundingClientRect().top + (window.pageYOffset || 0) - 100; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); } else window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }, 60); }
@@ -3761,12 +3883,12 @@ class Component extends DCLogic {
   renderVals() {
     var self = this, s = this.state, c = s.cur, pr = s.proc, ps = s.pStep;
     var tSeq = WAY_SEQ[s.wayIn] || TSEQ.think, tPos = Math.max(0, Math.min(s.tStep || 0, tSeq.length - 1)), tPh = tSeq[tPos], ts = typeof tPh === 'number' ? tPh : 0;
-    var tm = tPh === 'w' ? TW_STEP : TSTEPS[ts], pm = PSTEPS[ps];
+    var tm = tPh === 'w' ? TW_STEP : tPh === 'dl' ? TDL_STEP : TSTEPS[ts], pm = PSTEPS[ps];
     var allJ = JOURNEY.every(function (J) { return (s.lessonsDone || {})[J[0]]; });
     // EB_V2: where they're up to in Week 4, and which blueprints exist
     var ebProg = null; try { ebProg = JSON.parse(window.localStorage.getItem('bt-course') || 'null'); } catch (e) {}
-    var ebDone = (ebProg && ebProg.done) || {}, ebVid = !!ebDone.w4l4 || !!s.demoUnlock || !!(ebProg && ebProg.founder);
-    var ebOpen = !!ebDone.w4l2 || ebVid; var rLocked = !ebOpen, lockView = rLocked && s.tab !== 'tune', vt = lockView ? '__locked' : s.tab;
+    var ebDone = (ebProg && ebProg.done) || {}, ebVid = !!ebDone.w4l4 || !!s.demoUnlock || !!(window.BT_DEMO && window.BT_DEMO.unlock) || !!(ebProg && ebProg.founder);
+    var ebOpen = !!ebDone.w4l2 || ebVid || !!(window.BT_DEMO && window.BT_DEMO.unlock); var rLocked = !ebOpen, lockView = rLocked && s.tab !== 'tune', vt = lockView ? '__locked' : s.tab;
     var ebHas = function (k) { var bq = (s.blueprints || {})[k] || {}; return ['body', 'triggers', 'signs', 'express'].some(function (f) { return trim(bq[f] || ''); }) || (s.history || []).some(function (hh) { return (hh.emos || []).some(function (e) { return e.id === k; }); }); };
     var ebLeft = ['anger', 'sadness'].filter(function (k) { return !ebHas(k); });
     var ebLocked = s.demoUnlock ? false : (!ebVid || ebLeft.length > 0);
@@ -3781,7 +3903,72 @@ class Component extends DCLogic {
       if (best && best.h >= 2 && picked.indexOf(best.k) < 0) tMis = 'You picked ' + join(picked.map(function (k) { return low(EMOBY[k] ? EMOBY[k][1] : k); })) + ' on the wheel, but what you described in your body sounds a lot like ' + low(best.n) + '. You might have had the wrong label for it, which is really common. Have a look at ' + low(best.n) + ' below, and pick whatever feels true.';
     })();
     var ftShow = false;
-    var tabs = MENUTABS.map(function (tb) { var on = s.tab === tb[0], lk = rLocked && tb[0] !== 'tune' && tb[0] !== 'ect'; return { l: tb[1], img: IMG[tb[2]], num: lk ? '🔒' : '', hasNum: lk, cls: (on ? 'tab on' : 'tab') + (lk ? ' lockt' : ''), current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } }; });
+
+
+    var wayVals = (function () { // EB_WAY1: think it, feel it or see it
+      var W = [[0, 'Do you think about your emotions?', 'Write it out first', 'You tend to go over things in your head: what happened, why, what it means. A big brain dump comes first, then you name it and feel it. The longest of the three.', 'Write it out → name it → feel it · about 10 min'],
+        [1, 'Do you feel emotions in your body?', 'Feel it first', 'You notice it physically before you can explain it: a tight chest, a lump in your throat, a buzz. Your body leads, a line on what happened, then the name.', 'Feel it → a line on what happened → name it · about 5 min'],
+        [2, 'Do you visualise your emotions?', 'Name it first', 'You see it: a colour, a shape, a picture. You find it on the feelings wheel first, jot what happened, then check in with your body.', 'Name it → a line on what happened → feel it · about 3 min']];
+      var cur = typeof s.wayIn === 'number' ? s.wayIn : null, started = (s.tStep || 0) > 0;
+      return {
+        wayShow: vt === 'tune', wayPicked: true,
+        wayNote: cur !== null ? (started ? 'You’re part way through a check-in. Your new starting point is used next time, or tap Start over.' : 'Your check-in is open below. Next time it starts here too, and you can change it any time.') : 'Tap the one that sounds most like you and your check-in opens below.',
+        tModeShow: false, qShow: false,
+        w0: null, w1: null, w2: null,
+        wayOpts: W.map(function (w) { var on = cur === w[0]; return { q: w[1], t: w[2], d: w[3], o: w[4], cls: 'wp-b' + (on ? ' on' : ''), pressed: on ? 'true' : 'false',
+          pick: function () { var p = { wayIn: w[0], tMode: 'full', tuneDone: null }; if (!(self.state.tStep || 0) || self.state.wayIn !== w[0] && !self.state.tStep) p.tStep = 0; self.setState(p); setTimeout(function () { try { var f = [].slice.call(document.querySelectorAll('section.flow')).filter(function (x) { return !x.classList.contains('qflow') && x.offsetParent; })[0]; if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }, 120); } }; })
+      };
+    })();
+    wayVals.w0 = wayVals.wayOpts[0]; wayVals.w1 = wayVals.wayOpts[1]; wayVals.w2 = wayVals.wayOpts[2];
+    var qVals = (function () { // ---- quick check-in (EB_SIMPLE1), its own scope so nothing below can clash
+    var q = s.qk || { where: {}, feel: {}, emo: null, need: null }, qs = s.qStep || 0, qQuick = s.tMode === 'quick';
+    var qSet = function (patch) { self.setState({ qk: Object.assign({}, self.state.qk || { where: {}, feel: {}, emo: null, need: null }, patch) }); };
+    var qFlip = function (field, k) { var o = Object.assign({}, q[field] || {}); if (o[k]) delete o[k]; else o[k] = true; var p = {}; p[field] = o; qSet(p); };
+    var qFeelList = keys(q.feel), qScore = EMO.map(function (e) { return { k: e[0], n: e[1], h: qFeelList.filter(function (f) { return (e[3].feel || []).indexOf(f) >= 0; }).length }; }).sort(function (a, b) { return b.h - a.h; });
+    var qBest = qScore[0] && qScore[0].h > 0 ? qScore[0] : null;
+    var qNeedOpts = (q.emo && NEEDS[q.emo] ? NEEDS[q.emo].slice(0, 4) : []).concat(GENERAL).map(function (x) { return x[2]; }).filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6);
+    var qSave = function () {
+      var c = self.state.qk || q, en = { id: String(Date.now()), at: Date.now(), what: 'Quick check-in', dump: '', quick: true,
+        emos: c.emo ? [{ id: c.emo, n: emoName(c.emo) }] : [], recap: '', size: null, need: c.need || '', little: '', status: 'enough',
+        feel: keys(c.feel), where: keys(c.where).filter(function (k) { return k !== 'unsure'; }).map(spotName), shape: [], colour: [], temp: null, force: null, urge: [], words: [], feelWords: '' };
+      self.setState({ history: [en].concat(self.state.history || []), qStep: 3, qSaved: en.id });
+    };
+    var qTitles = ['Drop into your body', 'If you had to name it…', 'What do you need right now?', 'Saved'];
+    var qHints = ['One slow breath in, and a long breath out. Scan from your head down to your toes. Tap where you notice it and how it feels. Anything counts.',
+      'Read these slowly and notice which one your body goes “yeah… that” to. You don’t need to be sure.',
+      'Ask your body, not your brain. Pick the one you feel a little pull towards, then go and do it.', ''];
+    var qVals = {
+      tModeShow: vt === 'tune' && !s.tuneDone && ((!qQuick && !(s.tStep || 0)) || (qQuick && qs === 0)),
+      tmQuickCls: 'tmb' + (qQuick ? ' on' : ''), tmFullCls: 'tmb' + (!qQuick ? ' on' : ''), tmQuickP: qQuick ? 'true' : 'false', tmFullP: !qQuick ? 'true' : 'false',
+      tmQuick: function () { self.setState({ tMode: 'quick', qStep: 0, qk: { where: {}, feel: {}, emo: null, need: null }, tuneDone: null }); },
+      tmFull: function () { self.setState({ tMode: 'full', qStep: 0, tStep: 0, tuneDone: null }); },
+      qShow: vt === 'tune' && qQuick, qS0: qs === 0, qS1: qs === 1, qS2: qs === 2, qS3: qs === 3, qNav: qs < 3, qHasBack: qs > 0,
+      qKick: qs < 3 ? 'Quick check-in · ' + (qs + 1) + ' of 3' : 'Quick check-in', qTitle: qTitles[qs], qHint: qHints[qs],
+      qDots: [0, 1, 2].map(function (i) { return { cls: i <= qs ? 'on' : '' }; }),
+      qSpots: SPOTS.concat(WHEREX).map(function (sp) { var on = !!(q.where || {})[sp[0]]; return { l: sp[1], cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { qFlip('where', sp[0]); } }; }),
+      qFeels: FEEL.map(function (f) { var on = !!(q.feel || {})[f]; return { l: f, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { qFlip('feel', f); } }; }),
+      qHasGuess: !!qBest, qGuess: qBest ? 'What you felt in your body sounds a lot like ' + low(qBest.n) + '. Go with your body, though.' : '',
+      qEmos: (qBest ? [EMOBY[qBest.k]].concat(EMO.filter(function (e) { return e[0] !== qBest.k; })) : EMO).map(function (e) { var on = q.emo === e[0]; return { l: e[1], h: e[2], cls: 'qemo' + (on ? ' on' : ''), pressed: on ? 'true' : 'false', pick: function () { qSet({ emo: on ? null : e[0], need: null }); } }; }).concat([{ l: 'I’m not sure', h: 'That’s okay. It still counts, and it still saves.', cls: 'qemo' + (q.emo === null && qs === 1 && s.qUnsure ? ' on' : ''), pressed: 'false', pick: function () { self.setState({ qUnsure: true }); qSet({ emo: null }); } }]),
+      qNeeds: qNeedOpts.map(function (t) { var on = q.need === t; return { l: t, cls: 'qneed' + (on ? ' on' : ''), pressed: on ? 'true' : 'false', pick: function () { qSet({ need: on ? null : t }); } }; }),
+      qNextL: qs === 2 ? 'Save it' : 'Next',
+      qNext: function () { if (qs === 2) { qSave(); return; } self.setState({ qStep: qs + 1 }); },
+      qBack: function () { self.setState({ qStep: Math.max(0, qs - 1) }); },
+      qAgain: function () { self.setState({ qStep: 0, qk: { where: {}, feel: {}, emo: null, need: null }, qUnsure: false }); },
+      qCanProcess: !!q.emo && !ebLocked, qProcess: function () { self.startProcess(q.emo, s.qSaved); },
+      qDoneText: q.emo ? 'Saved to your ' + low(emoName(q.emo)) + ' blueprint. ' + (q.need ? 'Now go and do it: ' + low(q.need).replace(/\.$/, '') + '.' : 'Every check-in makes your pattern clearer.') : 'Saved. Even “not sure” is useful: it shows you what this feeling does in your body.'
+    };
+    // ---- your pattern so far (EB_SIMPLE1)
+    var patH = s.history || [], patT = function (arr) { var c = {}; arr.forEach(function (a) { (a || []).forEach(function (w) { c[w] = (c[w] || 0) + 1; }); }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }); };
+    var patRows = EMO.map(function (e) {
+      var hs = patH.filter(function (h) { return (h.emos || []).some(function (x) { return x.id === e[0]; }); }); if (hs.length < 2) return null;
+      var wh = patT(hs.map(function (h) { return h.where; })).slice(0, 2).map(low), fe = patT(hs.map(function (h) { return h.feel; })).slice(0, 3).map(low), nd = hs.map(function (h) { return h.need; }).filter(Boolean)[0] || '';
+      var bits = []; if (wh.length) bits.push('You feel it most in your ' + join(wh) + '.'); if (fe.length) bits.push('It usually feels ' + join(fe) + '.'); if (nd) bits.push('Last time, what you needed: ' + low(nd).replace(/\.$/, '') + '.');
+      return { n: e[1], img: IMG[e[0]] || IMG.other, count: hs.length + ' times', t: bits.join(' ') || 'Keep checking in and the details will fill in here.' };
+    }).filter(Boolean);
+    qVals.patShow = patH.length >= 2; qVals.patRows = patRows; qVals.patNone = patH.length >= 2 && !patRows.length;
+    return qVals;
+    })();
+    var tabs = MENUTABS.filter(function (tb) { return !(rLocked && tb[0] !== 'tune'); }).map(function (tb) { var on = tb[0] === 'more' ? MORE_T.indexOf(s.tab) >= 0 : s.tab === tb[0], lk = false; return { l: tb[1], img: IMG[tb[2]], num: lk ? '🔒' : '', hasNum: lk, cls: (on ? 'tab on' : 'tab') + (lk ? ' lockt' : ''), current: on ? 'page' : 'false', go: function () { self.goTab(tb[0]); } }; });
     var multi = function (which, field, list) {
       var src = s[which];
       return list.map(function (l) { var on = !!(src[field] || {})[l]; return { l: l, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.flipIn(which, field, l); } }; });
@@ -3797,7 +3984,7 @@ class Component extends DCLogic {
     var forceChips = FORCE.map(function (f) { var on = c.force === f; return { l: f, cls: on ? 'chip on' : 'chip', pressed: on ? 'true' : 'false', pick: function () { self.setCur({ force: on ? null : f }); } }; });
     var emoCards = EMO.map(function (e) {
       var on = !!(c.emos || {})[e[0]], hits = matches(c, e);
-      return { n: e[1], s: e[2], img: IMG[e[0]], cls: on ? 'emo on' : 'emo', pressed: on ? 'true' : 'false', hasMatch: hits.length > 0, match: hits.length + (hits.length === 1 ? ' clue: ' : ' clues: ') + hits.join(', '), pick: function () { self.flipIn('cur', 'emos', e[0]); } };
+      var fam = EIMBY[e[0]]; return { held: fam ? fam[3].concat(fam[4]).join(' · ') : '', up: fam ? 'Let it move and it becomes: ' + fam[5].join(', ').toLowerCase() + ', ' + fam[6].toLowerCase() : '', n: e[1], s: e[2], img: IMG[e[0]], cls: on ? 'emo on' : 'emo', pressed: on ? 'true' : 'false', hasMatch: hits.length > 0, match: hits.length + (hits.length === 1 ? ' clue: ' : ' clues: ') + hits.join(', '), pick: function () { self.flipIn('cur', 'emos', e[0]); } };
     });
     var cKeys = curEmoKeys(c);
     var firstKey = c.first && cKeys.indexOf(c.first) >= 0 ? c.first : cKeys[0];
@@ -4326,10 +4513,10 @@ class Component extends DCLogic {
         cHasIntro: !!intro, cIntro: intro, cNoIntro: !intro,
         cPillK: cAll ? 'Course done · nice work' : cDoneN + ' of ' + CMODS.length + ' done', cPillS: cAll ? 'Want a refresher? Re-open any module.' : 'Pick up where you left off.',
         cMinimise: function () { self.setState({ cShow: false }); },
-        cOpenCourse: function () { self.setState({ tab: 'home', cShow: true }); eScrollTo('home-course'); },
+        cOpenCourse: function () { self.setState({ tab: 'more', cShow: true }); eScrollTo('home-course'); },
         cDemoAreas: demoAreas, cBodyBtns: cBodyBtns, cDemoNone: !demo, cDemoAsk: demo ? BODY[demo].ask : '', cDemoHas: !!demo, cDemoN: demo ? BODY[demo].n : '', cDemoSays: demo ? BODY[demo].says : '', cDemoEmos: demoEmos,
         cPins: cPins, cAnnN: String(pin + 1), cAnnT: PINS[pin][0], cAnnD: PINS[pin][1], cAngerPath: cAngerPath,
-        eGoLearn: function () { self.setState({ tab: 'home', cShow: true }); eScrollTo('home-course'); },
+        eGoLearn: function () { self.setState({ tab: 'more', cShow: true }); eScrollTo('home-course'); },
         eGoWheel: function () { self.goTool('eim'); }
       });
       // body stacking
@@ -4368,7 +4555,16 @@ class Component extends DCLogic {
       NV.tfHasPicked = NV.tfPicked.length > 0;
       var tfHlW = Object.keys(tw).concat(NV.tfHasHits ? tf.hits.map(function (h) { return h.target; }) : []);
       NV.tfHl = tfHlW.filter(function (w, i) { return EIMIDX[w] && tfHlW.indexOf(w) === i; }).map(function (w) { var ix = EIMIDX[w], p = ePos(EIMR[ix.ring], eAng(ix)); return { x: p.x, y: p.y, cls: 'ehl r' + ix.ring + (tw[w] ? ' sel' : '') }; });
-      NV.tfBtns = Object.keys(EIMIDX).map(function (w) { var ix = EIMIDX[w], p = ePos(EIMR[ix.ring], eAng(ix)); return { cls: ['wb ec0', 'wb ec1', 'wb ec2', 'wb ec3', 'wb ec4'][ix.ring], x: p.x, y: p.y, l: 'Pick ' + w, pick: function () { pickTw(w); } }; });
+      NV.tfBtns = Object.keys(EIMIDX).map(function (w) { var ix = EIMIDX[w], p = ePos(EIMR[ix.ring], eAng(ix)); return { cls: ['wb ec0', 'wb ec1', 'wb ec2', 'wb ec3', 'wb ec4'][ix.ring] + (s.wInfo === w ? ' on' : ''), x: p.x, y: p.y, l: 'Read about ' + w, pick: function () { self.setState({ wInfo: w }); setTimeout(function () { var el = document.getElementById('wicard'); if (el && el.scrollIntoView) { var r = el.getBoundingClientRect(); if (r.top > window.innerHeight - 120 || r.top < 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 60); } }; });
+      var wiVals = (function () { var w = s.wInfo, ix = w && EIMIDX[w], d = w && EIMW[w]; if (!ix || !d) return { wiShow: false, wi: {} }; var E0 = EIMBY[ix.k], col = E0[2], on = !!tw[w], close = function () { self.setState({ wInfo: null }); };
+        return { wiShow: true, wi: { word: w, col: col, bg: col + '1F', ring: EIMRING[ix.ring], root: ix.ring === 0 ? E0[1] + ' is one of the root feelings on the wheel.' : 'Part of the ' + E0[1].toLowerCase() + ' family.', desc: d[0], thoughts: d[1] || [], body: d[2] || [], urges: d[4] || [],
+          ask: on ? 'You’ve picked this one.' : 'Does this sound like what you’re feeling?', yesL: on ? 'Keep it' : 'Yes, that’s it', noL: on ? 'Take it off' : 'Not this one',
+          yes: function () { if (!on) pickTw(w); self.setState({ wInfo: null }); }, no: function () { if (on) pickTw(w); self.setState({ wInfo: null }); }, close: close } }; })();
+      Object.assign(NV, wiVals);
+      var wzVals = (function () { var Z = [1, 1.5, 2, 2.6, 3.2], z = Math.max(0, Math.min(Z.length - 1, s.wZoom || 0)), go = function (nz) { var b = document.getElementById('wzbox'), cx = 0.5, cy = 0.5; if (b && b.scrollWidth) { cx = (b.scrollLeft + b.clientWidth / 2) / b.scrollWidth; cy = (b.scrollTop + b.clientHeight / 2) / b.scrollHeight; } self.setState({ wZoom: nz }); setTimeout(function () { var b2 = document.getElementById('wzbox'); if (b2) { b2.scrollLeft = cx * b2.scrollWidth - b2.clientWidth / 2; b2.scrollTop = cy * b2.scrollHeight - b2.clientHeight / 2; } }, 40); };
+        return { wzW: z ? (Z[z] * 100) + '%' : '100%', wzMax: z ? Math.round(640 * Z[z]) + 'px' : '640px', wzPct: Math.round(Z[z] * 100) + '%', wzZoomed: z > 0, wzBoxCls: z ? 'wzbox zoomed' : 'wzbox', wzOutCls: z === 0 ? 'wz-b off' : 'wz-b', wzInCls: z === Z.length - 1 ? 'wz-b off' : 'wz-b',
+          wzIn: function () { if (z < Z.length - 1) go(z + 1); }, wzOut: function () { if (z > 0) go(z - 1); }, wzReset: function () { go(0); } }; })();
+      Object.assign(NV, wzVals);
       NV.c = Object.assign({ feelWords: '' }, c0, { feelWords: c0.feelWords || '' });
 
       // ---- body check-in
@@ -4430,9 +4626,9 @@ class Component extends DCLogic {
         bcReset: function () { self.setState({ bc: { step: 0, areas: {}, sens: {}, own: '', int: null, word: null, choice: null, id: null } }); eScrollTo('body-check'); }
       });
     })();
-    return Object.assign(flags, eflags, {
+    return Object.assign(flags, eflags, qVals, wayVals, {
       journey: journey, jPct: Math.round(nDone / JOURNEY.length * 100), jDoneText: nDone + ' of ' + JOURNEY.length + ' lessons done', jNotDone: nDone < JOURNEY.length, jAllDone: nDone >= JOURNEY.length,
-      lx: lx, go: go, tool: tool, b7n: b7n, tabEim: vt === 'eim', eSegLearn: eView === 'learn' ? 'segb on' : 'segb', eSegWheel: eView === 'wheel' ? 'segb on' : 'segb', eGoLearn: function () { self.setState({ eView: 'learn' }); eScrollTo('eim-course'); }, eGoWheel: function () { self.setState({ eView: 'wheel' }); }, eIsLearn: eView === 'learn', eIsWheel: eView === 'wheel',
+      lx: lx, go: go, tool: tool, goMore: function () { self.goTab('more'); }, b7n: b7n, tabEim: vt === 'eim', eSegLearn: eView === 'learn' ? 'segb on' : 'segb', eSegWheel: eView === 'wheel' ? 'segb on' : 'segb', eGoLearn: function () { self.setState({ eView: 'learn' }); eScrollTo('eim-course'); }, eGoWheel: function () { self.setState({ eView: 'wheel' }); }, eIsLearn: eView === 'learn', eIsWheel: eView === 'wheel',
       eStepNum: String(eStep + 1), eStepTotal: String(ESTEPS.length), eStepTitle: ESTEPS[eStep], eDots: ESTEPS.map(function (x, i) { return { cls: i === eStep ? 'cdot on' : i < eStep ? 'cdot done' : 'cdot' }; }),
       eHasPrev: eStep > 0, eNoPrev: eStep === 0, eHasNext: eStep < ESTEPS.length - 1, eIsLast: eStep === ESTEPS.length - 1, ePrev: function () { self.setState({ eStep: Math.max(0, eStep - 1) }); eScrollTo('eim-course'); }, eNext: function () { self.setState({ eStep: Math.min(ESTEPS.length - 1, eStep + 1) }); eScrollTo('eim-course'); },
       eFinish: function () { var o = Object.assign({}, self.state.lessonsDone || {}); o.eimCourse = true; self.setState({ lessonsDone: o, eView: 'wheel' }); self.scrollTool('eim'); },
@@ -4479,29 +4675,29 @@ class Component extends DCLogic {
       levels: levels, bodyBtns: bodyBtns, chakraBtns: chakraBtns, areaCards: areaCards,
       bodyHints: bodyHints, hasBodyHints: bodyHints.length > 0,
       tabs: tabs,
-      homeTools: !CMODS_ALL(s), homeToolsTop: CMODS_ALL(s), bpNeedVid: !ebVid, bpCanMake: ebVid, bpMain: ['anger', 'sadness', 'fear'].map(bpBtn), bpDeep: ['hurt', 'grief', 'shame', 'guilt'].map(bpBtn),
+      homeTools: !CMODS_ALL(s), homeToolsTop: CMODS_ALL(s), bpNeedVid: !(ebVid || !!ebDone.w4a2), bpCanMake: ebVid || !!ebDone.w4a2, bpMain: ['anger', 'sadness', 'fear'].map(bpBtn), bpDeep: ['hurt', 'grief', 'shame', 'guilt'].map(bpBtn),
       tBp: !!(s.cur && s.cur.bp), tNotBp: !(s.cur && s.cur.bp), tBpK: tBpK, tBpQ: s.cur && s.cur.bp ? (EB_Q[s.cur.bp] || '') : '', tTrigLabel: s.cur && s.cur.bp ? 'What was happening? (in a line, just for you)' : 'What happened? (the trigger, in a line)',
       pLocked: ebLocked, pOpen: !ebLocked, pLockVid: !ebVid, pLockBp: ebVid && ebLeft.length > 0,
       pLockT: !ebVid ? 'This unlocks after the Processing Emotions video.' : 'First, create your blueprints.',
-      pLockD: !ebVid ? 'Watch Lesson 4: Processing Emotions in Week 4 of the course, then come back here. Until then, have a play with the wheel and start naming what you feel.' : 'Before you process anything, map how ' + join(ebLeft.map(function (k) { return low(EMOBY[k] ? EMOBY[k][1] : k); })) + ' feel' + (ebLeft.length === 1 ? 's' : '') + ' in your body. It only takes a few minutes each, then this opens up.',
+      pLockD: !ebVid ? 'Watch Lesson 4: Processing Emotions in Week 5 of the course, then come back here. Until then, have a play with the wheel and start naming what you feel.' : 'Before you process anything, map how ' + join(ebLeft.map(function (k) { return low(EMOBY[k] ? EMOBY[k][1] : k); })) + ' feel' + (ebLeft.length === 1 ? 's' : '') + ' in your body. It only takes a few minutes each, then this opens up.',
       pDemo: (function () { try { return !!(window.BT_DEMO || window.localStorage.getItem('__bt_demo_db')); } catch (e) { return false; } })() && ebLocked, pDemoUnlock: function () { self.setState({ demoUnlock: true }); },
       goMakeBp: function () { self.setState({ tab: 'mine', confirm: null }); setTimeout(function () { var el = document.getElementById('bp-make'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); },
       goEimTab: function () { self.goTab('eim'); },
       tabLock: lockView, lockGoTune: function () { self.goTab('tune'); }, lockDemo: (function () { try { return !!(window.BT_DEMO || window.localStorage.getItem('__bt_demo_db')); } catch (e) { return false; } })(), lockDemoGo: function () { self.setState({ demoUnlock: true }); },
       tShowSteps: s.tab === 'tune' && tPos === 0 && !s.tuneDone,
-      tabHome: vt === 'home', tabTune: vt === 'tune', tabProcess: vt === 'process', tabMine: vt === 'mine', tabLearn: vt === 'learn',
-      goHome: function () { self.goTab('home'); }, goLearn: function () { self.goTab('energy'); }, goMine: function () { self.goTab('mine'); },
+      tabHome: vt === 'home', tabMore: vt === 'more', tabTune: vt === 'tune', tabProcess: vt === 'process', tabProcessLive: vt === 'process' && !true, tabProcessSoon: vt === 'process' && true, soonTune: function () { self.goTab('tune'); }, soonMine: function () { self.goTab('mine'); }, tabMine: vt === 'mine', tabLearn: vt === 'learn',
+      goHome: function () { self.goTab('tune'); }, goLearn: function () { self.goTab('energy'); }, goMine: function () { self.goTab('mine'); },
       startTune: function () { self.goTool('tune'); }, startProcess: function () { self.startProcess(null, null); },
       hasLater: later.length > 0, laterText: later.length === 1 ? '1 feeling is waiting for you to come back to it.' : later.length + ' feelings are waiting for you to come back to them.',
 
-      tuneDone: !!s.tuneDone && !ftShow, tuneFlow: !s.tuneDone && !ftShow,
+      tuneDone: !!s.tuneDone && !ftShow, tuneFlow: !s.tuneDone && !ftShow && typeof s.wayIn === 'number',
       ftShowPick: ftShow, ftShowBar: false, ftHasPick: !!FT[s.feelType], ftName: FT[s.feelType] ? FT[s.feelType].name : '', ftSeqText: FT[s.feelType] ? FT[s.feelType].seq.join(' → ') : '',
       ftCards: FTORDER.map(function (k) { var f = FT[k], on = s.feelType === k; return { n: f.n, t: f.t, s: f.s, e1: f.e1, e2: f.e2, cls: on ? 'ftc on' : 'ftc', on: on ? 'true' : 'false', pick: function () { self.setState({ feelType: k, typeOpen: true, tStep: 0 }); setTimeout(function () { var el = document.querySelector('.ftrec'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); } }; }),
       ftRecT: FT[s.feelType] ? FT[s.feelType].recT : '', ftRecD: FT[s.feelType] ? FT[s.feelType].recD + ' This is now your default, so every time you open the Emotional Blueprint, this is the order we’ll use.' : '',
       ftSeq: FT[s.feelType] ? FT[s.feelType].seq.map(function (t, i) { return { n: String(i + 1), t: t }; }) : [], ftRecNote: FT[s.feelType] ? FT[s.feelType].note + ' Then you can choose to process it.' : '',
       ftGoLabel: s.cur && s.cur.bp ? 'Start my ' + low(EMOBY[s.cur.bp] ? EMOBY[s.cur.bp][1] : s.cur.bp) + ' blueprint →' : 'Let’s go →',
       ftGo: function () { self.setState({ typeOpen: false, tStep: 0 }); self.scrollTool('tune'); }, ftChange: function () { self.setState({ typeOpen: true }); setTimeout(function () { var el = document.getElementById('ft-pick'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); },
-      tShowDump: tPh === 'd' || tPh === 'dw', tShowWheel: tPh === 'w' || tPh === 'dw', tBpFirst: !!(s.cur && s.cur.bp) && tPos === 0, tBpHow: FT[s.feelType] ? FT[s.feelType].how : 'Now notice what was happening in your body. Write it all down, then we’ll map it, step by step.',
+      tShowDump: tPh === 'd' || tPh === 'dw' || tPh === 'dl', tDumpBig: tPh !== 'dl', tShowWheel: tPh === 'w' || tPh === 'dw', tBpFirst: !!(s.cur && s.cur.bp) && tPos === 0, tBpHow: FT[s.feelType] ? FT[s.feelType].how : 'Now notice what was happening in your body. Write it all down, then we’ll map it, step by step.',
       tMis: !!tMis, tMisText: tMis, tuneDoneText: s.tuneDone || '', newTune: function () { self.setState({ tuneDone: null, tStep: 0 }); self.top(); },
       tHasBack: tPos > 0, tNoBack: tPos === 0, tPrev: function () { self.setState({ tStep: Math.max(0, tPos - 1), confirm: null }); self.top(); },
       tDots: dotsOf(tSeq.length, tPos), tStepLabel: 'Step ' + (tPos + 1) + ' of ' + tSeq.length, tKicker: (tBpK ? tBpK + ' · ' : '') + (ebStepLabel(tSeq, tPos) || tm[0]), tTitle: tm[1], tImg: IMG[tm[2]], tDrop: tm[4],

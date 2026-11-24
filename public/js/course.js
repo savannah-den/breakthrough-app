@@ -100,6 +100,8 @@
     if (APP && APP.state.tier === 'private') return 'Sav opens Week ' + wkN(week) + ' for you when you’re ready';
     return week > spCapSetting() || week <= timeWeek() ? 'Opening soon. You’ll get a notification and an email the moment it’s ready' : 'Opens ' + fmt(opensOn(week));
   }
+  // activities that do hold the next lesson back: they tick off as soon as she opens that resource
+  var GATE_ACTS = { w4b2: 1 };
   function locks() {
     var p = prog(), info = { lessons: {}, weeks: {} }, blocked = null, prevW = null;
     course().weeks.forEach(function (w) {
@@ -111,7 +113,7 @@
       ls.forEach(function (l) {
         var open = dr && !held && (((cap == null || founder()) && bypass(w.week)) || !blocked || ((l.res || [])[0] === 'intent' && w.week === 0)); // Setting Intentions is never locked
         info.lessons[l.id] = { open: open, why: held ? heldWhy(w.week) : !dr ? 'Opens ' + fmt(opensOn(w.week)) : !open ? 'Finish “' + blocked.l.title + '” first' : '' };
-        if (!blocked && !p.done[l.id] && !l.optional && !isActivityCard(l) && !/^embodiment/i.test(l.title || '')) blocked = { w: w, l: l }; // activities never block
+        if (!blocked && !p.done[l.id] && !l.optional && (!isActivityCard(l) || GATE_ACTS[l.id]) && !/^embodiment/i.test(l.title || '')) blocked = { w: w, l: l }; // activities never block, except the ones in GATE_ACTS
       });
     });
     return info;
@@ -2169,7 +2171,8 @@
   function watchReturns() {
     window.addEventListener('click', function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a) return;
-      var r = resForHref(a.getAttribute('href')); if (!r) return;
+      var r = resForHref(a.getAttribute('href')) || resForHref(String(a.getAttribute('href') || '').split('?')[0]); if (!r) return;
+      try { allLessons().forEach(function (x) { if (GATE_ACTS[x.l.id] && (x.l.res || [])[0] === r.id && lessonOpen(x.l.id) && !prog().done[x.l.id]) markDone(x.l.id, true); }); } catch (er) {} // opening the resource ticks off a gate step
       var from = '#' + String(curRoute || 'Dashboard').replace('.dc.html', '');
       if (/^#(Course|Lesson-|Resources)/.test(from)) wr(RETK, { from: from, res: r.id, at: Date.now(), y: window.scrollY || 0 }); else wr(RETK, null);
     }, true);
@@ -2760,7 +2763,7 @@
   }
   var LESSON_FILES = {};
   // course cards that open one part of a resource straight away (the Emotional Blueprint's Start here, blueprints, What am I feeling?, Process it)
-  var RES_TAB = { w4s1: 'home', w4b1: 'mine', w4b2: 'tune', w4a3: 'process', w4a1: 'learn' };
+  var RES_TAB = { w4b1: 'mine', w4b2: 'tune', w4b3: 'more', w4a3: 'process', w4a1: 'learn' };
   function resTab(l) { return l.restab || RES_TAB[l.id] || ''; }
   function lessonHref(l) {
     if (resTab(l) && (l.res || []).length && !tx(l.video) && !tx(l.vimeo)) { var rt = resource(l.res[0]); if (rt && rt.href) return rt.href + (rt.href.indexOf('?') >= 0 ? '&' : '?') + 'tab=' + resTab(l); }
