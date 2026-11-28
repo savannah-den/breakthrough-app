@@ -76,7 +76,7 @@ ts = must(ts, "href.charAt(0) === '/' && a.target === '_blank'", "!/^https?:/.te
 wr(OUT + '/js/tool-shell.js', ts)
 
 ad = rd('public/js/admin.js')
-ad = ad.replace("href: '/', text: 'Open the app'", "href: 'app.html?door=private', text: 'Open the app'").replace('<a href="/"', '<a href="app.html"')
+ad = ad.replace("href: '/?asclient=1', text: 'Open the app'", "href: 'app.html?door=private&asclient=1', text: 'Open the app'").replace('<a href="/"', '<a href="app.html"')
 wr(OUT + '/js/admin.js', ad)
 
 for f in os.listdir('public/js'):

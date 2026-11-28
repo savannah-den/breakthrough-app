@@ -1,0 +1,140 @@
+<title>Sav's Brain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: a library card catalogue. Sticky search + shelf of sections, then entries that open like index cards. */
+:root{
+  --bg:#FFF4EE; --card:#FFFFFF; --ink:#1F1412; --muted:#6A5A57; --line:#EDE3DF;
+  --maroon:#4E0C08; --lime:#F1F9A6; --pink:#F4C2F7; --red:#D3302B; --chip:#FBE6FC; --hl:#F1F9A6;
+  --display:'Playfair Display',Georgia,serif; --body:'Poppins',system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1E0F0D;--card:#2A1714;--ink:#FBEDE7;--muted:#C8B3AD;--line:#45302C;--maroon:#F4C2F7;--chip:#3D2230;--hl:#5A5A20;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E0F0D;--card:#2A1714;--ink:#FBEDE7;--muted:#C8B3AD;--line:#45302C;--maroon:#F4C2F7;--chip:#3D2230;--hl:#5A5A20;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.hero{margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 28px);display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:600}
+h1{margin:0;font:700 clamp(34px,7vw,52px)/1.05 var(--display);color:var(--maroon);text-wrap:balance}
+.lede{margin:0;max-width:62ch;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.stat{padding:6px 12px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);font-size:13px;font-variant-numeric:tabular-nums}
+.stat b{color:var(--maroon)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-direction:column;gap:10px;border-bottom:1.5px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+#q{width:100%;min-height:48px;padding:10px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font:15px var(--body)}
+#q:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.shelf{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.sec{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:500 13.5px var(--body);cursor:pointer;white-space:nowrap}
+.sec .n{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sec[aria-pressed="true"]{background:var(--maroon);border-color:var(--maroon);color:var(--bg)}
+.sec[aria-pressed="true"] .n{color:var(--bg);opacity:.8}
+.sec:focus-visible,.card summary:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.secdesc{margin:0;color:var(--muted);font-size:13.5px}
+.list{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px}
+.card[open]{border-color:var(--ink)}
+.card summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 16px}
+.card summary::-webkit-details-marker{display:none}
+.card .t{font-weight:600;min-width:0}
+.card .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;grid-column:1}
+.card .chev{grid-row:1 / span 2;grid-column:2;align-self:center;color:var(--muted);transition:transform .2s}
+.card[open] .chev{transform:rotate(90deg)}
+.body{padding:0 16px 14px;white-space:pre-wrap;max-width:72ch;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 14px;font-size:12px;color:var(--muted)}
+.tag{padding:2px 8px;border-radius:999px;background:var(--chip)}
+mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 1px}
+.more{align-self:center;min-height:44px;padding:8px 20px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font:600 14px var(--body);cursor:pointer}
+.empty{padding:20px;border-radius:16px;border:1.5px dashed var(--line);color:var(--muted)}
+.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.box{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box h2{margin:0;font:700 22px/1.2 var(--display);color:var(--maroon)}
+.box ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.src{display:flex;flex-direction:column;gap:1px}.src b{font-size:14px}.src span{font-size:12.5px;color:var(--muted)}
+.pending{color:var(--red);font-weight:600}
+@media (prefers-reduced-motion: reduce){.card .chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Colour Me Neurospicy · knowledge base</span>
+    <h1>Sav's Brain</h1>
+    <p class="lede">Everything Sav teaches, in one place: the method, every lesson, the tools, the frameworks and the words she uses. It's the base an AI Sav will coach from, so it only holds teaching, never client details.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search everything, e.g. overwhelm, jealous, floor, proof…" aria-label="Search Sav's Brain" autocomplete="off">
+    <div class="shelf" id="shelf" role="group" aria-label="Sections"></div>
+  </div>
+
+  <p class="secdesc" id="secdesc"></p>
+  <div class="list" id="list" aria-live="polite"><div class="empty">Opening the brain…</div></div>
+  <button class="more" id="more" type="button" hidden>Show more</button>
+
+  <section class="panel" aria-label="About this knowledge base">
+    <div class="box">
+      <h2>What's in here</h2>
+      <div id="sources"></div>
+    </div>
+    <div class="box">
+      <h2>Getting to AI Sav</h2>
+      <ul>
+        <li><b>Now:</b> the app's “find anything” search and the Becoming Book suggestions already answer from this knowledge.</li>
+        <li><b>Next:</b> add the lesson video transcripts and Zoom call teaching points, so it knows the details in your own words.</li>
+        <li><b>Then:</b> an “Ask Sav” chat in the app that answers only from this brain, says when it doesn't know, and points people to you for anything big.</li>
+        <li><b>Always:</b> no client names, health details or private messages go in. Teaching only.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var S = { sec: 'all', q: '', shown: 40 }, B = null;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function hl(s, words) { var out = esc(s); words.forEach(function (w) { if (w.length < 2) return; out = out.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>'); }); return out; }
+  try { var saved = localStorage.getItem('brain-sec'); if (saved) S.sec = saved; } catch (e) {}
+  function secName(id) { var s = (B.sections || []).filter(function (x) { return x.id === id; })[0]; return s ? s.t : id; }
+  function matches() {
+    var words = S.q.toLowerCase().split(/\s+/).filter(Boolean);
+    var list = B.entries.filter(function (e) { return S.sec === 'all' || e.s === S.sec; });
+    if (!words.length) return { list: list, words: [] };
+    var scored = list.map(function (e) { var t = e.t.toLowerCase(), b = e.b.toLowerCase(), g = (e.tags || []).join(' ').toLowerCase(), sc = 0;
+      for (var i = 0; i < words.length; i++) { var w = words[i], hit = 0; if (t.indexOf(w) >= 0) hit += 5; if (g.indexOf(w) >= 0) hit += 3; if (b.indexOf(w) >= 0) hit += 1; if (!hit) return null; sc += hit; } return { e: e, sc: sc }; }).filter(Boolean);
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    return { list: scored.map(function (x) { return x.e; }), words: words };
+  }
+  function drawShelf() {
+    var counts = {}; B.entries.forEach(function (e) { counts[e.s] = (counts[e.s] || 0) + 1; });
+    var secs = [{ id: 'all', t: 'Everything' }].concat(B.sections);
+    $('shelf').innerHTML = secs.map(function (s) { var n = s.id === 'all' ? B.entries.length : (counts[s.id] || 0); return '<button class="sec" type="button" data-s="' + s.id + '" aria-pressed="' + (S.sec === s.id) + '">' + esc(s.t) + ' <span class="n">' + n + '</span></button>'; }).join('');
+    var cur = B.sections.filter(function (x) { return x.id === S.sec; })[0];
+    $('secdesc').textContent = cur ? cur.d : 'Everything Sav teaches. Search, or pick a section.';
+  }
+  function draw() {
+    var m = matches(), list = m.list;
+    if (!list.length) {
+      $('list').innerHTML = S.sec === 'calls' && !S.q ? '<div class="empty">Nothing from calls yet. Once Zoom is connected, the teaching points from each call land here (never client details).</div>' : '<div class="empty">Nothing matches “' + esc(S.q) + '” here. Try another word, or search Everything.</div>';
+      $('more').hidden = true; return;
+    }
+    $('list').innerHTML = list.slice(0, S.shown).map(function (e) {
+      return '<details class="card"' + (m.words.length && list.length <= 3 ? ' open' : '') + '><summary><span class="t">' + hl(e.t, m.words) + '</span><span class="k">' + esc(secName(e.s)) + '</span><span class="chev" aria-hidden="true">›</span></summary>' +
+        '<div class="body">' + hl(e.b, m.words) + '</div>' +
+        '<div class="meta">' + (e.src ? '<span>From: ' + esc(e.src) + '</span>' : '') + (e.tags || []).filter(Boolean).slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div></details>';
+    }).join('');
+    $('more').hidden = list.length <= S.shown; $('more').textContent = 'Show more (' + (list.length - S.shown) + ' left)';
+  }
+  function drawMeta() {
+    var counts = {}; B.entries.forEach(function (e) { counts[e.s] = (counts[e.s] || 0) + 1; });
+    $('stats').innerHTML = '<span class="stat"><b>' + B.entries.length + '</b> entries</span><span class="stat"><b>' + B.sources.filter(function (s) { return !s.pending; }).length + '</b> sources</span><span class="stat">Updated <b>' + esc(new Date(B.updated + 'T12:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })) + '</b></span>';
+    $('sources').innerHTML = B.sources.map(function (s) { return '<div class="src"><b>' + esc(s.name) + (s.pending ? ' <span class="pending">· to connect</span>' : '') + '</b><span>' + esc(s.what) + (s.added ? ' · added ' + esc(s.added) : '') + '</span></div>'; }).join('');
+  }
+  $('shelf').addEventListener('click', function (e) { var b = e.target.closest('.sec'); if (!b) return; S.sec = b.getAttribute('data-s'); S.shown = 40; try { localStorage.setItem('brain-sec', S.sec); } catch (x) {} drawShelf(); draw(); });
+  var t0; $('q').addEventListener('input', function () { clearTimeout(t0); t0 = setTimeout(function () { S.q = $('q').value.trim(); S.shown = 40; draw(); }, 120); });
+  $('more').addEventListener('click', function () { S.shown += 60; draw(); });
+  fetch('brain.json').then(function (r) { return r.json(); }).then(function (j) { B = j; if (S.sec !== 'all' && !B.sections.some(function (x) { return x.id === S.sec; })) S.sec = 'all'; drawMeta(); drawShelf(); draw(); })
+    .catch(function () { $('list').innerHTML = '<div class="empty">The brain didn’t load. Refresh the page to try again.</div>'; });
+})();
+</script>

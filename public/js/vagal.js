@@ -841,7 +841,7 @@
   var VK = 'bt-vwork';
   function vw() { var d = rd(VK) || {}; d.days = d.days || {}; d.min = d.min || null; return d; }
   function vday(k) { var d = vw(); return d.days[k] || {}; }
-  function setV(k, part, patch) { var d = vw(), day = d.days[k] = d.days[k] || {}; day[part] = Object.assign({}, day[part] || {}, patch); day.at = Date.now(); wr(VK, d); }
+  function setV(k, part, patch) { var d = vw(), day = d.days[k] = d.days[k] || {}; if (patch && patch.done && !(day[part] || {}).at && part !== 'filled') patch = Object.assign({ at: k === dk() ? Date.now() : fromKey(k) + 12 * 3600e3 }, patch); day[part] = Object.assign({}, day[part] || {}, patch); day.at = Date.now(); wr(VK, d); }
   var MIN_OPTS = {
     dose: ['One feel-good thing', 'Sunlight on my face', 'A hug or a kind message', 'One song I love, loud'],
     breathe: ['One physiological sigh', '1 minute of slow breathing', 'My daily 5'],
@@ -1130,12 +1130,13 @@
   }
   function lockedPart(part, ic, label) { return h('div', { class: 'rp-row rp-lockrow', 'data-rp': part }, [h('div', { class: 'rp-q' }, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof ic === 'string' ? document.createTextNode(ic) : ic]), h('b', { text: label }), h('span', { class: 'rp-lk', 'aria-hidden': 'true', text: '🔒' })]), h('span', { class: 'rp-lk-t', text: PART_LOCK[part] })]); }
   // other parts of the app can add to Today's reps for a while (e.g. the Energy Audit week)
-  function repsCard() { var b = repsCard0(); try { if (window.BT_REPS_EXTRA) window.BT_REPS_EXTRA(b); } catch (e) {} return b; }
-  function repsCard0() {
+  // o.compact: the home "Your day" version, just the ticks (detail is one tap away)
+  function repsCard(o) { o = o || {}; var b = repsCard0(o); b.__o = o; if (o.compact) b.classList.add('rp-compact'); try { if (window.BT_REPS_EXTRA) window.BT_REPS_EXTRA(b); } catch (e) {} return b; }
+  function repsCard0(o) {
     boot();
     var box = h('section', { class: 'rp', 'aria-labelledby': 'rp-h' });
-    var k = dk(), mode = vw().repsMode || 'quick';
-    function redraw(msg, part) { var nb = repsCard(); box.replaceWith(nb); try { if (window.BT_REPS_CHANGED) window.BT_REPS_CHANGED(); } catch (e) {} if (msg) { var m = nb.querySelector('[data-rp="' + part + '"] .rp-msg') || nb.querySelector('.rp-msg-all'); if (m) { m.textContent = msg; m.hidden = false; } } }
+    var k = dk(), mode = o.compact ? 'detail' : (vw().repsMode || 'quick');
+    function redraw(msg, part) { var nb = repsCard(box.__o); box.replaceWith(nb); try { if (window.BT_REPS_CHANGED) window.BT_REPS_CHANGED(); } catch (e) {} if (msg) { var m = nb.querySelector('[data-rp="' + part + '"] .rp-msg') || nb.querySelector('.rp-msg-all'); if (m) { m.textContent = msg; m.hidden = false; } } }
     function set(part, patch, msg) { setV(k, part, patch); if (part !== 'water' && part !== 'win') tickLesson(part); redraw(msg, part); }
     // locked until Week 1 is finished: an empty card with a kind note on top
     var on = partsOn(), PARTS6 = ['win', 'dose', 'breathe', 'pause', 'move', 'water'], total = PARTS6.filter(function (p) { return on[p]; }).length;
@@ -1163,10 +1164,29 @@
       return box;
     }
     box.appendChild(h('div', { class: 'rp-top' }, [h('div', null, [h('span', { class: 'rp-k', text: 'The key to rewiring' }), h('h2', { id: 'rp-h', class: 'rp-h', text: REPS_NAME })]), h('span', { class: 'rp-n' + (n ? ' on' : ''), text: n + ' / ' + total })]));
-    box.appendChild(h('div', { class: 'rp-mode', role: 'radiogroup', 'aria-label': 'How do you want to fill this in?' }, [['quick', '⚡ I’ve got 3 seconds', 'Just tick the boxes'], ['detail', '✎ I want to add detail', 'Choose or write what you did']].map(function (m) { var on = mode === m[0]; return h('button', { class: 'rp-mode-b' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', onclick: function () { var d = vw(); d.repsMode = m[0]; wr(VK, d); redraw(); } }, [h('b', { text: m[1] }), h('span', { text: m[2] })]); })));
+    if (!o.compact) box.appendChild(h('div', { class: 'rp-mode', role: 'radiogroup', 'aria-label': 'How do you want to fill this in?' }, [['quick', '⚡ I’ve got 3 seconds', 'Just tick the boxes'], ['detail', '✎ I want to add detail', 'Choose or write what you did']].map(function (m) { var on = mode === m[0]; return h('button', { class: 'rp-mode-b' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', onclick: function () { var d = vw(); d.repsMode = m[0]; wr(VK, d); redraw(); } }, [h('b', { text: m[1] }), h('span', { text: m[2] })]); })));
     box.appendChild(h('p', { class: 'rp-msg rp-msg-all', 'aria-live': 'polite', hidden: true }));
     function dayDone() { return h('div', { class: 'rp-end' }, [h('button', { class: 'bt-btn lime', type: 'button', text: '✓ That’s my day', onclick: function (e) { setV(k, 'filled', { at: Date.now() }); vs.repsOpen = false; kit.sparkleBurst(e.currentTarget); setTimeout(function () { redraw(); }, 300); } }), h('a', { class: 'rp-more', href: '#Book', text: 'Check my progress →' })]); }
     var CHEERS = { win: 'Logged. Another piece of proof.', dose: 'Feel-good chemicals: delivered.', breathe: 'Your vagus nerve thanks you.', pause: 'Quiet moments count.', move: 'Moving your body, even a little, is progress.', water: 'Hydrated brain, happier brain.' };
+    // home version: four picture tiles. The circle ticks it off, the picture opens the detail for just that one.
+    if (o.compact) {
+      box.setAttribute('data-open', vs.repsPart || '');
+      var CQ = [['breathe', kit.emblem('breathe'), 'Breathe'], ['pause', kit.emblem('pause'), 'Pause'], ['move', kit.emblem('move'), 'Move'], ['water', '💧', 'Water']];
+      box.appendChild(h('div', { class: 'rp-quick rp-cq' }, CQ.map(function (q) {
+        var icn = h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [typeof q[1] === 'string' ? document.createTextNode(q[1]) : q[1]]);
+        if (!on[q[0]]) return h('div', { class: 'rp-qi rp-qlock', 'data-rp': q[0], title: PART_LOCK[q[0]] }, [icn, h('b', { text: q[2] }), h('span', { class: 'rp-cq-lk', 'aria-hidden': 'true', text: '🔒' })]);
+        var isOn = done[q[0]], open = vs.repsPart === q[0];
+        return h('div', { class: 'rp-qi' + (isOn ? ' on' : '') + (open ? ' open' : ''), 'data-rp': q[0] }, [
+          h('button', { class: 'rp-cq-b', type: 'button', 'aria-expanded': open ? 'true' : 'false', 'aria-label': q[2] + ': more detail', onclick: function () { vs.repsPart = open ? null : q[0]; redraw(); } }, [icn, h('b', { text: q[2] })]),
+          h('button', { class: 'rp-tick', type: 'button', 'aria-pressed': isOn ? 'true' : 'false', 'aria-label': (isOn ? 'Untick ' : 'Tick off ') + q[2], text: isOn ? '✓' : '', onclick: function (e) {
+            if (q[0] === 'water') setV(k, 'water', isOn ? { level: '', n: 0, ml: null } : { level: 'good', n: 0, ml: null });
+            else { setV(k, q[0], { done: !isOn }); if (!isOn) tickLesson(q[0]); }
+            if (!isOn) kit.sparkleBurst(e.currentTarget);
+            var c = !isOn ? (cheerLine(q[0]) || CHEERS[q[0]]) : '';
+            setTimeout(function () { redraw(c, 'all'); }, isOn ? 0 : 250);
+          } })]);
+      })));
+    }
     if (mode === 'quick') {
       var Q = [['win', '✦', 'Had a win'], ['dose', kit.emblem('dose'), 'Got my DOSE'], ['breathe', kit.emblem('breathe'), 'Did some breathwork'], ['pause', kit.emblem('pause'), 'Took a pause'], ['move', kit.emblem('move'), 'Moved my body'], ['water', '💧', 'Drank water']];
       var qTile = function (q) {
@@ -1434,7 +1454,7 @@
     if (on) { ch.push(src); setV(k, part, { done: true, ch: ch, via: cur.done && !cur.via ? 'own' : (cur.via || 'ch') }); tickLesson(part); }
     else { var patch = { ch: ch }; if (!ch.length && cur.via === 'ch') patch.done = false; setV(k, part, patch); }
   }
-  function calStatus(k) { var st = status(k), v = vday(k), w = kit.winsOn(k); return { win: w.length > 0 || !!(v.win || {}).done, nWins: w.length, dose: st.dose, on: partsOn() }; }
+  function calStatus(k) { var st = status(k), v = vday(k), w = kit.winsOn(k); return { win: w.length > 0 || !!(v.win || {}).done, nWins: w.length, dose: st.dose, breathe: !!st.breathe, pause: !!st.pause, move: !!st.move, water: waterLevel(k) > 0, at: { breathe: (v.breathe || {}).at, pause: (v.pause || {}).at, move: (v.move || {}).at, water: (v.water || {}).at, win: (v.win || {}).at, dose: (v.dose || {}).at }, on: partsOn() }; }
   function calSet(k, part, on) { setV(k, part, { done: !!on }); if (on && part !== 'win' && part !== 'water') tickLesson(part); }
   function calWin(text) { var k = dk(), ab = kit.addWin(text); setV(k, 'win', { done: true }); return ab; }
   // one DOSE item on or off for a day (the drop-down in Your day)

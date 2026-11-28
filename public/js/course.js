@@ -48,7 +48,7 @@
   function findLesson(id) { return allLessons().filter(function (x) { return x.l.id === id; })[0] || null; }
   // a resource opens with its week, or (if it has "after") only once that lesson is done, e.g. the Energy Audit after Week 3 Lesson 6
   function resOpen(r) { if (!r) return false; var wk = !r.week || isOpen(r.week); if (r.after && !peek()) return wk && !!prog().done[r.after]; return wk; }
-  function resWhy(r) { if (r && r.after && !peek() && (!r.week || isOpen(r.week)) && !prog().done[r.after]) { var f = findLesson(r.after); return 'Unlocks when you finish ' + (f ? 'Week ' + wkN(f.w.week) + ', ' + f.l.title.replace(/^Lesson (\d+):.*/, 'Lesson $1') : 'the lesson before it'); } return r ? unlockText(r.week) : ''; }
+  function resWhy(r) { if (r && r.after && !peek() && (!r.week || isOpen(r.week)) && !prog().done[r.after]) { var f = findLesson(r.after); return 'Unlocks when you finish ' + (f ? wkL(f.w.week) + ', ' + f.l.title.replace(/^Lesson (\d+):.*/, 'Lesson $1') : 'the lesson before it'); } return r ? unlockText(r.week) : ''; }
   function resource(id) { return (window.BT_RESOURCES || []).filter(function (r) { return r.id === id; })[0] || null; }
 
   /* ---------------- unlocking ----------------
@@ -64,9 +64,14 @@
   function opensOn(n) { return new Date(startDate().getTime() + Math.max(0, n - 1) * 7 * DAY); }
   // Sav's own admin login (not 'view as' or the new-client trial): everything open
   // playground "new client" journeys: Sav sees exactly what a client sees, locks and all
+  // Sav's "Open the app" button (?asclient=1): everything stays unlocked, but she sees it the way a client does,
+  // without her own 1:1 setup tests or the coach-only bits. Lasts for this browser tab.
+  function coachAsClient() { try { if (/[?&]asclient=1/.test(location.search)) sessionStorage.setItem('bt-asclient', '1'); return !!(APP && APP.state && APP.state.isAdmin && sessionStorage.getItem('bt-asclient') === '1'); } catch (e) { return false; } }
   function asClient() { var d = window.BT_DEMO; return !!(d && (d.fresh || d.skip || d.asClient)); }
   // Week 1 is the Set yourself up for success mini course, so course weeks show one higher than their number in the data
   function wkN(n) { n = Number(n); return n >= 1 ? n + 1 : n; }
+  // the BONUS week (Money Magic) is week 99 in the data
+  function wkL(n) { return Number(n) === 99 ? 'BONUS' : 'Week ' + wkN(n); } window.BT_WKL = wkL;
   window.BT_WK = wkN;
   function peek() { return !!(window.BT_DEMO && window.BT_DEMO.peek) || !!(APP && APP.state && APP.state.isAdmin && !asClient()); }
   function override() { if ((window.BT_DEMO && window.BT_DEMO.unlock) || (APP && APP.state && APP.state.isAdmin && !asClient())) return 'all'; if (window.BT_DEMO && window.BT_DEMO.openTo) return window.BT_DEMO.openTo; /* playground walkthroughs: weeks open up to here */ /* playground: everything unlocked */ var uid = APP && APP.state.user && APP.state.user.id; return ((APP && APP.state.settings.unlocks) || {})[uid]; }
@@ -105,13 +110,13 @@
   function locks() {
     var p = prog(), info = { lessons: {}, weeks: {} }, blocked = null, prevW = null;
     course().weeks.forEach(function (w) {
-      var ls = w.lessons || [], dr = dripped(w.week), cap = oneCap(); if (cap == null) cap = selfCap(); var held = cap != null && w.week > cap;
-      var wOpen = dr && !held && (((cap == null || founder()) && bypass(w.week)) || !blocked);
-      var after = prevW ? (prevW.week === 0 ? 'the Introduction' : 'Week ' + wkN(prevW.week)) : '';
+      var ls = w.lessons || [], dr = dripped(w.week), cap = oneCap(); if (cap == null) cap = selfCap(); var held = cap != null && w.week > cap && w.week !== 99;
+      var wOpen = dr && !held && (((cap == null || founder()) && bypass(w.week)) || !blocked || w.week === 99);
+      var after = prevW ? (prevW.week === 0 ? 'the Introduction' : wkL(prevW.week)) : '';
       info.weeks[w.week] = { open: wOpen, why: held ? heldWhy(w.week) : !dr ? 'Opens ' + fmt(opensOn(w.week)) : !wOpen ? (after && blocked.w !== w ? 'Unlocks when you finish ' + after : 'Unlocks when you finish “' + blocked.l.title + '”') : '' };
       if (ls.length) prevW = w;
       ls.forEach(function (l) {
-        var open = dr && !held && (((cap == null || founder()) && bypass(w.week)) || !blocked || ((l.res || [])[0] === 'intent' && w.week === 0)); // Setting Intentions is never locked
+        var open = dr && !held && (((cap == null || founder()) && bypass(w.week)) || !blocked || ((l.res || [])[0] === 'intent' && w.week === 0) || w.week === 99); // Setting Intentions is never locked
         info.lessons[l.id] = { open: open, why: held ? heldWhy(w.week) : !dr ? 'Opens ' + fmt(opensOn(w.week)) : !open ? 'Finish “' + blocked.l.title + '” first' : '' };
         if (!blocked && !p.done[l.id] && !l.optional && (!isActivityCard(l) || GATE_ACTS[l.id]) && !/^embodiment/i.test(l.title || '')) blocked = { w: w, l: l }; // activities never block, except the ones in GATE_ACTS
       });
@@ -123,7 +128,7 @@
   function isOpen(week) { var x = locks().weeks[week]; return !!(x && x.open); }
   function unlockedWeek() {
     var lw = locks().weeks, max = 0;
-    Object.keys(lw).forEach(function (k) { if (lw[k].open) max = Math.max(max, +k); });
+    Object.keys(lw).forEach(function (k) { if (lw[k].open && +k !== 99) max = Math.max(max, +k); });
     return max;
   }
   function unlockText(n) { var x = locks().weeks[n]; return !x ? '' : x.open ? 'Open now' : x.why; }
@@ -200,7 +205,7 @@
       if (score && (score >= Math.min(2, words.length))) {
         var src = (x.l.transcript || x.l.desc || '').replace(/\s+/g, ' '), at = Math.max(0, src.toLowerCase().indexOf(words.filter(function (w) { return src.toLowerCase().indexOf(w) >= 0; })[0] || '') - 60);
         var snip = src ? (at > 0 ? '…' : '') + src.slice(at, at + 180).trim() + '…' : '';
-        hits.push({ score: score, e: { id: 'tr-' + x.l.id, label: 'From the course: ' + x.l.title, line: snip || ('Week ' + wkN(x.w.week) + ' · ' + x.w.title), watch: [x.l.id], res: x.l.res || [] } });
+        hits.push({ score: score, e: { id: 'tr-' + x.l.id, label: 'From the course: ' + x.l.title, line: snip || (wkL(x.w.week) + ' · ' + x.w.title), watch: [x.l.id], res: x.l.res || [] } });
       }
     });
     return hits.sort(function (a, b) { return b.score - a.score; }).slice(0, 3).map(function (x) { return x.e; });
@@ -210,7 +215,7 @@
      Floating magnifying glass. Type where you're stuck or how you're feeling and it points you to
      the right place: your next video, your notebook, a tool, a lesson, or how to get help. */
   var FIND_INTENTS = [
-    { re: /(lost|up to|where am i|where was i|next (video|lesson)|what('?s| is) next|which (video|lesson)|carry on|keep going|continue)/, go: function () { var nx = upNext(); return nx ? { t: 'You’re up to: ' + nx.l.title, s: (nx.w.week === 0 ? 'Introduction' : 'Week ' + wkN(nx.w.week) + ' · ' + nx.w.title) + '. Tap to go straight there.', href: lessonHref(nx.l), cta: 'Take me there →' } : { t: 'You’re all caught up', s: 'Nothing waiting right now. Have a look at your course.', href: '#Course', cta: 'Open my course →' }; } },
+    { re: /(lost|up to|where am i|where was i|next (video|lesson)|what('?s| is) next|which (video|lesson)|carry on|keep going|continue)/, go: function () { var nx = upNext(); return nx ? { t: 'You’re up to: ' + nx.l.title, s: (nx.w.week === 0 ? 'Introduction' : wkL(nx.w.week) + ' · ' + nx.w.title) + '. Tap to go straight there.', href: lessonHref(nx.l), cta: 'Take me there →' } : { t: 'You’re all caught up', s: 'Nothing waiting right now. Have a look at your course.', href: '#Course', cta: 'Open my course →' }; } },
     { re: /(notebook|journal|entr(y|ies)|what i wrote|my answers|questions? under)/, go: function () { return { t: 'Your Becoming Notebook', s: 'Every entry from every lesson lives in My Book → Becoming Notebook. You can edit them there too.', href: '#Book', cta: 'Open my notebook →', before: function () { bookState.tab = 'journal'; bookState.day = ''; bookState.q = ''; } }; } },
     { re: /(reps|tick|daily (list|check)|today'?s)/, go: function () { return { t: 'Today’s reps', s: 'Your daily ticks live on Home, in Today’s reps.', href: '#Dashboard', cta: 'Go to Home →' }; } },
     { re: /(calendar|progress|streak|how far|achievement|milestone)/, go: function () { return { t: 'Your progress', s: 'My Book has your calendar, streaks and every milestone, dated.', href: '#Book', cta: 'Open My Book →' }; } },
@@ -258,11 +263,11 @@
         var e = x.e, rows = [];
         out.appendChild(h('div', { class: 'bt-find-kb' }, [h('b', { text: e.label }), h('span', { text: e.line }), e.tip ? h('span', { class: 'bt-find-tip', text: 'Right now: ' + e.tip }) : null]));
         (e.res || []).slice(0, 3).forEach(function (rid) { var r = resource(rid); if (!r) return; var op = resOpen(r); rows.push(op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }); });
-        (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { kind: 'video', t: 'Rewatch: ' + f.l.title, s: 'Week ' + wkN(f.w.week) + ' · ' + f.w.title, href: lessonHref(f.l) } : { kind: 'video', t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
+        (e.watch || []).slice(0, 2).forEach(function (lid) { var f = findLesson(lid); if (!f) return; rows.push(lessonOpen(lid) ? { kind: 'video', t: 'Rewatch: ' + f.l.title, s: wkL(f.w.week) + ' · ' + f.w.title, href: lessonHref(f.l) } : { kind: 'video', t: '🔒 ' + f.l.title, s: lessonWhy(lid), href: '#Course' }); });
         rows.forEach(function (r) { out.appendChild(link(r)); });
       });
       // lessons and tools by name
-      var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { var kd = isActivityCard(x.l) ? 'act' : 'video', em = kd === 'act' ? (x.l.res || [])[0] : null; return lessonOpen(x.l.id) ? { kind: kd, emb: em, t: x.l.title, s: x.w.week === 0 ? 'Introduction' : 'Week ' + wkN(x.w.week) + ' · ' + x.w.title, href: lessonHref(x.l) } : { kind: kd, emb: em, t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
+      var ls = allLessons().filter(function (x) { var t = (x.l.title + ' ' + (x.l.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).slice(0, 4).map(function (x) { var kd = isActivityCard(x.l) ? 'act' : 'video', em = kd === 'act' ? (x.l.res || [])[0] : null; return lessonOpen(x.l.id) ? { kind: kd, emb: em, t: x.l.title, s: x.w.week === 0 ? 'Introduction' : wkL(x.w.week) + ' · ' + x.w.title, href: lessonHref(x.l) } : { kind: kd, emb: em, t: '🔒 ' + x.l.title, s: lessonWhy(x.l.id), href: '#Course' }; });
       var rs = (window.BT_RESOURCES || []).filter(function (r) { var t = (r.title + ' ' + (r.desc || '')).toLowerCase(); return words.some(function (w) { return w.length > 3 && t.indexOf(w) >= 0; }); }).filter(function (r) { return !kb.some(function (x) { return (x.e.res || []).indexOf(r.id) >= 0; }); }).slice(0, 3).map(function (r) { var op = resOpen(r); return op ? { kind: 'act', emb: r.id, t: r.title, s: r.desc, href: resHref(r) } : { kind: 'act', emb: r.id, t: '🔒 ' + r.title, s: 'Opens in Week ' + wkN(r.week), href: '#Resources' }; });
       group('In the course', ls); group('Tools', rs);
       // from inside the videos (transcripts)
@@ -359,7 +364,7 @@
     // a new week opened in the last 7 days and they haven't started it
     var nw = c.weeks.filter(function (w) { return w.week === uw && w.week >= 2 && (w.lessons || []).length; })[0];
     if (nw && !nw.lessons.some(function (l) { return p.done[l.id]; }))
-      out.push({ id: 'week-' + nw.week, kind: 'new', title: 'Week ' + wkN(nw.week) + ' is open', text: nw.title + '. Your new lessons and resources are ready.', href: lessonHref(nw.lessons[0]), cta: 'Start Week ' + wkN(nw.week) });
+      out.push({ id: 'week-' + nw.week, kind: 'new', title: wkL(nw.week) + ' is open', text: nw.title + '. Your new lessons and resources are ready.', href: lessonHref(nw.lessons[0]), cta: 'Start Week ' + wkN(nw.week) });
     // been a while
     if (p.lastAt && Date.now() - p.lastAt > 3 * DAY && upNext()) {
       var days = Math.floor((Date.now() - p.lastAt) / DAY);
@@ -398,7 +403,7 @@
     if (nx) {
       var pct = p.done[nx.l.id] ? 100 : (p.pct[nx.l.id] || 0);
       card.appendChild(h('span', { class: 'bt-cont-k', text: pct > 0 ? 'Pick up where you left off' : (st.done ? 'Up next' : 'Start here') }));
-      card.appendChild(h('span', { class: 'bt-cont-w', text: nx.w.week === 0 ? 'Introduction' : 'Week ' + wkN(nx.w.week) + ' · ' + nx.w.title }));
+      card.appendChild(h('span', { class: 'bt-cont-w', text: nx.w.week === 0 ? 'Introduction' : wkL(nx.w.week) + ' · ' + nx.w.title }));
       card.appendChild(h('b', { class: 'bt-cont-t', text: nx.l.title }));
       card.appendChild(h('div', { class: 'bt-bar' }, [h('span', { style: 'width:' + Math.max(pct, 3) + '%' })]));
       card.appendChild(h('div', { class: 'bt-cont-row' }, [
@@ -408,7 +413,7 @@
     } else {
       var nextWeek = course().weeks.filter(function (w) { return !isOpen(w.week); })[0];
       card.appendChild(h('span', { class: 'bt-cont-k', text: 'You’re all caught up' }));
-      card.appendChild(h('b', { class: 'bt-cont-t', text: nextWeek ? 'Week ' + wkN(nextWeek.week) + ': ' + unlockText(nextWeek.week).replace(/^Opens/, 'opens') : 'You’ve finished every lesson. Proud of you.' }));
+      card.appendChild(h('b', { class: 'bt-cont-t', text: nextWeek ? wkL(nextWeek.week) + ': ' + unlockText(nextWeek.week).replace(/^Opens/, 'opens') : 'You’ve finished every lesson. Proud of you.' }));
       card.appendChild(h('a', { class: 'bt-cont-all', href: '#Course', text: 'See the course' }));
     }
     return card;
@@ -536,7 +541,7 @@
     }
   }
   // Coming Home: when they've scheduled their few-times-a-month ones (from the month view on Home). { d: { 'Y-M-D': { id: 0 | 1 done } } }
-  var CHS_K = 'bt-ch-sched', calView = 'week', calMOff = 0, calMSel = null;
+  var CHS_K = 'bt-ch-sched', calView = 'today', calMOff = 0, calMSel = null;
   function chDK(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function chSched() { var x = rd(CHS_K); x = x && typeof x === 'object' ? x : {}; x.d = x.d || {}; return x; }
   function chBookedThisMonth(id) { var x = chSched().d, mk = chMonthK() + '-'; return Object.keys(x).filter(function (k) { return k.indexOf(mk) === 0 && x[k] && (id in x[k]); }); }
@@ -570,16 +575,546 @@
   }
   // Home: "Your day" = the week calendar + Today's reps + your Energy Audit plan + your Coming Home plan, as one card.
   // Every tick on the calendar is a rep, and every rep shows on the calendar.
-  var calWinOpen = false;
+  var calWinOpen = false, calDoseOpen = false, eaAddOpen = false;
+  /* ================= One master calendar =================
+     Their own Google / Apple / Outlook calendar, read-only and one way in: it shows in the app, nothing from the app
+     goes back out. Stored once in bt-mcal and every calendar in the app (Home, the Energy Audit, the Becoming Book)
+     reads from it. It quietly refreshes when it's more than a few hours old. */
+  var MCAL_K = 'bt-mcal', MCAL_SRC = { google: 'Google Calendar', apple: 'Apple Calendar', outlook: 'Outlook' };
+  var MCAL_HOW = {
+    google: ['On a computer, open Google Calendar and click the ⚙️ cog, then Settings.', 'On the left, click your calendar’s name.', 'Scroll to “Integrate calendar” and copy the “Secret address in iCal format”.', 'Paste it below and tap Link it.'],
+    apple: ['On your iPhone, open the Calendar app and tap Calendars at the bottom.', 'Tap the ⓘ next to your calendar and turn on “Public Calendar”.', 'Tap Share Link, then Copy.', 'Paste it below and tap Link it.'],
+    outlook: ['In Outlook on the web, go to ⚙️ Settings, Calendar, Shared calendars.', 'Under “Publish a calendar”, pick your calendar and “Can view all details”, then Publish.', 'Copy the ICS link.', 'Paste it below and tap Link it.']
+  };
+  function mcal() { var c = rd(MCAL_K) || {}; c.events = Array.isArray(c.events) ? c.events : []; return c; }
+  function mcalSave(c) { wr(MCAL_K, c); }
+  function mcalOn(dt) {
+    var a = new Date(dt); a.setHours(0, 0, 0, 0); var a0 = a.getTime(), a1 = a0 + DAY;
+    return mcal().events.filter(function (e) { var s = Date.parse(e.start); return s >= a0 && s < a1; }).sort(function (x, y) { return Date.parse(x.start) - Date.parse(y.start); });
+  }
+  function minsAgo(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : agoText(t); }
+  // the playground's pretend calendar: a believable few weeks either side of today
+  function mcalExample() {
+    var base = new Date(); base.setHours(0, 0, 0, 0); var out = [];
+    for (var d = -42; d <= 21; d++) {
+      var t = new Date(base); t.setDate(t.getDate() + d); var wd = (t.getDay() + 6) % 7;
+      var add = function (h1, m1, h2, m2, title) { var s = new Date(t), e = new Date(t); s.setHours(h1, m1, 0, 0); e.setHours(h2, m2, 0, 0); out.push({ id: 'ex' + d + '-' + h1 + '-' + m1, start: s.toISOString(), end: e.toISOString(), title: title }); };
+      if (wd < 5) add(9, 0, 9, 30, 'Team stand-up');
+      if (wd === 0) add(13, 0, 14, 0, 'Planning meeting');
+      if (wd === 1 || wd === 3) add(15, 0, 15, 30, 'School pickup');
+      if (wd === 2) add(11, 0, 12, 0, 'Client call');
+      if (wd === 3) add(19, 0, 20, 0, 'Pilates');
+      if (wd === 4) add(16, 30, 17, 30, 'Drinks with the team');
+      if (wd === 5) add(9, 30, 11, 0, 'Kids’ swimming');
+      if (wd === 6) add(17, 30, 20, 0, 'Dinner at Mum’s');
+      if ((d + 42) % 13 === 5) add(10, 0, 11, 0, 'Dentist');
+      if ((d + 42) % 14 === 8) add(12, 0, 13, 0, 'Session with Sav');
+    }
+    return out;
+  }
+  function mcalRefresh(force, cb) {
+    var c = mcal(); cb = cb || function () {};
+    if (!APP) return cb(null, c);
+    if (playground() || !APP.live) {
+      if (c.url && (force || !c.events.length || Date.now() - (c.at || 0) > 6 * 3600e3)) { c.events = mcalExample(); c.at = Date.now(); c.err = ''; mcalSave(c); }
+      return cb(null, c);
+    }
+    if (!c.url) return cb(null, c);
+    if (!force && c.at && Date.now() - c.at < 3 * 3600e3) return cb(null, c);
+    APP.sb().auth.getSession().then(function (r) {
+      var tok = r && r.data && r.data.session && r.data.session.access_token;
+      return fetch('/.netlify/functions/my-calendar', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ url: c.url, range: 'wide' }) });
+    }).then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(t || 'Couldn’t load it'); }); }).then(function (j) {
+      var c2 = mcal(); c2.events = j.events || []; c2.at = Date.now(); c2.err = ''; mcalSave(c2); cb(null, c2);
+    }).catch(function (e) { var c2 = mcal(); c2.err = String(e.message || e).slice(0, 160); mcalSave(c2); cb(e, c2); });
+  }
+  // the one place they link it. compact: folded away until they want it
+  function mcalLink(onDone, compact) {
+    var box = h('div', { class: 'mc-link' }), state = { src: '' };
+    function draw() {
+      box.innerHTML = ''; var c = mcal(); box.className = 'mc-link' + (c.url ? ' on' : '');
+      if (c.url) {
+        box.appendChild(h('div', { class: 'mc-on' }, [h('span', { class: 'mc-ic', 'aria-hidden': 'true', text: '📅' }),
+          h('span', { class: 'mc-t' }, [h('b', { text: 'Linked to ' + (MCAL_SRC[c.src] || 'your calendar') }), h('span', { text: c.err ? 'Couldn’t update just now. ' + c.err : 'Updated ' + minsAgo(c.at || Date.now()) + '. It only reads your calendar.' })]),
+          h('button', { class: 'mc-mini', type: 'button', 'aria-label': 'Update now', title: 'Update now', text: '↻', onclick: function (e) { e.currentTarget.disabled = true; mcalRefresh(true, function () { draw(); if (onDone) onDone(); }); } }),
+          h('button', { class: 'mc-mini txt', type: 'button', text: 'Unlink', onclick: function () { var c2 = mcal(); c2.url = ''; c2.events = []; c2.at = 0; c2.src = ''; mcalSave(c2); draw(); if (onDone) onDone(); } })]));
+        return;
+      }
+      var inner = h('div', { class: 'mc-in' });
+      inner.appendChild(h('p', { class: 'mc-sub', text: 'Your real day shows up in here. It only reads your calendar. Nothing from the app ever goes into it.' }));
+      inner.appendChild(h('div', { class: 'mc-pick', role: 'radiogroup', 'aria-label': 'Which calendar?' }, ['google', 'apple', 'outlook'].map(function (k) {
+        var on = state.src === k; return h('button', { class: 'mc-src' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', onclick: function () { state.src = k; draw(); var d0 = box.querySelector('details'); if (d0) d0.open = true; } }, [h('span', { class: 'mc-dot mc-' + k, 'aria-hidden': 'true' }), MCAL_SRC[k]]);
+      })));
+      if (state.src) {
+        inner.appendChild(h('ol', { class: 'mc-steps' }, MCAL_HOW[state.src].map(function (t) { return h('li', { text: t }); })));
+        var demo = playground() || !APP.live;
+        var inp = h('input', { class: 'bt-in', type: 'url', placeholder: demo ? 'Playground: just tap Link it' : 'Paste the link here', 'aria-label': 'Your calendar link' });
+        var msg = h('p', { class: 'ea-err', 'aria-live': 'polite' });
+        var go = h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Link it', onclick: function () {
+          var u = tx(inp.value); if (demo) u = 'example';
+          else if (!/^(https?|webcals?):\/\//i.test(u)) { msg.textContent = 'Paste the link first. It starts with https:// or webcal://'; return; }
+          var c2 = mcal(); c2.url = u; c2.src = state.src; c2.at = 0; mcalSave(c2); go.disabled = true; go.textContent = 'Linking…';
+          mcalRefresh(true, function (err, c3) {
+            if (err) { var c4 = mcal(); c4.url = ''; mcalSave(c4); go.disabled = false; go.textContent = 'Link it'; msg.textContent = String(err.message || err).slice(0, 160); return; }
+            APP.toast('Linked. ' + c3.events.length + ' events are in.' + (demo ? ' (Example events in the playground.)' : '')); draw(); if (onDone) onDone();
+          });
+        } });
+        inner.appendChild(h('div', { class: 'mc-row' }, [inp, go])); inner.appendChild(msg);
+      }
+      if (compact) box.appendChild(h('details', { class: 'mc-fold', open: state.src ? true : null }, [h('summary', null, [h('span', { class: 'mc-ic', 'aria-hidden': 'true', text: '📅' }), h('span', { class: 'mc-t' }, [h('b', { text: 'Link your Google or Apple calendar' }), h('span', { text: 'So your real day shows here' })])]), inner]));
+      else { box.appendChild(h('div', { class: 'mc-hd' }, [h('span', { class: 'mc-ic', 'aria-hidden': 'true', text: '📅' }), h('b', { text: 'Link your Google or Apple calendar' })])); box.appendChild(inner); }
+    }
+    draw(); return box;
+  }
+
+  /* ================= The day, like a Google calendar =================
+     Their linked calendar events, their Energy Audit blocks (in the audit colours), today's plan (dotted),
+     and on the right, everything they ticked off, at the time they did it. Tap an event to say how it felt. */
+  // one time picker for the whole Energy Audit: every 15 minutes across all 24 hours, plus "type an exact time"
+  // for anything in between (a 10-minute recharge, 7:52am…). .value is minutes, as a string.
+  function eaTimePick(val, lab) {
+    val = Math.max(0, Math.min(24 * 60 - 1, Math.round(+val || 0)));
+    var wrap = h('span', { class: 'ea-tp' }), sel = h('select', { class: 'bt-in ea-sel', 'aria-label': lab }), inp = h('input', { class: 'bt-in ea-tp-in', type: 'time', step: '60', 'aria-label': lab + ' (exact)', hidden: true });
+    for (var m = 0; m < 24 * 60; m += 15) sel.appendChild(h('option', { value: String(m), text: eaTime(m) }));
+    sel.appendChild(h('option', { value: 'x', text: 'Type an exact time…' }));
+    var hhmm = function (m) { return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+    var setV = function (m) { m = Math.max(0, Math.min(24 * 60 - 1, Math.round(+m || 0))); if (m % 15) { sel.value = 'x'; inp.hidden = false; inp.value = hhmm(m); } else { sel.value = String(m); inp.hidden = true; inp.value = hhmm(m); } };
+    sel.addEventListener('change', function () { if (sel.value === 'x') { inp.hidden = false; try { inp.focus(); } catch (e) {} } else { inp.hidden = true; inp.value = hhmm(+sel.value); } wrap.dispatchEvent(new Event('change')); });
+    inp.addEventListener('change', function () { wrap.dispatchEvent(new Event('change')); });
+    Object.defineProperty(wrap, 'value', { get: function () { if (sel.value !== 'x') return sel.value; var q = /^(\d+):(\d+)/.exec(inp.value || ''); return q ? String(+q[1] * 60 + +q[2]) : '0'; }, set: setV });
+    wrap.appendChild(sel); wrap.appendChild(inp); setV(val);
+    return wrap;
+  }
+  var DT0 = 0, DT1 = 24 * 60; // the day calendar covers all 24 hours (it scrolls to the useful part)
+  function dtKeyV(dt) { var t = new Date(dt).getTime() + 12 * 3600e3; return window.BT_VAGAL && window.BT_VAGAL.dayKey ? window.BT_VAGAL.dayKey(t) : dayKey(t); }
+  function dtItems(dt) {
+    var k = eaKey(dt), ea = eaData(), bl = eaBlocks(ea.days[k]), used = {}; bl.forEach(function (b) { if (b.calId) used[b.calId] = 1; });
+    var mn = function (d) { return d.getHours() * 60 + d.getMinutes(); };
+    var ev = mcalOn(dt).filter(function (e) { return !used[e.id]; }).map(function (e) { var s = new Date(e.start), en = new Date(e.end || Date.parse(e.start) + 3600e3), a = mn(s); return { t: 'cal', s: a, e: Math.max(a + 15, eaKey(en) === eaKey(s) ? mn(en) : DT1), title: e.title || 'Busy', ev: e }; });
+    var logs = bl.map(function (b) { return { t: 'ea', s: eaMins(b.start), e: Math.max(eaMins(b.start) + 15, eaMins(b.end)), title: b.what, b: b, k: eaKind(b.kind) }; });
+    var t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    var nowM = eaKey(dt) === eaKey(new Date()) ? new Date().getHours() * 60 + new Date().getMinutes() : 0;
+    var plan = new Date(dt) >= t0 ? eaPlanBlocks(ea, eaWd(new Date(dt).getTime())).filter(function (b) { var a = eaMins(b.start), z = eaMins(b.end); return !b.cal && z > nowM && !bl.some(function (x) { return eaMins(x.start) < z && eaMins(x.end) > a; }); }).map(function (b) { return { t: 'plan', s: eaMins(b.start), e: eaMins(b.end), title: b.what, k: eaKind(b.kind), b: b }; }) : [];
+    return ev.concat(logs, plan);
+  }
+  function dtDone(dt) {
+    var out = [], V = window.BT_VAGAL, vk = dtKeyV(dt), a0 = new Date(dt).setHours(0, 0, 0, 0), a1 = a0 + DAY;
+    var inDay = function (t) { return t && t >= a0 && t < a1; }, mins = function (t) { var d = new Date(t); return d.getHours() * 60 + d.getMinutes(); };
+    var NM = { breathe: 'Breathe', pause: 'Pause', move: 'Move', water: 'Water' };
+    if (V && V.calStatus) { try { var cs = V.calStatus(vk); Object.keys(NM).forEach(function (p) { if (cs[p]) { var t = (cs.at || {})[p]; out.push({ m: inDay(t) ? mins(t) : 12 * 60, g: p, label: NM[p] }); } }); } catch (e) {} }
+    if (V && V.doseData) { try { var dts = (V.doseData().days || {})[vk] || {}; Object.keys(dts).forEach(function (id) { var it = V.doseItem(id), t = dts[id]; out.push({ m: inDay(t) ? mins(t) : 12 * 60, g: 'dose', label: it ? it.text : 'DOSE' }); }); } catch (e) {} }
+    evidence().forEach(function (e) { var t = evAt(e); if (inDay(t)) out.push({ m: mins(t), g: 'proof', label: e.text }); });
+    var jl = rd(K.jlog) || {}; Object.keys(jl).forEach(function (key) { var t = (jl[key] || {}).at; if (inDay(t)) out.push({ m: mins(t), g: 'journal', label: 'Reflection' }); });
+    notesAll().forEach(function (n) { if (inDay(n.at)) out.push({ m: mins(n.at), g: 'note', label: tx(n.title) || 'Note to self' }); });
+    return out.sort(function (a, b) { return a.m - b.m; });
+  }
+  var DT_GLY = { water: '💧', proof: '✦', journal: '✎', note: '✎', dose: 'D', breathe: '≈', pause: '☕', move: '↟' };
+  function dtIcon(g) { var em = ['breathe', 'pause', 'move', 'dose'].indexOf(g) >= 0 ? emblem(g) : null; return h('span', { class: 'dt-gi', 'aria-hidden': 'true' }, [em || document.createTextNode(DT_GLY[g] || '•')]); }
+  function dayTimeline(dt, o) {
+    o = o || {}; var PX = o.px || 0.8, H = Math.round((DT1 - DT0) * PX), now = new Date();
+    var wrap = h('div', { class: 'dt' + (o.mini ? ' mini' : '') });
+    var scroller = h('div', { class: 'dt-scroll', style: o.height ? 'max-height:' + o.height + 'px' : null });
+    var grid = h('div', { class: 'dt-grid', style: 'height:' + H + 'px' });
+    for (var hr = 0; hr <= 24; hr++) { var y = Math.round((hr * 60 - DT0) * PX); grid.appendChild(h('span', { class: 'dt-ln', style: 'top:' + y + 'px' })); if (hr > 0 && hr < 24 && !o.mini) grid.appendChild(h('span', { class: 'dt-hr', style: 'top:' + y + 'px', text: eaTime(hr * 60) })); }
+    var lane = h('div', { class: 'dt-lane' }), side = h('div', { class: 'dt-side' }); grid.appendChild(lane); grid.appendChild(side);
+    var items = dtItems(dt).concat(!o.readOnly && !o.mini && sgOn() ? sgFor(dt) : []).filter(function (x) { return x.e > DT0 && x.s < DT1; }).sort(function (a, b) { return a.s - b.s || b.e - a.e; });
+    var cols = []; items.forEach(function (it) { var c = 0; while (cols[c] != null && cols[c] > it.s) c++; cols[c] = it.e; it.col = c; });
+    items.forEach(function (it) { it.n = 1 + Math.max.apply(null, items.filter(function (x) { return x.s < it.e && x.e > it.s; }).map(function (x) { return x.col; })); });
+    var form = h('div', { class: 'dt-form-slot' });
+    function openForm(it) { form.innerHTML = ''; var fin = function (changed) { form.innerHTML = ''; if (changed && o.onChange) o.onChange(); }; form.appendChild(it.t === 'sug' || it.t === 'plan' ? sgForm(dt, it, fin) : dtForm(dt, it, fin)); setTimeout(function () { try { form.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (x) {} }, 30); }
+    items.forEach(function (it) {
+      var a = Math.max(DT0, it.s), e = Math.min(DT1, it.e), top = Math.round((a - DT0) * PX), ht = Math.max(o.mini ? 6 : 20, Math.round((e - a) * PX) - 2);
+      var st = 'top:' + top + 'px;height:' + ht + 'px;left:calc(' + (it.col * 100 / it.n) + '% + 1px);width:calc(' + (100 / it.n) + '% - 3px)' + (it.k ? ';--c:' + it.k.c + ';--l:' + it.k.light : '');
+      var kids = o.mini ? [] : [h('b', { text: (it.t === 'cal' ? '📅 ' : '') + it.title }), ht >= 34 ? h('span', { text: eaTime(it.s) + '–' + eaTime(it.e) + (it.t === 'plan' ? ' · planned' : it.t === 'cal' ? ' · tap to add how it felt' : '') }) : null];
+      if (it.t === 'sug' && !o.mini) kids = [h('b', { text: '✨ ' + it.title }), ht >= 34 ? h('span', { text: eaTime(it.s) + '–' + eaTime(it.e) + ' · suggested' }) : null];
+      var evEl = h(o.readOnly ? 'div' : 'button', { class: 'dt-ev ' + it.t + (ht < 34 ? ' short' : ''), type: o.readOnly ? null : 'button', style: st, title: eaTime(it.s) + ' ' + it.title + (it.k ? ' · ' + it.k.name : ''), 'aria-label': o.readOnly ? null : eaTime(it.s) + ', ' + it.title, onclick: o.readOnly ? null : function (ev) { ev.stopPropagation(); if (evEl.__dragged) return; openForm(it); } }, kids);
+      if (!o.readOnly && (it.t === 'sug' || it.t === 'plan')) dtDrag(evEl, it, dt, PX, o.onChange);
+      lane.appendChild(evEl);
+    });
+    if (!o.noDone) {
+      var last = -99; dtDone(dt).forEach(function (d) {
+        var m = Math.min(DT1 - 15, Math.max(DT0, d.m)), top = Math.round((m - DT0) * PX); var step = o.mini ? 9 : 24; if (top < last + step) top = last + step; last = top;
+        side.appendChild(h('span', { class: 'dt-done g-' + d.g, style: 'top:' + top + 'px', title: eaTime(d.m) + ' · ' + d.label }, [dtIcon(d.g), o.mini ? null : h('span', { class: 'dt-dl', text: d.label })]));
+      });
+    }
+    if (eaKey(now) === eaKey(dt)) { var nm = now.getHours() * 60 + now.getMinutes(); if (nm > DT0 && nm < DT1) grid.appendChild(h('span', { class: 'dt-now', style: 'top:' + Math.round((nm - DT0) * PX) + 'px' })); }
+    if (!o.readOnly) grid.addEventListener('click', function (e) { if (e.target.closest('.dt-ev,.dt-done')) return; var r = grid.getBoundingClientRect(), m = DT0 + Math.floor((e.clientY - r.top) / PX / 30) * 30; openForm({ t: 'new', s: m, e: m + 60 }); });
+    scroller.appendChild(grid); wrap.appendChild(scroller); if (!o.readOnly) wrap.appendChild(form);
+    if (o.height) setTimeout(function () { var target = eaKey(now) === eaKey(dt) ? now.getHours() * 60 - 90 : (items[0] ? items[0].s - 30 : 8 * 60); scroller.scrollTop = Math.max(0, (target - DT0) * PX); }, 0);
+    return wrap;
+  }
+  function dtForm(dt, it, done) {
+    var k = eaKey(dt), editing = it.t === 'ea' ? it.b : null, fromCal = it.t === 'cal' ? it.ev : null, fromPlan = it.t === 'plan' ? it.b : null;
+    var kind = editing ? editing.kind : fromPlan ? fromPlan.kind : '';
+    var sel = function (val, lab) { return eaTimePick(val, lab); };
+    var st = sel(it.s, 'Start time'), en = sel(it.e, 'End time');
+    var what = h('input', { class: 'bt-in', placeholder: 'What were you doing?', 'aria-label': 'What were you doing?', value: editing ? editing.what : (it.title || '') });
+    var kr = h('div', { class: 'dt-kinds', role: 'radiogroup', 'aria-label': 'How did it affect your energy?' });
+    function drawK() { kr.innerHTML = ''; EA_KINDS.forEach(function (x) { var on = kind === x.k; kr.appendChild(h('button', { type: 'button', class: 'dt-k' + (on ? ' on' : ''), role: 'radio', 'aria-checked': on ? 'true' : 'false', style: '--c:' + x.c + ';--l:' + x.light, onclick: function () { kind = x.k; drawK(); } }, [h('i', { 'aria-hidden': 'true' }), x.name.replace(' / disassociating', '')])); }); }
+    drawK();
+    var err = h('p', { class: 'ea-err', 'aria-live': 'polite' });
+    var head = editing ? editing.what : fromCal ? 'How did “' + fromCal.title + '” feel?' : fromPlan ? 'How did “' + fromPlan.what + '” go?' : 'Add to your Energy Audit';
+    var save = h('button', { class: 'bt-btn lime sm', type: 'button', text: editing ? 'Save' : 'Add it', onclick: function (e) {
+      var a = +st.value, b = +en.value;
+      if (!tx(what.value)) { err.textContent = 'What were you doing?'; what.focus(); return; }
+      if (b <= a) { err.textContent = 'The end needs to be after the start.'; return; }
+      if (!kind) { err.textContent = 'Pick one: did it recharge you or drain you?'; return; }
+      var d = eaData(), day = d.days[k] = d.days[k] || { blocks: [] }; day.blocks = day.blocks || [];
+      var blk = { start: eaT24(a), end: eaT24(b), what: tx(what.value), kind: kind };
+      if (editing) day.blocks = day.blocks.map(function (x) { return x.id === editing.id ? Object.assign({}, x, blk) : x; });
+      else day.blocks.push(Object.assign({ id: String(Date.now()), rate: null, ns: null }, blk, fromCal ? { calId: fromCal.id } : {}));
+      d.setup = true; eaSave(d); try { sparkleBurst(e.currentTarget); } catch (x) {}
+      APP.toast(editing ? 'Updated.' : 'Added to your Energy Audit.'); setTimeout(function () { done(true); }, 250);
+    } });
+    var del = editing ? h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Delete', onclick: function () { var d = eaData(), day = d.days[k]; if (day) { day.blocks = (day.blocks || []).filter(function (x) { return x.id !== editing.id; }); eaSave(d); } done(true); } }) : null;
+    return h('div', { class: 'dt-form' }, [h('div', { class: 'dt-form-h' }, [h('b', { text: head }), h('button', { class: 'dt-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: function () { done(false); } })]),
+      what, h('div', { class: 'dt-times' }, [h('label', null, ['From ', st]), h('label', null, ['To ', en])]), h('span', { class: 'ea-q', text: 'How did it affect your energy?' }), kr, err, h('div', { class: 'bt-row' }, [save, del])]);
+  }
+  // a week of little day columns (the Becoming Book calendar)
+  function weekTimeline(mon, onPick) {
+    var row = h('div', { class: 'dt-week' }), NM = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], today = eaKey(new Date());
+    row.appendChild(h('div', { class: 'dt-wk-gut' }, [h('div', { class: 'dt-wk-hd' })].concat([6, 9, 12, 15, 18, 21].map(function (hr) { return h('span', { class: 'dt-wk-hr', style: 'top:' + (40 + Math.round((hr * 60 - DT0) * 0.42)) + 'px', text: eaTime(hr * 60).replace(':00', '') }); }))));
+    for (var i = 0; i < 7; i++) (function (i) {
+      var d = new Date(mon); d.setDate(mon.getDate() + i);
+      var col = h('button', { class: 'dt-wk-day' + (eaKey(d) === today ? ' today' : ''), type: 'button', 'aria-label': 'Open ' + d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }), onclick: function () { onPick(d); } },
+        [h('div', { class: 'dt-wk-hd' }, [h('span', { text: NM[i] }), h('b', { text: String(d.getDate()) })]), dayTimeline(d, { mini: true, readOnly: true, px: 0.42 })]);
+      row.appendChild(col);
+    })(i);
+    return row;
+  }
+
+  /* ================= Suggested balance: recharges placed around the drains =================
+     A toggle on the calendar. When it's on, the day shows ✨ suggestions: a recharge straight after each drain
+     (about 20 minutes per hour of slow drain, 30 per hour of fast drain), an energy lift in the morning and a wind-down
+     at night. Tap one to change it, add it, or say no thanks. Add the whole day or the whole week at once. Drag to move. */
+  var SG_ON = 'bt-sg-on', SG_X = 'bt-sg-x';
+  var SG_IDEAS = ['A walk outside', 'Breathwork: 3 physiological sighs', 'Music + dancing', 'Sit in the sun', 'Stretch on the floor', 'Cuppa outside, no phone', 'Call or voice-note a friend', 'Legs up the wall', 'Shake it out for 2 minutes', 'Time with my pets', 'Read something fun', 'Cold water on my face'];
+  function sgOn() { try { return localStorage.getItem(SG_ON) === '1'; } catch (e) { return false; } }
+  function sgSet(on) { try { localStorage.setItem(SG_ON, on ? '1' : '0'); } catch (e) {} }
+  function sgX() { return rd(SG_X) || {}; }
+  function sgIdeas() { var mine = []; try { mine = eaLists(eaData()).fills.map(function (x) { return x.t; }); } catch (e) {} var out = [], seen = {}; mine.concat(SG_IDEAS).forEach(function (t) { var n = eaNorm(t); if (!seen[n]) { seen[n] = 1; out.push(t); } }); return out; }
+  function sgFor(dt) {
+    var k = eaKey(dt), x = sgX()[k] || {}, items = dtItems(dt), busy = items.map(function (i) { return [i.s, i.e]; });
+    var t0 = new Date(); t0.setHours(0, 0, 0, 0); if (new Date(dt) < t0) return [];
+    var nowM = eaKey(dt) === eaKey(new Date()) ? new Date().getHours() * 60 + new Date().getMinutes() : 0;
+    var free = function (s, e) { return s >= Math.max(DT0, nowM) && e <= 22 * 60 + 30 && !busy.some(function (b) { return b[0] < e && b[1] > s; }); };
+    var ideas = sgIdeas(), ii = 0, out = [];
+    var place = function (s0, dur, what, why) { for (var s = s0; s <= s0 + 90; s += 15) { if (free(s, s + dur)) { var id = 'sg' + s0; if (x[id] === 0) return; var ed = x[id] && typeof x[id] === 'object' ? x[id] : null; var it = { t: 'sug', id: id, s: ed ? ed.s : s, e: ed ? ed.e : s + dur, title: ed ? ed.what : what, why: why, k: eaKind('green') }; busy.push([it.s, it.e]); out.push(it); return; } } };
+    var raised = items.some(function (i) { return i.s < 9 * 60 && i.k && i.k.k === 'green'; });
+    if (!raised) place(7 * 60, 15, 'Morning sunlight + a big glass of water', 'Lifts your energy for the day');
+    items.filter(function (i) { return i.t === 'cal' || (i.k && (i.k.k === 'red' || i.k.k === 'yellow')); }).sort(function (a, b) { return a.e - b.e; }).forEach(function (d) {
+      var len = Math.max(15, d.e - d.s), rate = d.k && d.k.k === 'red' ? 30 : 20, need = Math.min(45, Math.max(15, Math.round(len / 60 * rate / 15) * 15));
+      var after = items.some(function (i) { return i.k && i.k.k === 'green' && i.s >= d.e - 5 && i.s <= d.e + 45; }); if (after) return;
+      place(d.e, need, ideas[ii++ % ideas.length], 'A recharge after “' + d.title + '”');
+    });
+    place(21 * 60, 30, 'Wind down: screens off, slow breathing', 'Helps your body switch off for sleep');
+    return out.slice(0, 8);
+  }
+  function sgSave(dt, id, val) { var x = sgX(), k = eaKey(dt); x[k] = x[k] || {}; x[k][id] = val; wr(SG_X, x); }
+  function planAdd(dt, it) { var d = eaData(), p = eaPlan(d), wd = eaWd(new Date(dt).getTime()); p.days[wd] = (p.days[wd] || []).concat([{ id: 'pl' + Date.now() + Math.floor(Math.random() * 999), start: eaT24(it.s), end: eaT24(it.e), what: it.title, kind: 'green' }]); eaSave(d); }
+  function sgAddDay(dt) { var n = 0; sgFor(dt).forEach(function (it) { planAdd(dt, it); sgSave(dt, it.id, 0); n++; }); return n; }
+  function sgBar(dt, onChange) {
+    var on = sgOn(), mon = new Date(dt); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+    return h('div', { class: 'sg-bar' + (on ? ' on' : '') }, [
+      h('button', { class: 'sg-tog', type: 'button', role: 'switch', 'aria-checked': on ? 'true' : 'false', onclick: function () { sgSet(!on); onChange(); } }, [h('span', { class: 'sg-sw', 'aria-hidden': 'true' }, [h('i')]), '✨ Suggest my best balance']),
+      on ? h('button', { class: 'sg-act', type: 'button', text: 'Add all today', onclick: function () { var n = sgAddDay(dt); APP.toast(n ? 'Added ' + n + ' recharges to your plan. Drag them to move them.' : 'Nothing new to add today. You’re balanced.'); onChange(); } }) : null,
+      on ? h('button', { class: 'sg-act', type: 'button', text: 'Add for the whole week', onclick: function () { var n = 0; for (var i = 0; i < 7; i++) { var d = new Date(mon); d.setDate(mon.getDate() + i); n += sgAddDay(d); } APP.toast(n ? 'Added ' + n + ' recharges across your week.' : 'Nothing new to add this week.'); onChange(); } }) : null]);
+  }
+  function sgForm(dt, it, done) {
+    var sel = function (val, lab) { return eaTimePick(val, lab); };
+    var st = sel(it.s, 'Start time'), en = sel(it.e, 'End time'), what = h('input', { class: 'bt-in', value: it.title, 'aria-label': 'Activity' });
+    var chips = h('div', { class: 'sg-chips' }, sgIdeas().slice(0, 10).map(function (t) { return h('button', { type: 'button', class: 'rp-ea-chip', text: t, onclick: function () { what.value = t; } }); }));
+    var cur = function () { return { s: +st.value, e: Math.max(+st.value + 15, +en.value), title: tx(what.value) || it.title }; };
+    var isPlan = it.t === 'plan';
+    return h('div', { class: 'dt-form sg-form' }, [h('div', { class: 'dt-form-h' }, [h('b', { text: isPlan ? 'Your planned recharge' : '✨ ' + (it.why || 'A suggestion') }), h('button', { class: 'dt-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: function () { done(false); } })]),
+      what, h('span', { class: 'ea-q', text: 'Or pick something else:' }), chips, h('div', { class: 'dt-times' }, [h('label', null, ['From ', st]), h('label', null, ['To ', en])]),
+      h('div', { class: 'bt-row' }, isPlan ? [
+        h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Save changes', onclick: function () { var c = cur(), d = eaData(), p = eaPlan(d), wd = eaWd(new Date(dt).getTime()); p.days[wd] = (p.days[wd] || []).map(function (b) { return b.id === it.b.id ? Object.assign({}, b, { start: eaT24(c.s), end: eaT24(c.e), what: c.title }) : b; }); eaSave(d); done(true); } }),
+        h('button', { class: 'bt-btn ghost sm', type: 'button', text: '✓ I did it', onclick: function (e) { var c = cur(), d = eaData(), k = eaKey(dt), day = d.days[k] = d.days[k] || { blocks: [] }; day.blocks = (day.blocks || []).concat([{ id: String(Date.now()), start: eaT24(c.s), end: eaT24(c.e), what: c.title, kind: it.b.kind || 'green', rate: null, ns: null }]); eaSave(d); try { sparkleBurst(e.currentTarget); } catch (x) {} APP.toast('Logged in your Energy Audit.'); setTimeout(function () { done(true); }, 200); } }),
+        h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Take it off my plan', onclick: function () { var d = eaData(), p = eaPlan(d), wd = eaWd(new Date(dt).getTime()); p.days[wd] = (p.days[wd] || []).filter(function (b) { return b.id !== it.b.id; }); eaSave(d); done(true); } })
+      ] : [
+        h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add to my day', onclick: function (e) { var c = cur(); planAdd(dt, Object.assign({}, it, c)); sgSave(dt, it.id, 0); try { sparkleBurst(e.currentTarget); } catch (x) {} APP.toast('Added. It’s on your plan now.'); setTimeout(function () { done(true); }, 200); } }),
+        h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Save changes', onclick: function () { var c = cur(); sgSave(dt, it.id, { s: c.s, e: c.e, what: c.title }); done(true); } }),
+        h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Not for me', onclick: function () { sgSave(dt, it.id, 0); done(true); } })])]);
+  }
+  // drag a suggestion or a planned block up and down to move it (snaps to 15 minutes)
+  function dtDrag(el, it, dt, PX, onChange) {
+    el.style.touchAction = 'none';
+    el.addEventListener('pointerdown', function (ev) {
+      if (ev.button > 0) return; var y0 = ev.clientY, moved = false, s0 = it.s, len = it.e - it.s;
+      try { el.setPointerCapture(ev.pointerId); } catch (x) {}
+      var mv = function (e2) { var dy = e2.clientY - y0; if (!moved && Math.abs(dy) < 6) return; moved = true; el.classList.add('drag'); var ns = Math.max(DT0, Math.min(DT1 - len, s0 + Math.round(dy / PX / 15) * 15)); el.style.top = Math.round((ns - DT0) * PX) + 'px'; it._ns = ns; };
+      var up = function () { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); el.classList.remove('drag');
+        if (!moved || it._ns == null) return; el.__dragged = true; setTimeout(function () { el.__dragged = false; }, 50);
+        var ns = it._ns, ne = ns + len;
+        if (it.t === 'sug') sgSave(dt, it.id, { s: ns, e: ne, what: it.title });
+        else { var d = eaData(), p = eaPlan(d), wd = eaWd(new Date(dt).getTime()); p.days[wd] = (p.days[wd] || []).map(function (b) { return b.id === it.b.id ? Object.assign({}, b, { start: eaT24(ns), end: eaT24(ne) }) : b; }); eaSave(d); }
+        APP.toast('Moved to ' + eaTime(ns) + '.'); if (onChange) onChange(); };
+      el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    });
+  }
+  // the Becoming Book week: the same swipeable day cards as Home
+  function weekGallery(mon, onOpen) {
+    var gal = h('div', { class: 'wkg', role: 'list', 'aria-label': 'Your week, one day per card' }), NM = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], tk = eaKey(new Date()), ti = -1;
+    var REPN = { breathe: 'Breathe', pause: 'Pause', move: 'Move', water: 'Water', dose: 'DOSE', proof: 'Proof', journal: 'Reflection', note: 'Note' };
+    for (var i = 0; i < 7; i++) (function (i) {
+      var dt = new Date(mon); dt.setDate(mon.getDate() + i); dt.setHours(0, 0, 0, 0); var isT = eaKey(dt) === tk, fut = dt > new Date(); if (isT) ti = i;
+      var bl = eaBlocks(eaData().days[eaKey(dt)]), kindAt = function (m) { var b = bl.filter(function (x) { return eaMins(x.start) <= m && eaMins(x.end) > m; })[0]; return b ? eaKind(b.kind) : null; };
+      var done = dtDone(dt);
+      var reps = h('ul', { class: 'wkg-reps' }, done.map(function (r) { var k = kindAt(r.m); return h('li', { class: 'wkg-r on', style: k ? '--c:' + k.c + ';--l:' + k.light : null, title: k ? 'During: ' + k.name : null }, [dtIcon(r.g), h('span', { class: 'wkg-rl' }, [h('b', { text: (REPN[r.g] || '') + (r.label && r.label !== REPN[r.g] ? ': ' : '') }), r.label && r.label !== REPN[r.g] ? r.label : '']), h('span', { class: 'wkg-rt', text: eaTime(r.m) })]); }));
+      gal.appendChild(h('article', { class: 'wkg-c' + (isT ? ' today' : '') + (fut && !isT ? ' fut' : ''), role: 'listitem', id: 'bkg-' + i }, [
+        h('div', { class: 'wkg-h' }, [h('div', null, [h('span', { class: 'wkg-dn', text: isT ? 'Today' : NM[i] }), h('b', { text: dt.getDate() + ' ' + dt.toLocaleDateString('en-AU', { month: 'short' }) })]),
+          h('span', { class: 'wkg-n', text: fut && !isT ? 'Coming up' : done.length ? done.length + (done.length === 1 ? ' rep' : ' reps') : 'Rest day' }),
+          h('button', { class: 'wkg-open', type: 'button', text: 'Open', onclick: function () { onOpen(dt); } })]),
+        dayTimeline(dt, { readOnly: true, px: 0.5, height: 250 }),
+        h('span', { class: 'wkg-k', text: 'What you did' }), done.length ? reps : h('p', { class: 'wkg-none', text: fut && !isT ? 'Nothing yet.' : 'Nothing ticked this day. That’s okay.' })]));
+    })(i);
+    setTimeout(function () { var c = document.getElementById('bkg-' + (ti >= 0 ? ti : 0)); if (c && gal.scrollTo) gal.scrollTo({ left: c.offsetLeft - gal.offsetLeft - 8 }); }, 0);
+    return gal;
+  }
+  /* ================= Energy Audit on Home: their day as a calendar ================= */
+  var eaCardOff = 0;
+  function eaDayCard() {
+    if (!eaRepsOn() && !mcal().url) return null;
+    var card = h('section', { class: 'bt-eaday', 'aria-labelledby': 'bt-eaday-h' });
+    function draw() {
+      card.innerHTML = '';
+      var dt = new Date(); dt.setHours(0, 0, 0, 0); dt.setDate(dt.getDate() + eaCardOff);
+      var bl = eaBlocks(eaData().days[eaKey(dt)]), g = eaBalanceGame(bl), w = eaWeekInfo();
+      card.appendChild(h('div', { class: 'chc-top' }, [h('span', { class: 'chc-k', text: 'Energy Audit' }),
+        h('h2', { id: 'bt-eaday-h', text: eaCardOff === 0 ? 'Your day' : dt.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' }) }),
+        h('span', { class: 'chc-s', text: (w ? 'Day ' + w.day + ' of 7 · ' : '') + 'Tap anything to add how it felt.' })]));
+      card.appendChild(h('div', { class: 'eaday-nav' }, [
+        h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Day before', text: '‹', onclick: function () { eaCardOff--; draw(); } }),
+        h('button', { class: 'eaday-today' + (eaCardOff === 0 ? ' on' : ''), type: 'button', text: 'Today', onclick: function () { eaCardOff = 0; draw(); } }),
+        h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Next day', text: '›', onclick: function () { eaCardOff++; draw(); } }),
+        bl.length ? h('span', { class: 'eaday-bal ' + (g.ok ? 'ok' : 'no') }, [h('i', { 'aria-hidden': 'true', text: g.ok ? '⚖️' : '🔋' }), g.ok ? 'Balanced' : 'Needs ~' + (g.short >= 60 ? (Math.round(g.short / 30) / 2) + 'h' : g.short + 'm') + ' more recharge']) : null]));
+      card.appendChild(dayTimeline(dt, { height: 430, onChange: draw }));
+      card.appendChild(h('div', { class: 'eaday-key', 'aria-hidden': 'true' }, EA_KINDS.map(function (x) { return h('span', null, [h('i', { style: 'background:' + x.light + ';border-color:' + x.c }), x.name.replace(' / disassociating', '')]); }).concat([h('span', null, [h('i', { class: 'cal' }), 'Your calendar'])])));
+      card.appendChild(mcalLink(draw, true));
+      card.appendChild(h('a', { class: 'rp-link', href: '#Energy', text: 'Open my full Energy Audit →' }));
+    }
+    draw(); return card;
+  }
+
+  /* ================= Becoming Book: calendar + analytics ================= */
+  var bkCal = { mode: 'day', off: 0 }, bkAn = { range: 'month' };
+  function bookCalendar(root, redraw) {
+    var box = h('section', { class: 'bk-mcal' });
+    var base = new Date(); base.setHours(0, 0, 0, 0);
+    var dt = new Date(base); if (bkCal.mode === 'day') dt.setDate(dt.getDate() + bkCal.off); else { dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7) + bkCal.off * 7); }
+    var label = bkCal.mode === 'day' ? (bkCal.off === 0 ? 'Today, ' : '') + dt.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) : (function () { var e = new Date(dt); e.setDate(dt.getDate() + 6); return dt.getDate() + ' ' + dt.toLocaleDateString('en-AU', { month: 'short' }) + ' – ' + e.getDate() + ' ' + e.toLocaleDateString('en-AU', { month: 'short' }); })();
+    box.appendChild(h('div', { class: 'bk-mcal-top' }, [
+      h('div', { class: 'chc-view', role: 'tablist', 'aria-label': 'Calendar view' }, [['day', 'Day'], ['week', 'Week']].map(function (v) { var on = bkCal.mode === v[0]; return h('button', { class: on ? 'on' : '', type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: v[1], onclick: function () { bkCal.mode = v[0]; bkCal.off = 0; redraw(); } }); })),
+      h('div', { class: 'bk-mcal-nav' }, [h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Back', text: '‹', onclick: function () { bkCal.off--; redraw(); } }), h('b', { text: label }), h('button', { class: 'chc-arr', type: 'button', 'aria-label': 'Forward', text: '›', onclick: function () { bkCal.off++; redraw(); } })]),
+      bkCal.off ? h('button', { class: 'eaday-today', type: 'button', text: 'Today', onclick: function () { bkCal.off = 0; redraw(); } }) : null]));
+    if (bkCal.mode === 'day') { if (!COACH) box.appendChild(sgBar(dt, redraw)); box.appendChild(dayTimeline(dt, { height: 620, onChange: redraw, readOnly: !!COACH })); }
+    else box.appendChild(weekGallery(dt, function (d) { bkCal.mode = 'day'; bkCal.off = Math.round((d - base) / DAY); redraw(); }));
+    box.appendChild(h('div', { class: 'eaday-key', 'aria-label': 'Key' }, [h('span', null, [h('i', { class: 'cal' }), 'Your calendar']), h('span', null, [h('i', { style: 'background:#DDF0D6;border-color:#5FA052' }), 'Energy Audit']), h('span', null, [h('i', { class: 'plan' }), 'Planned']), h('span', null, [h('span', { class: 'dt-gi sm', text: '✦' }), 'What you did, when you did it'])]));
+    if (!COACH) box.appendChild(mcalLink(redraw, false));
+    root.appendChild(box);
+  }
+  function anDays(range) {
+    var end = new Date(); end.setHours(0, 0, 0, 0); var n = range === 'week' ? 7 : range === 'month' ? 30 : range === '90' ? 90 : Math.max(7, Math.min(400, Math.round((end - startDate()) / DAY) + 1));
+    var out = []; for (var i = n - 1; i >= 0; i--) { var d = new Date(end); d.setDate(end.getDate() - i); out.push(d); } return out;
+  }
+  function anDay(d) {
+    var V = window.BT_VAGAL, vk = dtKeyV(d), r = { reps: {}, n: 0, proof: 0, refl: 0, green: 0, drain: 0 };
+    if (V && V.calStatus) { try { var cs = V.calStatus(vk); ['dose', 'breathe', 'pause', 'move', 'water'].forEach(function (p) { if (cs[p]) { r.reps[p] = 1; r.n++; } }); } catch (e) {} }
+    var a0 = d.getTime(), a1 = a0 + DAY;
+    evidence().forEach(function (e) { var t = evAt(e); if (t >= a0 && t < a1) r.proof++; }); if (r.proof) { r.reps.proof = 1; r.n++; }
+    var jl = rd(K.jlog) || {}; Object.keys(jl).forEach(function (k) { var t = (jl[k] || {}).at; if (t >= a0 && t < a1) r.refl++; });
+    eaBlocks(eaData().days[eaKey(d)]).forEach(function (b) { var m = Math.max(15, eaMins(b.end) - eaMins(b.start)); if (b.kind === 'green') r.green += m; else if (b.kind === 'red' || b.kind === 'yellow') r.drain += m; });
+    if (r.green + r.drain) r.reps.energy = 1;
+    return r;
+  }
+  // how much they've used each tool, since they started
+  function anTools() {
+    var out = [], vw0 = rd('bt-vwork') || { days: {} }, vd = vw0.days || {}, dd = rd('bt-dose') || {}, ea = eaData();
+    var cnt = function (p) { return Object.keys(vd).filter(function (k) { return vd[k][p] && vd[k][p].done; }).length; };
+    var chDays = Object.keys(vd).filter(function (k) { return ['breathe', 'pause', 'move'].some(function (p) { return ((vd[k][p] || {}).ch || []).length; }); }).length;
+    var saves = []; try { saves = window.BT_SAVES ? window.BT_SAVES.list() : []; } catch (e) {}
+    var sv = function (t) { return saves.filter(function (x) { return x.tool === t; }).length; };
+    var eb = (rd('emotional-blueprint-v1') || {}).history || [], j = Object.keys(comp().j || {}).filter(function (k) { return tx((comp().j || {})[k]); }).length, pk = 0; try { pk = boxPicked().length; } catch (e) {}
+    [['proof', 'Proof portfolio', evidence().length, 'pieces of proof'], ['dose', 'DOSE', Object.keys(dd.days || {}).filter(function (k) { return Object.keys(dd.days[k] || {}).length; }).length, 'days'],
+     ['breathe', 'Breathe', cnt('breathe'), 'days'], ['pause', 'Pause', cnt('pause'), 'days'], ['move', 'Move', cnt('move'), 'days'], ['comehome', 'Coming Home', chDays, 'days'],
+     ['energy', 'Energy Audit', Object.keys(ea.days || {}).filter(function (k) { return eaBlocks(ea.days[k]).length; }).length, 'days logged'], ['blueprint', 'Emotional Blueprint', eb.length, 'check-ins'],
+     ['whatif', 'What If Workout', sv('what-if-workout'), 'workouts'], ['rewind', 'Pause and Rewind', sv('rewind'), 'rewinds'], ['ub', 'Understanding Bridge', sv('understanding-bridge'), 'bridges'],
+     ['box', 'Breaking Out of Your Box', pk, 'beliefs mapped'], ['intent', 'Becoming Notebook', j, 'reflections']
+    ].forEach(function (t) { if (t[2] > 0) out.push({ id: t[0], name: t[1], n: t[2], unit: t[3] }); });
+    return out.sort(function (a, b) { return b.n - a.n; });
+  }
+  function bookAnalytics(root, redraw) {
+    var V = window.BT_VAGAL, box = h('section', { class: 'bk-an' });
+    var first = tx(((APP.state.profile || {}).full_name || profileData().name || '').split(' ')[0]);
+    var since = Math.max(1, Math.round((Date.now() - startDate().getTime()) / DAY)), all = bookEntries(), ev = evidence();
+    // the hero: how far you've come
+    var hero = h('div', { class: 'an-hero' }, [h('span', { class: 'an-sp s1', 'aria-hidden': 'true' }), h('span', { class: 'an-sp s2', 'aria-hidden': 'true' }), h('span', { class: 'an-sp s3', 'aria-hidden': 'true' }),
+      h('span', { class: 'an-k', text: 'Your progress' }), h('h2', { text: 'Look how far you’ve come' + (first ? ', ' + first : '') + '.' }),
+      h('div', { class: 'an-big' }, [h('b', { text: String(since) }), h('span', { text: since === 1 ? 'day into becoming you' : 'days into becoming you' })]),
+      h('div', { class: 'an-hstats' }, [[ev.length, 'pieces of proof'], [all.filter(function (e) { return e.kind === 'milestone'; }).length, 'milestones'], [(V ? V.streak().best : 0), 'best streak']].map(function (x) { return h('span', null, [h('b', { text: String(x[0]) }), x[1]]); }))]);
+    box.appendChild(hero);
+    // where you started → where you are now, in their own words
+    var c0 = comp(), jl = rd(K.jlog) || {}, jk = Object.keys(jl).filter(function (k) { return jl[k] && jl[k].first; }).sort(function (a, b) { return (jl[a].firstAt || 0) - (jl[b].firstAt || 0); });
+    var then = [], now = [];
+    if (tx(c0.nsAway)) then.push(['You were done being', c0.nsAway]);
+    if (jk.length) then.push(['One of the first things you wrote', jl[jk[0]].first]);
+    if (tx(c0.nsToward)) now.push(['Who you said you’re becoming', c0.nsToward]);
+    var evS = ev.slice().sort(function (a, b) { return (evAt(b) || 0) - (evAt(a) || 0); });
+    if (evS.length) now.push(['Your latest proof', evS[0].text]);
+    if (jk.length > 1) { var lk = jk.slice().sort(function (a, b) { return (jl[b].at || 0) - (jl[a].at || 0); })[0]; if (lk !== jk[0]) now.push(['Something you wrote recently', (comp().j || {})[lk] || jl[lk].first]); }
+    if (then.length || now.length) box.appendChild(h('div', { class: 'an-card an-tn' }, [h('h3', { text: 'Where you started, and where you are now' }),
+      h('div', { class: 'an-tn-g' }, [h('div', { class: 'an-then' }, [h('span', { class: 'an-tag', text: 'Then · ' + startDate().toLocaleDateString('en-AU', { month: 'short', year: 'numeric' }) })].concat(then.map(function (q) { return h('figure', null, [h('figcaption', { text: q[0] }), h('blockquote', { text: '“' + tx(q[1]) + '”' })]); }))),
+        h('div', { class: 'an-arrow', 'aria-hidden': 'true', text: '→' }),
+        h('div', { class: 'an-now' }, [h('span', { class: 'an-tag lime', text: 'Now' })].concat(now.map(function (q) { return h('figure', null, [h('figcaption', { text: q[0] }), h('blockquote', { text: '“' + tx(q[1]) + '”' })]); })))])]));
+    // biggest wins
+    var big = ev.slice().sort(function (a, b) { return ((b.proves || []).length - (a.proves || []).length) || ((evAt(b) || 0) - (evAt(a) || 0)); }).slice(0, 8);
+    if (big.length) box.appendChild(h('div', { class: 'an-card' }, [h('h3', { text: '✦ Your biggest wins, so you never forget them' }), h('div', { class: 'an-wins' }, big.map(function (e) { var t = evAt(e); return h('figure', { class: 'an-win' }, [h('span', { class: 'an-wd', text: t ? new Date(t).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '' }), h('blockquote', { text: e.text }), (e.proves || []).length ? h('figcaption', { text: 'Proof that ' + e.proves.slice(0, 2).join(' and ') }) : null]); }))]));
+    // milestones, oldest first
+    var ms = all.filter(function (e) { return e.at && (e.kind === 'milestone' || (e.kind === 'activity' && e.title)); }).sort(function (a, b) { return a.at - b.at; }).slice(-12);
+    if (ms.length) box.appendChild(h('div', { class: 'an-card' }, [h('h3', { text: 'Your milestones' }), h('ol', { class: 'an-tl' }, ms.map(function (e, i) { return h('li', { class: i === ms.length - 1 ? 'last' : '' }, [h('span', { class: 'an-dot', 'aria-hidden': 'true' }), h('div', null, [h('b', { text: e.title }), h('span', { text: new Date(e.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + (e.text ? ' · ' + e.text : '') })])]); }))]));
+    // the tools they've been using
+    var tools = anTools();
+    if (tools.length) box.appendChild(h('div', { class: 'an-card' }, [h('h3', { text: 'The tools you’ve been using' }), h('div', { class: 'an-tools' }, tools.map(function (t) { var r = resource(t.id); return h(r ? 'a' : 'div', { class: 'an-tool', href: r ? resHref(r) : null }, [h('span', { class: 'an-ti', 'aria-hidden': 'true' }, [emblem(t.id) || document.createTextNode('◆')]), h('b', { text: String(t.n) }), h('span', { class: 'an-tu', text: t.unit }), h('span', { class: 'an-tn2', text: t.name })]); })),
+      h('p', { class: 'bk-an-note', text: tools[0] ? 'You keep coming back to ' + tools[0].name + '. That’s the one your brain is learning from most.' : '' })]));
+    box.appendChild(h('h3', { class: 'an-sec', text: 'Your reps, by the numbers' }));
+    var RANGES = [['week', 'This week'], ['month', '30 days'], ['90', '3 months'], ['all', 'All time']];
+    box.appendChild(h('div', { class: 'bk-an-f', role: 'radiogroup', 'aria-label': 'Show' }, RANGES.map(function (r) { var on = bkAn.range === r[0]; return h('button', { class: 'bk-an-rg' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', text: r[1], onclick: function () { bkAn.range = r[0]; redraw(); } }); })));
+    var days = anDays(bkAn.range), data = days.map(function (d) { return { d: d, r: anDay(d) }; });
+    var active = data.filter(function (x) { return x.r.n; }).length, totalReps = data.reduce(function (s, x) { return s + x.r.n; }, 0);
+    var proofs = data.reduce(function (s, x) { return s + x.r.proof; }, 0), refl = data.reduce(function (s, x) { return s + x.r.refl; }, 0);
+    var green = data.reduce(function (s, x) { return s + x.r.green; }, 0), drain = data.reduce(function (s, x) { return s + x.r.drain; }, 0);
+    var wk = V ? V.streak() : { current: 0, best: 0 }, ws = winStreak(), pct = Math.round(active / Math.max(1, days.length) * 100);
+    // always encouraging, whatever the numbers
+    var head = active === 0 ? 'A fresh page. Your first tick starts the streak.' : pct >= 80 ? 'Look at you. Showing up is becoming who you are.' : pct >= 50 ? 'You’re showing up more often than not. That’s a habit forming.' : pct >= 25 ? 'Every one of these days is a rep for your brain. Keep stacking them.' : 'You started. That’s the hardest part, and you’ve already done it.';
+    var ring = h('div', { class: 'bk-an-ring', role: 'img', 'aria-label': active + ' of ' + days.length + ' days' }); var R = 46, C = 2 * Math.PI * R;
+    ring.innerHTML = '<svg viewBox="0 0 110 110" width="110" height="110"><circle cx="55" cy="55" r="' + R + '" fill="none" stroke="#F3E7E3" stroke-width="10"/><circle cx="55" cy="55" r="' + R + '" fill="none" stroke="#4E0C08" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (C * pct / 100).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 55 55)"/></svg><b>' + active + '</b><span>of ' + days.length + ' days</span>';
+    box.appendChild(h('div', { class: 'bk-an-hero' }, [ring, h('div', null, [h('span', { class: 'chc-k', text: 'Days you showed up' }), h('h2', { text: head }), h('p', { text: totalReps + ' reps ticked off' + (proofs ? ', ' + proofs + ' pieces of proof' : '') + (refl ? ', ' + refl + ' reflections' : '') + '.' })])]));
+    box.appendChild(h('div', { class: 'bk-an-tiles' }, [
+      ['🔥', wk.current, 'day reps streak', wk.best > wk.current ? 'Best ever: ' + wk.best : wk.current ? 'Your best yet!' : 'Starts with one tick'],
+      ['✦', ws.current, 'day proof streak', ws.best > ws.current ? 'Best ever: ' + ws.best : ws.current ? 'Your best yet!' : 'Add one today'],
+      ['★', proofs, 'pieces of proof', 'Evidence for the new you'],
+      ['🔋', green ? (Math.round(green / 30) / 2) + 'h' : '0', 'recharge logged', drain ? Math.round(green / Math.max(1, green + drain) * 100) + '% of your logged energy' : 'From your Energy Audit']
+    ].map(function (t) { return h('div', { class: 'bk-an-t' }, [h('span', { class: 'bk-an-ic', 'aria-hidden': 'true', text: t[0] }), h('b', { text: String(t[1]) }), h('span', { text: t[2] }), h('small', { text: t[3] })]); })));
+    // reps per day (or per week for the longer views)
+    var buckets = [];
+    if (days.length <= 31) data.forEach(function (x) { buckets.push({ l: days.length <= 7 ? x.d.toLocaleDateString('en-AU', { weekday: 'short' }) : String(x.d.getDate()), v: x.r.n, max: 7, t: x.d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) + ': ' + x.r.n + ' reps' }); });
+    else for (var i = 0; i < data.length; i += 7) { var ch = data.slice(i, i + 7), v = ch.reduce(function (s, x) { return s + x.r.n; }, 0); buckets.push({ l: ch[0].d.getDate() + '/' + (ch[0].d.getMonth() + 1), v: v, max: 49, t: 'Week of ' + ch[0].d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + ': ' + v + ' reps' }); }
+    var mx = Math.max(1, Math.max.apply(null, buckets.map(function (b) { return b.v; })));
+    var bars = h('div', { class: 'bk-an-bars' + (buckets.length > 20 ? ' dense' : '') }, buckets.map(function (b, i) { return h('div', { class: 'bk-an-b', title: b.t, tabindex: '0', 'aria-label': b.t }, [h('i', { style: 'height:' + Math.max(b.v ? 6 : 2, Math.round(b.v / mx * 100)) + '%', class: b.v ? '' : 'z' }), (buckets.length <= 16 || i % 3 === 0 || i === buckets.length - 1) ? h('span', { text: b.l }) : h('span', { text: '' })]); }));
+    box.appendChild(h('div', { class: 'bk-an-card' }, [h('h3', { text: days.length <= 31 ? 'Reps each day' : 'Reps each week' }), bars]));
+    // what you've been doing most
+    var TYPES = [['proof', 'Proof', '✦'], ['dose', 'DOSE', null], ['breathe', 'Breathe', null], ['pause', 'Pause', null], ['move', 'Move', null], ['water', 'Water', '💧'], ['energy', 'Energy Audit', '🔋']];
+    var cnt = {}; TYPES.forEach(function (t) { cnt[t[0]] = data.filter(function (x) { return x.r.reps[t[0]]; }).length; });
+    var top = Math.max(1, Math.max.apply(null, TYPES.map(function (t) { return cnt[t[0]]; })));
+    box.appendChild(h('div', { class: 'bk-an-card' }, [h('h3', { text: 'What you’ve been doing' }), h('div', { class: 'bk-an-list' }, TYPES.map(function (t) {
+      return h('div', { class: 'bk-an-row' }, [h('span', { class: 'bk-an-ri', 'aria-hidden': 'true' }, [t[2] ? document.createTextNode(t[2]) : (emblem(t[0]) || document.createTextNode('•'))]), h('span', { class: 'bk-an-rl', text: t[1] }), h('span', { class: 'bk-an-rb' }, [h('i', { style: 'width:' + Math.round(cnt[t[0]] / top * 100) + '%' })]), h('b', { text: cnt[t[0]] + (cnt[t[0]] === 1 ? ' day' : ' days') })]);
+    }))]));
+    // energy balance + your strongest day
+    if (green + drain) box.appendChild(h('div', { class: 'bk-an-card' }, [h('h3', { text: 'Your energy balance' }), h('div', { class: 'bk-an-bal', role: 'img', 'aria-label': Math.round(green / (green + drain) * 100) + '% recharge' }, [h('i', { class: 'g', style: 'flex:' + green }), h('i', { class: 'd', style: 'flex:' + drain })]), h('p', { class: 'bk-an-note', text: (Math.round(green / 30) / 2) + 'h recharging, ' + (Math.round(drain / 30) / 2) + 'h draining. ' + (green >= drain * 0.5 ? 'You’re giving your battery real attention. That’s how you avoid the crash.' : 'Noticing this is the first step. One more recharge a day tips the balance.') })]));
+    var byWd = [0, 0, 0, 0, 0, 0, 0]; data.forEach(function (x) { byWd[(x.d.getDay() + 6) % 7] += x.r.n; });
+    var bestWd = byWd.indexOf(Math.max.apply(null, byWd)), WDN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    if (totalReps) box.appendChild(h('div', { class: 'bk-an-card lime' }, [h('h3', { text: '✨ Little things worth noticing' }), h('ul', { class: 'bk-an-ul' }, [
+      'Your strongest day is ' + WDN[bestWd] + '. Whatever you’re doing on ' + WDN[bestWd] + 's, it’s working.',
+      active ? 'You showed up on ' + active + ' of the last ' + days.length + ' days. Each one wired the new you in a little deeper.' : null,
+      cnt.proof ? 'You found proof on ' + cnt.proof + ' days. That’s ' + cnt.proof + ' days your brain saw evidence for the new story.' : 'Add a piece of proof today and watch this grow.',
+      wk.best >= 3 ? 'Your best streak is ' + wk.best + ' days in a row. You’ve done it before, you can do it again.' : null
+    ].filter(Boolean).map(function (t) { return h('li', { text: t }); }))]));
+    box.appendChild(h('div', { class: 'an-end' }, [h('b', { text: 'Keep going. You’re doing it.' }), h('span', { text: 'Every tick, every piece of proof, every hard moment you got through is the new you, wiring in. The person who started this would be so proud of you.' })]));
+    root.appendChild(box);
+  }
+  /* ================= Playground: "Everything unlocked" filled with six weeks of real-looking data =================
+     Modelled on Tyler's 1:1 journey (head-first, connection, perfectionism, procrastination, self-worth), so Sav can
+     see the app the way a client who's really using it does. Runs once per version, only in the playground. */
+  var RICH_V = 'v2';
+  function richSeed() {
+    if (!playground() || !window.BT_DEMO || !window.BT_DEMO.unlock) return;
+    if (localStorage.getItem('bt-rich-seed') === RICH_V) return;
+    var now = Date.now(), base = new Date(); base.setHours(0, 0, 0, 0);
+    var rnd = (function () { var x = 20261125; return function () { x = (x * 1103515245 + 12345) % 2147483648; return x / 2147483648; }; })();
+    var at = function (dOff, hh, mm) { var t = new Date(base); t.setDate(t.getDate() + dOff); t.setHours(hh, mm || 0, 0, 0); return Math.min(t.getTime(), now - 60000); };
+    var DAYS = 42;
+    // DOSE plan + Today's reps (breathe, pause, move, water) on most days, more as the weeks go on
+    var dose = rd('bt-dose') || {}; dose.plan = ['D0', 'O0', 'S0', 'E0']; dose.days = dose.days || {}; dose.loves = dose.loves || ['D0', 'O0', 'S0', 'E0', 'S3']; dose.custom = dose.custom || [];
+    var vw0 = rd('bt-vwork') || {}; vw0.days = vw0.days || {};
+    var MOVES = [['Walk'], ['Stretch'], ['Walk', 'Stretch'], ['Gym'], ['Dance'], ['Yoga']], BR = ['sigh', 'box', 'coherent', 'four78'], PAUSES = ['Coffee outside, no phone', 'Five minutes in the car before going in', 'Lay on the floor with the dog', 'Sat in the sun at lunch'];
+    for (var d = -DAYS; d <= 0; d++) {
+      var k = dayKey(at(d, 12)), wd = (new Date(at(d, 12)).getDay() + 6) % 7, keen = 0.55 + (d + DAYS) / DAYS * 0.35; // gets more consistent over time
+      if (rnd() > keen && d !== 0) continue;
+      var v = vw0.days[k] = vw0.days[k] || {};
+      var dd = dose.days[k] = dose.days[k] || {};
+      dose.plan.forEach(function (id, i) { if (rnd() < keen + 0.1) dd[id] = at(d, [7, 12, 8, 19][i], Math.floor(rnd() * 50)); });
+      if (Object.keys(dd).length) v.dose = { done: true, at: dd[Object.keys(dd)[0]], D: !!dd.D0, O: !!dd.O0, S: !!dd.S0, E: !!dd.E0 };
+      if (rnd() < keen) v.breathe = { done: true, at: at(d, 7, 15), ps: [BR[Math.floor(rnd() * BR.length)]] };
+      if (rnd() < keen - 0.1) v.pause = { done: true, at: at(d, 13, 20), items: [PAUSES[Math.floor(rnd() * PAUSES.length)]] };
+      if (rnd() < keen - 0.05) v.move = { done: true, at: at(d, wd < 5 ? 17 : 9, 30), types: MOVES[Math.floor(rnd() * MOVES.length)] };
+      if (rnd() < keen + 0.05) v.water = { level: 'good', n: 0, ml: null, at: at(d, 15) };
+      v.at = at(d, 20);
+      if (d === 0) { delete v.pause; delete v.move; }
+    }
+    wr('bt-dose', dose); wr('bt-vwork', vw0);
+    // proof: what Tyler-style wins look like, spread across the six weeks
+    var PROOF = [
+      ['Spoke up in the team meeting instead of saving it for later', 'connection'], ['Sent the email without rewriting it four times', 'perfectionism'], ['Started the task I’d been avoiding for a week. Took 20 minutes.', 'procrastination'],
+      ['Said yes to drinks after work and actually enjoyed it', 'connection'], ['Noticed I was overthinking and did a physiological sigh instead of spiralling', 'body'], ['Told my partner I was struggling instead of going quiet', 'connection'],
+      ['Took a lunch break away from my desk', 'rest'], ['Finished the first draft and let it be messy', 'perfectionism'], ['Asked a question in the group chat even though I thought it was dumb', 'connection'],
+      ['Went to bed at a decent time instead of scrolling', 'rest'], ['Got a compliment and said thank you, no deflecting', 'worth'], ['Rested on Sunday without feeling lazy', 'rest'],
+      ['Called Mum back the same day', 'connection'], ['Shipped the thing at 80% instead of waiting for perfect', 'perfectionism'], ['Did my DOSE four days in a row', 'body'],
+      ['Felt anxious walking into the party and stayed anyway', 'connection'], ['Made a decision without asking three people first', 'worth'], ['Went for a walk when I felt flat instead of pushing through', 'body'],
+      ['Shared something real in my session with Sav', 'connection'], ['Noticed the “I’m lazy” story and didn’t believe it', 'worth'], ['Cleared the inbox I’d been avoiding', 'procrastination'],
+      ['Laughed so hard at dinner I forgot to be self-conscious', 'connection'], ['Booked the doctor’s appointment I kept putting off', 'procrastination'], ['Said no to extra work without over-explaining', 'worth'],
+      ['Felt the tightness in my chest and named it: fear, not failure', 'body'], ['Introduced myself to someone new at the gym', 'connection'], ['Made my bed every day this week', 'procrastination']
+    ];
+    var PROVES = { connection: ['people want me around', 'I can be myself with people'], perfectionism: ['done is better than perfect', 'I’m enough as I am'], procrastination: ['I can start before I’m ready', 'I’m not lazy'], rest: ['rest is productive', 'I’m allowed to slow down'], body: ['I can calm my body down', 'I can trust myself'], worth: ['I’m enough as I am', 'my voice matters'] };
+    var pd = rd('program-decoder-v1') || {}; pd.evidence = pd.evidence || [];
+    var have = {}; pd.evidence.forEach(function (e) { have[e.text] = 1; });
+    PROOF.forEach(function (p, i) {
+      if (have[p[0]]) return;
+      var dOff = -DAYS + Math.round(i * (DAYS / PROOF.length)) + (i % 3 === 0 ? 1 : 0), t = at(Math.min(0, dOff), 10 + (i * 3) % 10, (i * 17) % 60);
+      pd.evidence.push({ id: String(t), date: new Date(t).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }), text: p[0], photo: null, belief: null, win: true, spark: i % 4 === 0 ? 'joy' : 'win', proves: PROVES[p[1]] || [] });
+      var vk = dayKey(t), vv = vw0.days[vk] = vw0.days[vk] || {}; vv.win = { done: true, at: t };
+    });
+    pd.evidence.sort(function (a, b) { return Number(b.id) - Number(a.id); }); wr('program-decoder-v1', pd); wr('bt-vwork', vw0);
+    try { if (!rd('bt-hunt-done')) wr('bt-hunt-done', 1); } catch (e) {}
+    // Energy Audit: logged days across the six weeks (on top of the example week)
+    var ea = eaData(), EAD = [
+      [['07:00', '07:30', 'Morning sunlight + coffee', 'green'], ['09:00', '09:30', 'Team stand-up', 'red'], ['09:30', '12:00', 'Deep focus work', 'yellow'], ['12:30', '13:00', 'Walk outside', 'green'], ['13:00', '16:30', 'Emails + admin', 'yellow'], ['17:30', '18:00', 'Gym', 'green'], ['20:00', '21:30', 'Scrolling my phone', 'pink']],
+      [['07:30', '08:00', 'Breathwork', 'green'], ['09:00', '09:30', 'Team stand-up', 'red'], ['10:00', '12:00', 'Meetings', 'red'], ['12:00', '12:30', 'Lunch away from desk', 'green'], ['13:00', '17:00', 'Project work', 'yellow'], ['18:00', '19:00', 'Cooking dinner', 'pink'], ['19:30', '20:30', 'Called a friend', 'green']],
+      [['08:00', '09:00', 'Sleep in + slow breakfast', 'green'], ['09:30', '11:00', 'Kids’ swimming', 'red'], ['11:30', '13:00', 'Groceries + errands', 'yellow'], ['14:00', '15:30', 'Reading in the sun', 'green'], ['17:30', '20:00', 'Dinner at Mum’s', 'red'], ['20:30', '21:30', 'Music + dancing', 'green']]
+    ];
+    for (var e = -DAYS; e <= 0; e++) {
+      var dt = new Date(base); dt.setDate(dt.getDate() + e); var ek = eaKey(dt), w2 = (dt.getDay() + 6) % 7;
+      if ((ea.days[ek] && eaBlocks(ea.days[ek]).length) || rnd() < 0.45) continue;
+      var tpl = w2 >= 5 ? EAD[2] : EAD[rnd() < 0.5 ? 0 : 1], nowM = e === 0 ? new Date().getHours() * 60 : 24 * 60;
+      ea.days[ek] = { blocks: tpl.filter(function (b) { return eaMins(b[1]) <= nowM; }).map(function (b, i) { return { id: 'rs' + e + '-' + i, start: b[0], end: b[1], what: b[2], kind: b[3], rate: 1 + Math.floor(rnd() * 5), ns: null }; }) };
+    }
+    eaSave(ea);
+    // reflections under the lessons, with the dates she wrote them
+    var cp = comp(); cp.j = cp.j || {}; var jl = rd(K.jlog) || {};
+    var REFL = ['I hold back because if they really saw me they might not like me. Writing that down feels huge.', 'The busier I get the less I have to feel. I can see it now.', 'I learned early that being good meant being quiet. I’m allowed to take up space.', 'When I procrastinate it’s not laziness, it’s fear of it not being perfect.', 'I want to feel connected without performing. That’s my north star.', 'My body knew before my head did. The tight chest is my early warning.', 'I’m starting to catch the “I’m lazy” story mid-sentence.', 'I can rest and still be worthy. Still practising believing it.'];
+    var pi = 0; allLessons().forEach(function (x) { (x.l.prompts || []).forEach(function (pr, i) { if (pi >= REFL.length) return; var key = x.l.id + '_' + i; if (tx(cp.j[key])) return; cp.j[key] = REFL[pi]; var t = at(-DAYS + 2 + pi * 5, 20, 15); jl[key] = { first: REFL[pi], firstAt: t, at: t }; pi++; }); });
+    if (!tx(cp.nsAway)) cp.nsAway = 'Stuck in my head. Holding back from people in case they judge me. Waiting until it’s perfect before I start anything.'; if (!tx(cp.nsToward)) cp.nsToward = 'Someone who says what they think, connects for real, and starts before it’s perfect.'; if (!tx(cp.intention)) cp.intention = 'I want to feel connected to people without performing.';
+    wr(K.comp, cp); wr(K.jlog, jl);
+    // a few notes to self
+    var nl = notesAll(); if (!nl.length) { [['After session 1', 'Sav said: notice it, name it, let it move. Try the chair thing with money too?', -30], ['Meltdown signs', 'Short with everyone, can’t decide what to eat, skipping meals. That’s the 48-hour warning.', -18], ['Remember', 'Done is better than perfect. Ship it at 80.', -6]].forEach(function (n, i) { var t = at(n[2], 21, 10); nl.push({ id: 'rs-n' + i, at: t, title: n[0], text: n[1] }); }); notesSave(nl); }
+    // Coming Home plan, ticked this week
+    var ch = rd(CH_K) || {}; ch.plan = ch.plan && (ch.plan.daily || []).length ? ch.plan : { daily: ['sigh', 'feet'], weekly: ['five', 'legs'], monthly: ['narrate'] }; ch.wdays = ch.wdays || { five: [0, 2, 4], legs: [1, 3] }; ch.ticks = ch.ticks || {};
+    ch.weekStart = chMonKey(); ch.monthKey = chMonthK(); var tdy = (new Date().getDay() + 6) % 7;
+    for (var c = 0; c <= tdy; c++) { if (c < tdy || new Date().getHours() > 9) ch.ticks['d|' + c + '|daily|sigh'] = true; if (c < tdy && c % 2 === 0) ch.ticks['d|' + c + '|daily|feet'] = true; }
+    wr(CH_K, ch);
+    // their Google calendar, linked
+    var mc = mcal(); if (!mc.url) { mc.url = 'example'; mc.src = 'google'; mc.at = 0; mcalSave(mc); mcalRefresh(true); }
+    localStorage.setItem('bt-rich-seed', RICH_V);
+  }
   function dayCard() {
     var V = window.BT_VAGAL; if (!V || !V.repsCard) return null;
-    var reps0 = V.repsCard(); if (reps0.classList.contains('rp-locked') || !V.calStatus) return reps0;
+    var reps0 = V.repsCard({ compact: true }); if (reps0.classList.contains('rp-locked') || !V.calStatus) return reps0;
     var A = chActs(), today = (new Date().getDay() + 6) % 7; if (chCalDay == null) chCalDay = today;
     var card = h('section', { class: 'bt-day', 'aria-labelledby': 'bt-day-h' });
-    card.appendChild(h('div', { class: 'chc-top' }, [h('span', { class: 'chc-k', text: 'The key to rewiring' }), h('h2', { id: 'bt-day-h', text: 'Your day' }), h('span', { class: 'chc-s', text: 'Your wins, DOSE, Coming Home plan, Energy Audit and Today’s reps, all in one place. Every tick is a rep.' })]));
+    card.appendChild(h('div', { class: 'chc-top' }, [h('span', { class: 'chc-k', text: 'The key to rewiring' }), h('h2', { id: 'bt-day-h', text: 'Your daily reps' }), h('span', { class: 'chc-s', text: 'Every tick is a rep.' })]));
     var calPart = h('div', { class: 'chc-cal' }), repsSlot = h('div', { class: 'rp-in' });
-    card.appendChild(calPart); card.appendChild(repsSlot);
-    var newReps = function () { repsSlot.innerHTML = ''; repsSlot.appendChild(V.repsCard()); };
+    card.appendChild(calPart);
+    var newReps = function () { repsSlot.innerHTML = ''; repsSlot.appendChild(V.repsCard({ compact: true })); };
     repsSlot.appendChild(reps0);
     function msg(t) { var m = calPart.querySelector('.chc-msg'); if (m && t) { m.textContent = t; m.hidden = false; } }
     function after(t, repsToo) { drawCal(); if (repsToo !== false) newReps(); msg(t); }
@@ -591,7 +1126,8 @@
     function doseDrop(k, future) {
       var dd = null; try { dd = V.doseData(); } catch (e) {}
       var plan = (dd && dd.plan) || [], dayD = V.calDoseDay ? V.calDoseDay(k) : {};
-      var det = h('details', { class: 'chc-dose' }, [h('summary', null, [h('span', { text: plan.length ? 'My DOSE (' + plan.filter(function (id) { return dayD[id]; }).length + ' of ' + plan.length + ')' : 'My DOSE' })])]);
+      var nOn = plan.filter(function (id) { return dayD[id]; }).length;
+      var det = h('div', { class: 'chc-dose open' + (plan.length && nOn === plan.length ? ' full' : '') }, [h('span', { class: 'chc-dose-k', text: plan.length ? 'Your bare-ass minimum. Tick each one as you do it.' : 'You haven’t picked your DOSE yet.' })]);
       if (!plan.length) { det.appendChild(h('a', { class: 'rp-link', href: '#Dose', text: 'Build my bare-ass minimum DOSE →' })); return det; }
       var L = h('div', { class: 'chc-dl' });
       plan.forEach(function (id) {
@@ -599,12 +1135,12 @@
         L.appendChild(h('button', { class: 'chc-di' + (on ? ' on' : ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', disabled: future ? true : null, onclick: function (e) { if (!on) sparkleBurst(e.currentTarget); V.calDoseItem(k, id, !on); after(!on ? 'Feel-good chemical: delivered. Counted in your reps.' : ''); setTimeout(function () { var d2 = calPart.querySelector('.chc-dose'); if (d2) d2.open = true; }, 0); } },
           [h('span', { class: 'chc-dl-l', text: it.letters.split('').join(' ') }), h('span', { text: it.text }), h('span', { class: 'chc-tk sm', 'aria-hidden': 'true', text: on ? '✓' : '' })]));
       });
-      det.appendChild(L); det.appendChild(h('a', { class: 'rp-link', href: '#Dose', text: 'Did something different? Open my DOSE menu →' }));
+      det.appendChild(L); det.appendChild(h('a', { class: 'rp-link sm', href: '#Dose', text: 'Did something different? →' }));
       return det;
     }
     function tabsBar() {
-      return h('div', { class: 'chc-view', role: 'tablist', 'aria-label': 'Calendar view' }, [['week', 'Week'], ['month', 'Month']].map(function (v) {
-        var on = calView === v[0]; return h('button', { class: on ? 'on' : '', type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: v[1], onclick: function () { calView = v[0]; drawCal(); } });
+      return h('div', { class: 'chc-view', role: 'tablist', 'aria-label': 'Calendar view' }, [['today', 'Today'], ['week', 'Week'], ['month', 'Month']].map(function (v) {
+        var on = calView === v[0]; return h('button', { class: on ? 'on' : '', type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: v[1], onclick: function () { calView = v[0]; if (v[0] === 'today') chCalDay = today; drawCal(); } });
       }));
     }
     function drawMonth() {
@@ -633,8 +1169,8 @@
         var monDt = chMon(), inWeek = sel >= monDt && sel < new Date(monDt.getTime() + 7 * 864e5), dl = h('div', { class: 'chc-list' }), dd2 = null; try { dd2 = V.doseData(); } catch (e) {}
         if (pOn.win) dl.appendChild(calRow(h('span', { class: 'chc-glyph', text: '✦' }), csd.nWins ? csd.nWins + (csd.nWins === 1 ? ' win' : ' wins') : 'Had a win', 'Wins · they become proof', csd.win, selFut, function (on) { V.calSet(kd, 'win', on); after(on ? 'Win ticked. Counted in your reps.' : ''); }));
         if (pOn.dose) {
-          dl.appendChild(calRow(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'Got my DOSE', dd2 && dd2.plan.length ? 'Bare-ass minimum' : 'Any happy-chemical hit counts', csd.dose, selFut, function (on) { if (dd2 && dd2.plan.length) V.calDose(kd, on); else V.calSet(kd, 'dose', on); after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : ''); }));
-          dl.appendChild(doseDrop(kd, selFut));
+          if (!(dd2 && dd2.plan.length)) dl.appendChild(calRow(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'Got my DOSE', dd2 && dd2.plan.length ? 'Bare-ass minimum' : 'Any happy-chemical hit counts', csd.dose, selFut, function (on) { if (dd2 && dd2.plan.length) V.calDose(kd, on); else V.calSet(kd, 'dose', on); after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : ''); }));
+          if (dd2 && dd2.plan.length) dl.appendChild(doseDrop(kd, selFut));
         }
         if (s) {
           var dItems = []; ((s.plan || {}).daily || []).forEach(function (id) { if (A[id]) dItems.push({ id: id, slot: 'daily' }); });
@@ -674,6 +1210,38 @@
       calPart.appendChild(h('p', { class: 'chc-msg', 'aria-live': 'polite', hidden: true }));
       calPart.appendChild(h('div', { class: 'chc-links' }, [h('a', { class: 'rp-link', href: '/tools/coming-home.html?tab=plan', text: monthly.length ? 'My Coming Home plan →' : 'Add few-times-a-month things to my plan →' })]));
     }
+    // Week: one card per day you can swipe through. The top is the day like Google Calendar (what was planned and
+    // what they did), the bottom lists every rep, coloured by the Energy Audit block it happened in.
+    function drawWeekGallery(dayInfo, mon, NM, parts, hasDosePlan, dd) {
+      var gal = h('div', { class: 'wkg', role: 'list', 'aria-label': 'Your week, one day per card' });
+      var s = chState(), REPN = { breathe: 'Breathe', pause: 'Pause', move: 'Move', water: 'Water', dose: 'DOSE', proof: 'Proof', journal: 'Reflection', note: 'Note' };
+      for (var i = 0; i < 7; i++) (function (i) {
+        var dt = new Date(mon.getTime()); dt.setDate(mon.getDate() + i); dt.setHours(0, 0, 0, 0); var inf = dayInfo(i), fut = i > today;
+        var bl = eaBlocks(eaData().days[eaKey(dt)]);
+        var kindAt = function (m) { var b = bl.filter(function (x) { return eaMins(x.start) <= m && eaMins(x.end) > m; })[0]; return b ? eaKind(b.kind) : null; };
+        var done = dtDone(dt);
+        // Coming Home ticks don't carry a time, so they list without one
+        var chDone = inf.its.filter(function (x) { return x.slot === 'sched' ? x.done : s && s.ticks[x.key]; }), chTodo = inf.its.filter(function (x) { return !(x.slot === 'sched' ? x.done : s && s.ticks[x.key]); });
+        var todo = [];
+        if (parts.dose && hasDosePlan) { var dday = V.calDoseDay(inf.k) || {}; dd.plan.forEach(function (id) { if (!dday[id]) { var it = V.doseItem(id); if (it) todo.push({ g: 'dose', label: it.text }); } }); }
+        chTodo.forEach(function (x) { todo.push({ g: 'ch', label: A[x.id][0] }); });
+        if (parts.win && !inf.cs.win) todo.push({ g: 'proof', label: 'A piece of proof' });
+        var n = done.length + chDone.length;
+        var repRow = function (r, isDone) { var k = isDone && r.m != null ? kindAt(r.m) : null; return h('li', { class: 'wkg-r' + (isDone ? ' on' : ' todo'), style: k ? '--c:' + k.c + ';--l:' + k.light : null, title: k ? 'During: ' + k.name : null },
+          [dtIcon(r.g === 'ch' ? 'breathe' : r.g), h('span', { class: 'wkg-rl' }, [h('b', { text: (REPN[r.g] || 'Coming Home') + (r.label && r.label !== REPN[r.g] ? ': ' : '') }), r.label && r.label !== REPN[r.g] ? r.label : '']), h('span', { class: 'wkg-rt', text: isDone ? (r.m != null ? eaTime(r.m) : '✓') : fut ? 'planned' : 'not yet' })]); };
+        var reps = h('ul', { class: 'wkg-reps' }, done.map(function (r) { return repRow(r, true); }).concat(chDone.map(function (x) { return repRow({ g: 'ch', label: A[x.id][0], m: null }, true); }), todo.map(function (r) { return repRow(r, false); })));
+        gal.appendChild(h('article', { class: 'wkg-c' + (i === today ? ' today' : '') + (fut ? ' fut' : ''), role: 'listitem', id: 'wkg-' + i }, [
+          h('div', { class: 'wkg-h' }, [h('div', null, [h('span', { class: 'wkg-dn', text: i === today ? 'Today' : NM[i] }), h('b', { text: dt.getDate() + ' ' + dt.toLocaleDateString('en-AU', { month: 'short' }) })]),
+            h('span', { class: 'wkg-n', text: fut ? 'Coming up' : n ? n + (n === 1 ? ' rep' : ' reps') : 'Rest day' }),
+            h('button', { class: 'wkg-open', type: 'button', text: 'Open', 'aria-label': 'Open ' + dt.toLocaleDateString('en-AU', { weekday: 'long' }), onclick: function () { calView = 'today'; chCalDay = i; drawCal(); } })]),
+          dayTimeline(dt, { readOnly: true, px: 0.5, height: 250, noDone: false }),
+          h('span', { class: 'wkg-k', text: fut ? 'Planned' : 'Your reps' }), reps.children.length ? reps : h('p', { class: 'wkg-none', text: fut ? 'Nothing planned yet.' : 'Nothing ticked this day. That’s okay.' })]));
+      })(i);
+      calPart.appendChild(gal);
+      calPart.appendChild(h('div', { class: 'eaday-key wkg-key', 'aria-hidden': 'true' }, EA_KINDS.map(function (x) { return h('span', null, [h('i', { style: 'background:' + x.light + ';border-color:' + x.c }), x.name.replace(' / disassociating', '')]); }).concat([h('span', null, [h('i', { class: 'cal' }), 'Your calendar'])])));
+      setTimeout(function () { var c = document.getElementById('wkg-' + today); if (c && gal.scrollTo) gal.scrollTo({ left: c.offsetLeft - gal.offsetLeft - 8 }); }, 0);
+      repsSlot.hidden = true;
+    }
     function drawCal() {
       if (calView === 'month') { drawMonth(); return; }
       calPart.innerHTML = ''; calPart.appendChild(tabsBar());
@@ -692,38 +1260,38 @@
       for (var i = 0; i < 7; i++) (function (i) {
         var dt = new Date(mon.getTime()); dt.setDate(mon.getDate() + i); var inf = dayInfo(i);
         days.appendChild(h('button', { class: 'chc-d' + (i === chCalDay ? ' on' : '') + (i === today ? ' today' : '') + (inf.tot && inf.dn === inf.tot && i <= today ? ' full' : ''), type: 'button', role: 'tab', 'aria-selected': i === chCalDay ? 'true' : 'false', onclick: function () { chCalDay = i; calWinOpen = false; drawCal(); } },
-          [h('span', { class: 'chc-dn', text: i === today ? 'Today' : NM[i] }), h('b', { text: String(dt.getDate()) }), h('span', { class: 'chc-dots', 'aria-label': inf.dn + ' of ' + inf.tot + ' done' }, Array.apply(null, Array(Math.min(inf.tot, 6))).map(function (_, j) { return h('i', { class: j < inf.dn ? 'on' : '' }); }))]));
+          [h('span', { class: 'chc-dn', text: i === today ? 'Today' : NM[i] }), h('b', { text: String(dt.getDate()) }), h('span', { class: 'chc-dots typed', 'aria-label': inf.dn + ' of ' + inf.tot + ' done' }, (function () { var ty = []; if (inf.cs.win) ty.push('proof'); if (inf.cs.dose) ty.push('dose'); ['breathe', 'pause', 'move', 'water'].forEach(function (p) { if (inf.cs[p]) ty.push(p); }); return ty.length ? ty.slice(0, 6).map(function (t) { return h('i', { class: 't-' + t, title: t }); }) : (i <= today ? [h('i', { class: 'none' })] : []); })())]));
       })(i);
-      calPart.appendChild(days);
+      if (calView === 'week') { drawWeekGallery(dayInfo, mon, NM, parts, hasDosePlan, dd); return; }
+      if (chCalDay !== today) { var vd = new Date(mon.getTime()); vd.setDate(mon.getDate() + chCalDay); calPart.appendChild(h('div', { class: 'chc-dayhd' }, [h('b', { text: vd.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) }), h('button', { class: 'eaday-today', type: 'button', text: '← Back to today', onclick: function () { chCalDay = today; drawCal(); } })])); }
       var di = chCalDay, inf = dayInfo(di), k = inf.k, future = di > today, isToday = di === today, list = h('div', { class: 'chc-list' });
+      // the day as a calendar first: their own calendar + Energy Audit blocks. Tap a block to colour it for the audit.
+      var auditOn = eaRepsOn() || !!mcal().url, dayDt = new Date(mon.getTime()); dayDt.setDate(mon.getDate() + di); dayDt.setHours(0, 0, 0, 0);
+      if (auditOn) { var dbl = eaBlocks(eaData().days[eaKey(dayDt)]), dg = eaBalanceGame(dbl);
+        calPart.appendChild(h('div', { class: 'chc-calhd' }, [h('b', { text: isToday ? 'Your day' : dayDt.toLocaleDateString('en-AU', { weekday: 'long' }) }), h('span', { class: 'chc-s', text: 'Tap a block to colour it for your Energy Audit' }), dbl.length ? h('span', { class: 'eaday-bal ' + (dg.ok ? 'ok' : 'no') }, [h('i', { 'aria-hidden': 'true', text: dg.ok ? '⚖️' : '🔋' }), dg.ok ? 'Balanced' : 'Needs ~' + (dg.short >= 60 ? (Math.round(dg.short / 30) / 2) + 'h' : dg.short + 'm') + ' more recharge']) : null]));
+        calPart.appendChild(sgBar(dayDt, drawCal));
+        calPart.appendChild(dayTimeline(dayDt, { height: 360, onChange: drawCal })); }
       var row = function (img, name, tag, on, onTick, extraCls) {
         return h('button', { class: 'chc-it' + (on ? ' on' : '') + (future ? ' later' : '') + (extraCls || ''), type: 'button', 'aria-pressed': on ? 'true' : 'false', disabled: future ? true : null, onclick: function (e) { if (!on) sparkleBurst(e.currentTarget); onTick(!on, e); } },
           [img, h('span', { class: 'chc-t' }, [h('span', { class: 'chc-tag', text: tag }), h('b', { text: name })]), h('span', { class: 'chc-tk', 'aria-hidden': 'true', text: on ? '✓' : '' })]);
       };
-      // a win
+      // proof: opens the same add-proof card as the Becoming Book
       if (parts.win) {
         var nW = inf.cs.nWins;
-        list.appendChild(row(h('span', { class: 'chc-glyph', text: '✦' }), isToday ? (nW ? (nW === 1 ? '1 win today. Got another?' : nW + ' wins today. Got another?') : 'Had a win') : (inf.cs.win ? 'Had a win' : 'A win'), 'Wins · they become proof', inf.cs.win, function (on) {
-          if (isToday) { calWinOpen = !calWinOpen || !inf.cs.win; drawCal(); setTimeout(function () { var wi = document.getElementById('chc-win-in'); if (wi) wi.focus(); }, 40); return; }
-          V.calSet(k, 'win', on); after(on ? 'Win ticked. Counted in your reps.' : '');
-        }));
-        if (isToday && calWinOpen) {
-          var wIn = h('input', { class: 'bt-in sm', id: 'chc-win-in', placeholder: 'Today I…', 'aria-label': 'Your win today' });
-          var addW = function () { var t = tx(wIn.value); if (!t) { wIn.focus(); return; } var ab = V.calWin(t); calWinOpen = false; after('Added. That’s proof against ' + ab.beliefs.length + ' old beliefs.'); };
-          wIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addW(); });
-          list.appendChild(h('div', { class: 'chc-win' }, [h('b', { text: '✦ What was your win?' }), h('span', { class: 'chc-s', text: 'Big or tiny, it all counts. It goes into your proof portfolio.' }),
-            h('div', { class: 'rp-inrow' }, [wIn, h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Add', onclick: addW })]),
-            inf.cs.win ? null : h('button', { class: 'rp-more', type: 'button', text: 'Just tick it for now', onclick: function () { V.calSet(k, 'win', true); calWinOpen = false; after('Win ticked. Counted in your reps.'); } })]));
-        }
+        list.appendChild(row(h('span', { class: 'chc-glyph', text: '✦' }), 'Proof', isToday ? (nW ? nW + (nW === 1 ? ' piece today · add another' : ' pieces today · add another') : 'Tap to add today’s proof') : (inf.cs.win ? 'You found proof' : 'Tap to tick'), inf.cs.win, function (on) {
+          if (isToday) { calWinOpen = !calWinOpen; calDoseOpen = false; drawCal(); return; }
+          V.calSet(k, 'win', on); after(on ? 'Proof ticked. Counted in your reps.' : '');
+        }, (isToday && calWinOpen ? ' open' : '')));
+        if (isToday && calWinOpen) { var pc = h('div', { class: 'chc-open' }); try { pc.appendChild(proofHome(false, true)); } catch (e) {} list.appendChild(pc); }
       }
-      // your DOSE
+      // your DOSE: opens to show the ones they picked
       if (parts.dose) {
-        var names = hasDosePlan ? dd.plan.map(function (id) { var it = V.doseItem(id); return it ? it.text : ''; }).filter(Boolean) : [];
-        list.appendChild(row(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'Got my DOSE', names.length ? 'Bare-ass minimum · ' + names.slice(0, 3).join(', ') + (names.length > 3 ? '…' : '') : 'Any happy-chemical hit counts', inf.cs.dose, function (on) {
-          if (hasDosePlan) V.calDose(k, on); else V.calSet(k, 'dose', on);
-          after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : '');
-        }));
-        list.appendChild(doseDrop(k, future));
+        var nOn2 = hasDosePlan ? dd.plan.filter(function (id) { return (V.calDoseDay(k) || {})[id]; }).length : 0;
+        list.appendChild(row(emblem('dose') || h('span', { class: 'chc-glyph', text: 'D' }), 'DOSE', hasDosePlan ? nOn2 + ' of ' + dd.plan.length + ' · tap to see your plan' : 'Tap to tick', inf.cs.dose, function (on) {
+          if (hasDosePlan) { calDoseOpen = !calDoseOpen; calWinOpen = false; drawCal(); return; }
+          V.calSet(k, 'dose', on); after(on ? 'Feel-good chemicals: delivered. Counted in your reps.' : '');
+        }, (calDoseOpen && hasDosePlan ? ' open' : '')));
+        if (calDoseOpen && hasDosePlan) { var dc = h('div', { class: 'chc-open' }); dc.appendChild(doseDrop(k, future)); list.appendChild(dc); }
       }
       // Coming Home
       inf.its.forEach(function (it) {
@@ -744,16 +1312,20 @@
       });
       if (future) list.appendChild(h('p', { class: 'chc-none', text: 'Coming up. You can tick these off on the day.' }));
       calPart.appendChild(list);
-      // Energy Audit: today's planned blocks
-      if (isToday) { try { var hp = eaHomePlan(); if (hp) { hp.classList.add('in-day'); calPart.appendChild(hp); } } catch (e) {} }
+      if (isToday) calPart.appendChild(repsSlot); // breathe, pause, move, water: a list running on under Coming Home
+      // then the full Energy Audit logger, folded away until they want it
+      if (auditOn && isToday && eaRepsOn()) {
+        var fold = h('details', { class: 'chc-eaadd', open: eaAddOpen ? true : null, ontoggle: function () { eaAddOpen = fold.open; } }, [h('summary', null, [emblem('energy') || h('span', { text: '🔋' }), h('span', { class: 'chc-t' }, [h('b', { text: 'Add to my Energy Audit' }), h('span', { class: 'chc-tag', text: (function () { var w = eaWeekInfo(), n = eaBlocks(eaData().days[eaKey()]).length; return (w ? 'Day ' + w.day + ' of 7 · ' : '') + (n ? n + (n === 1 ? ' block' : ' blocks') + ' today' : 'What drained you, what filled you up'); })() })]), h('span', { class: 'chc-tk', 'aria-hidden': 'true', text: '+' })]), eaRepsSection()]);
+        calPart.appendChild(fold);
+      }
+      if (auditOn) calPart.appendChild(mcalLink(drawCal, true));
       calPart.appendChild(h('p', { class: 'chc-msg', 'aria-live': 'polite', hidden: true }));
-      var hasCH = !!s && ['daily', 'weekly', 'monthly'].some(function (x) { return (P[x] || []).length; });
-      calPart.appendChild(h('div', { class: 'chc-links' }, [h('a', { class: 'rp-link', href: '/tools/coming-home.html?tab=plan', text: hasCH ? 'My Coming Home plan →' : 'Add my Coming Home plan →' }), h('a', { class: 'rp-link', href: '#Dose', text: hasDosePlan ? 'My DOSE →' : 'Build my DOSE →' })]));
-      if (isToday) calPart.appendChild(h('div', { class: 'chc-vn' }, [h('span', { class: 'chc-k', text: 'Today’s reps' }), h('span', { class: 'chc-s', text: 'Your vagus nerve workout. Coming Home ticks fill these in for you.' })]));
       repsSlot.hidden = !isToday;
     }
     drawCal();
     window.BT_REPS_CHANGED = function () { if (document.body.contains(card)) drawCal(); };
+    window.BT_EA_CHANGED = function () { if (document.body.contains(card)) drawCal(); };
+    window.BT_DAY_PROOF = function () { calView = 'today'; chCalDay = today; calWinOpen = true; calDoseOpen = false; drawCal(); setTimeout(function () { var el = card.querySelector('.chc-open'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); };
     return card;
   }
   function fillHomeTop(slot) {
@@ -764,7 +1336,7 @@
     try { eaSeedPlayground(false); } catch (e) {}
     try { var ed = eaData(), el = eaLoggedDays(ed).length; if (el >= 3 && (ed.patSeen || 0) < el) slot.appendChild(h('a', { class: 'ea-home-pat', href: '#Energy', onclick: function () { try { sessionStorage.setItem('bt-ea-tab', 'audit'); } catch (x) {} } }, [emblem('energy') || h('span', { text: '🔋' }), h('span', null, [h('b', { text: 'I’ve found patterns in your energy 👀' }), h('span', { text: 'Your Energy Audit has something to show you. Take a look →' })])])); } catch (e) {}
     // once the 1:1 setup is done it's tucked away (the tests and agreement live in the profile)
-    if (APP.state.tier === 'private' && !oneSetupDone()) oneStart(slot);
+    if (APP.state.tier === 'private' && !oneSetupDone() && !coachAsClient()) oneStart(slot);
     var c = continueCard(), r = reminderList();
     var pages = 0; try { pages = bookEntries().length; } catch (e) {}
     var bk = h('a', { class: 'bt-bookln', href: '#Book' }, [icon('star', 'bt-bookln-ic'), h('span', null, [h('b', { text: 'Your Becoming Book' }), h('span', { text: 'Your notebook + ' + pages + ' page' + (pages === 1 ? '' : 's') + ' of your story' })]), h('span', { class: 'bt-bookln-go', text: 'Open →' })]);
@@ -773,7 +1345,7 @@
     try { chReconcile(); } catch (e) {}
     try { var dc = dayCard(); if (dc) slot.appendChild(dc); } catch (e) { if (window.console) console.warn(e); if (window.BT_VAGAL && window.BT_VAGAL.repsCard) { try { slot.appendChild(window.BT_VAGAL.repsCard()); } catch (x) {} } }
     try { slot.appendChild(notesBox({ home: true })); } catch (e) {}
-    slot.appendChild(proofHome());
+    if (!document.querySelector || !slot.querySelector('.bt-day')) slot.appendChild(proofHome());
     // (the belief map lives in Breaking Out of Your Box and the Becoming Book, not on Home)
     // (the Becoming Book link card was removed from Home: it's in the top nav as My Book)
     if (r) slot.appendChild(r);
@@ -1047,7 +1619,7 @@
       var f = findLesson(PROOF_LESSON), lk = h('section', { class: 'bt-proof simple locked', 'aria-label': 'Proof portfolio, locked' });
       var ic = h('span', { class: 'bt-proof-jar bt-ps-ic' }); ic.innerHTML = proofScaleSvg({ icon: true });
       lk.appendChild(h('div', { class: 'bt-proof-in' }, [h('div', { class: 'bt-proof-top' }, [ic, h('div', { class: 'bt-proof-tt' }, [h('span', { class: 'bt-wins-k', text: '🔒 Opens soon' }), h('h2', { class: 'bt-wins-h', text: 'Your proof portfolio' })])]),
-        h('p', { class: 'bt-wins-t', text: 'This opens after ' + (f ? (f.w.week ? 'Week ' + wkN(f.w.week) + ': ' : '') + f.l.title.replace(/^Lesson \d+:\s*/, '“') + '”' : 'the Proof Portfolio lesson') + '. It’ll make so much more sense once you’ve watched it.' })]));
+        h('p', { class: 'bt-wins-t', text: 'This opens after ' + (f ? (f.w.week ? wkL(f.w.week) + ': ' : '') + f.l.title.replace(/^Lesson \d+:\s*/, '“') + '”' : 'the Proof Portfolio lesson') + '. It’ll make so much more sense once you’ve watched it.' })]));
       return lk;
     }
     if (!force && !pp && !rd('bt-hunt-done') && !evidence().length) {
@@ -2444,7 +3016,7 @@
     var st = stats(), all = st.total && st.done === st.total && !seen.all;
     if (!fresh && !all) return;
     saveProg(function (q) { q.cheered = q.cheered || {}; if (fresh) q.cheered[fresh.week] = Date.now(); if (all) q.cheered.all = Date.now(); });
-    var title = all ? 'You finished the whole program!' : (fresh.week === 0 ? 'Introduction complete!' : 'Week ' + wkN(fresh.week) + ' complete!');
+    var title = all ? 'You finished the whole program!' : (fresh.week === 0 ? 'Introduction complete!' : wkL(fresh.week) + ' complete!');
     var msg = all ? 'Every lesson, every question, every bit of showing up. Take a second and let that land. I’m so proud of you.' : (fresh.week === 0 ? 'You’ve set your intentions and set yourself up for success. Now the real work begins.' : 'That’s a whole week of showing up for yourself. Give yourself the credit, you earned it.');
     if (!all && fresh.week === 0 && !(isSelf() && startedBefore())) { readyForCall(); return; }
     party(title, msg, 'Hell yes');
@@ -2500,7 +3072,7 @@
       var box = h('details', { class: 'bt-wk' + (open ? '' : ' lock'), open: current ? 'open' : null }, [
         h('summary', null, [
           w.week === 0 ? icon('star', 'bt-wk-n') : h('span', { class: 'bt-wk-n', text: String(w.week) }),
-          h('span', { class: 'bt-wk-t' }, [h('b', { text: w.week === 0 ? 'Week 1 · ' + w.title : 'Week ' + wkN(w.week) + (w.title && w.title !== 'Coming soon' ? ' · ' + w.title : '') }),
+          h('span', { class: 'bt-wk-t' }, [h('b', { text: w.week === 0 ? 'Week 1 · ' + w.title : wkL(w.week) + (w.title && w.title !== 'Coming soon' ? ' · ' + w.title : '') }),
             h('span', { text: !open ? wl.why + (ls.length ? '' : ' · lessons coming soon') : !ls.length ? 'Lessons coming soon' : done + ' of ' + ls.length + ' done' })]),
           !open ? icon('lock', 'bt-wk-lock') : ls.length && done === ls.length ? icon('tick', 'bt-wk-done') : h('span', { class: 'bt-wk-ring', style: '--p:' + (ls.length ? Math.round(100 * done / ls.length) : 0), 'aria-hidden': 'true' })
         ])
@@ -2904,7 +3476,7 @@
     var w = f.w, l = f.l, open = lessonOpen(id);
     var list = allLessons(), idx = list.map(function (x) { return x.l.id; }).indexOf(id), next = list[idx + 1], prev = list[idx - 1];
     var wrap = h('div', { class: 'bt-wrap bt-lesson' }, [back('Course', '#Course')]);
-    var lt = lessonMins(l); wrap.appendChild(h('span', { class: 'bt-les-k', text: (w.week === 0 ? 'Introduction' : 'Week ' + wkN(w.week) + ' · ' + w.title) + (lt ? ' · ' + lt.m + ' min video' : '') }));
+    var lt = lessonMins(l); wrap.appendChild(h('span', { class: 'bt-les-k', text: (w.week === 0 ? 'Introduction' : wkL(w.week) + ' · ' + w.title) + (lt ? ' · ' + lt.m + ' min video' : '') }));
     wrap.appendChild(h('h1', { class: 'bt-les-t', text: l.title }));
     if (!open) {
       wrap.appendChild(h('div', { class: 'bt-locked' }, [icon('lock'), h('b', { text: lessonWhy(id) }), h('span', { text: paceNote() }),
@@ -3147,7 +3719,7 @@
      collected, and "before vs now" where her answers have changed. */
   var KINDS = {
     milestone: ['Milestone', '#6B1510', 'star'], activity: ['Activity', '#F4C2F7', 'tick'], journal: ['Reflection', '#FFF4EE', 'play'],
-    win: ['Wins & joy', '#E4F27A', 'star'], proof: ['Proof', '#E4F27A', 'tick'], vagal: ['Vagal tone', '#BFE3D0', 'play'], change: ['Before & now', '#F28C3B', 'star'], note: ['My note', '#F1F9A6', 'play']
+    win: ['Wins & joy', '#E4F27A', 'star'], proof: ['Proof', '#E4F27A', 'tick'], vagal: ['Vagal tone', '#BFE3D0', 'play'], energy: ['Energy', '#DDF0D6', 'play'], change: ['Before & now', '#F28C3B', 'star'], note: ['My note', '#F1F9A6', 'play']
   };
   function parseDate(v) { if (!v) return null; var n = typeof v === 'number' ? v : Date.parse(v); return isNaN(n) ? null : n; }
   /* ---------------- My notes: sticky notes on any lesson, on Home, and in the Becoming Book ----------------
@@ -3157,7 +3729,7 @@
   function notesSave(list) { wr(K.notes, { list: list }); }
   function noteUpsert(n) { var list = notesAll(), i = -1; list.forEach(function (x, k) { if (x.id === n.id) i = k; }); if (i >= 0) list[i] = n; else list.push(n); notesSave(list); }
   function noteRemove(id) { notesSave(notesAll().filter(function (x) { return x.id !== id; })); }
-  function noteWhere(n) { var f = n.lesson ? findLesson(n.lesson) : null; return f ? (f.w.week === 0 ? 'Introduction' : 'Week ' + wkN(f.w.week)) + ' · ' + f.l.title : ''; }
+  function noteWhere(n) { var f = n.lesson ? findLesson(n.lesson) : null; return f ? (f.w.week === 0 ? 'Introduction' : wkL(f.w.week)) + ' · ' + f.l.title : ''; }
   function noteColour(n) { var x = 0; String(n.id).split('').forEach(function (c) { x = (x * 31 + c.charCodeAt(0)) % 997; }); return NOTE_COLS[x % NOTE_COLS.length]; }
   function noteDate(t) { return new Date(t).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
   // one sticky note, with Edit (and Remove) right on it
@@ -3173,7 +3745,7 @@
       var fw = showWhere && n.lesson ? findLesson(n.lesson) : null;
       var suM = showWhere && /^su\d+$/.test(n.lesson || '') ? n.lesson.slice(2) : null, suL = suM !== null ? (suCourse().lessons || []).filter(function (x) { return String(x.n) === suM; })[0] : null;
       if (suL) c.appendChild(h('a', { class: 'bt-sticky-w', href: '#Setup-' + suL.n }, [h('span', { class: 'bt-sticky-wi', 'aria-hidden': 'true', text: '▶' }), h('span', { text: 'Watch again: ' + suL.title + ' · Set yourself up for success →' })]));
-      if (fw) { var act = isActivityCard(fw.l); c.appendChild(h('a', { class: 'bt-sticky-w', href: act ? lessonHref(fw.l) : '#Lesson-' + fw.l.id }, [h('span', { class: 'bt-sticky-wi', 'aria-hidden': 'true', text: act ? '◆' : '▶' }), h('span', { text: (act ? 'Activity: ' : 'Watch again: ') + fw.l.title + ' · ' + (fw.w.week === 0 ? 'Introduction' : 'Week ' + wkN(fw.w.week)) + ' →' })])); }
+      if (fw) { var act = isActivityCard(fw.l); c.appendChild(h('a', { class: 'bt-sticky-w', href: act ? lessonHref(fw.l) : '#Lesson-' + fw.l.id }, [h('span', { class: 'bt-sticky-wi', 'aria-hidden': 'true', text: act ? '◆' : '▶' }), h('span', { text: (act ? 'Activity: ' : 'Watch again: ') + fw.l.title + ' · ' + (fw.w.week === 0 ? 'Introduction' : wkL(fw.w.week)) + ' →' })])); }
       var rm = h('button', { class: 'bt-sticky-b rm', type: 'button', text: 'Remove', onclick: function () { if (!rm.dataset.sure) { rm.dataset.sure = 1; rm.textContent = 'Tap again to remove'; return; } noteRemove(n.id); if (onChange) onChange(); } });
       c.appendChild(h('div', { class: 'bt-sticky-acts' }, [h('button', { class: 'bt-sticky-b', type: 'button', text: 'Edit ✎', onclick: edit }), rm]));
     }
@@ -3242,14 +3814,14 @@
     course().weeks.forEach(function (w) {
       var ls = w.lessons || []; if (!ls.length || !ls.every(function (l) { return p.done[l.id]; })) return;
       var at = Math.max.apply(null, ls.map(function (l) { return doneAt[l.id] || 0; })) || (typeof cheered[w.week] === 'number' ? cheered[w.week] : null);
-      push({ kind: 'milestone', at: at || null, title: (w.week === 0 ? 'Introduction' : 'Week ' + wkN(w.week) + ': ' + w.title) + ' complete', text: ls.length + ' lessons done.' });
+      push({ kind: 'milestone', at: at || null, title: (w.week === 0 ? 'Introduction' : wkL(w.week) + ': ' + w.title) + ' complete', text: ls.length + ' lessons done.' });
     });
     var st = stats(); if (st.total && st.done === st.total) push({ kind: 'milestone', at: typeof cheered.all === 'number' ? cheered.all : null, title: 'You finished the whole program', text: 'Every lesson. Every question. You did it.' });
     if (APP.state.tier === 'private') {
       var one = rd(K.one) || {}, rep = rd(K.rep);
       if (rep && rep.ranks) push({ kind: 'milestone', at: parseDate(rep.date), title: 'Representational System Test done', text: 'You learned how your brain takes things in.', href: '#RepTest' });
-      if (one.hd && one.hd.type !== 'skip') push({ kind: 'milestone', at: parseDate(one.hd.date), title: 'Human Design chart added', img: one.hd.type === 'image' ? one.hd.data : '' });
-      if (one.disc) push({ kind: 'milestone', at: parseDate(one.disc.date), title: 'DISC profile added', img: one.disc.type === 'image' ? one.disc.data : '' });
+      if (one.hd && one.hd.type !== 'skip') push({ kind: 'milestone', at: parseDate(one.hd.date), title: 'Human Design chart added', img: /^data:image/.test(one.hd.data || '') ? one.hd.data : '' });
+      if (one.disc) push({ kind: 'milestone', at: parseDate(one.disc.date), title: 'DISC profile added', img: /^data:image/.test(one.disc.data || '') ? one.disc.data : '' });
     }
     if (window.BT_VAGAL && window.BT_VAGAL.bookEntries) { try { window.BT_VAGAL.bookEntries().forEach(push); } catch (e) {} }
     if (window.BT_SAVES) window.BT_SAVES.list().forEach(function (x) { push({ kind: 'activity', at: x.at, title: x.title, text: ((window.BT_SAVES.tools[x.tool] || {}).name || ''), item: x, img: x.img || '', res: { 'what-if-workout': 'whatif', 'rewind': 'rewind', 'coming-home': 'comehome', 'emotional-blueprint': 'blueprint', 'breaking-out': 'box' }[x.tool] || '' }); });
@@ -3264,6 +3836,9 @@
       var log = jl[key] || {};
       push({ kind: 'journal', key: key, at: log.at || null, title: q, text: val, sub: f ? f.l.title : '', lesson: f ? f.l.id : '', tag: m[2] === 'n' ? 'My note' : 'Reflection' });
     });
+    // a page for every day of their Energy Audit
+    try { var ead = eaData(); Object.keys(ead.days || {}).forEach(function (k) { var bl = eaBlocks(ead.days[k]); if (!bl.length) return; var g = eaBalanceGame(bl), p = k.split('-'), last = bl[bl.length - 1], t = new Date(+p[0], p[1] - 1, +p[2]); t.setHours(Math.floor(eaMins(last.end) / 60), eaMins(last.end) % 60, 0, 0);
+      push({ kind: 'energy', at: Math.min(t.getTime(), Date.now()), title: 'Energy Audit: ' + bl.length + (bl.length === 1 ? ' block' : ' blocks'), text: (g.green ? (Math.round(g.green / 30) / 2) + 'h recharge' : 'No recharge logged') + ' · ' + (g.drain ? (Math.round(g.drain / 30) / 2) + 'h drain' : 'no drain logged') + (g.ok ? ' · Balanced ⚖️' : ''), sub: bl.slice(0, 4).map(function (b) { return b.what; }).join(' · ') }); }); } catch (e) {}
     var evIdx = {}; evidence().forEach(function (e) { evIdx[e.id] = e; });
     evidence().forEach(function (e) {
       var base = e.builds && evIdx[e.builds], ba = base && evAt(base);
@@ -3524,13 +4099,39 @@
     handDefs();
     var el = h('div', { class: 'bt-bkh', 'aria-hidden': 'true' }); el.innerHTML = svg; return el;
   }
+  // a gentle next step under each note in the Becoming Book: a resource, a lesson or a follow-up prompt that fits what they wrote
+  var NOTE_HELP = [
+    [/overwhelm|stress|anxious|anxiety|panic|melt ?down|shut ?down|too much|spiral/i, ['comehome', 'breathe'], 'w4l3', 'What’s the earliest sign your body gives you, before it gets this big?'],
+    [/tired|exhaust|drain|burn ?out|burnt|no energy|flat|wiped/i, ['energy', 'dose'], null, 'What drained you most today, and what’s one tiny recharge you could add tomorrow?'],
+    [/procrastinat|avoid|stuck|lazy|can'?t start|cant start|motivat|putting (it )?off/i, ['dose', 'whatif'], null, 'What’s the smallest first step, one you could do in two minutes?'],
+    [/not good enough|failure|failed|worthless|imposter|judg|reject|stupid|useless|hate myself|not enough/i, ['box', 'proof'], null, 'What’s one piece of proof that this story isn’t the whole truth?'],
+    [/argu|fight|partner|husband|wife|boyfriend|girlfriend|misunderstood|they don'?t get|communicat|conflict/i, ['ub'], null, 'What might they have been feeling or needing underneath what they said?'],
+    [/regret|replay|keep thinking|ruminat|what if|should have|shouldn'?t have/i, ['rewind', 'whatif'], null, 'If you could replay that moment, what would you do differently, and what does that say about who you’re becoming?'],
+    [/angry|anger|sad|upset|hurt|cry|crying|frustrat|jealous|guilt|shame|grief|lonely|scared|afraid|fear/i, ['blueprint'], 'w4l2', 'If this feeling could talk, what would it want you to know?'],
+    [/goal|future|dream|want to be|purpose|vision|direction|who i want/i, ['star', 'intent'], null, 'What would the future you do about this today?'],
+    [/proud|happy|grateful|excited|did it|win|finally|so good|amazing/i, ['proof'], null, 'What does this prove about who you’re becoming?']
+  ];
+  function noteHelp(text) {
+    var t = String(text || ''), hit = NOTE_HELP.filter(function (x) { return x[0].test(t); })[0] || [null, ['blueprint'], null, 'What’s the feeling underneath this, and where do you notice it in your body?'];
+    var links = [];
+    hit[1].forEach(function (id) { var r = resource(id); if (r && resOpen(r) && links.length < 2) links.push(h('a', { class: 'bk-help-l', href: resHref(r) }, [emblem(r.id) || h('span', { text: '◆' }), h('span', { text: r.title })])); });
+    if (hit[2]) { var f = findLesson(hit[2]); if (f && lessonOpen(f.l.id)) links.push(h('a', { class: 'bk-help-l', href: lessonHref(f.l) }, [h('span', { class: 'bk-help-play', 'aria-hidden': 'true', text: '▶' }), h('span', { text: f.l.title.replace(/^[^:]*:\s*/, '') })])); }
+    return h('div', { class: 'bk-help' }, [h('span', { class: 'bk-help-k', text: '✨ This might help' }), h('p', { class: 'bk-help-q', text: hit[3] }), links.length ? h('div', { class: 'bk-help-ls' }, links) : null]);
+  }
   function BookView(root) {
     var all = bookEntries();
     var count = function (k) { return all.filter(function (e) { return k === 'all' || e.kind === k || (k === 'proof' && e.kind === 'win'); }).length; };
     root.appendChild(pageHead(COACH ? 'Their story so far' : 'Your story so far', 'The Becoming Book', 'Started ' + startDate().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + all.length + ' pages'));
     var wrap = h('div', { class: 'bt-wrap bk' }, [COACH ? null : back('Home', '#Dashboard'), h('p', { class: 'bt-bk-about', text: COACH ? 'Exactly what ' + (COACH.name || 'they') + ' see' + (COACH.name ? 's' : '') + ' in their Becoming Book (read only).' : 'This is the story of who you’re becoming. Your reflections, finished lessons and activities, wins and proof, workouts and milestones all land here by themselves, dated, so you can look back and see how far you’ve come.' }), bookHero()]);
+    // three views: the story (every page), the master calendar, and analytics
+    var BKV = [['story', 'My story'], ['calendar', 'Calendar'], ['analytics', 'Analytics']], bv = bookState.view || 'story';
+    wrap.appendChild(h('div', { class: 'bk-views', role: 'tablist', 'aria-label': 'Becoming Book' }, BKV.map(function (v) { var on = bv === v[0]; return h('button', { class: 'bk-v' + (on ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', text: v[1], onclick: function () { bookState.view = v[0]; var y = window.scrollY; APP.reload(); window.scrollTo(0, y); } }); })));
+    if (bv !== 'story') {
+      var vbox = h('div', { class: 'bk-vbox' }), redrawV = function () { vbox.innerHTML = ''; if (bv === 'calendar') bookCalendar(vbox, redrawV); else bookAnalytics(vbox, redrawV); };
+      redrawV(); wrap.appendChild(vbox); root.appendChild(wrap); waves(root); return;
+    }
     // calendar: symbols on the days she moved forward + win streaks
-    var GLY = { milestone: '★', activity: '◆', journal: '✎', win: '✦', proof: '✓', vagal: '≈' };
+    var GLY = { milestone: '★', activity: '◆', journal: '✎', win: '✦', proof: '✓', vagal: '≈', energy: '⚡' };
     var byDay = {}; all.forEach(function (e) { if (!e.at) return; var k = dayKey(e.at); (byDay[k] = byDay[k] || {})[e.kind] = (byDay[k][e.kind] || 0) + 1; });
     var cal = h('section', { class: 'bk-cal', 'aria-label': 'Your progress calendar' });
     function drawCal() {
@@ -3579,7 +4180,7 @@
     // add proof: the same card as on Home
     if (!COACH) wrap.appendChild(proofHome());
     // tabs + search
-    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Reflections'], ['note', 'My notes'], ['vagal', 'Vagal tone'], ['activity', 'Activities'], ['milestone', 'Milestones']];
+    var tabs = [['all', 'Everything'], ['proof', 'Proof portfolio'], ['win', 'Wins & joy'], ['journal', 'Reflections'], ['note', 'My notes'], ['vagal', 'Vagal tone'], ['energy', 'Energy'], ['activity', 'Activities'], ['milestone', 'Milestones']];
     var list = h('div', { class: 'bk-pages' });
     var search = h('input', { class: 'bt-in bk-search', type: 'search', id: 'bk-q', placeholder: 'Search your book', value: bookState.q, 'aria-label': 'Search your book' });
     var tabRow = h('div', { class: 'bk-tabs', role: 'tablist' }, tabs.map(function (t) {
@@ -3602,7 +4203,7 @@
     if (!COACH) wrap.appendChild(notesBox({ book: true, onChange: function () { APP.reload(); } }));
     wrap.appendChild(tabRow); wrap.appendChild(rangeBox); wrap.appendChild(search); wrap.appendChild(list);
     function card(e) {
-      if (e.kind === 'note' && e.note) { var nw = h('div', { class: 'bk-e note' }); var d0 = new Date(e.at); nw.appendChild(h('div', { class: 'bk-date' }, [h('b', { text: String(d0.getDate()) }), h('span', { text: d0.toLocaleDateString('en-AU', { weekday: 'short' }) })])); nw.appendChild(stickyNote(e.note, function () { APP.reload(); }, true)); return nw; }
+      if (e.kind === 'note' && e.note) { var nw = h('div', { class: 'bk-e note' }); var d0 = new Date(e.at); nw.appendChild(h('div', { class: 'bk-date' }, [h('b', { text: String(d0.getDate()) }), h('span', { text: d0.toLocaleDateString('en-AU', { weekday: 'short' }) })])); nw.appendChild(stickyNote(e.note, function () { APP.reload(); }, true)); if (!COACH && tx(e.note.text)) { try { var hp = noteHelp((e.note.title || '') + ' ' + e.note.text); hp.classList.add('in-note'); nw.appendChild(hp); } catch (x) {} } return nw; }
       var k = KINDS[e.kind];
       var c = h('article', { class: 'bk-e ' + e.kind, style: '--kc:' + k[1] });
       var d = e.at ? new Date(e.at) : null;
@@ -3908,6 +4509,11 @@
     if (isSelf()) return !o.homeSaved && !profileData().startDone && !startedBefore();
     return !(o.homeSaved && o.wa && (testsDone() || profileData().startDone));
   }
+  // open or download a saved file (a data: URL). Browsers block opening data: links directly, so it goes through a Blob first.
+  function fileBlobUrl(u) { var m = /^data:([^;,]+)(;base64)?,(.*)$/.exec(u || ''); if (!m) return ''; var raw = m[2] ? atob(m[3]) : decodeURIComponent(m[3]), n = raw.length, a = new Uint8Array(n); for (var i = 0; i < n; i++) a[i] = raw.charCodeAt(i); return URL.createObjectURL(new Blob([a], { type: m[1] })); }
+  function fileOpen(u) { var b = fileBlobUrl(u); if (!b) return; var w = window.open(b, '_blank'); if (!w) location.href = b; }
+  function fileSave(u, name) { var b = fileBlobUrl(u); if (!b) return; var ext = /^data:application\/pdf/.test(u) ? '.pdf' : /^data:image\/png/.test(u) ? '.png' : '.jpg'; name = String(name || 'file').replace(/\.(pdf|png|jpe?g)$/i, '') + ext; var a = document.createElement('a'); a.href = b; a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); URL.revokeObjectURL(b); }, 4000); }
+  function fileBtns(u, name, hh) { return hh('div', { class: 'bt-filebtns' }, [hh('button', { class: 'bt-btn ghost sm', type: 'button', text: /^data:application\/pdf/.test(u) ? '📄 View PDF' : '🔍 View full size', onclick: function () { fileOpen(u); } }), hh('button', { class: 'bt-btn ghost sm', type: 'button', text: '⬇ Download', onclick: function () { fileSave(u, name); } })]); }
   function testsDone() { var o = rd(K.one) || {}, rep = rd(K.rep); return !!(((rep && rep.ranks) || o.repDone || o.repImg) && o.hd && o.disc); }
   function contractStepDone() { var c = APP.state.contract; return !!(c && c.status === 'signed'); }
   var INTRO = ['i1', 'i3', 'i2'];
@@ -4370,8 +4976,9 @@
         var has = rec && rec.data;
         kids.push(h('div', { class: 'bt-test' + (rec ? '' : ' off') }, [h('b', { text: tdef[1] }),
           h('span', { class: 'bt-sub', text: has ? 'Saved ' + (rec.date || '') : rec && rec.type === 'skip' ? 'No birth time yet' : rec ? 'Marked done, no copy saved' : 'Not uploaded yet' }),
-          has && rec.type !== 'pdf' ? h('img', { class: 'bt-test-img', src: rec.data, alt: tdef[1] }) : null,
-          has && rec.type === 'pdf' ? h('span', { class: 'bt-sub', text: 'PDF: ' + (rec.name || 'your file') }) : null,
+          has && rec.type !== 'pdf' ? h('button', { class: 'bt-test-imgb', type: 'button', 'aria-label': 'View ' + tdef[1] + ' full size', onclick: function () { fileOpen(rec.data); } }, [h('img', { class: 'bt-test-img', src: rec.data, alt: tdef[1] })]) : null,
+          has && rec.type === 'pdf' ? h('span', { class: 'bt-sub', text: '📄 ' + (rec.name || 'your file') }) : null,
+          has ? fileBtns(rec.data, 'My ' + tdef[1], h) : null,
           h('div', { class: 'bt-row' }, [h('a', { class: 'bt-btn ' + (has ? 'ghost' : 'lime'), href: TLINK[tdef[0]][0], target: '_blank', rel: 'noopener', text: (has ? TLINK[tdef[0]][2] : TLINK[tdef[0]][1]) + ' ↗' }),
             h('label', { class: 'bt-btn ghost', for: 'up-' + tdef[0] }, [has ? 'Replace' : 'Upload it here', inp])]), mm]));
       });
@@ -5438,19 +6045,20 @@
   // the week as a vertical calendar
   function eaWeek(d, offset, onEdit) {
     var mon = new Date(); mon.setHours(12, 0, 0, 0); mon.setDate(mon.getDate() - 6 + offset * 7); // a rolling week that ends today
-    var T0 = 6 * 60, T1 = 23 * 60, PX = 0.62; // px per minute
+    var T0 = 6 * 60, T1 = 23 * 60, PX = 0.62; // px per minute (stretches to fit anything earlier or later)
+    (function () { for (var z = 0; z < 7; z++) { var tz = new Date(mon); tz.setDate(mon.getDate() + z); eaBlocks(d.days[eaKey(tz)]).forEach(function (b) { T0 = Math.min(T0, Math.floor(eaMins(b.start) / 120) * 120); T1 = Math.max(T1, Math.min(24 * 60, Math.ceil(eaMins(b.end) / 60) * 60)); }); } })();
     var allBl = [];
     var grid = h('div', { class: 'ea-wk' });
     var gut = h('div', { class: 'ea-wk-gut' }, [h('div', { class: 'ea-wk-hd' })]);
     var gbody = h('div', { class: 'ea-wk-col', style: 'height:' + Math.round((T1 - T0) * PX) + 'px' });
-    for (var hr = 6; hr <= 22; hr += 2) gbody.appendChild(h('span', { class: 'ea-wk-hr', style: 'top:' + Math.round((hr * 60 - T0) * PX) + 'px', text: eaTime(hr * 60) }));
+    for (var hr = T0 / 60; hr <= T1 / 60 - 1; hr += 2) gbody.appendChild(h('span', { class: 'ea-wk-hr', style: 'top:' + Math.round((hr * 60 - T0) * PX) + 'px', text: eaTime(hr * 60) }));
     gut.appendChild(gbody); grid.appendChild(gut);
     for (var i = 0; i < 7; i++) {
       var t = new Date(mon); t.setDate(mon.getDate() + i); var k = eaKey(t), bl = eaBlocks(d.days[k]), g = eaBalanceGame(bl), today = k === eaKey();
       var col = h('div', { class: 'ea-wk-day' + (today ? ' today' : '') });
       col.appendChild(h('div', { class: 'ea-wk-hd' }, [h('b', { text: t.toLocaleDateString('en-AU', { weekday: 'short' }) }), h('span', { text: t.getDate() + '' }), bl.length ? h('i', { class: g.ok ? 'ok' : 'no', title: g.ok ? 'Balanced' : 'Needed more green', text: g.ok ? '⚖️' : '' }) : null]));
       var body = h('div', { class: 'ea-wk-col', style: 'height:' + Math.round((T1 - T0) * PX) + 'px' });
-      for (var hr2 = 6; hr2 <= 22; hr2 += 2) body.appendChild(h('span', { class: 'ea-wk-ln', style: 'top:' + Math.round((hr2 * 60 - T0) * PX) + 'px' }));
+      for (var hr2 = T0 / 60; hr2 <= T1 / 60 - 1; hr2 += 2) body.appendChild(h('span', { class: 'ea-wk-ln', style: 'top:' + Math.round((hr2 * 60 - T0) * PX) + 'px' }));
       bl.forEach(function (b) {
         var k2 = eaKind(b.kind), a = Math.max(T0, eaMins(b.start)), e = Math.min(T1, eaMins(b.end)); if (e <= a) return;
         var ht = Math.max(10, (e - a) * PX - 2);
@@ -5518,7 +6126,7 @@
   }
   // Energy Audit week: the 7 days after they finish the Energy Audit lesson, it's part of Today's reps
   function eaWeekInfo() {
-    var t = (prog().doneAt || {}).w2a2; if (!t) return null;
+    var t = (prog().doneAt || {}).w2a2; if (!t) return null; var rs = eaData().restartAt; if (rs && rs > t) t = rs;
     var a = new Date(t); a.setHours(12, 0, 0, 0); var b = new Date(); b.setHours(12, 0, 0, 0);
     var dayN = Math.round((b - a) / 864e5) + 1; if (dayN < 1 || dayN > 7) return null;
     var d = eaData(), n = eaBlocks(d.days[eaKey()]).length;
@@ -5549,7 +6157,7 @@
     var drawK = function () { kindRow.innerHTML = ''; EA_KINDS.forEach(function (k) { var on = EA_REP.kind === k.k; kindRow.appendChild(h('button', { class: 'rp-ea-k' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', style: '--c:' + k.c + ';--l:' + k.light, text: k.name.replace(' / disassociating', ''), onclick: function () { EA_REP.kind = k.k; drawK(); } })); }); };
     drawK();
     var durRow = h('div', { class: 'rp-ea-dur', role: 'radiogroup', 'aria-label': 'For how long?' });
-    var drawD = function () { durRow.innerHTML = ''; durRow.appendChild(h('span', { text: 'For the last' })); [[15, '15m'], [30, '30m'], [60, '1h'], [120, '2h'], [180, '3h']].forEach(function (x) { var on = EA_REP.dur === x[0]; durRow.appendChild(h('button', { class: 'rp-ea-d' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', text: x[1], onclick: function () { EA_REP.dur = x[0]; drawD(); } })); }); };
+    var drawD = function () { durRow.innerHTML = ''; durRow.appendChild(h('span', { text: 'For the last' })); [[5, '5m'], [10, '10m'], [15, '15m'], [30, '30m'], [60, '1h'], [120, '2h'], [180, '3h']].forEach(function (x) { var on = EA_REP.dur === x[0]; durRow.appendChild(h('button', { class: 'rp-ea-d' + (on ? ' on' : ''), type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', text: x[1], onclick: function () { EA_REP.dur = x[0]; drawD(); } })); }); };
     drawD();
     var err = h('p', { class: 'ea-err', 'aria-live': 'polite' });
     var log = h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Log it', onclick: function (e) {
@@ -5557,7 +6165,7 @@
       if (!EA_REP.kind) { err.textContent = 'Did it drain you or recharge you?'; return; }
       var d2 = eaData(), day2 = d2.days[eaKey()] = d2.days[eaKey()] || { blocks: [] }, now = new Date(), end = Math.max(EA_REP.dur, now.getHours() * 60 + Math.floor(now.getMinutes() / 5) * 5);
       day2.blocks = (day2.blocks || []).concat([{ id: String(Date.now()), start: eaT24(end - EA_REP.dur), end: eaT24(end), what: t, kind: EA_REP.kind }]); d2.setup = d2.setup || Date.now();
-      eaSave(d2); EA_REP = { kind: '', dur: EA_REP.dur, what: '' };
+      eaSave(d2); EA_REP = { kind: '', dur: EA_REP.dur, what: '' }; try { if (window.BT_EA_CHANGED) setTimeout(window.BT_EA_CHANGED, 320); } catch (x) {}
       try { sparkleBurst(e.currentTarget); } catch (x) {} setTimeout(redraw, 300);
     } });
     sec.appendChild(h('div', { class: 'rp-ea-log' }, [what,
@@ -5568,7 +6176,7 @@
     return sec;
   }
   window.BT_REPS_EXTRA = function (box) {
-    if (box.classList.contains('rp-locked') || !eaRepsOn()) return;
+    if (box.classList.contains('rp-locked') || box.classList.contains('rp-compact') || !eaRepsOn()) return;
     var end = box.querySelector('.rp-end') || box.querySelector('.rp-mini-acts');
     if (box.classList.contains('rp-mini')) {
       var w = eaWeekInfo(), n = eaBlocks(eaData().days[eaKey()]).length, ok = n >= 3;
@@ -5577,8 +6185,18 @@
         h('span', { class: 'rp-tick', 'aria-hidden': 'true', text: ok ? '✓' : '→' })]);
       if (end) end.parentNode.insertBefore(row, end); else box.appendChild(row); return;
     }
-    var sec = eaRepsSection(); if (end) end.parentNode.insertBefore(sec, end); else box.appendChild(sec);
+    if (box.classList.contains('rp-compact')) return;
+    var sec = eaRepsSection();
+    if (box.classList.contains('rp-compact')) {
+      var w2 = eaWeekInfo(), n2 = eaBlocks(eaData().days[eaKey()]).length;
+      var fold = h('details', { class: 'rp-eafold' + (n2 >= 3 ? ' on' : ''), open: EA_FOLD_OPEN ? true : null, ontoggle: function () { EA_FOLD_OPEN = fold.open; } }, [h('summary', null, [h('span', { class: 'rp-ic', 'aria-hidden': 'true' }, [emblem('energy') || document.createTextNode('🔋')]),
+        h('span', { class: 'rp-ea-t' }, [h('b', { text: 'Energy Audit' }), h('span', { text: (w2 ? 'Day ' + w2.day + ' of 7 · ' : '') + (n2 ? n2 + (n2 === 1 ? ' block' : ' blocks') + ' today' : 'Log what drained or filled you') })]),
+        h('span', { class: 'rp-tick', 'aria-hidden': 'true', text: n2 >= 3 ? '✓' : '+' })]), sec]);
+      sec = fold;
+    }
+    if (end) end.parentNode.insertBefore(sec, end); else box.appendChild(sec);
   };
+  var EA_FOLD_OPEN = false;
   // the three-step picture at the top of the Energy Audit, drawn in the same hand-drawn style as the What If? Workout
   var EA_ART = [
     ['Notice', 'Notice what drains you,', 'A stick person with a draining battery above their head, red and yellow blocks of the day falling out of it',
@@ -5649,7 +6267,7 @@
         var tok = r && r.data && r.data.session && r.data.session.access_token;
         return fetch('/.netlify/functions/my-calendar', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'content-type': 'application/json' }, body: JSON.stringify({ url: url }) });
       }).then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(t || 'Couldn’t load it'); }); }).then(function (j) {
-        var d2 = data2(), n0 = eaCalAdd(d2, j.events || []); d2.cal.url = url; save2(d2);
+        var d2 = data2(), n0 = eaCalAdd(d2, j.events || []); d2.cal.url = url; save2(d2); try { var mc = mcal(); if (!mc.url) { mc.url = url; mc.src = /google/.test(url) ? 'google' : /icloud/.test(url) ? 'apple' : /outlook|office|live\./.test(url) ? 'outlook' : ''; mc.at = 0; mcalSave(mc); mcalRefresh(true); } } catch (x) {}
         APP.toast(n0 ? 'Loaded ' + n0 + ' events from your calendar. They’re locked in on your plan.' : 'Your calendar’s clear for the next 7 days.'); if (onDone) onDone();
       }).catch(function (e) { btn.disabled = false; btn.textContent = 'Load my week'; msg.textContent = String(e.message || e).slice(0, 160); });
     };
@@ -5667,9 +6285,10 @@
   var EA_PSX = 0, EA_PE = null; // EA_PE: the plan block being edited (or '__new' for a spot they tapped)
   function eaPlanGrid(d, onRemove, onLock, io) {
     var T0 = 6 * 60, T1 = 23 * 60, PX = io ? 0.8 : 0.62, today = eaWd();
+    for (var zw = 0; zw < 7; zw++) eaPlanBlocks(d, zw).forEach(function (b) { T0 = Math.min(T0, Math.floor(eaMins(b.start) / 60) * 60); T1 = Math.max(T1, Math.min(24 * 60, Math.ceil(eaMins(b.end) / 60) * 60)); });
     var grid = h('div', { class: 'ea-wk plan' + (io ? ' live' : '') }), bodies = [];
     var gut = h('div', { class: 'ea-wk-gut' }, [h('div', { class: 'ea-wk-hd' })]), gb = h('div', { class: 'ea-wk-col', style: 'height:' + Math.round((T1 - T0) * PX) + 'px' });
-    for (var hr = 6; hr <= 22; hr += (io ? 1 : 2)) gb.appendChild(h('span', { class: 'ea-wk-hr', style: 'top:' + Math.round((hr * 60 - T0) * PX) + 'px', text: eaTime(hr * 60) }));
+    for (var hr = T0 / 60; hr <= T1 / 60 - 1; hr += (io ? 1 : 2)) gb.appendChild(h('span', { class: 'ea-wk-hr', style: 'top:' + Math.round((hr * 60 - T0) * PX) + 'px', text: eaTime(hr * 60) }));
     gut.appendChild(gb); gut.appendChild(h('div', { class: 'ea-wk-ft' })); grid.appendChild(gut);
     var drag = function (el, wd, b, lab) {
       el.addEventListener('pointerdown', function (ev) {
@@ -5711,7 +6330,7 @@
       var bl = eaPlanBlocks(d, i), col = h('div', { class: 'ea-wk-day' + (i === today ? ' today' : '') });
       col.appendChild(h('div', { class: 'ea-wk-hd' }, [h('b', { text: EA_WD[i] })]));
       var body = h('div', { class: 'ea-wk-col', style: 'height:' + Math.round((T1 - T0) * PX) + 'px' }); bodies.push(body);
-      for (var hr2 = 6; hr2 <= 22; hr2 += (io ? 1 : 2)) body.appendChild(h('span', { class: 'ea-wk-ln', style: 'top:' + Math.round((hr2 * 60 - T0) * PX) + 'px' }));
+      for (var hr2 = T0 / 60; hr2 <= T1 / 60 - 1; hr2 += (io ? 1 : 2)) body.appendChild(h('span', { class: 'ea-wk-ln', style: 'top:' + Math.round((hr2 * 60 - T0) * PX) + 'px' }));
       if (io && io.pending && io.pending.wd === i) bl = bl.concat([{ id: '__new', start: io.pending.start, end: io.pending.end, what: io.pending.what || 'New block', kind: io.pending.kind || '', pend: true }]);
       // overlapping blocks sit side by side, like a calendar app
       var lanes = [], lane = {}, cl = [], clEnd = -1, groups = [];
@@ -6027,7 +6646,19 @@
     homePane.appendChild(homeDyn);
     var demoBar = h('div');
     var trackPane = h('div', { class: 'ea-pane ea-body' }), auditPane = h('div', { class: 'ea-pane ea-body' }), planPane = h('div', { class: 'ea-pane ea-body' });
-    wrap.appendChild(demoBar); wrap.appendChild(homePane); wrap.appendChild(trackPane); wrap.appendChild(auditPane); wrap.appendChild(planPane);
+    var freshBox = h('div', { class: 'ea-fresh-wrap' });
+    wrap.appendChild(demoBar); wrap.appendChild(homePane); wrap.appendChild(trackPane); wrap.appendChild(auditPane); wrap.appendChild(planPane); wrap.appendChild(freshBox);
+    // start the audit again: the old log is kept as a past audit, the tracker starts empty, lists + plan stay
+    function drawFresh(d) {
+      freshBox.innerHTML = ''; var n = Object.keys(d.days || {}).filter(function (k) { return eaBlocks(d.days[k]).length; }).length;
+      freshBox.hidden = eaTab !== 'tracker' || eaDemoOn() || !n;
+      if (freshBox.hidden) return;
+      var sure = h('div', { class: 'ea-fresh-sure', hidden: true }, [h('p', { text: 'Your ' + n + (n === 1 ? ' logged day goes' : ' logged days go') + ' into your past audits (nothing is deleted), and the tracker starts empty from today. Your lists and your plan stay as they are.' }),
+        h('div', { class: 'bt-row' }, [h('button', { class: 'bt-btn lime sm', type: 'button', text: 'Yes, start fresh', onclick: function () { var d2 = data(); d2.past = (d2.past || []).concat([{ at: Date.now(), days: d2.days }]); d2.days = {}; d2.patSeen = 0; d2.restartAt = Date.now(); save(d2); day = eaKey(); APP.toast('Fresh start. Day 1 of your new audit begins today.'); draw(); } }),
+          h('button', { class: 'bt-btn ghost sm', type: 'button', text: 'Not now', onclick: function () { sure.hidden = true; } })])]);
+      freshBox.appendChild(h('section', { class: 'ea-card ea-fresh' }, [h('h2', { text: 'Want to run your audit again?' }), h('p', { class: 'bt-sub', text: 'Things change. Start a fresh audit any time to see where your energy is now.' + ((d.past || []).length ? ' You’ve done ' + (d.past.length + 1) + ' rounds so far.' : '') }),
+        h('button', { class: 'bt-btn ghost', type: 'button', text: '↺ Start a fresh audit', onclick: function () { sure.hidden = false; } }), sure]));
+    }
     var day = eaKey(), weekOff = 0, editLists = false, chartView = 'batt', body = trackPane, editId = null;
     // which tab it opens on: a pattern notification → Audit; from the course → Home; from Resources or Home → Tracker
     var eaTab = null;
@@ -6121,7 +6752,7 @@
       if (eaTab === 'audit' && logged.length >= 3 && unseen) { d.patSeen = logged.length; save(d); unseen = false; }
       tabsEl.innerHTML = '';
       [['home', 'Home', '🏠'], ['tracker', 'Tracker', '✏️'], ['audit', 'Audit', '📊'], ['plan', 'Plan', '🗓️']].forEach(function (t) { var on = eaTab === t[0]; tabsEl.appendChild(h('button', { class: 'ea-tab' + (on ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', onclick: function () { setTab(t[0]); } }, [h('span', { 'aria-hidden': 'true', text: t[2] }), t[1], t[0] === 'audit' && unseen ? h('i', { class: 'ea-tab-new', text: 'new' }) : null])); });
-      homePane.hidden = eaTab !== 'home'; trackPane.hidden = eaTab !== 'tracker'; auditPane.hidden = eaTab !== 'audit'; planPane.hidden = eaTab !== 'plan';
+      homePane.hidden = eaTab !== 'home'; trackPane.hidden = eaTab !== 'tracker'; auditPane.hidden = eaTab !== 'audit'; planPane.hidden = eaTab !== 'plan'; try { drawFresh(d); } catch (e) {}
       // HOME: lists, change your state, how to recharge
       homeDyn.appendChild(listsCard(d, fresh)); homeDyn.appendChild(stateCard()); homeDyn.appendChild(eaHow());
       if (fresh) { trackPane.appendChild(h('section', { class: 'ea-card ea-gofirst' }, [h('h2', { text: 'First, make your lists' }), h('p', { class: 'bt-sub', text: 'Before you start logging, pick what drains you and what fills you back up. It takes two minutes, and it’s what powers your suggestions.' }), h('button', { class: 'bt-btn lime', type: 'button', text: 'Make my lists →', onclick: function () { setTab('home'); } })]));
@@ -6291,8 +6922,7 @@
       var drawDays = function () { dayRow.innerHTML = ''; EA_WD.forEach(function (n, i) { dayRow.appendChild(chip(n, !!picked[i], function () { picked[i] = !picked[i]; drawDays(); })); }); dayRow.appendChild(chip('Weekdays', [0, 1, 2, 3, 4].every(function (i) { return picked[i]; }), function () { var on = [0, 1, 2, 3, 4].every(function (i) { return picked[i]; }); [0, 1, 2, 3, 4].forEach(function (i) { picked[i] = !on; }); drawDays(); }, ' wide')); };
       var drawK = function () { kindRow.innerHTML = ''; EA_KINDS.forEach(function (k) { kindRow.appendChild(h('button', { class: 'ea-kind' + (kind === k.k ? ' on' : ''), type: 'button', style: '--c:' + k.c + ';--l:' + k.light, 'aria-pressed': kind === k.k ? 'true' : 'false', onclick: function () { kind = k.k; drawK(); if (typeof syncPend === 'function') syncPend(); } }, [h('b', { text: k.name })])); }); };
       drawDays(); drawK();
-      var opts = []; for (var m = 5 * 60; m <= 23 * 60 + 45; m += 15) opts.push(m);
-      var sel = function (val, lab) { var x = h('select', { class: 'bt-in ea-sel', 'aria-label': lab }); opts.forEach(function (m) { var o = h('option', { value: String(m), text: eaTime(m) }); if (m === val) o.selected = true; x.appendChild(o); }); return x; };
+      var sel = function (val, lab) { return eaTimePick(val, lab); };
       var st = sel(pe ? eaMins(pe.start) : 9 * 60, 'Start time'), en = sel(pe ? eaMins(pe.end) : 10 * 60, 'End time'), what = h('input', { class: 'bt-in ea-what', placeholder: 'What’s planned?', 'aria-label': 'What’s planned?' }), lockIn = h('input', { type: 'checkbox' });
       if (pe) { what.value = pe.what || ''; lockIn.checked = !!pe.lock; }
       var syncPend = function () { if (EA_PE && EA_PE.id === '__new') { EA_PE.what = what.value; EA_PE.kind = kind; } };
@@ -6365,10 +6995,9 @@
     }
     function eaForm(bl, d) {
       var lastEnd = bl.length ? eaMins(bl[bl.length - 1].end) : 7 * 60;
-      var opts = []; for (var m = 5 * 60; m <= 23 * 60 + 30; m += 30) opts.push(m);
-      var sel = function (val, lab) { var s = h('select', { class: 'bt-in ea-sel', 'aria-label': lab }); opts.forEach(function (m) { var o = h('option', { value: String(m), text: eaTime(m) }); if (m === val) o.selected = true; s.appendChild(o); }); return s; };
-      var snap = function (m) { return Math.round(m / 30) * 30; };
-      var st = sel(Math.min(snap(lastEnd), 23 * 60), 'Start time'), en = sel(Math.min(snap(lastEnd) + 60, 23 * 60 + 30), 'End time');
+      var sel = function (val, lab) { return eaTimePick(val, lab); };
+      var snap = function (m) { return Math.round(m / 15) * 15; };
+      var st = sel(Math.min(snap(lastEnd), 23 * 60 + 45), 'Start time'), en = sel(Math.min(snap(lastEnd) + 60, 23 * 60 + 59), 'End time');
       var what = h('input', { class: 'bt-in ea-what', placeholder: 'What were you doing?', 'aria-label': 'What were you doing?' });
       var kind = '', rate = 0, ns = null, kindRow = h('div', { class: 'ea-kinds' }), rateRow = h('div', { class: 'ea-rates' }), nsRow = h('div', { class: 'ea-nss' });
       function drawNs() { nsRow.innerHTML = ''; EA_RUNGS.forEach(function (r, i) { nsRow.appendChild(h('button', { class: 'ea-ns' + (ns === i ? ' on' : '') + (i >= 2 && i <= 4 ? ' reg' : ''), type: 'button', style: '--nc:' + EA_RUNGC[i] + ';--nd:' + EA_NSC[i], 'aria-pressed': ns === i ? 'true' : 'false', onclick: function () { ns = ns === i ? null : i; drawNs(); } }, [h('i', { 'aria-hidden': 'true' }), r])); }); }
@@ -6408,14 +7037,14 @@
       formEl.edit = function (id) {
         var b = (bl || []).filter(function (y) { return y.id === id; })[0] || eaBlocks((data().days || {})[day]).filter(function (y) { return y.id === id; })[0]; if (!b) return;
         editing = id; editId = id;
-        var snap2 = function (m) { return String(Math.min(23 * 60 + 30, Math.max(5 * 60, Math.round(m / 30) * 30))); };
+        var snap2 = function (m) { return String(Math.max(0, Math.min(24 * 60 - 1, m))); };
         st.value = snap2(eaMins(b.start)); en.value = snap2(eaMins(b.end)); what.value = b.what; kind = b.kind; drawKinds(); rate = b.rate || 0; drawRates(); ns = b.ns == null ? null : b.ns; drawNs();
         head.textContent = 'Edit: ' + b.what; save1.textContent = 'Save changes'; cancel.hidden = false; formEl.classList.add('editing'); err.textContent = '';
         document.querySelectorAll('.ea-blk.editing').forEach(function (z) { z.classList.remove('editing'); });
         try { formEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
       };
       formEl.fill = function (b) {
-        var snap2 = function (m) { return String(Math.min(23 * 60 + 30, Math.max(5 * 60, Math.round(m / 30) * 30))); };
+        var snap2 = function (m) { return String(Math.max(0, Math.min(24 * 60 - 1, m))); };
         st.value = snap2(eaMins(b.start)); en.value = snap2(eaMins(b.end)); what.value = b.what; kind = b.kind; drawKinds(); rate = 0; drawRates(); ns = null; drawNs();
         err.textContent = 'Now rate your battery honestly. If it was planned as a drain, did it drain you as much as it used to?'; err.classList.add('hint');
         try { formEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
@@ -6427,10 +7056,10 @@
   }
   window.BT_NATIVE = { Energy: EnergyView, FlowPic: FlowPic, MapHow: MapHowView, BoxNow: BoxNowView, ProgFlow: ProgFlowView, BoxResults: BoxMapView, BoxResultsOld: BoxResultsView, NextTest: NextTestView, Course: CourseView, Lesson: LessonView, Profile: ProfileView, Proof: ProofView, ActDone: ActDoneView, Back: function (root, resId) { setTimeout(function () { if (!activityBack(resId)) goHref('#Resources'); }, 30); }, Setup: SetupView, Intentions: homeOn('home', 'intent'), Journal: function (root) { bookState.tab = 'journal'; bookState.day = ''; BookView(root); }, Resources: homeOn('res'), Book: BookView, Welcome: WelcomeView, Contract: ContractView, Start: StartView };
   window.BT_COURSE = {
-    init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} try { eaSeedPlayground(false); } catch (e) {} watchSlots(); watchJournal(); watchReturns(); },
+    init: function (app) { APP = app; h = app.h; try { migrateWins(); backfillProof(); } catch (e) {} try { eaSeedPlayground(false); } catch (e) {} try { richSeed(); } catch (e) { if (window.console) console.warn(e); } setTimeout(function () { try { mcalRefresh(false); } catch (e) {} }, 1500); watchSlots(); watchJournal(); watchReturns(); },
     ensureFooter: ensureFooter,
     coachBook: coachBook,
-    isCoach: function () { return !!(APP && APP.state && APP.state.isAdmin && !asClient()); },
+    isCoach: function () { return !!(APP && APP.state && APP.state.isAdmin && !asClient() && !coachAsClient()); },
     afterShow: function (route) {
       ensureFooter();
       try { refreshContract(false); } catch (e) {}
@@ -6476,7 +7105,7 @@
     runTour: function (steps, o) { if (APP) runTour(steps, o); },
     winsToday: function () { return evidence().filter(function (e) { var a = evAt(e); return e.win && a && dayKey(a) === dayKey(Date.now()); }).length; },
     dayCard: dayCard, chReconcile: chReconcile,
-    goAddProof: function () { var el = document.getElementById('bt-home-proof'); if (!el) { proofTabNext = proofTabState = 'mine'; goHref('#Proof'); return; } el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(function () { var i = document.getElementById('bt-win-in'); if (i) { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } } el.classList.add('bt-flash'); setTimeout(function () { el.classList.remove('bt-flash'); }, 1600); }, 450); },
+    goAddProof: function () { if (window.BT_DAY_PROOF && document.querySelector('.bt-day')) { window.BT_DAY_PROOF(); return; } var el = document.getElementById('bt-home-proof'); if (!el) { proofTabNext = proofTabState = 'mine'; goHref('#Proof'); return; } el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(function () { var i = document.getElementById('bt-win-in'); if (i) { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } } el.classList.add('bt-flash'); setTimeout(function () { el.classList.remove('bt-flash'); }, 1600); }, 450); },
     resIntro: resIntro,
     contractPdf: function (ct, hh) { if (!h && hh) h = hh; contractPdf(ct); },
     find: function () { findSheet(); },

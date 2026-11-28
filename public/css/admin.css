@@ -782,3 +782,8 @@ svg.ct-shot{border:0;height:auto}
 .ad-ctab{font:600 15px Poppins,system-ui,sans-serif;padding:10px 18px;border-radius:999px;border:1.5px solid #1F1412;background:#fff;color:#1F1412;cursor:pointer}
 .ad-ctab.on{background:#4E0C08;color:#F1F9A6;border-color:#4E0C08}
 .ad-bookframe{width:100%;min-height:600px;border:0;border-radius:24px;background:#4E0C08;display:block}
+.ad-thumb,.ad-prof-img{padding:0;border:0;background:none;cursor:zoom-in}
+.ad-prof-img{display:block;width:100%}
+.ad-filebox{display:flex;flex-direction:column;gap:4px}
+.ad-prof-pdf{display:flex;flex-direction:column;gap:4px}
+.bt-filebtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}

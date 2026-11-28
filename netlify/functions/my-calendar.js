@@ -36,7 +36,9 @@ exports.handler = async (event) => {
   finally { clearTimeout(t); }
   if (!/BEGIN:VCALENDAR/.test(text)) return { statusCode: 502, body: 'That link isn’t a calendar' };
 
-  const from = Date.now() - 864e5, to = Date.now() + 8 * 864e5;
-  const events = occurrences(text, from, to).slice(0, 300).map(e => ({ id: e.id, start: e.start, end: new Date(e.ms + (e.dur || 3600e3)).toISOString(), title: e.title || 'Busy' }));
+  // range 'wide': the app's master calendar (the last 6 weeks and the next 5), otherwise the Energy Audit's next 7 days
+  const wide = body.range === 'wide';
+  const from = Date.now() - (wide ? 45 : 1) * 864e5, to = Date.now() + (wide ? 35 : 8) * 864e5;
+  const events = occurrences(text, from, to).slice(0, wide ? 900 : 300).map(e => ({ id: e.id, start: e.start, end: new Date(e.ms + (e.dur || 3600e3)).toISOString(), title: e.title || 'Busy' }));
   return { statusCode: 200, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify({ events }) };
 };

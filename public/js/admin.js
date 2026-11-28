@@ -108,9 +108,14 @@
   }
 
   /* ---------- readable answers (works for any tool) ---------- */
+  // open or download a saved file (a data: URL). Browsers block opening data: links directly, so it goes through a Blob first.
+  function fileBlobUrl(u) { var m = /^data:([^;,]+)(;base64)?,(.*)$/.exec(u || ''); if (!m) return ''; var raw = m[2] ? atob(m[3]) : decodeURIComponent(m[3]), n = raw.length, a = new Uint8Array(n); for (var i = 0; i < n; i++) a[i] = raw.charCodeAt(i); return URL.createObjectURL(new Blob([a], { type: m[1] })); }
+  function fileOpen(u) { var b = fileBlobUrl(u); if (!b) return; var w = window.open(b, '_blank'); if (!w) location.href = b; }
+  function fileSave(u, name) { var b = fileBlobUrl(u); if (!b) return; var ext = /^data:application\/pdf/.test(u) ? '.pdf' : /^data:image\/png/.test(u) ? '.png' : '.jpg'; name = String(name || 'file').replace(/\.(pdf|png|jpe?g)$/i, '') + ext; var a = document.createElement('a'); a.href = b; a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); URL.revokeObjectURL(b); }, 4000); }
+  function fileBtns(u, name, hh) { return hh('div', { class: 'bt-filebtns' }, [hh('button', { class: 'bt-btn ghost sm', type: 'button', text: /^data:application\/pdf/.test(u) ? '📄 View PDF' : '🔍 View full size', onclick: function () { fileOpen(u); } }), hh('button', { class: 'bt-btn ghost sm', type: 'button', text: '⬇ Download', onclick: function () { fileSave(u, name); } })]); }
   function fileLink(v, label) {
-    if (/^data:image\//.test(v)) return h('a', { href: v, target: '_blank', rel: 'noopener', class: 'ad-thumb' }, [h('img', { src: v, alt: label || 'Image they saved' })]);
-    if (/^data:application\/pdf/.test(v)) return h('a', { href: v, download: (label || 'file') + '.pdf', class: 'bt-btn ghost' }, ['Open the PDF']);
+    if (/^data:image\//.test(v)) return h('div', { class: 'ad-filebox' }, [h('button', { type: 'button', class: 'ad-thumb', onclick: function () { fileOpen(v); } }, [h('img', { src: v, alt: label || 'Image they saved' })]), fileBtns(v, label, h)]);
+    if (/^data:application\/pdf/.test(v)) return fileBtns(v, label, h);
     return null;
   }
   function value(v, label, depth) {
@@ -855,7 +860,10 @@
       nt.addEventListener('change', function () { var o = {}; o[key] = Object.assign({}, coach(c)[key] || {}, { notes: nt.value }); saveCoach(c, o, false); });
       return h('div', { class: 'ad-prof' }, [h('b', { text: label }),
         h('span', { class: 'ad-muted', text: rec ? (rec.type === 'sent' ? 'Sent on WhatsApp' + (rec.date ? ' · ' + rec.date : '') : rec.type === 'skip' ? 'Skipped' : 'Uploaded' + (rec.date ? ' · ' + rec.date : '')) : 'Not done yet' }),
-        img ? h('a', { class: 'ad-prof-img', href: img, target: '_blank', rel: 'noopener' }, [h('img', { src: img, alt: label + ' screenshot' })]) : null,
+        img ? h('button', { class: 'ad-prof-img', type: 'button', onclick: function () { fileOpen(img); } }, [h('img', { src: img, alt: label + ' screenshot' })]) : null,
+        img ? fileBtns(img, (c.full_name || 'client') + ' ' + label, h) : null,
+        rec && /^data:application\/pdf/.test(rec.data || '') ? h('div', { class: 'ad-prof-pdf' }, [h('span', { class: 'ad-muted', text: '📄 ' + (rec.name || label + '.pdf') }), fileBtns(rec.data, (c.full_name || 'client') + ' ' + label, h)]) : null,
+        rec && mine.img && /^data:image/.test(rec.data || '') && rec.data !== img ? h('div', { class: 'ad-prof-pdf' }, [h('span', { class: 'ad-muted', text: 'The one they uploaded:' }), fileBtns(rec.data, (c.full_name || 'client') + ' ' + label, h)]) : null,
         h('label', { class: 'bt-btn ghost sm', for: 'cp-' + key + '-' + c.id }, [img ? 'Replace screenshot' : 'Add a screenshot', file]), nt]);
     }
     // compact summary: lead rep system + levels, and the two screenshots
@@ -1194,7 +1202,7 @@
       h('header', { class: 'ad-hero' }, [
         h('div', { class: 'ad-hero-t' }, [
           h('div', { class: 'ad-hero-t' }, [h('img', { class: 'ad-logo', src: 'icons/icon-192.png', alt: '' }), h('div', null, [h('p', { class: 'ad-kick', text: 'Back of house' }), h('h1', { class: 'ad-h1', text: 'Hey Sav' })])]),
-          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'https://claude.ai/artifact/WA6wA6JZykpKyJ6gjs6NfF' : '/breakthrough', target: '_blank', rel: 'noopener', title: 'The stand-alone Breakthrough landing page. No login, no app access. Share this link: app.colourmeneurospicy.com.au/breakthrough', text: '🌐 Breakthrough landing page' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'coaching.html' : '/coaching', target: '_blank', rel: 'noopener', title: 'Private coaching packages page. No login needed. Share this link: app.colourmeneurospicy.com.au/coaching', text: '🔥 Coaching packages page' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'tools/emotional-blueprint-full.html' : '/tools/emotional-blueprint-full.html', target: '_blank', rel: 'noopener', title: 'The full, in-depth Emotional Blueprint, saved as a draft (clients don’t see this)', text: '📘 Emotional Blueprint: full version (draft)' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
+          h('div', { class: 'ad-topbtns' }, [h('a', { class: 'bt-btn lime', href: '/?asclient=1', text: 'Open the app' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: 'https://claude.ai/artifact/KWLeN9A1fF4xqsCfJDWjyF', target: '_blank', rel: 'noopener', text: '🛝 Playground' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: 'https://claude.ai/artifact/LB5jA1EzQPeiLbcN7r8UeQ', target: '_blank', rel: 'noopener', text: '🧠 Sav’s Brain' }), window.BT_DEMO ? null : h('a', { class: 'bt-btn ghost on-dark', href: '/?trial=1', target: '_blank', rel: 'noopener', text: '🧪 Try the new-client journey' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'https://claude.ai/artifact/WA6wA6JZykpKyJ6gjs6NfF' : '/breakthrough', target: '_blank', rel: 'noopener', title: 'The stand-alone Breakthrough landing page. No login, no app access. Share this link: app.colourmeneurospicy.com.au/breakthrough', text: '🌐 Breakthrough landing page' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'coaching.html' : '/coaching', target: '_blank', rel: 'noopener', title: 'Private coaching packages page. No login needed. Share this link: app.colourmeneurospicy.com.au/coaching', text: '🔥 Coaching packages page' }), h('a', { class: 'bt-btn ghost on-dark', href: window.BT_DEMO ? 'tools/emotional-blueprint-full.html' : '/tools/emotional-blueprint-full.html', target: '_blank', rel: 'noopener', title: 'The full, in-depth Emotional Blueprint, saved as a draft (clients don’t see this)', text: '📘 Emotional Blueprint: full version (draft)' }), h('button', { class: 'bt-btn ghost on-dark', text: 'Log out', onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })])
         ]),
         h('div', { class: 'ad-stats' }, [
           stat(real.length, 'clients', '#F1F9A6'),
